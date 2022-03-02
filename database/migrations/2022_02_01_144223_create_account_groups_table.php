@@ -22,6 +22,7 @@ class CreateAccountGroupsTable extends Migration
             $table->string('_updated_by',60)->nullable();
             $table->unsignedBigInteger('_account_head_id');
             $table->foreign('_account_head_id')->references('id')->on('account_heads');
+             $table->longText('_details')->nullable();
             
             $table->integer('_parent_id')->default(0);
             $table->timestamps();

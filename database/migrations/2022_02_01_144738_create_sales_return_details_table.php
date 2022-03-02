@@ -25,9 +25,9 @@ class CreateSalesReturnDetailsTable extends Migration
             $table->double('_discount',15,4)->default(0);
             $table->double('_vat',15,4)->default(0);
             $table->double('_value',15,4)->default(0);
-            $table->integer('_store_id')->nullable();
-            $table->integer('_cost_center_id')->nullable();
-            $table->integer('_store_salves_id')->nullable();
+            $table->integer('_store_id')->default(0);
+            $table->integer('_cost_center_id')->default(0);
+            $table->integer('_store_salves_id')->default(0);
             $table->unsignedBigInteger('_no');
             $table->foreign('_no')->references('id')->on('sales_returns');
             $table->unsignedBigInteger('_branch_id');

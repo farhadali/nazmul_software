@@ -26,7 +26,7 @@ class CreateVoucherMastersTable extends Migration
             $table->string('_transection_type')->nullable();
             $table->string('_transection_ref')->nullable();
             $table->string('_form_name')->nullable();
-            $table->double('_amount',15,4)->nullable();
+            $table->double('_amount',15,4)->default(0);
             $table->unsignedBigInteger('_branch_id');
             $table->foreign('_branch_id')->references('id')->on('branches');
             $table->tinyInteger('_status')->default(0);

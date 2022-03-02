@@ -18,4 +18,11 @@ trait ImgaeUpload
  
         return $image_url; // Just return image
     }
+
+
+
+
+    public function _check_status($_status){
+     return   ($_status==1) ? "Active" : "In Active";
+    }
 }

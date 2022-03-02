@@ -20,6 +20,7 @@ class CreateAccountHeadsTable extends Migration
             $table->tinyInteger('_status')->default(0);
             $table->string('_created_by',60)->nullable();
             $table->string('_updated_by',60)->nullable();
+            $table->integer('_account_id')->nullable();
             $table->timestamps();
         });
     }

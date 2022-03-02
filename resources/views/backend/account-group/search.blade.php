@@ -14,10 +14,17 @@
                             </select>
                           </div>
                           <div class="col-md-4">
-                            <input type="text" name="name" class="form-control" placeholder="Search By Name" value="@if(isset($request->name)) {{$request->name ?? ''}}  @endif">
+                            <input type="text" name="_name" class="form-control" placeholder="Search By Name" value="@if(isset($request->_name)) {{$request->_name ?? ''}}  @endif">
                           </div>
                           <div class="col-md-4">
-                            <input type="text" name="email" class="form-control" placeholder="Search By email" value="@if(isset($request->email)) {{$request->email ?? ''}}  @endif">
+                            <select class="form-control" name="_account_head_id">
+                              <option value="">--Select--</option>
+                              @forelse($account_types as $account_type )
+                              <option value="{{$account_type->id}}" @if(isset($request->_account_head_id)) @if($request->_account_head_id == $account_type->id) selected @endif   @endif>{{ $account_type->_name ?? '' }}</option>
+                              @empty
+                              @endforelse
+                            </select>
+                            
                           </div>
                           
                           <div class="col-md-2">

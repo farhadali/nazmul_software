@@ -6,6 +6,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SocialMediaController;
+use App\Http\Controllers\AccountGroupController;
+use App\Http\Controllers\AccountHeadController;
 
 
 
@@ -34,11 +36,16 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 
 Route::group(['middleware' => ['auth']], function() {
-    //Admin Section start
 
+    //Admin Section start
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('social_media', SocialMediaController::class);
+    Route::resource('account-type', AccountHeadController::class);
+    Route::post('account-type/update', 'App\Http\Controllers\AccountHeadController@update');
+
+    Route::resource('account-group', AccountGroupController::class);
+    Route::post('account-group/update', 'App\Http\Controllers\AccountGroupController@update');
 
     
 

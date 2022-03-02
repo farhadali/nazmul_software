@@ -7,15 +7,9 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-
-      
-
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-         
           <li class="nav-item">
             <a href="{{url('home')}}" class="nav-link">
               <i class="nav-icon far fa-image"></i>
@@ -65,6 +59,33 @@
                   <p>Users</p>
                 </a>
               </li>
+              
+            </ul>
+          </li>
+
+          <li class="nav-item  ">
+            <a href="#" class="nav-link ">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>
+                Account
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              
+              <li class="nav-item">
+                <a href="{{url('account-type')}}" class="nav-link {{Route::is('account-type.*')   ? 'active' : '' }}" >
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Account Type</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url('account-group')}}" class="nav-link {{Route::is('account-group.*')   ? 'active' : '' }}" >
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Account Group</p>
+                </a>
+              </li>
+              
               
             </ul>
           </li>
