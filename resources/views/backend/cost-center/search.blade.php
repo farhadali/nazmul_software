@@ -14,10 +14,20 @@
                             </select>
                           </div>
                           <div class="col-md-4">
-                            <input type="text" name="name" class="form-control" placeholder="Search By Name" value="@if(isset($request->name)) {{$request->name ?? ''}}  @endif">
+                            <input type="text" name="_name" class="form-control" placeholder="Search By Name" value="@if(isset($request->_name)) {{$request->_name ?? ''}}  @endif">
                           </div>
-                          <div class="col-md-4">
-                            <input type="text" name="email" class="form-control" placeholder="Search By email" value="@if(isset($request->email)) {{$request->email ?? ''}}  @endif">
+                          <div class="col-md-2">
+                            <input type="text" name="_code" class="form-control" placeholder="Search By Code" value="@if(isset($request->_code)) {{$request->_code ?? ''}}  @endif">
+                          </div>
+                          <div class="col-md-2">
+                            <select class="form-control" name="_branch_id" required>
+                              <option value="">--Branch--</option>
+                                  @forelse($branchs as $branch)
+                                  <option value="{{$branch->id}}">{{ $branch->_name ?? '' }}</option>
+                                  @empty
+                                  @endforelse
+                                  
+                                </select>
                           </div>
                           
                           <div class="col-md-2">

@@ -17,7 +17,7 @@ class CreateAccountLedgersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('_account_group_id');
             $table->foreign('_account_group_id')->references('id')->on('account_groups');
-            
+            $table->integer('_aaccount_head_id')->nullable();
             $table->string('_name')->nullable();
             $table->string('_code',50)->nullable();
             $table->string('_image',250)->nullable();
@@ -28,6 +28,7 @@ class CreateAccountLedgersTable extends Migration
             $table->string('_address',200)->nullable();
             $table->double('_credit_limit',15,4)->default(0);
             $table->integer('_branch_id')->nullable();
+            
             $table->integer('_is_user')->default(0);
             $table->integer('_user_id')->nullable();
             $table->integer('_is_sales_form')->default(0);

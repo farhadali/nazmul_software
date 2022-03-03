@@ -20,7 +20,7 @@ class CreateVoucherMasterDetailsTable extends Migration
 
             $table->unsignedBigInteger('_ledger_id');
             $table->foreign('_ledger_id')->references('id')->on('account_ledgers');
-            $table->double('_amount',15,4)->nullable();
+            $table->double('_amount',15,4)->default(0);
             $table->string('_type',10)->nullable();
             $table->unsignedBigInteger('_branch_id');
             $table->foreign('_branch_id')->references('id')->on('branches');

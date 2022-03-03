@@ -13,11 +13,18 @@
                                     @endforelse
                             </select>
                           </div>
-                          <div class="col-md-4">
-                            <input type="text" name="name" class="form-control" placeholder="Search By Name" value="@if(isset($request->name)) {{$request->name ?? ''}}  @endif">
+                          <div class="col-md-2">
+                            <input type="text" name="_name" class="form-control" placeholder="Search By Name" value="@if(isset($request->_name)) {{$request->_name ?? ''}}  @endif">
                           </div>
-                          <div class="col-md-4">
-                            <input type="text" name="email" class="form-control" placeholder="Search By email" value="@if(isset($request->email)) {{$request->email ?? ''}}  @endif">
+                          <div class="col-md-2">
+                            <input type="text" name="_address" class="form-control" placeholder="Address" value="@if(isset($request->_address)) {{$request->_address ?? ''}}  @endif">
+                          </div>
+                          
+                          <div class="col-md-2">
+                            <input type="text" name="_email" class="form-control" placeholder="Email" value="@if(isset($request->_email)) {{$request->_email ?? ''}}  @endif">
+                          </div>
+                          <div class="col-md-2">
+                            <input type="text" name="_phone" class="form-control" placeholder="Phone" value="@if(isset($request->_phone)) {{$request->_phone ?? ''}}  @endif">
                           </div>
                           
                           <div class="col-md-2">

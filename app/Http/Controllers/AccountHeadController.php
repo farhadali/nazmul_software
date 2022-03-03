@@ -12,9 +12,25 @@ class AccountHeadController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+        function __construct()
     {
-        //
+      $this->page_name = "Account Type";
+    }
+    
+
+    public function index(Request $request)
+    {
+        $limit = $request->limit ?? 10;
+        $datas = AccountHead::where('_status','!=',"");
+        if($request->has('_name') && $request->_name !=''){
+            $datas = $datas->where('_name','like',"%$request->_name%");
+        }
+
+         $datas = $datas->orderBy('id','desc')->paginate($limit);
+         $page_name = $this->page_name;
+        return view('backend.account-type.index',compact('datas','request','page_name'));
+
     }
 
     /**
@@ -24,7 +40,8 @@ class AccountHeadController extends Controller
      */
     public function create()
     {
-        //
+        $page_name = $this->page_name;
+        return view('backend.account-type.create',compact('page_name'));
     }
 
     /**
@@ -35,7 +52,17 @@ class AccountHeadController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = new AccountHead();
+        $data->_name       = $request->_name ?? '';
+        $data->_account_id = $request->_account_id ?? '';
+        $data->_code       = $request->_code ?? '';
+        $data->_status     = $request->_status ?? '';
+        $data->save();
+
+        return redirect()->back()->with('success','Information Save successfully');
+
+
+
     }
 
     /**
@@ -46,7 +73,9 @@ class AccountHeadController extends Controller
      */
     public function show(AccountHead $accountHead)
     {
-        //
+        $page_name = $this->page_name;
+        $data = $accountHead;
+        return view('backend.account-type.show',compact('data','page_name'));
     }
 
     /**
@@ -55,9 +84,11 @@ class AccountHeadController extends Controller
      * @param  \App\Models\AccountHead  $accountHead
      * @return \Illuminate\Http\Response
      */
-    public function edit(AccountHead $accountHead)
+    public function edit(AccountHead $accountHead,$id)
     {
-        //
+        $page_name = $this->page_name;
+        $data = AccountHead::find($id);
+        return view('backend.account-type.edit',compact('data','page_name'));
     }
 
     /**
@@ -67,9 +98,16 @@ class AccountHeadController extends Controller
      * @param  \App\Models\AccountHead  $accountHead
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, AccountHead $accountHead)
+    public function update(Request $request)
     {
-        //
+        $data = AccountHead::find($request->id);
+        $data->_name       = $request->_name ?? '';
+        $data->_account_id = $request->_account_id ?? '';
+        $data->_code       = $request->_code ?? '';
+        $data->_status     = $request->_status ?? '';
+        $data->save();
+
+        return redirect('account-type')->with('success','Information Save successfully');
     }
 
     /**
@@ -80,6 +118,6 @@ class AccountHeadController extends Controller
      */
     public function destroy(AccountHead $accountHead)
     {
-        //
+        return "You Can not delete this Information";
     }
 }
