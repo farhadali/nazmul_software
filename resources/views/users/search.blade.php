@@ -16,8 +16,18 @@
                           <div class="col-md-4">
                             <input type="text" name="name" class="form-control" placeholder="Search By Name" value="@if(isset($request->name)) {{$request->name ?? ''}}  @endif">
                           </div>
-                          <div class="col-md-4">
+                          <div class="col-md-2">
                             <input type="text" name="email" class="form-control" placeholder="Search By email" value="@if(isset($request->email)) {{$request->email ?? ''}}  @endif">
+                          </div>
+                          <div class="col-md-2">
+                            <select class="form-control" name="branch_ids" >
+                              <option value="">--Select Branch--</option>
+                                  @forelse($branchs as $branch)
+                                  <option value="{{$branch->id}}" @if($request->branch_ids==$branch->id) selected @endif>{{ $branch->_name ?? '' }}</option>
+                                  @empty
+                                  @endforelse
+                                  
+                                </select>
                           </div>
                           
                           <div class="col-md-2">

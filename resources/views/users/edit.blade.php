@@ -42,6 +42,24 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
+                                <strong>Branch:</strong>
+                                @php
+                                $selected_branchs=[];
+                                if($user->branch_ids !=0){
+                                 $selected_branchs =  explode(",",$user->branch_ids);
+                                }
+                                @endphp
+                                <select class="form-control" name="branch_ids[]" multiple="" required>
+                                  @forelse($branchs as $branch)
+                                  <option value="{{$branch->id}}" @if(in_array($branch->id,$selected_branchs)) selected @endif >{{ $branch->_name ?? '' }}</option>
+                                  @empty
+                                  @endforelse
+                                  
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
                                 <strong>Name:</strong>
                                 {!! Form::text('name', null, array('placeholder' => 'Name','class' => 'form-control')) !!}
                             </div>

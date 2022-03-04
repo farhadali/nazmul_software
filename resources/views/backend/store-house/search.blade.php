@@ -20,10 +20,10 @@
                             <input type="text" name="_code" class="form-control" placeholder="Search By Code" value="@if(isset($request->_code)) {{$request->_code ?? ''}}  @endif">
                           </div>
                           <div class="col-md-2">
-                            <select class="form-control" name="_branch_id" required>
-                              <option value="">--Branch--</option>
+                            <select class="form-control" name="_branch_id" >
+                              <option value="">--Select Branch--</option>
                                   @forelse($branchs as $branch)
-                                  <option value="{{$branch->id}}">{{ $branch->_name ?? '' }}</option>
+                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id==$branch->id) selected @endif  @endif>{{ $branch->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                   

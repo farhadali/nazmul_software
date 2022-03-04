@@ -20,8 +20,8 @@
           </li>
        
           
-          <li class="nav-item {{ Route::is('roles.*') || Route::is('users.*') || Route::is('admin-settings') || Route::is('branch.*') || Route::is('social_media.*') || Route::is('board.*') || Route::is('profession.*')  ? 'menu-is-opening menu-open' : '' }}">
-            <a href="#" class="nav-link {{ Route::is('roles.*') || Route::is('users.*') || Route::is('admin-settings') || Route::is('branch.*')  || Route::is('profession.*')  || Route::is('front-banner.*')   ? 'active' : '' }}">
+          <li class="nav-item {{ Route::is('roles.*') || Route::is('users.*') || Route::is('admin-settings') || Route::is('branch.*') || Route::is('social_media.*') || Route::is('cost-center.*') || Route::is('store-house.*')  ? 'menu-is-opening menu-open' : '' }}">
+            <a href="#" class="nav-link {{ Route::is('roles.*') || Route::is('users.*') || Route::is('admin-settings') || Route::is('branch.*')  || Route::is('cost-center.*')  || Route::is('store-house.*')   ? 'active' : '' }}">
               <i class="nav-icon fas fa-chart-pie"></i>
               <p>
                 Settings
@@ -90,8 +90,8 @@
             </ul>
           </li>
 
-          <li class="nav-item  ">
-            <a href="#" class="nav-link ">
+          <li class="nav-item {{ Route::is('account-type.*') || Route::is('account-group.*')   ? 'menu-is-opening menu-open' : '' }}">
+            <a href="#" class="nav-link {{ Route::is('account-type.*') || Route::is('account-group.*')    ? 'active' : '' }}">
               <i class="nav-icon fas fa-chart-pie"></i>
               <p>
                 Account
@@ -99,20 +99,22 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              
+             @can('account-type-list')
               <li class="nav-item">
                 <a href="{{url('account-type')}}" class="nav-link {{Route::is('account-type.*')   ? 'active' : '' }}" >
                   <i class="far fa-circle nav-icon"></i>
                   <p>Account Type</p>
                 </a>
               </li>
+              @endcan
+            @can('account-group-list')  
               <li class="nav-item">
                 <a href="{{url('account-group')}}" class="nav-link {{Route::is('account-group.*')   ? 'active' : '' }}" >
                   <i class="far fa-circle nav-icon"></i>
                   <p>Account Group</p>
                 </a>
               </li>
-              
+            @endcan  
               
             </ul>
           </li>

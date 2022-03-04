@@ -42,11 +42,13 @@
                        <th>Name</th>
                        <th>Email</th>
                        <th>Roles</th>
+                       <th>Branch</th>
+                       <th>Status</th>
                      </tr>
                      @foreach ($data as $key => $user)
                       <tr>
 
-                        <td>{{ ++$i }}</td>
+                        <td>{{ $key+1 }}</td>
                          <td>
                            <a class="btn btn-sm btn-info" href="{{ route('users.show',$user->id) }}">
                              <i class="nav-icon fas fa-eye"></i>
@@ -55,12 +57,12 @@
                              <i class="nav-icon fas fa-edit"></i>
                            </a>
                             {!! Form::open(['method' => 'DELETE','route' => ['users.destroy', $user->id],'style'=>'display:inline']) !!}
-                               <button type="submit" class="btn btn-sm btn-danger">
+                               <button type="submit"  onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger">
                                  <i class="nav-icon fas fa-trash"></i>
                             </button>
                             {!! Form::close() !!}
                         </td>
-                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->id }} - {{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>
                           @if(!empty($user->getRoleNames()))
@@ -69,6 +71,23 @@
                             @endforeach
                           @endif
                         </td>
+                        <td>
+                         @php
+                            $selected_branchs=[];
+                            if($user->branch_ids !=0){
+                                 $selected_branchs =  explode(",",$user->branch_ids);
+                            }
+                          @endphp
+                          @forelse($branchs as $branch)
+                              @if(in_array($branch->id,$selected_branchs)) <label class="badge badge-info">{{$branch->_name}}</label> @endif
+                              @empty
+                              @endforelse
+
+
+                        </td>
+                        <td>
+                          
+                          {{ ($user->status==1) ? 'Active' : 'In Active' }}</td>
                        
                       </tr>
                      @endforeach

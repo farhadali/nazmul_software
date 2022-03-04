@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Branch;
 use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
 use Illuminate\Support\Arr;
+use Auth;
     
 class UserController extends Controller
 {
@@ -27,10 +29,23 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $paginate = $request->paginate ?? 10;
-        $data = User::where('user_type','admin')->orderBy('id','DESC')->paginate();
-        return view('users.index',compact('data'))
-            ->with('i', ($request->input('page', 1) - 1) * $paginate);
+        
+        $limit = $request->limit ?? 10;
+        $data = User::where('status','!=','');
+        if($request->has('name') && $request->name !=''){
+            $data = $data->where('name','like',"%$request->name%");
+        }
+        if($request->has('email ') && $request->email  !=''){
+            $data = $data->where('email ','like',"%$request->email %");
+        }
+        if($request->has('branch_ids') && $request->branch_ids !=''){
+            $data = $data->where('branch_ids','like',"%$request->branch_ids%");
+        }
+
+         $data = $data->orderBy('name','asc')->paginate($limit);
+
+        $branchs = Branch::select('id','_name')->orderBy('_name','asc')->get();
+        return view('users.index',compact('data','branchs','request'));
     }
     
     /**
@@ -41,7 +56,8 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::pluck('name','name')->all();
-        return view('users.create',compact('roles'));
+         $branchs = Branch::orderBy('_name','asc')->get();
+        return view('users.create',compact('roles','branchs'));
     }
     
     /**
@@ -54,12 +70,15 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'branch_ids' => 'required|array',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
             'roles' => 'required'
         ]);
     
         $input = $request->all();
+        $branch_ids = implode(",",$request->branch_ids);
+        $input['branch_ids'] = $branch_ids;
         $input['password'] = Hash::make($input['password']);
     
         $user = User::create($input);
@@ -92,9 +111,9 @@ class UserController extends Controller
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
-        
+         $branchs = Branch::orderBy('_name','asc')->get();
     
-        return view('users.edit',compact('user','roles','userRole'));
+        return view('users.edit',compact('user','roles','userRole','branchs'));
     }
     
     /**
@@ -106,14 +125,19 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        
         $this->validate($request, [
             'name' => 'required',
+            'branch_ids' => 'required|array',
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
             'roles' => 'required'
         ]);
+        
     
         $input = $request->all();
+        $branch_ids = implode(",",$request->branch_ids);
+        $input['branch_ids'] = $branch_ids;
         if(!empty($input['password'])){ 
             $input['password'] = Hash::make($input['password']);
         }else{

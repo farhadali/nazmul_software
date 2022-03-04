@@ -33,7 +33,12 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-
+Route::get('newhelper', function(){
+    $timeInEuropeParisTimezone = '2021-03-25 11:00:00';
+    $selected_branchs = selectedBranch(explode(',',\Auth::user()->branch_ids));
+  
+    dd($selected_branchs);
+});
 
 
 

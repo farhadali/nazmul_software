@@ -97,29 +97,50 @@
       <!-- Notifications Dropdown Menu -->
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
-          <span class="badge badge-warning navbar-badge">15</span>
+          
+          Settings <i class="right fas fa-angle-down"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">15 Notifications</span>
+         
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
+           @can('admin-settings')
+          <a href="{{url('admin-settings')}}" class="dropdown-item">
+            <i class="fas fa-cog mr-2"></i> General Settings
           </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('role-list')
+          <a href="{{url('roles')}}" class="dropdown-item">
+            <i class="fas fa-cog mr-2"></i> Roles
           </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('user-list')
+          <a href="{{url('user')}}" class="dropdown-item">
+            <i class="fas fa-users  mr-2"></i> Users
           </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-        </div>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('branch-list')
+          <a href="{{url('branch')}}" class="dropdown-item">
+            <i class="fas fa-store  mr-2 btn_success"></i> Branch
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('cost-center-list')
+          <a href="{{url('cost-center')}}" class="dropdown-item">
+            <i class="fas fa-file   mr-2"></i> Branch
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('store-house-list')
+          <a href="{{url('store-house')}}" class="dropdown-item">
+            <i class="fas fa-store   mr-2"></i>Store House
+          </a>
+         @endcan
+        
+              
+              
       </li>
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
