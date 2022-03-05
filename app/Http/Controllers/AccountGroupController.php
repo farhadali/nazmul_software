@@ -9,11 +9,15 @@ use Illuminate\Http\Request;
 class AccountGroupController extends Controller
 {
 
+    
     function __construct()
     {
-      $this->page_name = "Account Group";
+         $this->middleware('permission:account-group-list|account-group-create|account-group-edit|account-group-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:account-group-create', ['only' => ['create','store']]);
+         $this->middleware('permission:account-group-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:account-group-delete', ['only' => ['destroy']]);
+         $this->page_name = "Account Group";
     }
-    
     /**
      * Display a listing of the resource.
      *

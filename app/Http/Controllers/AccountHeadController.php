@@ -13,9 +13,13 @@ class AccountHeadController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-        function __construct()
+     function __construct()
     {
-      $this->page_name = "Account Type";
+         $this->middleware('permission:account-type-list|account-type-create|account-type-edit|account-type-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:account-type-create', ['only' => ['create','store']]);
+         $this->middleware('permission:account-type-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:account-type-delete', ['only' => ['destroy']]);
+         $this->page_name = "Account Type";
     }
     
 

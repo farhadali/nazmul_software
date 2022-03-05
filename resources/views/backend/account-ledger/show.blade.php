@@ -1,18 +1,18 @@
 @extends('backend.layouts.app')
-
+@section('title',$page_name)
 
 @section('content')
 <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Show Role </h1>
+            <h1 class="m-0">{!! $page_name ?? '' !!} </h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
               <li class="breadcrumb-item active">
-                 <a class="btn btn-primary" href="{{ route('roles.index') }}"> Role Management</a>
+                 <a class="btn btn-primary" href="{{ route('account-type.index') }}"> {!! $page_name ?? '' !!}</a>
                </li>
             </ol>
           </div><!-- /.col -->
@@ -41,19 +41,34 @@
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
                         <strong>Name:</strong>
-                        {{ $role->name }}
+                        {{ $data->_name }}
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>Permissions:</strong><br>
-                        @if(!empty($rolePermissions))
-                            @foreach($rolePermissions as $v)
-                                <label class="badge badge-info mr-3">{{ $v->name }}</label>
-                            @endforeach
-                        @endif
+                        <strong>Name:</strong>
+                        {{ $data->_name }}
                     </div>
                 </div>
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <strong>Name:</strong>
+                        {{ $data->_name }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <strong>Name:</strong>
+                        {{ $data->_name }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <strong>Name:</strong>
+                        {{ $data->_name }}
+                    </div>
+                </div>
+               
                 
               </div>
             </div>

@@ -98,6 +98,36 @@
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           
+          Accounts <i class="right fas fa-angle-down"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+         
+          <div class="dropdown-divider"></div>
+           @can('account-type-list')
+          <a href="{{url('account-type')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Account Type
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('account-group-list')
+          <a href="{{url('account-group')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Account Group
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('account-ledger-list')
+          <a href="{{url('account-ledger')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Account Ledger
+          </a>
+         @endcan
+         
+        
+              
+              
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          
           Settings <i class="right fas fa-angle-down"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
@@ -111,25 +141,25 @@
          <div class="dropdown-divider"></div>
         @can('role-list')
           <a href="{{url('roles')}}" class="dropdown-item">
-            <i class="fas fa-cog mr-2"></i> Roles
+          <i class="fa fa-server  mr-2" aria-hidden="true"></i>   Roles
           </a>
          @endcan
          <div class="dropdown-divider"></div>
         @can('user-list')
-          <a href="{{url('user')}}" class="dropdown-item">
+          <a href="{{url('users')}}" class="dropdown-item">
             <i class="fas fa-users  mr-2"></i> Users
           </a>
          @endcan
          <div class="dropdown-divider"></div>
         @can('branch-list')
           <a href="{{url('branch')}}" class="dropdown-item">
-            <i class="fas fa-store  mr-2 btn_success"></i> Branch
+            <i class="fa fa-share-alt mr-2" aria-hidden="true"></i>  Branch
           </a>
          @endcan
          <div class="dropdown-divider"></div>
         @can('cost-center-list')
           <a href="{{url('cost-center')}}" class="dropdown-item">
-            <i class="fas fa-file   mr-2"></i> Branch
+           <i class="fa fa-adjust mr-2" aria-hidden="true"></i> Cost center
           </a>
          @endcan
          <div class="dropdown-divider"></div>

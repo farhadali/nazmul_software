@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use App\Models\AccountGroup;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\AccountHeadController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CostCenterController;
 use App\Http\Controllers\StoreHouseController;
+use App\Http\Controllers\AccountLedgerController;
 
 
 
@@ -63,6 +66,15 @@ Route::group(['middleware' => ['auth']], function() {
     
     Route::resource('store-house', StoreHouseController::class);
     Route::post('store-house/update', 'App\Http\Controllers\StoreHouseController@update');
+
+    Route::resource('account-ledger', AccountLedgerController::class);
+    Route::post('account-ledger/update', 'App\Http\Controllers\AccountLedgerController@update');
+
+
+    Route::get('type_base_group',function(Request $request){
+        $account_groups = AccountGroup::where('_account_head_id',$request->id)->orderBy('_name','asc')->get();
+        return view('backend.account-ledger.type_base_group',compact('account_groups'));
+    });
 
     
 

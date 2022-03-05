@@ -49,7 +49,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
                               @php
-                              $types = ['admin','exhibitor','applicant','visitor'];
+                              $types = ['admin','visitor'];
                               @endphp
                                 <strong>Type:</strong>
                                 <select class="form-control" name="type">
@@ -64,15 +64,28 @@
                             <div class="form-group">
                                 <strong>Permission:</strong>
                                 <br/>
-                                <div class="row">
-                                @foreach($permission as $value)
-                                <div class="col-md-3">
-                                    <label>{{ Form::checkbox('permission[]', $value->id, false, array('class' => 'name')) }}
+                               @php
+                                $number = 1;
+                               @endphp
+                                @foreach($permission as $key=>$values)
+                                <div class="col-md-12">
+                                  <h4 style="background: #f4f6f9;padding: 5px;border-radius: 5px;">{{$number}} - {{$key}}</h4>
+                                   <div class="row">
+                                  @foreach($values as $value)
+                                  
+                                  <div class="col-md-3">
+                                    <label>{{ Form::checkbox('permission[]', $value->id, false, array('class' => 'name mr-2')) }}
                                     {{ $value->name }}</label>
+                                  </div>
+                                    @endforeach
                                 </div>
+                                </div>
+                                @php
+                                $number++;
+                               @endphp
                                 @endforeach
                               </div>
-                            </div>
+                            
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                             <button type="submit" class="btn btn-primary submit-button">Submit</button>

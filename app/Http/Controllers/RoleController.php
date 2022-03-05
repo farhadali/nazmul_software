@@ -45,7 +45,12 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permission = Permission::get();
+        $permission =[];
+        $permissions = Permission::orderBy('type','asc')->get();
+        foreach ($permissions as $value) {
+            $permission[$value->type][]=$value;
+        }
+
         return view('roles.create',compact('permission'));
     }
     
@@ -94,7 +99,11 @@ class RoleController extends Controller
     public function edit($id)
     {
         $role = Role::find($id);
-        $permission = Permission::get();
+         $permission =[];
+        $permissions = Permission::orderBy('type','asc')->get();
+        foreach ($permissions as $value) {
+            $permission[$value->type][]=$value;
+        }
         $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id",$id)
             ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
             ->all();
