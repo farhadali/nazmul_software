@@ -91,8 +91,8 @@
             </ul>
           </li>
 
-          <li class="nav-item {{ Route::is('account-type.*') || Route::is('account-group.*')  || Route::is('account-ledger.*')   ? 'menu-is-opening menu-open' : '' }}">
-            <a href="#" class="nav-link {{ Route::is('account-type.*') || Route::is('account-group.*') || Route::is('account-ledger.*')    ? 'active' : '' }}">
+          <li class="nav-item {{ Route::is('account-type.*') || Route::is('account-group.*')|| Route::is('voucher.*')  || Route::is('account-ledger.*')   ? 'menu-is-opening menu-open' : '' }}">
+            <a href="#" class="nav-link {{ Route::is('account-type.*') || Route::is('account-group.*') || Route::is('account-ledger.*') || Route::is('voucher.*')    ? 'active' : '' }}">
              
               <i class="fa fa-credit-card nav-icon" aria-hidden="true"></i>
 
@@ -123,6 +123,14 @@
                 <a href="{{url('account-ledger')}}" class="nav-link {{Route::is('account-ledger.*')   ? 'active' : '' }}" >
                   <i class="fa fa-fax nav-icon"></i>
                   <p>Account Ledger</p>
+                </a>
+              </li>
+            @endcan  
+            @can('voucher-list')  
+              <li class="nav-item">
+                <a href="{{url('voucher')}}" class="nav-link {{Route::is('voucher.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-fax nav-icon"></i>
+                  <p>Voucher</p>
                 </a>
               </li>
             @endcan  

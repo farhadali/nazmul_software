@@ -26,6 +26,7 @@ class User extends Authenticatable
         'user_type',
         'status',
         'branch_ids',
+        'cost_center_ids',
     ];
 
     /**

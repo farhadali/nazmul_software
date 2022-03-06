@@ -3,6 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\VoucherMaster;
+use App\Models\AccountLedger;
+use App\Models\AccountGroup;
+use App\Models\AccountHead;
+use App\Models\Accounts;
+use App\Models\Branch;
+use App\Models\VoucherType;
+use Auth;
 use Illuminate\Http\Request;
 
 class VoucherMasterController extends Controller
@@ -12,10 +19,27 @@ class VoucherMasterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    function __construct()
     {
-        //
+         $this->middleware('permission:voucher-list|voucher-create|voucher-edit|voucher-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:voucher-create', ['only' => ['create','store']]);
+         $this->middleware('permission:voucher-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:voucher-delete', ['only' => ['destroy']]);
+         $this->page_name = "Voucher";
     }
+     public function index(Request $request)
+    {
+        $limit = $request->limit ?? 10;
+        $_asc_desc = $request->_asc_desc ?? 'ASC';
+        $asc_cloumn =  $request->asc_cloumn ?? '_name';
+        $datas = VoucherMaster::orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
+
+         $page_name = $this->page_name;
+         $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
+         $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        return view('backend.voucher.index',compact('datas','page_name','account_types','request','account_groups'));
+    }
+    
 
     /**
      * Show the form for creating a new resource.
@@ -24,7 +48,16 @@ class VoucherMasterController extends Controller
      */
     public function create()
     {
-        //
+        $users = Auth::user();
+        $page_name = $this->page_name;
+        $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
+
+       return view('backend.voucher.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types'));
     }
 
     /**

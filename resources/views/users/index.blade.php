@@ -34,7 +34,7 @@
                 @include('users.search')
               </div>
               <div class="card-body">
-                <div class="d-flex">
+                <div class="table-responsive">
                   <table class="table table-bordered">
                      <tr>
                        <th>No</th>
@@ -43,6 +43,7 @@
                        <th>Email</th>
                        <th>Roles</th>
                        <th>Branch</th>
+                       <th>Cost Center</th>
                        <th>Status</th>
                      </tr>
                      @foreach ($data as $key => $user)
@@ -50,14 +51,14 @@
 
                         <td>{{ $key+1 }}</td>
                          <td>
-                           <a class="btn btn-sm btn-info" href="{{ route('users.show',$user->id) }}">
+                           <a class="btn btn-sm btn-info btn btn-sm btn-info _action_button" href="{{ route('users.show',$user->id) }}">
                              <i class="nav-icon fas fa-eye"></i>
                            </a>
-                           <a class="btn btn-sm btn-primary" href="{{ route('users.edit',$user->id) }}">
+                           <a class="btn btn-sm btn-primary btn btn-sm btn-info _action_button" href="{{ route('users.edit',$user->id) }}">
                              <i class="nav-icon fas fa-edit"></i>
                            </a>
                             {!! Form::open(['method' => 'DELETE','route' => ['users.destroy', $user->id],'style'=>'display:inline']) !!}
-                               <button type="submit"  onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger">
+                               <button type="submit"  onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger btn btn-sm btn-info _action_button">
                                  <i class="nav-icon fas fa-trash"></i>
                             </button>
                             {!! Form::close() !!}
@@ -80,6 +81,20 @@
                           @endphp
                           @forelse($branchs as $branch)
                               @if(in_array($branch->id,$selected_branchs)) <label class="badge badge-info">{{$branch->_name}}</label> @endif
+                              @empty
+                              @endforelse
+
+
+                        </td>
+                        <td>
+                         @php
+                            $selected_costcenters=[];
+                            if($user->cost_center_ids !=0){
+                                 $selected_costcenters =  explode(",",$user->cost_center_ids);
+                            }
+                          @endphp
+                          @forelse($cost_centers as $costcenter)
+                              @if(in_array($costcenter->id,$selected_costcenters)) <label class="badge badge-info">{{$costcenter->_name}}</label> @endif
                               @empty
                               @endforelse
 

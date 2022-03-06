@@ -95,7 +95,7 @@
         </div>
       </li>
       <!-- Notifications Dropdown Menu -->
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown remove_from_header">
         <a class="nav-link" data-toggle="dropdown" href="#">
           
           Accounts <i class="right fas fa-angle-down"></i>
@@ -120,12 +120,18 @@
             <i class="fa fa-fax mr-2" aria-hidden="true"></i> Account Ledger
           </a>
          @endcan
+         <div class="dropdown-divider"></div>
+        @can('voucher-list')
+          <a href="{{url('voucher')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Voucher
+          </a>
+         @endcan
          
         
               
               
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown remove_from_header">
         <a class="nav-link" data-toggle="dropdown" href="#">
           
           Settings <i class="right fas fa-angle-down"></i>

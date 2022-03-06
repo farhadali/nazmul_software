@@ -41,13 +41,26 @@
               <div class="card-body">
                 {!! Form::open(array('route' => 'users.store','method'=>'POST')) !!}
                     <div class="row">
-                       <div class="col-xs-12 col-sm-12 col-md-12">
+                       <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <strong>Branch:</strong>
                                 
                                 <select class="form-control" name="branch_ids[]" multiple="" required>
                                   @forelse($branchs as $branch)
                                   <option value="{{$branch->id}}"  >{{ $branch->_name ?? '' }}</option>
+                                  @empty
+                                  @endforelse
+                                  
+                                </select>
+                            </div>
+                        </div>
+                         <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <strong>Cost Center:</strong>
+                                
+                                <select class="form-control" name="cost_center_ids[]" multiple="" >
+                                  @forelse($cost_centers as $cost_center)
+                                  <option value="{{$cost_center->id}}"  >{{ $cost_center->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                   

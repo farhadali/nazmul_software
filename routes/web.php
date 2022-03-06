@@ -14,6 +14,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CostCenterController;
 use App\Http\Controllers\StoreHouseController;
 use App\Http\Controllers\AccountLedgerController;
+use App\Http\Controllers\VoucherMasterController;
 
 
 
@@ -36,11 +37,12 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('newhelper', function(){
+Route::get('permited_branch', function(){
     $timeInEuropeParisTimezone = '2021-03-25 11:00:00';
-    $selected_branchs = selectedBranch(explode(',',\Auth::user()->branch_ids));
+    $permited_branch = permited_branch(explode(',',\Auth::user()->branch_ids));
+    $permited_costcenters = permited_costcenters(explode(',',\Auth::user()->cost_center_ids));
   
-    dd($selected_branchs);
+    dd($permited_costcenters);
 });
 
 
@@ -70,11 +72,16 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('account-ledger', AccountLedgerController::class);
     Route::post('account-ledger/update', 'App\Http\Controllers\AccountLedgerController@update');
 
+    Route::resource('voucher', VoucherMasterController::class);
+    Route::post('voucher/update', 'App\Http\Controllers\VoucherMasterController@update');
+
 
     Route::get('type_base_group',function(Request $request){
         $account_groups = AccountGroup::where('_account_head_id',$request->id)->orderBy('_name','asc')->get();
         return view('backend.account-ledger.type_base_group',compact('account_groups'));
     });
+
+    Route::any('ledger-search','App\Http\Controllers\AccountLedgerController@ledger_search');
 
     
 

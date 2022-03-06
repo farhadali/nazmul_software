@@ -31,6 +31,7 @@ class CreateVoucherMasterDetailsTable extends Migration
             $table->unsignedBigInteger('_branch_id');
             $table->foreign('_branch_id')->references('id')->on('branches');
             $table->integer('_cost_center')->nullable(0);
+            $table->string('_short_narr')->nullable();
             $table->tinyInteger('_status')->default(0);
             $table->string('_created_by',60)->nullable();
             $table->string('_updated_by',60)->nullable();

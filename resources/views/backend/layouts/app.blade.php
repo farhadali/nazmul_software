@@ -37,6 +37,7 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
 <link rel="stylesheet" href="{{asset('backend/style.css')}}">
+<link rel="stylesheet" href="{{asset('backend/responsive.css')}}">
 
 
 
@@ -131,9 +132,31 @@
   };
 
   $(function () {
+    var default_date_formate = `{{default_date_formate()}}`
     // Summernote
     
     $('.select2').select2()
+     $('#reservationdate').datetimepicker({
+        format:default_date_formate
+
+    });
+     $(".datetimepicker-input").val(today())
+
+function today(){
+    var d = new Date();
+  var yyyy = d.getFullYear().toString();
+  var mm = (d.getMonth()+1).toString(); // getMonth() is zero-based
+  var dd  = d.getDate().toString();
+  if(default_date_formate=='DD-MM-YYYY'){
+    return (dd[1]?dd:"0"+dd[0]) +"-"+ (mm[1]?mm:"0"+mm[0])+"-"+ yyyy ;
+  }
+  if(default_date_formate=='MM-DD-YYYY'){
+    return (mm[1]?mm:"0"+mm[0])+"-" + (dd[1]?dd:"0"+dd[0]) +"-"+  yyyy ;
+  }
+  
+
+  
+}
 
   })
 
@@ -154,6 +177,114 @@ $("._account_head_id").on('change',function(){
       alert( "Request failed: " + textStatus );
     });
 
+})
+
+
+function delay(callback, ms) {
+  var timer = 0;
+  return function() {
+    var context = this, args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      callback.apply(context, args);
+    }, ms || 0);
+  };
+}
+
+
+// Example usage:
+
+$('._search_ledger_id').keyup(delay(function (e) {
+  var _gloabal_this = $(this);
+
+  var _text_val = $(this).val().trim();
+
+
+  var request = $.ajax({
+      url: "{{url('ledger-search')}}",
+      method: "GET",
+      data: { _text_val : _text_val },
+      dataType: "JSON"
+    });
+     
+    request.done(function( result ) {
+
+      var search_html =``;
+      
+      var data = result.data; 
+      
+      if(data.length > 0 ){
+        console.log(data.length )
+            search_html +=`<div class="card">
+                                                  <table style="width: 300px;">
+                                                    <thead>
+                                                      <th>ID</th>
+                                                      <th>Name</th>
+                                                    </thead>
+                                                    <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                         search_html += `<tr class="search_row" >
+                                                        <td>${data[i].id}
+                                                          <input type="hidden" name="id" class="id" value="${data[i].id}">
+                                                        </td>
+                                                        <td>${data[i]._name}
+                                                           <input type="hidden" name="id" class="name" value="${data[i]._name}">
+                                                        </td>
+                                                      </tr>`;
+                        }
+            
+                                                      
+                                                      
+            search_html += ` </tbody>
+                                                    
+                                                  </table>
+                                                  </div>`;
+      }else{
+        search_html +=`<div class="card">
+                                                  <table style="width: 300px;">
+                                                    <thead>
+                                                      <th colspan="3">No Data Found</th>
+                                                    </thead>
+                                                    <tbody>
+
+                                                    </tbody>
+                                                    
+                                                  </table>
+                                                  </div>`;
+      }     
+      _gloabal_this.parent('td').find('.search_box').html(search_html);
+      _gloabal_this.parent('td').find('.search_box').addClass('search_box_show').show();
+      console.log(search_html)
+    });
+     
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+
+  
+
+}, 500));
+
+
+$(document).on('click','.search_row',function(){
+  var _id = $(this).children('td').find('.id').val();
+  var _name = $(this).find('.name').val();
+  $(this).parent().parent().parent().parent().parent().parent().find('._ledger_id').val(_id);
+  var _id_name = `${_id} -${_name} `;
+  $(this).parent().parent().parent().parent().parent().parent().find('._search_ledger_id').val(_id_name);
+
+  console.log(_id)
+  console.log(_name)
+
+  $('.search_box').hide();
+  $('.search_box').removeClass('search_box_show').hide();
+})
+
+$(document).on('click',function(){
+    var searach_show= $('.search_box').hasClass('search_box_show');
+    if(searach_show ==true){
+      $('.search_box').removeClass('search_box_show').hide();
+    }
 })
 
   

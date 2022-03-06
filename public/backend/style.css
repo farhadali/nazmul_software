@@ -35,3 +35,53 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+
+.remove_from_header{
+	display: block;
+}
+.content-header {
+    padding: 5px;
+}
+.card-header {
+    padding: 5px;
+    margin-bottom: 0;
+    background-color: rgba(0,0,0,.03);
+    border-bottom: 0 solid rgba(0,0,0,.125);
+}
+.card-body {
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 0px 3px;
+}
+.form-control {
+    
+    margin-bottom: 5px;
+}
+.margin_bottom_20{
+	margin-bottom: 20px;
+}
+
+.table td, .table th {
+    padding: .25rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+
+.width_280_px{
+	width: 280px;
+}
+.search_row{
+	cursor: pointer;
+}
+.search_box{
+	position: absolute;
+    z-index: 9999;
+    background: #fff;
+    display: none;
+}
+.search_row:hover{
+	background: #e9ecef;
+}
+

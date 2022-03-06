@@ -1,6 +1,7 @@
 <?php
 use Carbon\Carbon;
 use App\Models\Branch;
+use App\Models\CostCenter;
 
 if (! function_exists('convertLocalToUTC')) {
     function convertLocalToUTC($time)
@@ -17,12 +18,22 @@ if (! function_exists('convertUTCToLocal')) {
 }
 
 
-if (! function_exists('selectedBranch')) {
-    function selectedBranch($branch_ids)
+if (! function_exists('permited_branch')) {
+    function permited_branch($branch_ids)
     {
         return Branch::whereIn('id',$branch_ids)->select('id','_name')->get();
     }
 }
+
+
+if (! function_exists('permited_costcenters')) {
+    function permited_costcenters($ids)
+    {
+        return CostCenter::whereIn('id',$ids)->select('id','_name')->get();
+    }
+}
+
+
 if (! function_exists('filter_page_numbers')) {
     function filter_page_numbers()
     {
@@ -91,3 +102,12 @@ if (! function_exists('selected_yes_no')) {
         }
     }
 }
+
+
+if (! function_exists('default_date_formate')) {
+    function default_date_formate($value='DD-MM-YYYY')
+    {
+        return $value;
+    }
+}
+

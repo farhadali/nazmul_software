@@ -14,7 +14,7 @@ class AccountLedgerController extends Controller
 {
 
 
-      function __construct()
+    function __construct()
     {
          $this->middleware('permission:account-ledger-list|account-ledger-create|account-ledger-edit|account-ledger-delete', ['only' => ['index','store']]);
          $this->middleware('permission:account-ledger-create', ['only' => ['create','store']]);
@@ -36,14 +36,29 @@ class AccountLedgerController extends Controller
         if($request->has('_name') && $request->_name !=''){
             $datas = $datas->where('_name','like',"%$request->_name%");
         }
+        if($request->has('_address') && $request->_address !=''){
+            $datas = $datas->where('_address','like',"%$request->_address%");
+        }
+        if($request->has('_code') && $request->_code !=''){
+            $datas = $datas->where('_code','like',"%$request->_code%");
+        }
+        if($request->has('_nid') && $request->_nid !=''){
+            $datas = $datas->where('_nid','like',"%$request->_nid%");
+        }
+        if($request->has('_email') && $request->_email !=''){
+            $datas = $datas->where('_email','like',"%$request->_email%");
+        }
+        if($request->has('_phone') && $request->_phone !=''){
+            $datas = $datas->where('_phone','like',"%$request->_phone%");
+        }
         if ($request->has('_account_group_id') && $request->_account_group_id !="") {
             $datas = $datas->where('_account_group_id','=',$request->_account_group_id);
         }
         if ($request->has('_account_head_id') && $request->_account_head_id !="") {
             $datas = $datas->where('_account_head_id','=',$request->_account_head_id);
         }
+        $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
 
-          $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
          $page_name = $this->page_name;
          $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
          $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
@@ -62,6 +77,22 @@ class AccountLedgerController extends Controller
         $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
         $branchs = Branch::orderBy('_name','asc')->get();
        return view('backend.account-ledger.create',compact('account_types','page_name','account_groups','branchs'));
+    }
+
+    public function ledger_search(Request $request){
+        //return $request->_text_val;
+        $limit = $request->limit ?? 10;
+        $_asc_desc = $request->_asc_desc ?? 'ASC';
+        $asc_cloumn =  $request->asc_cloumn ?? '_name';
+        $text_val = $request->_text_val;
+        $datas = AccountLedger::select('id','_name','_code')->where('_status',1);
+         if($request->has('_text_val') && $request->_text_val !=''){
+            $datas = $datas->where('_name','like',"%$request->_text_val%");
+        }
+        
+        
+        $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
+        return json_encode( $datas);
     }
 
     /**
@@ -89,6 +120,7 @@ class AccountLedgerController extends Controller
         $data->_code = $request->_code;
         $data->_nid = $request->_nid;
         $data->_email = $request->_email;
+        $data->_phone = $request->_phone;
         $data->_credit_limit = $request->_credit_limit ?? 0;
         $data->_is_user = $request->_is_user;
         $data->_is_sales_form = $request->_is_sales_form;
@@ -162,6 +194,7 @@ class AccountLedgerController extends Controller
         $data->_code = $request->_code;
         $data->_nid = $request->_nid;
         $data->_email = $request->_email;
+        $data->_phone = $request->_phone;
         $data->_credit_limit = $request->_credit_limit ?? 0;
         $data->_is_user = $request->_is_user;
         $data->_is_sales_form = $request->_is_sales_form;

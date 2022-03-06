@@ -13,7 +13,7 @@
               <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
               <li class="breadcrumb-item active">
                 @can('role-create')
-                        <a class="btn btn-success" href="{{ route('account-ledger.create') }}"> Create New </a>
+                        <a class="btn btn-success" href="{{ route('voucher.create') }}"> Create New </a>
                 @endcan
                </li>
             </ol>
@@ -32,7 +32,7 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header border-0">
-                 @include('backend.account-ledger.search')
+                 @include('backend.voucher.search')
               </div>
               <div class="card-body">
                 <div class="table-responsive">
@@ -53,16 +53,16 @@
                         <tr>
                             <td>{{ $key+1 }}</td>
                              <td>
-                                <a class="btn btn-sm btn-info _action_button" href="{{ route('account-ledger.show',$data->id) }}">
+                                <a class="btn btn-sm btn-info _action_button" href="{{ route('voucher.show',$data->id) }}">
                                   <i class="nav-icon fas fa-eye"></i>
                                 </a>
-                                @can('account-ledger-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('account-ledger.edit',$data->id) }}">
+                                @can('voucher-edit')
+                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('voucher.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
                                     </a>
                                 @endcan
-                                @can('account-ledger-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['account-ledger.destroy', $data->id],'style'=>'display:inline']) !!}
+                                @can('voucher-delete')
+                                    {!! Form::open(['method' => 'DELETE','route' => ['voucher.destroy', $data->id],'style'=>'display:inline']) !!}
                                         <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
                                             <i class="nav-icon fas fa-trash"></i>
                                         </button>

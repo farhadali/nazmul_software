@@ -114,6 +114,12 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
+                                <strong>Phone:</strong>
+                                <input type="text" name="_phone" class="form-control" value="{{old('_phone')}}" placeholder="Phone" >
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3">
+                            <div class="form-group">
                                 <strong>Credit Limit:</strong>
                                 <input type="number" step="any" name="_credit_limit" class="form-control" value="{{old('_credit_limit',0)}}" placeholder="Credit Limit" >
                             </div>

@@ -1,0 +1,27 @@
+
+
+
+@media only screen and (max-width: 600px) {
+  .remove_from_header{
+  	display: none;
+  }
+  ._action_button{
+  	margin-bottom: 10px;
+  }
+  .width_100_px{
+  	width: 100px;
+  }
+  .width_150_px{
+  	width: 150px;
+  }
+  .width_200_px{
+  	width: 200px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  
+  ._action_button{
+  	margin-bottom: 10px;
+  }
+ }

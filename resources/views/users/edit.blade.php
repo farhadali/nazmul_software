@@ -40,7 +40,7 @@
               <div class="card-body">
                {!! Form::model($user, ['method' => 'PATCH','route' => ['users.update', $user->id]]) !!}
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <strong>Branch:</strong>
                                 @php
@@ -49,9 +49,27 @@
                                  $selected_branchs =  explode(",",$user->branch_ids);
                                 }
                                 @endphp
-                                <select class="form-control" name="branch_ids[]" multiple="" required>
+                                <select class="form-control" name="branch_ids[]" multiple required>
                                   @forelse($branchs as $branch)
                                   <option value="{{$branch->id}}" @if(in_array($branch->id,$selected_branchs)) selected @endif >{{ $branch->_name ?? '' }}</option>
+                                  @empty
+                                  @endforelse
+                                  
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <strong>Cost Center:</strong>
+                                @php
+                                $selected_costcenter=[];
+                                if($user->cost_center_ids !=0){
+                                 $selected_costcenter =  explode(",",$user->cost_center_ids);
+                                }
+                                @endphp
+                                <select class="form-control" name="cost_center_ids[]" multiple >
+                                  @forelse($cost_centers as $cost_center)
+                                  <option value="{{$cost_center->id}}" @if(in_array($cost_center->id,$selected_costcenter)) selected @endif  >{{ $cost_center->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                   

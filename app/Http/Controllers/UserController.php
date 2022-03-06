@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Branch;
+use App\Models\CostCenter;
 use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
@@ -45,7 +46,8 @@ class UserController extends Controller
          $data = $data->orderBy('name','asc')->paginate($limit);
 
         $branchs = Branch::select('id','_name')->orderBy('_name','asc')->get();
-        return view('users.index',compact('data','branchs','request'));
+        $cost_centers = CostCenter::select('id','_name')->orderBy('_name','ASC')->get();
+        return view('users.index',compact('data','branchs','request','cost_centers'));
     }
     
     /**
@@ -57,7 +59,8 @@ class UserController extends Controller
     {
         $roles = Role::pluck('name','name')->all();
          $branchs = Branch::orderBy('_name','asc')->get();
-        return view('users.create',compact('roles','branchs'));
+         $cost_centers = CostCenter::select('id','_name')->orderBy('_name','ASC')->get();
+        return view('users.create',compact('roles','branchs','cost_centers'));
     }
     
     /**
@@ -77,8 +80,21 @@ class UserController extends Controller
         ]);
     
         $input = $request->all();
-        $branch_ids = implode(",",$request->branch_ids);
-        $input['branch_ids'] = $branch_ids;
+       if(isset($request->branch_ids)){
+            $branch_ids = implode(",",$request->branch_ids);
+            $input['branch_ids'] = $branch_ids;
+        }else{
+            $input['branch_ids'] = 0;
+        }
+        
+        
+         if(isset($request->cost_center_ids) ){
+            $cost_center_ids = implode(",",$request->cost_center_ids);
+            $input['cost_center_ids'] = $cost_center_ids;
+        }else{
+            $input['cost_center_ids'] = 0;
+        }
+
         $input['password'] = Hash::make($input['password']);
     
         $user = User::create($input);
@@ -112,8 +128,9 @@ class UserController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
          $branchs = Branch::orderBy('_name','asc')->get();
+          $cost_centers = CostCenter::select('id','_name')->orderBy('_name','ASC')->get();
     
-        return view('users.edit',compact('user','roles','userRole','branchs'));
+        return view('users.edit',compact('user','roles','userRole','branchs','cost_centers'));
     }
     
     /**
@@ -136,8 +153,22 @@ class UserController extends Controller
         
     
         $input = $request->all();
-        $branch_ids = implode(",",$request->branch_ids);
-        $input['branch_ids'] = $branch_ids;
+        if(isset($request->branch_ids)){
+            $branch_ids = implode(",",$request->branch_ids);
+            $input['branch_ids'] = $branch_ids;
+        }else{
+            $input['branch_ids'] = 0;
+        }
+        
+        
+         if(isset($request->cost_center_ids) ){
+            $cost_center_ids = implode(",",$request->cost_center_ids);
+            $input['cost_center_ids'] = $cost_center_ids;
+        }else{
+            $input['cost_center_ids'] = 0;
+        }
+        
+
         if(!empty($input['password'])){ 
             $input['password'] = Hash::make($input['password']);
         }else{
