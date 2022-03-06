@@ -32,7 +32,7 @@ class AccountLedgerController extends Controller
         $limit = $request->limit ?? 10;
         $_asc_desc = $request->_asc_desc ?? 'ASC';
         $asc_cloumn =  $request->asc_cloumn ?? '_name';
-        $datas = AccountLedger::with(['account_type','account_group','last_balance']);
+        $datas = AccountLedger::with(['account_type','account_group']);
         if($request->has('_name') && $request->_name !=''){
             $datas = $datas->where('_name','like',"%$request->_name%");
         }

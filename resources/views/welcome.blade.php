@@ -71,7 +71,7 @@ span.psw {
 <body>
 
 
-<div style="width: 400px;
+<div style="width: 320px;
     margin: 0px auto;">
    
     <h2 style="text-align:center">{{ $settings->title ?? '' }}</h2>

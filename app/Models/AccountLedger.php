@@ -23,7 +23,7 @@ class AccountLedger extends Model
 
 
     public function last_balance(){
-    	return $this->hasOne(Accounts::class,'_account_ledger','id')->SUM(\DB::raw(' _dr_amount - _cr_amount '));
+    	return $this->hasOne(Accounts::class,'_account_ledger','id');
     }
 
 

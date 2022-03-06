@@ -17,6 +17,9 @@
   .width_200_px{
   	width: 200px;
   }
+  .width_250_px{
+  	width: 250px;
+  }
 }
 
 @media only screen and (min-width: 768px) {

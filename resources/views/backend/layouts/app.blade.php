@@ -121,6 +121,7 @@
 
 @yield('script')
 <script>
+$('.message-area').delay(5000).fadeOut('slow');
   var loadFile = function(event,_id) {
     var ids = `output_${_id}`;
     var output = document.getElementById('output_'+_id);
@@ -132,6 +133,7 @@
   };
 
   $(function () {
+
     var default_date_formate = `{{default_date_formate()}}`
     // Summernote
     
@@ -194,7 +196,8 @@ function delay(callback, ms) {
 
 // Example usage:
 
-$('._search_ledger_id').keyup(delay(function (e) {
+$(document).on('keyup','._search_ledger_id',delay(function(e){
+    $(document).find('._search_ledger_id').removeClass('required_border');
   var _gloabal_this = $(this);
 
   var _text_val = $(this).val().trim();
@@ -215,42 +218,20 @@ $('._search_ledger_id').keyup(delay(function (e) {
       
       if(data.length > 0 ){
         console.log(data.length )
-            search_html +=`<div class="card">
-                                                  <table style="width: 300px;">
-                                                    <thead>
-                                                      <th>ID</th>
-                                                      <th>Name</th>
-                                                    </thead>
-                                                    <tbody>`;
+            search_html +=`<div class="card"><table style="width: 300px;">
+                            <thead><th>ID</th><th>Name</th> </thead><tbody>`;
                         for (var i = 0; i < data.length; i++) {
                          search_html += `<tr class="search_row" >
-                                                        <td>${data[i].id}
-                                                          <input type="hidden" name="id" class="id" value="${data[i].id}">
-                                                        </td>
-                                                        <td>${data[i]._name}
-                                                           <input type="hidden" name="id" class="name" value="${data[i]._name}">
-                                                        </td>
-                                                      </tr>`;
-                        }
-            
-                                                      
-                                                      
-            search_html += ` </tbody>
-                                                    
-                                                  </table>
-                                                  </div>`;
+                                        <td>${data[i].id}
+                                        <input type="hidden" name="_id_ledger" class="_id_ledger" value="${data[i].id}">
+                                        </td><td>${data[i]._name}
+                                        <input type="hidden" name="_name_leder" class="_name_leder" value="${data[i]._name}">
+                                        </td></tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
       }else{
-        search_html +=`<div class="card">
-                                                  <table style="width: 300px;">
-                                                    <thead>
-                                                      <th colspan="3">No Data Found</th>
-                                                    </thead>
-                                                    <tbody>
-
-                                                    </tbody>
-                                                    
-                                                  </table>
-                                                  </div>`;
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
       }     
       _gloabal_this.parent('td').find('.search_box').html(search_html);
       _gloabal_this.parent('td').find('.search_box').addClass('search_box_show').show();
@@ -267,10 +248,10 @@ $('._search_ledger_id').keyup(delay(function (e) {
 
 
 $(document).on('click','.search_row',function(){
-  var _id = $(this).children('td').find('.id').val();
-  var _name = $(this).find('.name').val();
+  var _id = $(this).children('td').find('._id_ledger').val();
+  var _name = $(this).find('._name_leder').val();
   $(this).parent().parent().parent().parent().parent().parent().find('._ledger_id').val(_id);
-  var _id_name = `${_id} -${_name} `;
+  var _id_name = `${_name} `;
   $(this).parent().parent().parent().parent().parent().parent().find('._search_ledger_id').val(_id_name);
 
   console.log(_id)

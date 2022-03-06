@@ -41,8 +41,10 @@ Route::get('permited_branch', function(){
     $timeInEuropeParisTimezone = '2021-03-25 11:00:00';
     $permited_branch = permited_branch(explode(',',\Auth::user()->branch_ids));
     $permited_costcenters = permited_costcenters(explode(',',\Auth::user()->cost_center_ids));
+
+   $_last_balance =  _last_balance(2);
   
-    dd($permited_costcenters);
+    dd($_last_balance[0]->_balance);
 });
 
 
