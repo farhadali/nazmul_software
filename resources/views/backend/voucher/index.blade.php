@@ -38,20 +38,21 @@
                 <div class="table-responsive">
                   <table class="table table-bordered">
                       <tr>
-                         <th class="_no">No</th>
-                         <th class="_action">Action</th>
-                         <th>Type</th>
-                         <th>Group</th>
-                         <th>Name</th>
+                         <th class="_action_big">Action</th>
+                         <th class="_no">ID</th>
                          <th>Code</th>
-                         <th>Email</th>
-                         <th>Phone</th>
-                         <th>Balance</th>
-                         <th>Status</th>
+                         <th>Date</th>
+                         <th>Type</th>
+                         <th>Amount</th>
+                         <th>Refarance</th>
+                         <th>Note</th>
+                         <th>Branch</th>
+                         <th>User</th>
+                        
                       </tr>
                         @foreach ($datas as $key => $data)
                         <tr>
-                            <td>{{ $key+1 }}</td>
+                            
                              <td>
                                 <a class="btn btn-sm btn-info _action_button" href="{{ route('voucher.show',$data->id) }}">
                                   <i class="nav-icon fas fa-eye"></i>
@@ -68,18 +69,72 @@
                                         </button>
                                     {!! Form::close() !!}
                                 @endcan
+                                <a class="btn btn-sm btn-default _action_button" data-toggle="collapse" href="#collapseExample__{{$key}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                      <i class=" fas fa-angle-down"></i>
+                                    </a>
                             </td>
-                            
-                            <td>{{ $data->account_type->_name ?? '' }}</td>
-                            <td>{{ $data->account_group->_name ?? '' }}</td>
-                            <td>{{ $data->id }} - {{ $data->_name }}</td>
+                            <td>{{ $data->id }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
-                            <td>{{ $data->_email ?? '' }}</td>
-                            <td>{{ $data->_phone ?? '' }}</td>
-                            <td>{{ $data->last_balance ?? 0 }}</td>
-                            <td>{{ ($data->_status==1) ? 'Active' : 'In Active' }}</td>
+                            <td>{{ $data->_date ?? '' }}</td>
+                            <td>{{ $data->_voucher_type ?? '' }}</td>
+                            <td>{{ number_format((float) $data->_amount ?? 0, default_des(), '.', '') }} </td>
+                            <td>{{ $data->_transection_ref ?? '' }}</td>
+                            <td>{{ $data->_note ?? '' }}</td>
+                            <td>{{ $data->_master_branch->_name ?? '' }}</td>
+                            <td>{{ $data->_user_name ?? ''  }}</td>
+                            
                            
                         </tr>
+                        <tr>
+                          <td colspan="12" >
+                           <div class="collapse" id="collapseExample__{{$key}}">
+                            <div class="card card-body" style="background: #f4f6f9;">
+                              <table class="table">
+                                <thead>
+                                  <th>ID</th>
+                                  <th>Ledger</th>
+                                  <th>Branch</th>
+                                  <th>Cost Center</th>
+                                  <th>Short Narr.</th>
+                                  <th class="text-right" >Dr. Amount</th>
+                                  <th class="text-right" >Cr. Amount</th>
+                                </thead>
+                                <tbody>
+                                  @php
+                                    $_dr_amount = 0;
+                                    $_cr_amount = 0;
+                                  @endphp
+                                  @forelse($data->_master_details AS $detail_key=>$_master_val )
+                                  <tr>
+                                    <td>{{ ($_master_val->id) }}</td>
+                                    <td>{{ $_master_val->_voucher_ledger->_name ?? '' }}</td>
+                                    <td>{{ $_master_val->_detail_branch->_name ?? '' }}</td>
+                                    <td>{{ $_master_val->_detail_cost_center->_name ?? '' }}</td>
+                                    <td>{{ $_master_val->_short_narr ?? '' }}</td>
+                  <td class="text-right">{{ number_format((float) $_master_val->_dr_amount ?? 0, default_des(), '.', '') }}</td>
+                  <td class="text-right"> {{ number_format((float) $_master_val->_cr_amount ?? 0, default_des(), '.', '') }} </td>
+                                    @php 
+                                    $_dr_amount += $_master_val->_dr_amount;   
+                                    $_cr_amount += $_master_val->_cr_amount;  
+                                    @endphp
+                                  </tr>
+                                  @empty
+                                  @endforelse
+                                </tbody>
+                                <tfoot>
+                                  <tr>
+                                    <td colspan="5" class="text-right"><b>Total</b></td>
+                                    <td  class="text-right"><b>{{ number_format((float) $_dr_amount ?? 0, default_des(), '.', '') }} </b></td>
+                                    <td  class="text-right"><b>{{ number_format((float) $_cr_amount ?? 0, default_des(), '.', '') }} </b></td>
+                                    
+                                  </tr>
+                                </tfoot>
+                              </table>
+                            </div>
+                          </div>
+                        </td>
+                        </tr>
+                       
                         @endforeach
                     </table>
                 </div>

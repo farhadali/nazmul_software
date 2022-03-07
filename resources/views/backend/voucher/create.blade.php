@@ -12,7 +12,7 @@
             <ol class="breadcrumb float-sm-right">
               <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
               <li class="breadcrumb-item active">
-                 <a class="btn btn-primary" href="{{ route('account-ledger.index') }}"> {{ $page_name ?? '' }} </a>
+                 <a class="btn btn-primary" href="{{ route('voucher.index') }}"> {{ $page_name ?? '' }} </a>
                </li>
             </ol>
           </div><!-- /.col -->
@@ -194,7 +194,7 @@
                         </div>
                        
                         <div class="col-xs-3 col-sm-3 col-md-3 text-right">
-                            <button type="submit" class="btn btn-primary submit-button">Submit</button>
+                            <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
                         </div>
                         <br><br>
                     </div>
@@ -219,6 +219,7 @@
 @section('script')
 
 <script type="text/javascript">
+  var default_date_formate = `{{default_date_formate()}}`
  var single_row =  `<tr class="_voucher_row">
                       <td><a  href="" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a></td>
                       <td><input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger">
@@ -317,6 +318,22 @@
     var _voucher_type = $(document).find('._voucher_type').val();
     var _note = $(document).find('._note').val();
     var _search_ledger_id = $(document).find('._search_ledger_id').val();
+
+
+    var empty_ledger = [];
+    $(document).find("._ledger_id").each(function(){
+        if($(this).val() ==""){
+          alert(" Please Add Ledger  ");
+          $(document).find('._search_ledger_id').focus().addClass('required_border');
+          empty_ledger.push(1);
+        }  
+    })
+
+    if(empty_ledger.length > 0){
+      return false;
+    }
+
+
     if(_total_dr_amount !=_total_cr_amount){
       $(document).find("._total_dr_amount").focus().addClass('required_border');
       $(document).find("._total_cr_amount").focus().addClass('required_border');
@@ -338,7 +355,23 @@
     }
   })
 
+$(".datetimepicker-input").val(date__today())
 
+          function date__today(){
+              var d = new Date();
+            var yyyy = d.getFullYear().toString();
+            var mm = (d.getMonth()+1).toString(); // getMonth() is zero-based
+            var dd  = d.getDate().toString();
+            if(default_date_formate=='DD-MM-YYYY'){
+              return (dd[1]?dd:"0"+dd[0]) +"-"+ (mm[1]?mm:"0"+mm[0])+"-"+ yyyy ;
+            }
+            if(default_date_formate=='MM-DD-YYYY'){
+              return (mm[1]?mm:"0"+mm[0])+"-" + (dd[1]?dd:"0"+dd[0]) +"-"+  yyyy ;
+            }
+            
+
+            
+          }
 
 </script>
 @endsection

@@ -137,7 +137,7 @@
                               <div class="form-group">
                                 <div class="d-flex">
                                     <button type="button" class="btn btn-warning mr-3" data-toggle="modal" data-target="#modal-default" title="Advance Search"><i class="fa fa-search mr-2"></i> </button>
-                                     <a href="{{url('account-ledger')}}" class="btn btn-danger" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
+                                     <a href="{{url('voucher')}}" class="btn btn-danger" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
                                      </div>
                                 </div>
                           </div>

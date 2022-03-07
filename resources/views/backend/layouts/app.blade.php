@@ -119,7 +119,7 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('dist/js/demo.js')}}"></script>
 
-@yield('script')
+
 <script>
 $('.message-area').delay(5000).fadeOut('slow');
   var loadFile = function(event,_id) {
@@ -142,23 +142,7 @@ $('.message-area').delay(5000).fadeOut('slow');
         format:default_date_formate
 
     });
-     $(".datetimepicker-input").val(today())
-
-function today(){
-    var d = new Date();
-  var yyyy = d.getFullYear().toString();
-  var mm = (d.getMonth()+1).toString(); // getMonth() is zero-based
-  var dd  = d.getDate().toString();
-  if(default_date_formate=='DD-MM-YYYY'){
-    return (dd[1]?dd:"0"+dd[0]) +"-"+ (mm[1]?mm:"0"+mm[0])+"-"+ yyyy ;
-  }
-  if(default_date_formate=='MM-DD-YYYY'){
-    return (mm[1]?mm:"0"+mm[0])+"-" + (dd[1]?dd:"0"+dd[0]) +"-"+  yyyy ;
-  }
-  
-
-  
-}
+     
 
   })
 
@@ -217,9 +201,9 @@ $(document).on('keyup','._search_ledger_id',delay(function(e){
       var data = result.data; 
       
       if(data.length > 0 ){
-        console.log(data.length )
+        
             search_html +=`<div class="card"><table style="width: 300px;">
-                            <thead><th>ID</th><th>Name</th> </thead><tbody>`;
+                            <tbody>`;
                         for (var i = 0; i < data.length; i++) {
                          search_html += `<tr class="search_row" >
                                         <td>${data[i].id}
@@ -235,7 +219,7 @@ $(document).on('keyup','._search_ledger_id',delay(function(e){
       }     
       _gloabal_this.parent('td').find('.search_box').html(search_html);
       _gloabal_this.parent('td').find('.search_box').addClass('search_box_show').show();
-      console.log(search_html)
+      
     });
      
     request.fail(function( jqXHR, textStatus ) {
@@ -254,8 +238,6 @@ $(document).on('click','.search_row',function(){
   var _id_name = `${_name} `;
   $(this).parent().parent().parent().parent().parent().parent().find('._search_ledger_id').val(_id_name);
 
-  console.log(_id)
-  console.log(_name)
 
   $('.search_box').hide();
   $('.search_box').removeClass('search_box_show').hide();
@@ -271,5 +253,6 @@ $(document).on('click',function(){
   
 
 </script>
+@yield('script')
 </body>
 </html>

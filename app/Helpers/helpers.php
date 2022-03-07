@@ -21,6 +21,15 @@ if (! function_exists('convertUTCToLocal')) {
     }
 }
 
+if (! function_exists('default_pagination')) {
+    function default_pagination()
+    {
+        return 10;
+    }
+}
+
+
+
 
 if (! function_exists('permited_branch')) {
     function permited_branch($branch_ids)
@@ -127,6 +136,14 @@ if (! function_exists('change_date_format')) {
     function change_date_format($_date)
     {
       return   date('Y-m-d', strtotime($_date));
+    }
+}
+
+
+if (! function_exists('default_des')) {
+    function default_des()
+    {
+      return   2;
     }
 }
 
