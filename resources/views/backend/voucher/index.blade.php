@@ -32,10 +32,56 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header border-0">
-                 @include('backend.voucher.search')
+                
               </div>
               <div class="card-body">
                 <div class="table-responsive">
+                  <div class="row">
+                   @php
+
+ $currentURL = URL::full();
+ $current = URL::current();
+if($currentURL === $current){
+   $print_url = $current."?print=single";
+   $print_url_detal = $current."?print=detail";
+}else{
+     $print_url = $currentURL."&print=single"."<br>";
+     $print_url_detal = $currentURL."&print=detail";
+}
+    
+
+                   @endphp
+                    <div class="col-md-6">
+                       @include('backend.voucher.search')
+                    </div>
+                    <div class="col-md-6">
+                      <div class="d-flex flex-row justify-content-end">
+                         @can('voucher-print')
+                        <li class="nav-item dropdown remove_from_header">
+                              <a class="nav-link" data-toggle="dropdown" href="#">
+                                
+                                <i class="fa fa-print " aria-hidden="true"></i> <i class="right fas fa-angle-down "></i>
+                              </a>
+                              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                               
+                                <div class="dropdown-divider"></div>
+                                
+                                <a target="__blank" href="{{$print_url}}" class="dropdown-item">
+                                  <i class="fa fa-print mr-2" aria-hidden="true"></i>Main  Print
+                                </a>
+                               <div class="dropdown-divider"></div>
+                              
+                                <a target="__blank" href="{{$print_url_detal}}"  class="dropdown-item">
+                                  <i class="fa fa-fax mr-2" aria-hidden="true"></i> Detail Print
+                                </a>
+                              
+                                    
+                            </li>
+                             @endcan   
+                         {!! $datas->render() !!}
+                          </div>
+                    </div>
+                  </div>
                   <table class="table table-bordered">
                       <tr>
                          <th class="_action_big">Action</th>
@@ -142,9 +188,7 @@
 
                 
 
-                <div class="d-flex flex-row justify-content-end">
-                 {!! $datas->render() !!}
-                </div>
+                
               </div>
             </div>
             <!-- /.card -->
@@ -157,4 +201,74 @@
     </div>
 </div>
 
+@endsection
+
+@section('script')
+
+<script type="text/javascript">
+ $(function () {
+   var default_date_formate = `{{default_date_formate()}}`
+   var _datex = `{{$request->_datex ?? '' }}`
+   var _datey = `{{$request->_datey ?? '' }}`
+    
+     $('#reservationdate_datex').datetimepicker({
+        format:'L'
+    });
+     $('#reservationdate_datey').datetimepicker({
+         format:'L'
+    });
+ 
+
+ 
+
+// if(_datex =='' && _datey =='' ){
+//   $(".datetimepicker-input_datex").val(date__today());
+//   $(".datetimepicker-input_datey").val(date__today());
+//   console.log('Ok new Page')
+// }else{
+//   $(".datetimepicker-input_datex").val(after_request_date__today( `{{$request->_datex}}` ))
+//   $(".datetimepicker-input_datey").val(after_request_date__today( `{{$request->_datey}}` ))
+//   console.log('after search')
+// }
+
+function date__today(){
+              var d = new Date();
+            var yyyy = d.getFullYear().toString();
+            var mm = (d.getMonth()+1).toString(); // getMonth() is zero-based
+            var dd  = d.getDate().toString();
+            if(default_date_formate=='DD-MM-YYYY'){
+              return (dd[1]?dd:"0"+dd[0]) +"-"+ (mm[1]?mm:"0"+mm[0])+"-"+ yyyy ;
+            }
+            if(default_date_formate=='MM-DD-YYYY'){
+              return (mm[1]?mm:"0"+mm[0])+"-" + (dd[1]?dd:"0"+dd[0]) +"-"+  yyyy ;
+            }
+            
+
+            
+          }
+
+
+  
+
+function after_request_date__today(_date){
+            var data = _date.split('-');
+            var yyyy =data[0];
+            var mm =data[1];
+            var dd =data[2];
+            if(default_date_formate=='DD-MM-YYYY'){
+              return (dd[1]?dd:"0"+dd[0]) +"-"+ (mm[1]?mm:"0"+mm[0])+"-"+ yyyy ;
+            }
+            if(default_date_formate=='MM-DD-YYYY'){
+              return (mm[1]?mm:"0"+mm[0])+"-" + (dd[1]?dd:"0"+dd[0]) +"-"+  yyyy ;
+            }
+            
+
+            
+          }
+
+});
+
+
+
+</script>
 @endsection

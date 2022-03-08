@@ -76,6 +76,10 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('voucher', VoucherMasterController::class);
     Route::post('voucher/update', 'App\Http\Controllers\VoucherMasterController@update');
+    Route::get('voucher/print/{id}', 'App\Http\Controllers\VoucherMasterController@voucherPrint');
+    Route::get('voucher-main-print', 'App\Http\Controllers\VoucherMasterController@voucherMainPrint');
+    Route::get('voucher-detail-print', 'App\Http\Controllers\VoucherMasterController@voucherDetailPrint');
+
 
 
     Route::get('type_base_group',function(Request $request){

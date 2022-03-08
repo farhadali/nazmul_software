@@ -6,6 +6,7 @@ use App\Models\AccountGroup;
 use App\Models\AccountHead;
 use App\Models\AccountLedger;
 use App\Models\Accounts;
+use App\Models\VoucherType;
 
 if (! function_exists('convertLocalToUTC')) {
     function convertLocalToUTC($time)
@@ -131,11 +132,38 @@ if (! function_exists('voucher_prefix')) {
     }
 }
 
+if (! function_exists('report_date_formate')) {
+    function report_date_formate()
+    {
+        return 'd-m-Y';
+    }
+}
+
+if (! function_exists('voucher_code_to_name')) {
+    function voucher_code_to_name($value)
+    {
+        $types = VoucherType::where('_code',$value)->select('_name')->first();
+        return $types->_name ?? '';
+    }
+}
+
+
+if (! function_exists('prefix_taka')) {
+    function prefix_taka($value="Tk")
+    {
+        
+        return $value;
+    }
+}
+
+
+
+
 
 if (! function_exists('change_date_format')) {
     function change_date_format($_date)
     {
-      return   date('Y-m-d', strtotime($_date));
+      return   date(report_date_formate(), strtotime($_date));
     }
 }
 

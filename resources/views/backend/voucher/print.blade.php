@@ -1,45 +1,22 @@
-@extends('backend.layouts.app')
-@section('title',$page_name)
 
-@section('content')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{$page_name}}</title>
 
-    <div class="message-area">
-    @if (count($errors) > 0)
-           <div class="alert alert-danger">
-                <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-                </ul>
-            </div>
-        @endif
-    </div>
-    <div class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="card">
-             <div class="card-header">
-                <div class="card_header_section">
-                  <div class="_page_name_area">
-                     <h4 class="m-0">{!! $page_name ?? '' !!} </h4>
-                  </div>
-                  <div class="_new_button_area">
-                    <div class="d-flex right_float">
-                      @can('voucher-print')
-                        <a target="__blank" class="btn btn-default mr-3" href="{{ url('voucher/print') }}/{{$data->id }}"> <i class="fa fa-print _required" aria-hidden="true"></i></a>
-                      @endcan
-                       <a class="btn btn-primary" href="{{ route('voucher.index') }}"> {!! $page_name ?? '' !!}</a>
-                    </div>
-                   
-                  </div>
-                </div>
-             </div>
-              <div class="card-body">
-                <div class="wrapper">
-  <!-- Main content -->
-  <section class="invoice">
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
+</head>
+<body>
+<div class="wrapper">
+
+<section class="invoice">
     <!-- title row -->
     <div class="row">
       <div class="col-12">
@@ -108,9 +85,9 @@
           </tbody>
           <tfoot>
             <tr>
-              <th colspan="5" class="text-right">Total:</th>
-              <th class="text-right" >{!! number_format((float) $data->_amount ?? 0, default_des(), '.', '')!!}</th>
-              <th class="text-right" >{!! number_format((float) $data->_amount ?? 0, default_des(), '.', '')!!}</th>
+              <th style="background-color: rgba(0,0,0,.05);" colspan="5" class="text-center">Total:</th>
+              <th style="background-color: rgba(0,0,0,.05);" class="text-right" >{!! number_format((float) $data->_amount ?? 0, default_des(), '.', '')!!}</th>
+              <th style="background-color: rgba(0,0,0,.05);" class="text-right" >{!! number_format((float) $data->_amount ?? 0, default_des(), '.', '')!!}</th>
             </tr>
           </tfoot>
         </table>
@@ -132,10 +109,10 @@ $digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
       <!-- /.col -->
       <div class="col-12 mt-5">
         <div class="row">
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f5f9;">Received By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f5f9;">Prepared By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f5f9;">Checked By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f5f9;"> Approved By</span></div>
+          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>
+          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Prepared By</span></div>
+          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Checked By</span></div>
+          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;"> Approved By</span></div>
         </div>
 
           
@@ -145,21 +122,12 @@ $digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
     </div>
     <!-- /.row -->
   </section>
-  <!-- /.content -->
+
 </div>
-               
-                
-              </div>
-            </div>
-            <!-- /.card -->
-
-            
-        </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
-    </div>
-</div>
-
-
-@endsection
+<!-- ./wrapper -->
+<!-- Page specific script -->
+<script>
+  window.addEventListener("load", window.print());
+</script>
+</body>
+</html>

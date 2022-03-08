@@ -98,3 +98,20 @@ input[type="number"] {
     padding: 0px 0px 0px 20px;
 }
 
+.card_header_section{
+    width: 100%;
+}
+._page_name_area{
+    width: 50%;
+    float: left;
+    text-align: left;
+}
+._new_button_area{
+    width: 50%;
+    float: left;
+    text-align: right;
+}
+.right_float{
+    float: right !important; 
+}
+

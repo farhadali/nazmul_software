@@ -13,6 +13,7 @@ use App\Models\VoucherMasterDetail;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
+use Session;
 
 class VoucherMasterController extends Controller
 {
@@ -23,7 +24,8 @@ class VoucherMasterController extends Controller
      */
     function __construct()
     {
-         $this->middleware('permission:voucher-list|voucher-create|voucher-edit|voucher-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:voucher-list|voucher-create|voucher-edit|voucher-delete|voucher-print', ['only' => ['index','store']]);
+         $this->middleware('permission:voucher-print', ['only' => ['voucherPrint']]);
          $this->middleware('permission:voucher-create', ['only' => ['create','store']]);
          $this->middleware('permission:voucher-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:voucher-delete', ['only' => ['destroy']]);
@@ -48,7 +50,21 @@ class VoucherMasterController extends Controller
          $page_name = $this->page_name;
          $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
          $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
-        return view('backend.voucher.index',compact('datas','page_name','account_types','request','account_groups'));
+          $current_date = date('Y-m-d');
+          $current_time = date('H:i:s');
+         
+
+         if($request->has('print')){
+            if($request->print =="single"){
+                return view('backend.voucher.master_print',compact('datas','page_name','account_types','request','account_groups','current_date','current_time'));
+            }
+
+            if($request->print =="detail"){
+                return view('backend.voucher.details_print',compact('datas','page_name','account_types','request','account_groups','current_date','current_time'));
+            }
+         }
+
+        return view('backend.voucher.index',compact('datas','page_name','account_types','request','account_groups','current_date'));
     }
     
 
@@ -186,9 +202,19 @@ class VoucherMasterController extends Controller
      * @param  \App\Models\VoucherMaster  $voucherMaster
      * @return \Illuminate\Http\Response
      */
-    public function show(VoucherMaster $voucherMaster)
+    public function show($id)
     {
-        //
+        $users = Auth::user();
+        $page_name = $this->page_name;
+        $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
+         $data = VoucherMaster::with(['_master_branch','_master_details'])->find($id);
+
+       return view('backend.voucher.show',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','data'));
     }
 
     /**
@@ -210,6 +236,21 @@ class VoucherMasterController extends Controller
         $data = VoucherMaster::with(['_master_branch','_master_details'])->find($id);
 
        return view('backend.voucher.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','data'));
+    }
+
+
+    public function voucherPrint($id){
+        $users = Auth::user();
+        $page_name = $this->page_name;
+        $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
+         $data = VoucherMaster::with(['_master_branch','_master_details'])->find($id);
+
+       return view('backend.voucher.print',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','data'));
     }
 
     /**
