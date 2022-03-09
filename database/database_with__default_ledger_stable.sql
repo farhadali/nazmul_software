@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 08, 2022 at 08:45 PM
+-- Generation Time: Mar 09, 2022 at 07:15 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.10
 
@@ -48,29 +48,6 @@ CREATE TABLE `accounts` (
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `accounts`
---
-
-INSERT INTO `accounts` (`_id`, `_ref_master_id`, `_ref_detail_id`, `_short_narration`, `_narration`, `_reference`, `_transaction`, `_date`, `_table_name`, `_account_head`, `_account_group`, `_account_ledger`, `_dr_amount`, `_cr_amount`, `_branch_id`, `_cost_center`, `_name`, `created_at`, `updated_at`) VALUES
-(1, 11, 3, 'N/A', 'n', NULL, 'Account', '2022-03-07', 'voucher_masters', 12, 43, 2, 500.0000, 0.0000, 1, 1, 'admin', '2022-03-06 19:43:05', '2022-03-06 19:43:05'),
-(2, 11, 4, 'N/A', 'n', NULL, 'Account', '2022-03-07', 'voucher_masters', 13, 1, 3, 0.0000, 500.0000, 1, 1, 'admin', '2022-03-06 19:43:05', '2022-03-06 19:43:05'),
-(3, 12, 5, 'N/A', 'n', NULL, 'Account', '2022-03-07', 'voucher_masters', 12, 43, 2, 500.0000, 0.0000, 1, 1, 'admin', '2022-03-06 19:44:55', '2022-03-06 19:44:55'),
-(4, 12, 6, 'N/A', 'n', NULL, 'Account', '2022-03-07', 'voucher_masters', 13, 1, 3, 0.0000, 500.0000, 1, 1, 'admin', '2022-03-06 19:44:55', '2022-03-06 19:44:55'),
-(5, 13, 7, 'N/A', 'Note yes', 'N/A', 'Account', '2022-03-07', 'voucher_masters', 12, 43, 2, 500.0000, 0.0000, 1, 1, 'admin', '2022-03-06 19:47:34', '2022-03-06 19:47:34'),
-(6, 13, 8, 'N/A', 'Note yes', 'N/A', 'Account', '2022-03-07', 'voucher_masters', 13, 1, 3, 0.0000, 500.0000, 1, 1, 'admin', '2022-03-06 19:47:34', '2022-03-06 19:47:34'),
-(7, 14, 9, 'N/A', 'Note', 'Reference', 'Account', '2022-03-07', 'voucher_masters', 12, 43, 2, 5000.0000, 0.0000, 1, 1, 'admin', '2022-03-07 17:24:54', '2022-03-07 17:24:54'),
-(8, 14, 10, 'N/A', 'Note', 'Reference', 'Account', '2022-03-07', 'voucher_masters', 13, 1, 3, 0.0000, 5000.0000, 1, 1, 'admin', '2022-03-07 17:24:54', '2022-03-07 17:24:54'),
-(10, 15, 12, 'N/A', 'note', 'New Ref', 'Account', '2022-02-28', 'voucher_masters', 13, 1, 3, 0.0000, 5000.0000, 1, 1, 'admin', '2022-03-07 17:36:35', '2022-03-07 17:36:35'),
-(17, 15, 12, 'N/A', 'note', 'New Ref', 'Account', '2022-02-28', 'voucher_masters', 13, 1, 3, 4000.0000, 0.0000, 1, 1, 'admin', '2022-03-07 19:18:35', '2022-03-07 19:18:35'),
-(18, 15, 12, 'N/A', 'note', 'New Ref', 'Account', '2022-02-28', 'voucher_masters', 13, 1, 3, 4000.0000, 0.0000, 1, 1, 'admin', '2022-03-07 19:19:05', '2022-03-07 19:19:05'),
-(19, 15, 12, 'N/A', 'note', 'New Ref', 'Account', '2022-02-28', 'voucher_masters', 13, 1, 3, 4000.0000, 0.0000, 1, 1, 'admin', '2022-03-07 19:19:23', '2022-03-07 19:19:23'),
-(20, 15, 22, 'N/A', 'note', 'New Ref', 'Account', '2022-02-28', 'voucher_masters', 13, 1, 3, 0.0000, 4000.0000, 1, 1, 'admin', '2022-03-07 19:21:59', '2022-03-07 19:21:59'),
-(24, 18, 26, 'N/A', 'yes', 'No Reference', 'Account', '2022-03-08', 'voucher_masters', 12, 43, 2, 20000.0000, 0.0000, 1, 1, 'admin', '2022-03-07 19:29:25', '2022-03-07 19:29:25'),
-(25, 18, 27, 'N/A', 'yes', 'No Reference', 'Account', '2022-03-08', 'voucher_masters', 13, 1, 3, 0.0000, 20000.0000, 1, 1, 'admin', '2022-03-07 19:29:25', '2022-03-07 19:29:25'),
-(26, 19, 28, 'N/A', 'save without cost center', NULL, 'Account', '2022-03-08', 'voucher_masters', 12, 43, 2, 1000.0000, 0.0000, 1, 0, 'admin', '2022-03-07 19:39:49', '2022-03-07 19:39:49'),
-(27, 19, 29, 'N/A', 'save without cost center', NULL, 'Account', '2022-03-08', 'voucher_masters', 13, 1, 3, 0.0000, 1000.0000, 1, 0, 'admin', '2022-03-07 19:39:49', '2022-03-07 19:39:49');
 
 -- --------------------------------------------------------
 
@@ -235,7 +212,10 @@ INSERT INTO `account_groups` (`id`, `_name`, `_code`, `_details`, `_status`, `_c
 (136, 'Depreciation', '', 'Use Depreciation to track how much you depreciate fixed assets.\r\nYou may want a depreciation account for each fixed asset you have.', 1, NULL, NULL, 15, 0, '2022-03-02 13:11:00', '2022-03-02 13:11:00'),
 (137, 'Exchange Gain or Loss', '', 'Use Exchange Gain or Loss to track gains or losses that occur as a result of exchange rate fluctuations.', 1, NULL, NULL, 15, 0, '2022-03-02 13:11:13', '2022-03-02 13:11:13'),
 (138, 'Other Expense', '', 'Use Other expense to track unusual or infrequent expenses that don’t fall into another Other Expense type.', 1, NULL, NULL, 15, 0, '2022-03-02 13:11:28', '2022-03-02 13:11:28'),
-(139, 'Penalties and settlements', '', 'Use Penalties and settlements to track money you pay for violating laws or regulations, settling lawsuits, or other penalties.', 1, NULL, NULL, 15, 0, '2022-03-02 13:11:41', '2022-03-02 13:11:41');
+(139, 'Penalties and settlements', '', 'Use Penalties and settlements to track money you pay for violating laws or regulations, settling lawsuits, or other penalties.', 1, NULL, NULL, 15, 0, '2022-03-02 13:11:41', '2022-03-02 13:11:41'),
+(140, 'Cost of goods sold', '', '', 1, NULL, NULL, 9, 0, '2022-03-09 11:48:02', '2022-03-09 11:48:02'),
+(141, 'Discount Received', '', '', 1, NULL, NULL, 11, 0, '2022-03-09 11:51:58', '2022-03-09 11:51:58'),
+(142, 'Discount Payment', '', '', 1, NULL, NULL, 10, 0, '2022-03-09 11:54:31', '2022-03-09 11:54:31');
 
 -- --------------------------------------------------------
 
@@ -313,8 +293,44 @@ CREATE TABLE `account_ledgers` (
 --
 
 INSERT INTO `account_ledgers` (`id`, `_account_group_id`, `_account_head_id`, `_name`, `_code`, `_image`, `_nid`, `_other_document`, `_email`, `_phone`, `_address`, `_credit_limit`, `_branch_id`, `_is_user`, `_user_id`, `_is_sales_form`, `_is_purchase_form`, `_is_all_branch`, `_status`, `_created_by`, `_updated_by`, `created_at`, `updated_at`) VALUES
-(2, 43, 12, 'First A/P', '12345678', NULL, '098765432', NULL, 'ap@gmail.com', '01756256562', NULL, 0.0000, 1, 0, NULL, 1, 1, 0, 1, '1-admin', '1-admin', '2022-03-05 13:09:25', '2022-03-05 23:10:42'),
-(3, 1, 13, 'First A/R', '343243', NULL, '32432', NULL, 'ar@gmail.com', '01677023131', 'Dhaka', 0.0000, 1, 0, NULL, 1, 1, 1, 1, '1-admin', '1-admin', '2022-03-05 13:10:36', '2022-03-05 23:10:53');
+(1, 16, 1, 'Cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:46:36', '2022-03-09 11:46:36'),
+(2, 140, 9, 'Purchase', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:48:41', '2022-03-09 11:48:41'),
+(3, 140, 9, 'Purchase Return', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:49:00', '2022-03-09 11:49:00'),
+(4, 85, 8, 'Sales', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:49:50', '2022-03-09 11:49:50'),
+(5, 85, 8, 'Sales Return', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:50:46', '2022-03-09 11:50:46'),
+(6, 96, 11, 'Purchase Discount', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:51:26', '2022-03-09 11:51:26'),
+(7, 141, 11, 'Purchase Discount', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:52:42', '2022-03-09 11:52:42'),
+(8, 142, 10, 'Sales Discount', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:55:02', '2022-03-09 11:55:02'),
+(9, 110, 10, 'Commission on sales', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:56:06', '2022-03-09 11:56:06'),
+(10, 115, 10, 'VAT Payable', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:56:44', '2022-03-09 11:56:44'),
+(11, 124, 10, 'Conveyance', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:57:27', '2022-03-09 11:57:27'),
+(12, 134, 10, 'Electricity Bill', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:57:57', '2022-03-09 11:57:57'),
+(13, 122, 10, 'Cleaning Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:58:27', '2022-03-09 11:58:27'),
+(14, 127, 10, 'Repair & Maintenance', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:58:49', '2022-03-09 11:58:49'),
+(15, 122, 10, 'Entertainment Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:59:12', '2022-03-09 11:59:12'),
+(16, 122, 10, 'Printing Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:59:28', '2022-03-09 11:59:28'),
+(17, 122, 10, 'Stationery Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 11:59:46', '2022-03-09 11:59:46'),
+(18, 128, 10, 'Postage & Courier Bill', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:00:20', '2022-03-09 12:00:20'),
+(19, 134, 10, 'Internet Bill', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:00:44', '2022-03-09 12:00:44'),
+(20, 131, 10, 'Travelling Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:01:08', '2022-03-09 12:01:08'),
+(21, 122, 10, 'License Renewal Fee', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:01:58', '2022-03-09 12:01:58'),
+(22, 118, 10, 'Audit Fee', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:02:15', '2022-03-09 12:02:15'),
+(23, 126, 10, 'Office Rent', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:02:35', '2022-03-09 12:02:35'),
+(24, 134, 10, 'Fuel & Oil Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:03:19', '2022-03-09 12:03:19'),
+(25, 116, 10, 'Insurance Premium', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:03:32', '2022-03-09 12:03:32'),
+(26, 123, 10, 'Miscellaneous Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:04:18', '2022-03-09 12:04:18'),
+(27, 122, 10, 'Medical Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:06:48', '2022-03-09 12:06:48'),
+(28, 104, 10, 'Business Promotional Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:07:05', '2022-03-09 12:07:05'),
+(29, 109, 10, 'Donation Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:08:44', '2022-03-09 12:08:44'),
+(30, 121, 10, 'Food Allowance', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:08:58', '2022-03-09 12:08:58'),
+(31, 104, 10, 'Marketing Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:09:25', '2022-03-09 12:09:25'),
+(32, 123, 10, 'Other Office Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:09:48', '2022-03-09 12:09:48'),
+(33, 122, 10, 'News Paper & Cable-Tv Bill', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:10:05', '2022-03-09 12:10:05'),
+(34, 130, 10, 'Tax & VAT Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:10:37', '2022-03-09 12:10:37'),
+(35, 118, 10, 'Legal Expenses', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:10:52', '2022-03-09 12:10:52'),
+(36, 108, 10, 'Bank Charges', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:11:11', '2022-03-09 12:11:11'),
+(37, 106, 10, 'Rounding Off', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:11:51', '2022-03-09 12:11:51'),
+(38, 96, 11, 'Rounding Add', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.0000, 1, 1, NULL, 1, 1, 1, 1, '1-admin', NULL, '2022-03-09 12:12:23', '2022-03-09 12:12:23');
 
 -- --------------------------------------------------------
 
@@ -1299,29 +1315,6 @@ CREATE TABLE `voucher_masters` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `voucher_masters`
---
-
-INSERT INTO `voucher_masters` (`id`, `_code`, `_date`, `_time`, `_user_id`, `_user_name`, `_note`, `_voucher_type`, `_transection_type`, `_transection_ref`, `_form_name`, `_amount`, `_branch_id`, `_status`, `_created_by`, `_updated_by`, `created_at`, `updated_at`) VALUES
-(1, NULL, '2022-03-07', '19:11:20', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:11:20', '2022-03-06 13:11:20'),
-(2, NULL, '2022-03-07', '19:13:42', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:13:42', '2022-03-06 13:13:42'),
-(3, 'AC-3', '2022-03-07', '19:14:35', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:14:35', '2022-03-06 13:14:35'),
-(4, 'AC-4', '2022-03-07', '19:22:04', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:22:04', '2022-03-06 13:22:04'),
-(5, 'AC-5', '2022-03-07', '19:22:24', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:22:24', '2022-03-06 13:22:24'),
-(6, 'AC-6', '2022-03-07', '19:22:41', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:22:41', '2022-03-06 13:22:41'),
-(7, 'AC-7', '2022-03-07', '19:23:05', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:23:05', '2022-03-06 13:23:05'),
-(8, 'AC-8', '2022-03-07', '19:23:16', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:23:16', '2022-03-06 13:23:16'),
-(9, 'AC-9', '2022-03-07', '19:32:42', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:32:42', '2022-03-06 13:32:42'),
-(10, 'AC-10', '2022-03-07', '19:33:11', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:33:11', '2022-03-06 13:33:11'),
-(11, 'AC-11', '2022-03-07', '19:43:05', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:43:05', '2022-03-06 13:43:05'),
-(12, 'AC-12', '2022-03-07', '19:44:55', 1, 'admin', 'n', 'BP', NULL, NULL, 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:44:55', '2022-03-06 13:44:55'),
-(13, 'AC-13', '2022-03-07', '19:47:34', 1, 'admin', 'Note yes', 'BP', NULL, 'N/A', 'voucher_masters', 500.0000, 1, 1, '1-admin', NULL, '2022-03-06 13:47:34', '2022-03-06 13:47:34'),
-(14, 'AC-14', '2022-03-07', '17:24:54', 1, 'admin', 'Note', 'JV', NULL, 'Reference', 'voucher_masters', 5000.0000, 1, 1, '1-admin', NULL, '2022-03-07 11:24:54', '2022-03-07 11:24:54'),
-(15, 'AC-15', '2022-02-28', '19:21:59', 1, 'admin', 'note', 'CP', NULL, 'New Ref', 'voucher_masters', 4000.0000, 1, 1, '1-admin', '1-admin', '2022-03-07 11:36:35', '2022-03-07 13:21:59'),
-(18, 'AC-18', '2022-03-08', '19:29:25', 1, 'admin', 'yes', 'CR', NULL, 'No Reference', 'voucher_masters', 20000.0000, 1, 1, '1-admin', '1-admin', '2022-03-07 13:27:57', '2022-03-07 13:29:25'),
-(19, 'AC-19', '2022-03-08', '19:39:49', 1, 'admin', 'save without cost center', 'BP', NULL, NULL, 'voucher_masters', 1000.0000, 1, 1, '1-admin', NULL, '2022-03-07 13:39:49', '2022-03-07 13:39:49');
-
 -- --------------------------------------------------------
 
 --
@@ -1346,28 +1339,6 @@ CREATE TABLE `voucher_master_details` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `voucher_master_details`
---
-
-INSERT INTO `voucher_master_details` (`id`, `_no`, `_account_type_id`, `_account_group_id`, `_ledger_id`, `_dr_amount`, `_cr_amount`, `_type`, `_short_narr`, `_branch_id`, `_cost_center`, `_status`, `_created_by`, `_updated_by`, `created_at`, `updated_at`) VALUES
-(1, 10, 12, 43, 2, 500.0000, 0.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-06 13:33:11', '2022-03-06 13:33:11'),
-(2, 10, 13, 1, 3, 0.0000, 500.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-06 13:33:11', '2022-03-06 13:33:11'),
-(3, 11, 12, 43, 2, 500.0000, 0.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-06 13:43:05', '2022-03-06 13:43:05'),
-(4, 11, 13, 1, 3, 0.0000, 500.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-06 13:43:05', '2022-03-06 13:43:05'),
-(5, 12, 12, 43, 2, 500.0000, 0.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-06 13:44:55', '2022-03-06 13:44:55'),
-(6, 12, 13, 1, 3, 0.0000, 500.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-06 13:44:55', '2022-03-06 13:44:55'),
-(7, 13, 12, 43, 2, 500.0000, 0.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-06 13:47:34', '2022-03-06 13:47:34'),
-(8, 13, 13, 1, 3, 0.0000, 500.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-06 13:47:34', '2022-03-06 13:47:34'),
-(9, 14, 12, 43, 2, 5000.0000, 0.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-07 11:24:54', '2022-03-07 11:24:54'),
-(10, 14, 13, 1, 3, 0.0000, 5000.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-07 11:24:54', '2022-03-07 11:24:54'),
-(12, 15, 13, 1, 3, 4000.0000, 0.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-07 11:36:35', '2022-03-07 13:13:49'),
-(22, 15, 13, 1, 3, 0.0000, 4000.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-07 13:21:59', '2022-03-07 13:21:59'),
-(26, 18, 12, 43, 2, 20000.0000, 0.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-07 13:29:25', '2022-03-07 13:29:25'),
-(27, 18, 13, 1, 3, 0.0000, 20000.0000, NULL, 'N/A', 1, 1, 1, '1-admin', NULL, '2022-03-07 13:29:25', '2022-03-07 13:29:25'),
-(28, 19, 12, 43, 2, 1000.0000, 0.0000, NULL, 'N/A', 1, 0, 1, '1-admin', NULL, '2022-03-07 13:39:49', '2022-03-07 13:39:49'),
-(29, 19, 13, 1, 3, 0.0000, 1000.0000, NULL, 'N/A', 1, 0, 1, '1-admin', NULL, '2022-03-07 13:39:49', '2022-03-07 13:39:49');
 
 -- --------------------------------------------------------
 
@@ -1716,13 +1687,13 @@ ALTER TABLE `voucher_types`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `account_groups`
 --
 ALTER TABLE `account_groups`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=140;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
 
 --
 -- AUTO_INCREMENT for table `account_heads`
@@ -1734,7 +1705,7 @@ ALTER TABLE `account_heads`
 -- AUTO_INCREMENT for table `account_ledgers`
 --
 ALTER TABLE `account_ledgers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `branches`
@@ -1920,13 +1891,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `voucher_masters`
 --
 ALTER TABLE `voucher_masters`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `voucher_master_details`
 --
 ALTER TABLE `voucher_master_details`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `voucher_types`

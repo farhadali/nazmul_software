@@ -27,10 +27,17 @@
                   </div>
                   <div class="_new_button_area">
                     <div class="d-flex right_float">
-                      @can('voucher-print')
-                        <a target="__blank" class="btn btn-default mr-3" href="{{ url('voucher/print') }}/{{$data->id }}"> <i class="fa fa-print _required" aria-hidden="true"></i></a>
+                      @can('voucher-edit')
+                                    <a title="Edit" class="btn btn-sm btn-default  mr-3" href="{{ route('voucher.edit',$data->id) }}">
+                                      <i class="nav-icon fas fa-edit"></i>
+                                    </a>
                       @endcan
-                       <a class="btn btn-primary" href="{{ route('voucher.index') }}"> {!! $page_name ?? '' !!}</a>
+                      @can('voucher-print')
+                        <a target="__blank" title="Print" class="btn btn-default mr-3" href="{{ url('voucher/print') }}/{{$data->id }}"> <i class="fa fa-print _required" aria-hidden="true"></i></a>
+                      @endcan
+                      @can('voucher-list')
+                       <a class="btn btn-primary" title="List" href="{{ route('voucher.index') }}"> <i class="fa fa-th-list" aria-hidden="true"></i></a>
+                       @endcan
                     </div>
                    
                   </div>

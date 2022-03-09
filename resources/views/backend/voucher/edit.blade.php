@@ -10,10 +10,26 @@
           </div><!-- /.col -->
           <div class=" col-sm-6 ">
             <ol class="breadcrumb float-sm-right">
-              <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
-              <li class="breadcrumb-item active">
-                 <a class="btn btn-primary" href="{{ route('voucher.index') }}"> {{ $page_name ?? '' }} </a>
+              @can('voucher-print')
+              <li >
+                 <a class="btn btn-default mr-3" href="{{ route('voucher.show',$data->id) }}">
+                       <i class="nav-icon fas fa-eye"></i>
+                  </a>
                </li>
+               @endcan
+              @can('voucher-print')
+              <li >
+                 <a target="__blank" title="Print" class="btn btn-default mr-3" href="{{ url('voucher/print') }}/{{$data->id }}"> <i class="fa fa-print _required" aria-hidden="true"></i></a>
+               </li>
+               @endcan
+               @can('voucher-list')
+              <li >
+                 <a class="btn btn-primary" title="List" href="{{ route('voucher.index') }}"> 
+                    <i class="fa fa-th-list" aria-hidden="true"></i>
+                  </a>
+               </li>
+                @endcan
+
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -32,6 +48,11 @@
         @endif
   @if ($message = Session::get('success'))
     <div class="alert alert-success">
+      <p>{{ $message }}</p>
+    </div>
+    @endif
+  @if ($message = Session::get('error'))
+    <div class="alert alert-danger" >
       <p>{{ $message }}</p>
     </div>
     @endif

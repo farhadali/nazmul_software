@@ -121,7 +121,7 @@
 
 
 <script>
-$('.message-area').delay(5000).fadeOut('slow');
+
   var loadFile = function(event,_id) {
     var ids = `output_${_id}`;
     var output = document.getElementById('output_'+_id);

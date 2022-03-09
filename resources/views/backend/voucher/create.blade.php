@@ -12,7 +12,7 @@
             <ol class="breadcrumb float-sm-right">
               <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
               <li class="breadcrumb-item active">
-                 <a class="btn btn-primary" href="{{ route('voucher.index') }}"> {{ $page_name ?? '' }} </a>
+                 <a class="btn btn-success" title="List" href="{{ route('voucher.index') }}"> <i class="nav-icon fas fa-list"></i> </a>
                </li>
             </ol>
           </div><!-- /.col -->

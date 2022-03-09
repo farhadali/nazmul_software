@@ -115,3 +115,46 @@ input[type="number"] {
     float: right !important; 
 }
 
+
+.alert-danger{
+    padding: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.message-area{
+    width: 95%;
+    margin: 0px auto;
+    height: 63px;
+}
+
+._nv_th_action{
+    width: 13%;
+}
+._nv_th_id{
+    width: 5%;
+}
+._nv_th_code{
+    width: 5%;
+}
+._nv_th_date{
+    width: 10%;
+}
+._nv_th_type{
+    width: 5%;
+}
+._nv_th_amount{
+    width: 10%;
+}
+._nv_th_ref{
+    width: 15%;
+}
+._nv_th_note{
+    width: 20%;
+}
+._nv_th_branch{
+    width: 10%;
+}
+._nv_th_user{
+    width: 5%;
+}

@@ -12,8 +12,9 @@
             <ol class="breadcrumb float-sm-right">
               <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
               <li class="breadcrumb-item active">
-                @can('role-create')
-                        <a class="btn btn-success" href="{{ route('account-ledger.create') }}"> Create New </a>
+                @can('account-ledger-create')
+                        
+                    <a title="Add New" class="btn btn-success" href="{{ route('account-ledger.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                 @endcan
                </li>
             </ol>
@@ -32,7 +33,47 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header border-0">
-                 @include('backend.account-ledger.search')
+                 
+
+                  <div class="row">
+                   @php
+
+ $currentURL = URL::full();
+ $current = URL::current();
+if($currentURL === $current){
+   $print_url = $current."?print=single";
+   $print_url_detal = $current."?print=detail";
+}else{
+     $print_url = $currentURL."&print=single";
+     $print_url_detal = $currentURL."&print=detail";
+}
+    
+
+                   @endphp
+                    <div class="col-md-4">
+                      @include('backend.account-ledger.search')
+                    </div>
+                    <div class="col-md-8">
+                      <div class="d-flex flex-row justify-content-end">
+                         @can('voucher-print')
+                        <li class="nav-item dropdown remove_from_header">
+                              <a class="nav-link" data-toggle="dropdown" href="#">
+                                
+                                <i class="fa fa-print " aria-hidden="true"></i> <i class="right fas fa-angle-down "></i>
+                              </a>
+                              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                               
+                                <div class="dropdown-divider"></div>
+                                
+                                <a target="__blank" href="{{$print_url}}" class="dropdown-item">
+                                  <i class="fa fa-print mr-2" aria-hidden="true"></i> Print
+                                </a>  
+                            </li>
+                             @endcan   
+                         {!! $datas->render() !!}
+                          </div>
+                    </div>
+                  </div>
               </div>
               <div class="card-body">
                 <div class="table-responsive">

@@ -12,8 +12,8 @@
             <ol class="breadcrumb float-sm-right">
               <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
               <li class="breadcrumb-item active">
-                @can('role-create')
-                        <a class="btn btn-success" href="{{ route('voucher.create') }}"> Create New </a>
+                @can('voucher-create')
+                        <a title="Add New" class="btn btn-success" href="{{ route('voucher.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                 @endcan
                </li>
             </ol>
@@ -45,16 +45,16 @@ if($currentURL === $current){
    $print_url = $current."?print=single";
    $print_url_detal = $current."?print=detail";
 }else{
-     $print_url = $currentURL."&print=single"."<br>";
+     $print_url = $currentURL."&print=single";
      $print_url_detal = $currentURL."&print=detail";
 }
     
 
                    @endphp
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                        @include('backend.voucher.search')
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                       <div class="d-flex flex-row justify-content-end">
                          @can('voucher-print')
                         <li class="nav-item dropdown remove_from_header">
@@ -84,19 +84,24 @@ if($currentURL === $current){
                   </div>
                   <table class="table table-bordered">
                       <tr>
-                         <th class="_action_big">Action</th>
-                         <th class="_no">ID</th>
-                         <th>Code</th>
-                         <th>Date</th>
-                         <th>Type</th>
-                         <th>Amount</th>
-                         <th>Refarance</th>
-                         <th>Note</th>
-                         <th>Branch</th>
-                         <th>User</th>
-                        
+                         <th class=" _nv_th_action _action_big"><b>Action</b></th>
+                         <th class="_nv_th_id _no"><b>ID</b></th>
+                         <th class="_nv_th_code"><b>Code</b></th>
+                         <th class="_nv_th_date"><b>Date</b></th>
+                         <th class="_nv_th_type"><b>Type</b></th>
+                         <th class="_nv_th_amount"><b>Amount</b></th>
+                         <th class="_nv_th_ref"><b>Refarance</b></th>
+                         <th class="_nv_th_note"><b>Note</b></th>
+                         <th class="_nv_th_branch"><b>Branch</b></th>
+                         <th class="_nv_th_user"><b>User</b></th>
                       </tr>
+                      @php
+                      $sum_of_amount=0;
+                      @endphp
                         @foreach ($datas as $key => $data)
+                        @php
+                           $sum_of_amount += $data->_amount ?? 0;
+                        @endphp
                         <tr>
                             
                              <td>
@@ -123,7 +128,7 @@ if($currentURL === $current){
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_date ?? '' }}</td>
                             <td>{{ $data->_voucher_type ?? '' }}</td>
-                            <td>{{ number_format((float) $data->_amount ?? 0, default_des(), '.', '') }} </td>
+                            <td>{{ _report_amount( $data->_amount ?? 0) }} </td>
                             <td>{{ $data->_transection_ref ?? '' }}</td>
                             <td>{{ $data->_note ?? '' }}</td>
                             <td>{{ $data->_master_branch->_name ?? '' }}</td>
@@ -157,8 +162,8 @@ if($currentURL === $current){
                                     <td>{{ $_master_val->_detail_branch->_name ?? '' }}</td>
                                     <td>{{ $_master_val->_detail_cost_center->_name ?? '' }}</td>
                                     <td>{{ $_master_val->_short_narr ?? '' }}</td>
-                  <td class="text-right">{{ number_format((float) $_master_val->_dr_amount ?? 0, default_des(), '.', '') }}</td>
-                  <td class="text-right"> {{ number_format((float) $_master_val->_cr_amount ?? 0, default_des(), '.', '') }} </td>
+                  <td class="text-right">{{ _report_amount( $_master_val->_dr_amount ?? 0) }}</td>
+                  <td class="text-right"> {{ _report_amount( $_master_val->_cr_amount ?? 0) }} </td>
                                     @php 
                                     $_dr_amount += $_master_val->_dr_amount;   
                                     $_cr_amount += $_master_val->_cr_amount;  
@@ -170,8 +175,8 @@ if($currentURL === $current){
                                 <tfoot>
                                   <tr>
                                     <td colspan="5" class="text-right"><b>Total</b></td>
-                                    <td  class="text-right"><b>{{ number_format((float) $_dr_amount ?? 0, default_des(), '.', '') }} </b></td>
-                                    <td  class="text-right"><b>{{ number_format((float) $_cr_amount ?? 0, default_des(), '.', '') }} </b></td>
+                                    <td  class="text-right"><b>{{ _report_amount($_dr_amount ?? 0 ) }} </b></td>
+                                    <td  class="text-right"><b>{{ _report_amount( $_cr_amount ?? 0 ) }} </b></td>
                                     
                                   </tr>
                                 </tfoot>
@@ -180,8 +185,15 @@ if($currentURL === $current){
                           </div>
                         </td>
                         </tr>
+
+
                        
                         @endforeach
+                        <tr>
+                          <td colspan="5" class="text-center"><b>Total</b></td>
+                          <td><b>{{ _report_amount($sum_of_amount) }} </b></td>
+                          <td colspan="4"></td>
+                        </tr>
                     </table>
                 </div>
                 <!-- /.d-flex -->

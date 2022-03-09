@@ -77,7 +77,7 @@
                   <div class="form-group row">
                     <label for="_amount" class="col-sm-2 col-form-label">Amount:</label>
                     <div class="col-sm-10">
-                      <input type="number" id="_amount" name="_amount" class="form-control" placeholder="Search By Amount" value="@if(isset($request->_amount)) {{$request->_amount ?? ''}}  @endif">
+                      <input type="text" id="_amount" name="_amount" class="form-control" placeholder="Search By Amount" value="@if(isset($request->_amount)) {{$request->_amount ?? ''}}  @endif">
                     </div>
                   </div>
                   <div class="form-group row">
@@ -101,16 +101,6 @@
 
 
                   <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Sort Order:</label>
-                    <div class="col-sm-10">
-                       <select class=" form-control" name="_asc_desc">
-                        @foreach(asc_desc() AS $key=>$val)
-                            <option value="{{$val}}" @if(isset($request->_asc_desc)) @if($val==$request->_asc_desc) selected @endif @endif >{{$val}}</option>
-                        @endforeach
-                        </select>
-                    </div>
-                  </div>
-                  <div class="form-group row">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Order By:</label>
                     <div class="col-sm-10">
                       @php
@@ -125,7 +115,18 @@
                         </select>
                     </div>
                   </div>
-                     
+                  
+
+                  <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Sort Order:</label>
+                    <div class="col-sm-10">
+                       <select class=" form-control" name="_asc_desc">
+                        @foreach(asc_desc() AS $key=>$val)
+                            <option value="{{$val}}" @if(isset($request->_asc_desc)) @if($val==$request->_asc_desc) selected @endif @endif >{{$val}}</option>
+                        @endforeach
+                        </select>
+                    </div>
+                  </div> 
                          
 
                              

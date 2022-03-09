@@ -20,6 +20,37 @@
   .width_250_px{
   	width: 250px;
   }
+
+    ._nv_th_action{
+      width: 120px;
+  }
+  ._nv_th_id{
+      width: 120px;
+  }
+  ._nv_th_code{
+      width: 120px;
+  }
+  ._nv_th_date{
+      width: 150px;
+  }
+  ._nv_th_type{
+      width:  150px;
+  }
+  ._nv_th_amount{
+      width:  250px;
+  }
+  ._nv_th_ref{
+      width:  250px;
+  }
+  ._nv_th_note{
+      width:  250px;
+  }
+  ._nv_th_branch{
+      width:  150px;
+  }
+  ._nv_th_user{
+      width:  150px;
+  }
 }
 
 @media only screen and (min-width: 768px) {

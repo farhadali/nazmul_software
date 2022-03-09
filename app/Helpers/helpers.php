@@ -79,7 +79,7 @@ if (! function_exists('yes_nos')) {
 if (! function_exists('asc_desc')) {
     function asc_desc()
     {
-        return  ['ASC','DESC'];
+        return  ['DESC','ASC'];
     }
 }
 
@@ -158,14 +158,26 @@ if (! function_exists('prefix_taka')) {
 
 
 
-
+//Database insert formate Date
 
 if (! function_exists('change_date_format')) {
     function change_date_format($_date)
     {
-      return   date(report_date_formate(), strtotime($_date));
+      return   date('Y-m-d', strtotime($_date));
     }
 }
+
+
+
+if (! function_exists('_report_amount')) {
+    function _report_amount($_amount)
+    {
+      return   number_format((float) $_amount ?? 0, default_des(), '.', ',');
+    }
+}
+
+
+
 
 
 if (! function_exists('default_des')) {

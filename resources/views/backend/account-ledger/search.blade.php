@@ -120,7 +120,7 @@
                     @csrf
 
                         <div class="row">
-                          <div class="col-md-2">
+                          <div class="col-md-4">
                             <div class="form-group">
                                 
                                 <select name="limit" class="form-control" onchange="this.form.submit()">
@@ -133,7 +133,7 @@
                           </div>
                           
                           
-                          <div class="col-md-6">
+                          <div class="col-md-8">
                               <div class="form-group">
                                 <div class="d-flex">
                                     <button type="button" class="btn btn-warning mr-3" data-toggle="modal" data-target="#modal-default" title="Advance Search"><i class="fa fa-search mr-2"></i> </button>

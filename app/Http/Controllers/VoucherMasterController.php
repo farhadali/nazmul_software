@@ -33,17 +33,53 @@ class VoucherMasterController extends Controller
     }
      public function index(Request $request)
     {
+
+        //return $ids =  array_map('intval', explode(',', $request->id )); 
+        //return $request->all();
+        
+
         $auth_user = Auth::user();
         $limit = $request->limit ?? default_pagination();
         $_asc_desc = $request->_asc_desc ?? 'DESC';
         $asc_cloumn =  $request->asc_cloumn ?? 'id';
+
         $datas = VoucherMaster::with(['_master_branch','_master_details']);
         $datas = $datas->whereIn('_branch_id',explode(',',\Auth::user()->branch_ids));
         if($auth_user->user_type !='admin'){
-            $datas = $datas->where('_user_id',$auth_user->id);
-            
+            $datas = $datas->where('_user_id',$auth_user->id);   
         }
 
+        if($request->has('_user_date') && $request->_user_date=="yes" && $request->_datex !="" && $request->_datex !=""){
+            $_datex =  change_date_format($request->_datex);
+            $_datey=  change_date_format($request->_datey);
+
+             $datas = $datas->whereDate('_date','<=', $_datex);
+            $datas = $datas->whereDate('_date','>=', $_datey);
+        }
+
+        if($request->has('id') && $request->id !=""){
+            $ids =  array_map('intval', explode(',', $request->id ));
+            $datas = $datas->whereIn('id', $ids); 
+        }
+        
+        if($request->has('_code') && $request->_code !=''){
+            $datas = $datas->where('_code','like',"%trim($request->_code)%");
+        }
+
+        if($request->has('_transection_ref') && $request->_transection_ref !=''){
+            $datas = $datas->where('_transection_ref','like',"%trim($request->_transection_ref)%");
+        }
+        if($request->has('_note') && $request->_note !=''){
+            $datas = $datas->where('_note','like',"%trim($request->_note)%");
+        }
+        if($request->has('_user_name') && $request->_user_name !=''){
+            $datas = $datas->where('_user_name','like',"%trim($request->_user_name)%");
+        }
+        
+        if($request->has('_amount') && $request->_amount !=''){
+            $datas = $datas->where('_amount','=',trim($request->_amount));
+        }
+        
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)
                         ->paginate($limit);
 
@@ -103,6 +139,7 @@ class VoucherMasterController extends Controller
              '_cr_amount' => 'required|array',
             '_voucher_type' => 'required',
             '_branch_id' => 'required',
+           
             '_date' => 'required'
         ]);
 
@@ -190,7 +227,7 @@ class VoucherMasterController extends Controller
             return redirect()->back()->with('success','Information save successfully');
        } catch (\Exception $e) {
            DB::rollback();
-           
+           return redirect()->back();
         }
 
 
@@ -264,19 +301,22 @@ class VoucherMasterController extends Controller
     {
       
 
-        $this->validate($request, [
-             '_ledger_id' => 'required|array',
+        
+
+        $request->validate([
+            '_ledger_id' => 'required|array',
             '_branch_id_detail' => 'required|array',
              '_dr_amount' => 'required|array',
              '_cr_amount' => 'required|array',
             '_voucher_type' => 'required',
             '_branch_id' => 'required',
             '_master_id' => 'required',
+            '_note' => 'required',
             '_date' => 'required'
         ]);
 
 //return $request->all();
-        
+      //return $request->all();  
 
        DB::beginTransaction();
        try {
@@ -386,25 +426,50 @@ class VoucherMasterController extends Controller
 
                     if(empty($Accounts)){
                         $Accounts = new Accounts();
+                        $Accounts->_ref_master_id = $master_id;
+                        $Accounts->_ref_detail_id = $master_detail_id;
+                        $Accounts->_short_narration = $_short_narr[$i] ?? 'N/A';
+                        $Accounts->_narration = $request->_note;
+                        $Accounts->_reference = $request->_transection_ref;
+                        $Accounts->_transaction = 'Account';
+                        $Accounts->_date = change_date_format($request->_date);
+                        $Accounts->_table_name = $request->_form_name;
+                        $Accounts->_account_head = $_account_type_id;
+                        $Accounts->_account_group = $_account_group_id;
+                        $Accounts->_account_ledger = $_ledger_id[$i];
+                        $Accounts->_dr_amount = $_dr_amount[$i] ?? 0;
+                        $Accounts->_cr_amount = $_cr_amount[$i] ?? 0;
+                        $Accounts->_branch_id = $_branch_id_detail[$i] ?? 0;
+                        $Accounts->_cost_center = $_cost_center[$i] ?? 0;
+                        $Accounts->_name =$users->name;
+                        $Accounts->save();
                         
+                    }else{
+                        Accounts::where('_ref_master_id',$master_id)
+                                        ->where('_table_name',$request->_form_name)
+                                        ->where('_ref_detail_id',$master_detail_id)
+                                        ->update( [ 
+                                            '_ref_master_id'=>$master_id,
+                                            '_ref_detail_id'=>$master_detail_id,
+                                            '_short_narration'=>$_short_narr[$i] ?? 'N/A',
+                                            '_narration'=>$request->_note,
+                                            '_reference'=>$request->_transection_ref,
+                                            '_transaction'=>'Account',
+                                            '_date'=>change_date_format($request->_date),
+                                            '_table_name'=>$request->_form_name,
+                                            '_account_head'=>$_account_type_id,
+                                            '_account_group'=>$_account_group_id,
+                                            '_account_ledger'=>$_ledger_id[$i],
+                                            '_dr_amount'=>$_dr_amount[$i] ?? 0,
+                                            '_cr_amount'=>$_cr_amount[$i] ?? 0,
+                                            '_branch_id'=>$_branch_id_detail[$i] ?? 0,
+                                            '_cost_center'=>$_cost_center[$i] ?? 0,
+                                            '_name'=>$users->name ?? 0
+
+                                              ] );
+                       //return $Accounts ; 
                     }
-                    $Accounts->_ref_master_id = $master_id;
-                    $Accounts->_ref_detail_id = $master_detail_id;
-                    $Accounts->_short_narration = $_short_narr[$i] ?? 'N/A';
-                    $Accounts->_narration = $request->_note;
-                    $Accounts->_reference = $request->_transection_ref;
-                    $Accounts->_transaction = 'Account';
-                    $Accounts->_date = change_date_format($request->_date);
-                    $Accounts->_table_name = $request->_form_name;
-                    $Accounts->_account_head = $_account_type_id;
-                    $Accounts->_account_group = $_account_group_id;
-                    $Accounts->_account_ledger = $_ledger_id[$i];
-                    $Accounts->_dr_amount = $_dr_amount[$i] ?? 0;
-                    $Accounts->_cr_amount = $_cr_amount[$i] ?? 0;
-                    $Accounts->_branch_id = $_branch_id_detail[$i] ?? 0;
-                    $Accounts->_cost_center = $_cost_center[$i] ?? 0;
-                    $Accounts->_name =$users->name;
-                    $Accounts->save();
+                    
                     
                     
 
@@ -418,7 +483,7 @@ class VoucherMasterController extends Controller
             return redirect()->back()->with('success','Information save successfully');
        } catch (\Exception $e) {
            DB::rollback();
-           
+            return redirect()->back()->with('error','Something Went Wrong');;
         }
     }
 
