@@ -15,6 +15,7 @@ use App\Http\Controllers\CostCenterController;
 use App\Http\Controllers\StoreHouseController;
 use App\Http\Controllers\AccountLedgerController;
 use App\Http\Controllers\VoucherMasterController;
+use App\Http\Controllers\AccountReportController;
 
 
 
@@ -79,6 +80,10 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('voucher/print/{id}', 'App\Http\Controllers\VoucherMasterController@voucherPrint');
     Route::get('voucher-main-print', 'App\Http\Controllers\VoucherMasterController@voucherMainPrint');
     Route::get('voucher-detail-print', 'App\Http\Controllers\VoucherMasterController@voucherDetailPrint');
+
+
+    Route::get('ledger-report','App\Http\Controllers\AccountReportController@ledgerReprt');
+    Route::get('ledger-report-show','App\Http\Controllers\AccountReportController@ledgerReprtShow');
 
 
 

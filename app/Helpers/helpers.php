@@ -139,6 +139,15 @@ if (! function_exists('report_date_formate')) {
     }
 }
 
+if (! function_exists('_view_date_formate')) {
+    function _view_date_formate($_date)
+    {
+        date('d-m-Y', strtotime($_date));
+    }
+}
+
+
+
 if (! function_exists('voucher_code_to_name')) {
     function voucher_code_to_name($value)
     {

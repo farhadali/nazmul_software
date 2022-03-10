@@ -185,7 +185,7 @@ $(document).on('keyup','._search_ledger_id',delay(function(e){
   var _gloabal_this = $(this);
 
   var _text_val = $(this).val().trim();
-
+console.log($(this).val());
 
   var request = $.ajax({
       url: "{{url('ledger-search')}}",
@@ -199,7 +199,7 @@ $(document).on('keyup','._search_ledger_id',delay(function(e){
       var search_html =``;
       
       var data = result.data; 
-      
+      console.log(data)
       if(data.length > 0 ){
         
             search_html +=`<div class="card"><table style="width: 300px;">
