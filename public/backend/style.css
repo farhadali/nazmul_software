@@ -125,7 +125,8 @@ input[type="number"] {
 .message-area{
     width: 95%;
     margin: 0px auto;
-    height: 63px;
+    max-height: 63px;
+    min-height: 10px;
 }
 
 ._nv_th_action{

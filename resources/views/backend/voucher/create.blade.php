@@ -341,6 +341,7 @@
 
     }else if(_voucher_type ==""){
        $(document).find('._voucher_type').focus().addClass('required_border');
+       alert('Please Select Voucher Type.');
       return false;
     }else if(_note ==""){
        
