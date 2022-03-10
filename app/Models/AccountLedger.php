@@ -26,5 +26,9 @@ class AccountLedger extends Model
     	return $this->hasOne(Accounts::class,'_account_ledger','id');
     }
 
+    public function _entry_branch(){
+        return $this->hasOne(Branch::class,'id','_branch_id')->select('id','_name');
+    }
+
 
 }
