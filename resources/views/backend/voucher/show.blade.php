@@ -105,8 +105,8 @@
             <td>{!! $detail->_detail_branch->_name ?? '' !!}</td>
             <td>{!! $detail->_detail_cost_center->_name ?? '' !!}</td>
             <td>{!! $detail->_short_narr ?? '' !!}</td>
-            <td class="text-right" >{!! number_format((float) $detail->_dr_amount ?? 0, default_des(), '.', '') !!}</td>
-            <td class="text-right" >{!! number_format((float) $detail->_cr_amount ?? 0, default_des(), '.', '')!!}</td>
+            <td class="text-right" >{!! _report_amount( $detail->_dr_amount ) !!}</td>
+            <td class="text-right" >{!! _report_amount( $detail->_cr_amount ) !!}</td>
              
           </tr>
           @empty
@@ -116,8 +116,8 @@
           <tfoot>
             <tr>
               <th colspan="5" class="text-right">Total:</th>
-              <th class="text-right" >{!! number_format((float) $data->_amount ?? 0, default_des(), '.', '')!!}</th>
-              <th class="text-right" >{!! number_format((float) $data->_amount ?? 0, default_des(), '.', '')!!}</th>
+              <th class="text-right" >{!! _report_amount( $data->_amount ?? 0 )!!}</th>
+              <th class="text-right" >{!! _report_amount( $data->_amount ?? 0 )!!}</th>
             </tr>
           </tfoot>
         </table>
