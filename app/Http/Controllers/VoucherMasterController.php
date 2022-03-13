@@ -149,6 +149,7 @@ class VoucherMasterController extends Controller
        DB::beginTransaction();
        try {
 
+            $_print_value = $request->_print ?? 0;
             $users = Auth::user();
             // Voucher Master Data Insert
             $VoucherMaster = new VoucherMaster();
@@ -224,7 +225,7 @@ class VoucherMasterController extends Controller
            
 
            DB::commit();
-            return redirect()->back()->with('success','Information save successfully');
+            return redirect()->back()->with('success','Information save successfully')->with('_master_id',$master_id)->with('_print_value',$_print_value);
        } catch (\Exception $e) {
            DB::rollback();
            return redirect()->back();

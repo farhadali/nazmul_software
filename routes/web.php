@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\AccountGroup;
+use App\Models\AccountLedger;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
@@ -82,17 +83,20 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('voucher-detail-print', 'App\Http\Controllers\VoucherMasterController@voucherDetailPrint');
 
 
+    //Account Report Section 
     Route::get('ledger-report','App\Http\Controllers\AccountReportController@ledgerReprt');
     Route::get('ledger-report-show','App\Http\Controllers\AccountReportController@ledgerReprtShow');
+    Route::get('group-ledger','App\Http\Controllers\AccountReportController@groupLedger');
+    Route::post('group-base-ledger-report','App\Http\Controllers\AccountReportController@groupBaseLedgerReport');
+    Route::get('group-base-ledger-filter-reset','App\Http\Controllers\AccountReportController@groupBaseLedgerFilterReset');
 
 
-
-    Route::get('type_base_group',function(Request $request){
-        $account_groups = AccountGroup::where('_account_head_id',$request->id)->orderBy('_name','asc')->get();
-        return view('backend.account-ledger.type_base_group',compact('account_groups'));
-    });
-
+    
+    //Searching section 
     Route::any('ledger-search','App\Http\Controllers\AccountLedgerController@ledger_search');
+    Route::any('type_base_group','App\Http\Controllers\AccountLedgerController@type_base_group');
+    Route::any('group-base-ledger','App\Http\Controllers\AccountLedgerController@groupBaseLedger');
+    
 
     
 

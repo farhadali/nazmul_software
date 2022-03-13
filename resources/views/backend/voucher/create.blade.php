@@ -180,6 +180,18 @@
                                      <label class="mr-2" for="_note">Note:<span class="_required">*</span></label>
                                   </div>
                                   <div class="col-md-11">
+                                    @if ($_print = Session::get('_print_value'))
+                                     <input type="hidden" name="_after_print" value="{{$_print}}" class="_after_print" >
+                                    @else
+                                    <input type="hidden" name="_after_print" value="0" class="_after_print" >
+                                    @endif
+                                    @if ($_master_id = Session::get('_master_id'))
+                                     <input type="hidden" name="_master_id" value="{{url('voucher/print')}}/{{$_master_id}}" class="_master_id">
+                                    
+                                    @endif
+                                   
+                                       <input type="hidden" name="_print" value="0" class="_save_and_print_value">
+
                                     <input type="text" id="_note"  name="_note" class="form-control _note" value="{{old('_note')}}" placeholder="Note" required >
                                   </div>
                                 </div>
@@ -189,12 +201,13 @@
                         
                        
                        
-                        <div class="col-xs-8 col-sm-8 col-md-8 ">
+                        <div class="col-xs-6 col-sm-6 col-md-6 ">
                            <!--  <button type="submit" class="btn btn-primary submit-button">Submit</button> -->
                         </div>
                        
-                        <div class="col-xs-3 col-sm-3 col-md-3 text-right">
+                        <div class="col-xs-6 col-sm-6 col-md-6 text-right">
                             <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
+                            <button type="submit" class="btn btn-warning submit-button _save_and_print"><i class="fa fa-print mr-2" aria-hidden="true"></i> Save & Print</button>
                         </div>
                         <br><br>
                     </div>
@@ -219,7 +232,21 @@
 @section('script')
 
 <script type="text/javascript">
-  var default_date_formate = `{{default_date_formate()}}`
+  var default_date_formate = `{{default_date_formate()}}`;
+  var _after_print = $(document).find("._after_print").val();
+  var _master_id = $(document).find("._master_id").val();
+  if(_after_print ==1){
+      var open_new = window.open(_master_id, '_blank');
+      if (open_new) {
+          //Browser has allowed it to be opened
+          open_new.focus();
+      } else {
+          //Browser has blocked it
+          alert('Please allow popups for this website');
+      }
+  }
+
+
  var single_row =  `<tr class="_voucher_row">
                       <td><a  href="" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a></td>
                       <td><input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger">
@@ -310,6 +337,10 @@
     $(document).find('._note').removeClass('required_border');
   })
 
+  $(document).on('click','._save_and_print',function(){
+    $(document).find('._save_and_print_value').val(1);
+  })
+
 
   $(document).on('click','.submit-button',function(event){
     event.preventDefault();
@@ -355,6 +386,11 @@
       $(document).find('.voucher-form').submit();
     }
   })
+
+
+
+
+ 
 
 $(".datetimepicker-input").val(date__today())
 

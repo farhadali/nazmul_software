@@ -27,8 +27,11 @@
                   </div>
                   <div class="_new_button_area">
                     <div class="d-flex right_float">
+                       @can('voucher-create')
+                        <a title="Add New" class="btn  btn-success  mr-3" href="{{ route('voucher.create') }}"> <i class=" fa fa-plus"></i> </a>
+                      @endcan
                       @can('voucher-edit')
-                                    <a title="Edit" class="btn btn-sm btn-default  mr-3" href="{{ route('voucher.edit',$data->id) }}">
+                                    <a title="Edit" class="btn  btn-default  mr-3" href="{{ route('voucher.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
                                     </a>
                       @endcan
@@ -52,7 +55,7 @@
       <div class="col-12">
         <h2 class="page-header">
            <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
-          <small class="float-right">Date: {{ change_date_format($data->_date ?? '') }}</small>
+          <small class="float-right">Date: {{ _view_date_formate($data->_date ?? '') }}</small>
         </h2>
       </div>
       <!-- /.col -->

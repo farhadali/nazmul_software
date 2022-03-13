@@ -10,48 +10,77 @@
           <div class="card">
             <div class="card-header">
                 <h4>{{ $page_name ?? '' }}</h4>
+                @if (count($errors) > 0)
+           <div class="alert alert-danger">
+                <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+                </ul>
+            </div>
+        @endif
             </div>
           
          
             <div class="card-body" style="width: 350px;margin:0px auto;margin-bottom: 20px;">
-               <form target="_blank" action="{{url('ledger-report-show')}}" method="GET">
+               <form target="__blank" action="{{url('group-base-ledger-report')}}" method="POST">
                 @csrf
                     <div class="row">
                       <label>Start Date:</label>
                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                      <input type="text" name="_datex" class="form-control datetimepicker-input" data-target="#reservationdate" required />
+                                      <input type="text" name="_datex" class="form-control datetimepicker-input" data-target="#reservationdate" required @if(isset($previous_filter["_datex"])) value='{{$previous_filter["_datex"] }}' @endif  />
                                       <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                       </div>
-                                  </div>
+                              @if(isset($previous_filter["_datex"]))
+                              <input type="hidden" name="_old_filter" class="_old_filter" value="1">
+                              @else
+                              <input type="hidden" name="_old_filter" class="_old_filter" value="0">
+                              @endif
+                        </div>
                     </div>
                     <div class="row">
                       <label>End Date:</label>
                         <div class="input-group date" id="reservationdate_2" data-target-input="nearest">
-                                      <input type="text" name="_datey" class="form-control datetimepicker-input_2" data-target="#reservationdate_2" required />
+                                      <input type="text" name="_datey" class="form-control datetimepicker-input_2" data-target="#reservationdate_2" required @if(isset($previous_filter["_datey"])) value='{{$previous_filter["_datey"] }}' @endif  />
                                       <div class="input-group-append" data-target="#reservationdate_2" data-toggle="datetimepicker">
                                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                       </div>
                                   </div>
                     </div>
                     <div class="row">
-                      <label>Ledger:</label><br>
-                      
-
-                    </div>
+                      <label>Ledger Group:</label><br> </div>
                      <div class="row">
-                         <input type="text" name="_search_ledger_id" class="form-control _search_ledger_id_ledger " placeholder="Ledger" required>
-                          <input type="hidden" name="_ledger_id" class="form-control _ledger_id" >
-                          <div class="search_box _filter_ledger_search_display" >
-                            
-                          </div>
+                         <select id="_account_group_id" class="form-control _account_group_id" name="_account_group_id[]" multiple size='8' required>
+                           @forelse($account_groups as $group)
+                           <option value="{{$group->id}}"
+            @if(isset($previous_filter["_account_group_id"]))
+                  @if(in_array($group->id,$previous_filter["_account_group_id"])) selected @endif
+            @endif
+                             >{{$group->_name}}</option>
+                           @empty
+                           @endforelse
+                         </select>
                      </div>
-                     <div class="row mt-5">
+                     <div class="row">
+                      <label>Ledger:</label><br></div>
+                     <div class="row">
+                         <select id="_account_ledger_id" class="form-control _account_ledger_id" name="_account_ledger_id[]" multiple size='8'>
+                          @if(isset($request->_account_ledger_id)  )
+                           @forelse($account_groups as $group)
+                           <option value="{{$group->id}}">{{$group->_name}}</option>
+                           @empty
+                           @endforelse
+                          @endif
+                         </select>
+                     </div>
+                     <div class="row mt-3">
                          <div class="col-xs-6 col-sm-6 col-md-6 ">
                             <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Report</button>
                         </div>
                          <div class="col-xs-6 col-sm-6 col-md-6 ">
-                                     <a href="{{url('ledger-report')}}" class="btn btn-danger form-control" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
+                                     <a href="{{url('group-base-ledger-filter-reset')}}" class="btn btn-danger form-control" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
                         </div>
                         <br><br>
                      </div>
@@ -74,6 +103,8 @@
 
 <script type="text/javascript">
 
+
+ 
     $(function () {
 
      var default_date_formate = `{{default_date_formate()}}`
@@ -85,9 +116,14 @@
      $('#reservationdate_2').datetimepicker({
         format:default_date_formate
     });
+
+     var _old_filter = $(document).find("._old_filter").val();
+     if(_old_filter==0){
+        $(".datetimepicker-input").val(date__today())
+        $(".datetimepicker-input_2").val(date__today())
+     }
      
-     $(".datetimepicker-input").val(date__today())
-    $(".datetimepicker-input_2").val(date__today())
+     
 
 
      function date__today(){
@@ -107,12 +143,41 @@
 
   })
 
+    var _account_group_ids = $(document).find('._account_group_id').val();
+    if(_account_group_ids.length > 0){
+      _nv_group_base_ledger(_account_group_ids);
+    }
+
+  $(document).find('#_account_group_id').on('change',function(){
+    var _account_group_id = $(this).val();
+    
+      _nv_group_base_ledger(_account_group_id);
+    
+  })
+
+  function _nv_group_base_ledger(_account_group_id){
+    var request = $.ajax({
+        url: "{{url('group-base-ledger')}}",
+        method: "GET",
+        data: { _account_group_id : _account_group_id },
+        dataType: "HTML"
+      });
+    request.done(function( result ) {
+      $("#_account_ledger_id").html(result);
+      });
+       
+      request.fail(function( jqXHR, textStatus ) {
+       console.log(textStatus)
+      });
+  }
+
+
+
+
 $(document).on('keyup','._search_ledger_id_ledger',delay(function(e){
   var _gloabal_this = $(this);
 
   var _text_val = $(this).val().trim();
-console.log($(this).val());
-
   var request = $.ajax({
       url: "{{url('ledger-search')}}",
       method: "GET",
@@ -128,7 +193,7 @@ console.log($(this).val());
       console.log(data)
       if(data.length > 0 ){
         
-            search_html +=`<div class="card"><table class="_filter_ledger_search_table">
+            search_html +=`<div class="card"><table class="_filter_ledger_search_table" >
                             <tbody>`;
                         for (var i = 0; i < data.length; i++) {
                          search_html += `<tr class="search_row _ledger_search_row" >

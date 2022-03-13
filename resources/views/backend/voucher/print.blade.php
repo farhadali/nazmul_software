@@ -22,7 +22,7 @@
       <div class="col-12">
         <h2 class="page-header">
            <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
-          <small class="float-right">Date: {{ change_date_format($data->_date ?? '') }}</small>
+          <small class="float-right">Date: {{ _view_date_formate($data->_date ?? '') }}</small>
         </h2>
       </div>
       <!-- /.col -->

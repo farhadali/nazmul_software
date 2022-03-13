@@ -87,8 +87,10 @@ class AccountLedgerController extends Controller
         $text_val = $request->_text_val;
         $datas = AccountLedger::select('id','_name','_code')->where('_status',1);
          if($request->has('_text_val') && $request->_text_val !=''){
-            $datas = $datas->where('_name','like',"%$request->_text_val%");
+            $datas = $datas->where('_name','like',"%$request->_text_val%")
+            ->orWhere('id','like',"%$request->_text_val%");
         }
+        
         
         
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
@@ -225,4 +227,23 @@ class AccountLedgerController extends Controller
         
         
     }
+
+
+
+public function type_base_group(Request $request){
+        $account_groups = AccountGroup::where('_account_head_id',$request->id)->orderBy('_name','asc')->get();
+        return view('backend.account-ledger.type_base_group',compact('account_groups'));
+}
+
+public function groupBaseLedger(Request $request){
+        
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)->select('id','_name')->get();
+        
+
+       
+        return view('backend.account-ledger.group_base_ledger',compact('data'));
+}
+
+
+
 }

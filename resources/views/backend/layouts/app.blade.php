@@ -51,6 +51,7 @@
 
 <body class="hold-transition sidebar-mini sidebar-collapse">
 <div class="wrapper">
+  <div class="ajax_loader"><h5 class="loading_text">Loading.....</span></div>
   <!-- Navbar -->
   @include('backend.layouts.navbar')
   <!-- /.navbar -->

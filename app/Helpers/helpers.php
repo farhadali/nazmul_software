@@ -142,7 +142,7 @@ if (! function_exists('report_date_formate')) {
 if (! function_exists('_view_date_formate')) {
     function _view_date_formate($_date)
     {
-        date('d-m-Y', strtotime($_date));
+       return date('d-m-Y', strtotime($_date));
     }
 }
 
@@ -209,6 +209,17 @@ if (! function_exists('_last_balance')) {
     function _last_balance($ledger)
     {
       return \DB::select(' select SUM(_dr_amount-_cr_amount) as _balance from accounts where _account_ledger="'.$ledger.'" ');
+    }
+}
+
+
+if (! function_exists(' nv_number_to_text')) {
+    function  nv_number_to_text($amount)
+    {
+
+        $digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+        return prefix_taka().".  ".$digit->format($amount ?? 0)." Only."; 
+        
     }
 }
 

@@ -137,6 +137,37 @@
               
             </ul>
           </li>
+          <li class="nav-item {{ Route::is('ledger-report.*') || Route::is('group-ledger.*') ? 'menu-is-opening menu-open' : '' }}">
+            <a href="#" class="nav-link {{ Route::is('ledger-report.*') || Route::is('group-ledger.*')    ? 'active' : '' }}">
+             
+              <i class="fa fa-file nav-icon" aria-hidden="true"></i>
+
+              <p>
+                Accounts Report
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+             @can('ledger-report')
+              <li class="nav-item">
+                <a href="{{url('ledger-report')}}" class="nav-link {{Route::is('ledger-report.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-id-card nav-icon"></i>
+                  <p>Ledger Statement</p>
+                </a>
+              </li>
+              @endcan
+             @can('group-ledger')
+              <li class="nav-item">
+                <a href="{{url('group-ledger')}}" class="nav-link {{Route::is('group-ledger.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-id-card nav-icon"></i>
+                  <p>Group Ledger Statement</p>
+                </a>
+              </li>
+              @endcan
+             
+              
+            </ul>
+          </li>
           
          
          

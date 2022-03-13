@@ -38,6 +38,9 @@
                   </div>
                   <div class="col-md-6 ">
                     <div class="d-flex right" style="float: right;">
+                        @can('voucher-create')
+                        <a title="Add New" class="btn btn-success mr-3" href="{{ route('voucher.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                        @endcan
                         @can('voucher-print')
                         
                            <a class="btn btn-default mr-3" href="{{ route('voucher.show',$data->id) }}">

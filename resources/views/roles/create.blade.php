@@ -87,9 +87,11 @@
                               </div>
                             
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                            <button type="submit" class="btn btn-primary submit-button">Submit</button>
-                        </div>
+                        
+                        
+                    </div>
+                    <div class="row submit-button_row">
+                      <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
                     </div>
                     {!! Form::close() !!}
                 

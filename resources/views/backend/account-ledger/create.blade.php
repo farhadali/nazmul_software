@@ -48,7 +48,7 @@
                        <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <strong>Account Type: <span class="_required">*</span></strong>
-                               <select class="form-control _account_head_id" name="_account_head_id" required>
+                               <select type_base_group="{{url('type_base_group')}}" class="form-control _account_head_id" name="_account_head_id" required>
                                   <option value="">--Select Account Type--</option>
                                   @forelse($account_types as $account_type )
                                   <option value="{{$account_type->id}}" @if(isset($request->_account_head_id)) @if($request->_account_head_id == $account_type->id) selected @endif   @endif>{{ $account_type->id ?? '' }}-{{ $account_type->_name ?? '' }}</option>

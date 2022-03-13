@@ -48,7 +48,7 @@
       <div class="col-sm-4 invoice-col">
         <h3 class="text-center"><b>Ledger Report</b></h3>
         <h5 class="text-center"><b>{!! $ledger_info->_name ?? '' !!}</b></h5>
-        <h5 class="text-center"><small>Date: {{ change_date_format($request->_datex ?? '') }} To {{ change_date_format($request->_datey ?? '') }}</small></h5>
+        <h5 class="text-center"><small>Date: {{ _view_date_formate($request->_datex ?? '') }} To {{ _view_date_formate($request->_datey ?? '') }}</small></h5>
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col text-right">
@@ -69,7 +69,7 @@
           <thead>
           <tr>
             <th style="width: 6%;">Date</th>
-            <th style="width: 9%;">Voucher NO.</th>
+            <th style="width: 9%;">ID</th>
             <th style="width: 25%;">Narration</th>
             <th style="width: 25%;">Short Narration</th>
             <th style="width: 10%;" class="text-right" >Dr. Amount</th>
@@ -101,7 +101,7 @@
             <td>{!! $detail->_date !!}</td>
             @if($detail->_table_name=="voucher_masters")
             <td class="text-center"> <a target="__blank" href="{{ route('voucher.edit',$detail->_ref_master_id) }}">
-              {!! $detail->_ref_master_id ?? '' !!}</a>
+              A-{!! $detail->_ref_master_id ?? '' !!}</a>
             </td>
             @else
              <td>  </td>
@@ -125,7 +125,8 @@
           </tbody>
           <tfoot>
             <tr>
-              <th style="background-color: rgba(0,0,0,.05);" colspan="5" class="text-center">Closing Balance:</th>
+              <th style="background-color: rgba(0,0,0,.05);" colspan="4" class="text-center">Closing Balance:</th>
+              <th style="background-color: rgba(0,0,0,.05);"  class="text-center"></th>
               <th style="background-color: rgba(0,0,0,.05);" class="text-right" >{!! _report_amount( $balance) !!}</th>
               <th style="background-color: rgba(0,0,0,.05);" class="text-right" >{!! _report_amount( $balance) !!}</th>
             </tr>
@@ -139,11 +140,8 @@
     <div class="row">
       <!-- accepted payments column -->
       <div class="col-12">
-        @php
-        $digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
-
-        @endphp
-        <p class="lead"> <b>In Words: {{ prefix_taka() }}. {{ $digit->format($balance ?? 0) }}. </b></p>
+        
+        <p> In Words: {{ nv_number_to_text($balance ?? 0) }} </p>
         
       </div>
       <!-- /.col -->
