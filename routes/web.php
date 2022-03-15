@@ -93,6 +93,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::any('trail-balance','App\Http\Controllers\AccountReportController@trailBalance');
     Route::any('trail-balance-report','App\Http\Controllers\AccountReportController@trailBalanceReport');
     Route::get('trail-balance-filter-reset','App\Http\Controllers\AccountReportController@trailBalanceReportFilterReset');
+    Route::get('income-statement','App\Http\Controllers\AccountReportController@incomeStatement');
+    Route::get('income-statement-report','App\Http\Controllers\AccountReportController@incomeStatementReport');
 
     
     //Searching section 

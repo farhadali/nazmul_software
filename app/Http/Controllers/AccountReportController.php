@@ -35,39 +35,52 @@ class AccountReportController extends Controller
     	 $this->validate($request, [
             '_datex' => 'required',
             '_datey' => 'required',
-            '_branch_id' => 'required',
-            '_cost_center' => 'required',
             '_ledger_id' => 'required'
         ]);
         $_datex =  change_date_format($request->_datex);
         $_datey=  change_date_format($request->_datey);
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+
+        $_branch_ids = array();
+        if($request->has('_branch_id')){
+            $_branch_ids = $request->_branch_id;
+        }else{
+           foreach ($permited_branch as $branch) {
+                    array_push($_branch_ids, $branch->id);
+                } 
+        }
+
+        $_cost_center_ids=array();
+        if($request->has('_cost_center')){
+             $_cost_center_ids = $request->_cost_center;
+        }else{
+            foreach ($permited_costcenters as $cost_center) {
+                    array_push($_cost_center_ids, $cost_center->id);
+                }
+        }
+                
+
 
        session()->put('ledgerReprtFilter', $request->all());
         $previous_filter= Session::get('ledgerReprtFilter');
 
         $balance = DB::table('accounts')
                     ->where('accounts._account_ledger','=',$request->_ledger_id)
-                    ->whereDate('accounts._date','<' ,$_datex);
-            if($request->has('_branch_id')){
-                $balance =$balance->whereIn('accounts._branch_id' ,$request->_branch_id);
-            }
-            if($request->has('_cost_center')){
-                $balance =$balance->whereIn('accounts._cost_center' ,$request->_cost_center);
-            }
-            $balance =$balance->select(DB::raw('sum(accounts._dr_amount) as _opening_dr_amount'), DB::raw('sum(accounts._cr_amount) as _opening_cr_amount'))
+                    ->whereDate('accounts._date','<' ,$_datex)
+                    ->whereIn('accounts._branch_id' ,$_branch_ids)
+                    ->whereIn('accounts._cost_center' ,$_cost_center_ids)
+                    ->select(DB::raw('sum(accounts._dr_amount) as _opening_dr_amount'), DB::raw('sum(accounts._cr_amount) as _opening_cr_amount'))
                     ->first();
 
          $ledger_details = DB::table('accounts')
                         ->where('accounts._account_ledger','=',$request->_ledger_id)
                        ->whereDate('accounts._date', '>=', $_datex)
-                        ->whereDate('accounts._date', '<=', $_datey);
-                if($request->has('_branch_id')){
-                    $ledger_details =$ledger_details->whereIn('accounts._branch_id' ,$request->_branch_id);
-                }
-                if($request->has('_cost_center')){
-                    $ledger_details =$ledger_details->whereIn('accounts._cost_center' ,$request->_cost_center);
-                }
-            $ledger_details =$ledger_details->get();
+                        ->whereDate('accounts._date', '<=', $_datey)
+                        ->whereIn('accounts._branch_id' ,$_branch_ids)
+                        ->whereIn('accounts._cost_center' ,$_cost_center_ids)
+                        ->get();
                   
          $ledger_info = AccountLedger::with(['account_type','account_group','_entry_branch'])->find($request->_ledger_id);
     	$page_name = "Ledger Report";
@@ -102,7 +115,10 @@ class AccountReportController extends Controller
         session()->put('groupBaseLedgerReportFilter', $request->all());
         $previous_filter= Session::get('groupBaseLedgerReportFilter');
         $page_name = "Group Ledger Statement";
-        //return $request->all();
+        
+       $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
         $datas=[];
          $_datex =  change_date_format($request->_datex);
         $_datey=  change_date_format($request->_datey);
@@ -132,6 +148,7 @@ class AccountReportController extends Controller
             }
         }
 
+        //check branch id is available 
          $_branch_ids = array();
          $_branch_id = $request->_branch_id ?? [];
          if(sizeof($_branch_id) > 0){
@@ -139,8 +156,13 @@ class AccountReportController extends Controller
                 array_push($_branch_ids, (int) $value);
             }
         }else{
-            array_push($_branch_ids, 1);
+            //if branch id is not selected then defalut branch id wise filter
+            foreach ($permited_branch as $branch) {
+                    array_push($_branch_ids, $branch->id);
+                }
         }
+
+        //check cost center id is available 
          $_cost_center_ids=array();
          $_cost_center_id = $request->_cost_center ?? [];
           if(sizeof($_cost_center_id) > 0){
@@ -148,8 +170,14 @@ class AccountReportController extends Controller
                 array_push($_cost_center_ids, (int) $value);
             }
         }else{
-            array_push($_cost_center_ids, 1);
+             //if cost center id is not selected then defalut cost center id wise filter
+           foreach ($permited_costcenters as $cost_center) {
+                array_push($_cost_center_ids, $cost_center->id);
+            }
         }
+
+
+
 
       $ledger_id_rows = implode(',', $ledger_ids);
       $_branch_ids_rows = implode(',', $_branch_ids);
@@ -179,9 +207,6 @@ class AccountReportController extends Controller
            $group_array_values[$value->_group_name][$value->_l_name][]=$value;
        }
 
-       $users = Auth::user();
-        $permited_branch = permited_branch(explode(',',$users->branch_ids));
-        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
 
         //return $group_array_values;
         return view('backend.account-report.group_ledger_report',compact('request','page_name','group_array_values','basic_information','_datex','_datey','previous_filter','permited_branch','permited_costcenters'));
@@ -224,10 +249,13 @@ class AccountReportController extends Controller
         session()->put('trailBalanceReportFilter', $request->all());
         $previous_filter= Session::get('trailBalanceReportFilter');
         $page_name = "Trail Balance";
-        //return $request->all();
+       
         $datas=[];
          $_datex =  change_date_format($request->_datex);
         $_datey=  change_date_format($request->_datey);
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
 
         $group_ids = array();
         $_account_groups = $request->_account_group_id ?? [];
@@ -261,8 +289,13 @@ class AccountReportController extends Controller
                 array_push($_branch_ids, (int) $value);
             }
         }else{
-            array_push($_branch_ids, 1);
+                foreach ($permited_branch as $branch) {
+                    array_push($_branch_ids, $branch->id);
+                }
+            
         }
+
+
          $_cost_center_ids=array();
          $_cost_center_id = $request->_cost_center ?? [];
           if(sizeof($_cost_center_id) > 0){
@@ -270,7 +303,10 @@ class AccountReportController extends Controller
                 array_push($_cost_center_ids, (int) $value);
             }
         }else{
-            array_push($_cost_center_ids, 1);
+            foreach ($permited_costcenters as $cost_center) {
+                array_push($_cost_center_ids, $cost_center->id);
+            }
+            
         }
 
       $ledger_id_rows = implode(',', $ledger_ids);
@@ -307,9 +343,7 @@ class AccountReportController extends Controller
 
      //  return $group_array_values;
 
-       $users = Auth::user();
-        $permited_branch = permited_branch(explode(',',$users->branch_ids));
-        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+       
 
         //return $group_array_values;
         return view('backend.account-report.trail-balance-report',compact('request','page_name','group_array_values','basic_information','_datex','_datey','previous_filter','permited_branch','permited_costcenters'));
@@ -319,6 +353,28 @@ class AccountReportController extends Controller
         Session::flash('trailBalanceReportFilter');
 
         return redirect()->back();
+    }
+
+
+    public function incomeStatement(Request $request){
+        $previous_filter= Session::get('incomeStatementFillter');
+        $page_name = "Income Statement";
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+         
+        return view('backend.account-report.income-statement',compact('request','page_name','previous_filter','permited_branch','permited_costcenters'));
+    }
+
+
+    public function incomeStatementReport(Request $request){
+        $previous_filter= Session::get('incomeStatementFillter');
+        $page_name = "Income Statement";
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+         
+        return view('backend.account-report.income-statement-report',compact('request','page_name','previous_filter','permited_branch','permited_costcenters'));
     }
 
 

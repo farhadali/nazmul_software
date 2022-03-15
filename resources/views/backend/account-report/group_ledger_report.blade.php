@@ -23,25 +23,34 @@
     <!-- info row -->
     <div class="row invoice-info">
       <div class="col-sm-4 invoice-col">
-        
-        
-      </div>
-      <!-- /.col -->
-      <div class="col-sm-4 invoice-col">
-        <h2 class="page-header text-center">
-           <!-- <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> --> {{$settings->name ?? '' }}
+        <h2 class="page-header text-left">
+           <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
           <small class="float-right"></small>
         </h2>
-        <address class="text-center">
+        <address class="text-left ml-5">
           <strong>{{$settings->_address ?? '' }}</strong><br>
           {{$settings->_phone ?? '' }}<br>
           {{$settings->_email ?? '' }}<br>
         </address>
-        <h3 class="text-center"><b>Group Ledger Report</b></h3>
+        
+      </div>
+      <!-- /.col -->
+      <div class="col-sm-4 invoice-col">
+         <h3 class="text-center"><b>{{$page_name}}</b></h3>
+        <p class="text-center"><strong>Date:{{ $previous_filter["_datex"] ?? '' }} To {{ $previous_filter["_datey"] ?? '' }}</strong><br>
+         
+        @foreach($permited_branch as $p_branch)
+                      @if(isset($previous_filter["_branch_id"]))
+                        @if(in_array($p_branch->id,$previous_filter["_branch_id"])) 
+                       <span style="background: #f4f6f9;margin-right: 2px;padding: 5px;"><b>{{ $p_branch["_name"] }}</b></span>    
+                        @endif
+                      @endif
+                      @endforeach
+       
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col text-right">
-
+        <p class="text-right">Print: {{date('d-m-Y H:s:a')}}</p>
       </div>
       <!-- /.col -->
     </div>
@@ -153,15 +162,30 @@
 
             @empty
             @endforelse
-          
-          </tbody>
-          <tfoot>
             <tr>
               
                 <td colspan="4" style="text-align: left;background: #f5f9f9;"> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<b>Grand Total </b> </td>
                 <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_dr_grand_total) }}</b> </td>
                 <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_cr_grand_total) }}</b> </td>
                 <td style="text-align: right;background: #f5f9f9;"> <b>{{_show_amount_dr_cr(_report_amount($_dr_grand_total-$_cr_grand_total)) }}</b> </td>
+            </tr>
+          
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="7">
+                <div class="col-12 mt-5">
+                  <div class="row">
+                    <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>
+                    <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Prepared By</span></div>
+                    <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Checked By</span></div>
+                    <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;"> Approved By</span></div>
+                  </div>
+
+                    
+                 
+                </div>
+              </td>
             </tr>
           </tfoot>
         </table>
@@ -170,27 +194,7 @@
     </div>
     <!-- /.row -->
 
-    <div class="row">
-      <!-- accepted payments column -->
-      <div class="col-12">
-        
-        
-        
-      </div>
-      <!-- /.col -->
-      <div class="col-12 mt-5">
-        <div class="row">
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Prepared By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Checked By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;"> Approved By</span></div>
-        </div>
-
-          
-       
-      </div>
-      <!-- /.col -->
-    </div>
+    
     <!-- /.row -->
   </section>
 

@@ -66,6 +66,7 @@ class AccountGroupController extends Controller
         $data->_details = $request->_details ?? '';
         $data->_account_head_id  = $request->_account_head_id ?? '';
         $data->_parent_id  = $request->_parent_id ?? 0;
+        $data->_short  = $request->_short ?? 5;
         $data->_status     = $request->_status ?? '';
         $data->save();
         return redirect()->back()->with('success','Information Save successfully');
@@ -114,6 +115,7 @@ class AccountGroupController extends Controller
         $data->_details = $request->_details ?? '';
         $data->_account_head_id  = $request->_account_head_id ?? '';
         $data->_parent_id  = $request->_parent_id ?? 0;
+        $data->_short  = $request->_short ?? 5;
         $data->_status     = $request->_status ?? '';
         $data->save();
 

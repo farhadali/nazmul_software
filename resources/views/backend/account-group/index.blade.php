@@ -46,6 +46,7 @@
                          <th>Name</th>
                          <th>Details</th>
                          <th>Status</th>
+                         <th>Possition</th>
                       </tr>
                     </thead>
                       <tbody>
@@ -74,6 +75,7 @@
                             <td>{{ $data->id ?? '' }} - {{ $data->_name ?? '' }}</td>
                             <td>{{ $data->_details ?? '' }}</td>
                             <td>{{ selected_status($data->_status) }}</td>
+                            <td>{{ $data->_short ?? '' }}</td>
                         </tr>
                         @endforeach
                         </tbody>

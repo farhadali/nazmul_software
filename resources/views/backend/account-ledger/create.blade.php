@@ -102,6 +102,12 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
+                                <strong>Display Possition:</strong>
+                                {!! Form::text('_short', null, array('placeholder' => 'Possition','class' => 'form-control')) !!}
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3">
+                            <div class="form-group">
                                 <strong>NID Number:</strong>
                                <input type="text" name="_nid" class="form-control" value="{{old('_nid')}}" placeholder="NID Number">
                             </div>

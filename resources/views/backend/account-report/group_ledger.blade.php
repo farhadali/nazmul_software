@@ -23,10 +23,11 @@
             </div>
           
          
-            <div class="card-body" style="width: 350px;margin:0px auto;margin-bottom: 20px;">
+            <div class="card-body filter_body" >
                <form  action="{{url('group-base-ledger-report')}}" method="POST">
                 @csrf
                     <div class="row">
+                      <div class="col-md-6">
                       <label>Start Date:</label>
                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                       <input type="text" name="_datex" class="form-control datetimepicker-input" data-target="#reservationdate" required @if(isset($previous_filter["_datex"])) value='{{$previous_filter["_datex"] }}' @endif  />
@@ -39,20 +40,21 @@
                               <input type="hidden" name="_old_filter" class="_old_filter" value="0">
                               @endif
                         </div>
-                    </div>
-                    <div class="row">
-                      <label>End Date:</label>
+                      </div>
+
+                      <div class="col-md-6">
+                        <label>End Date:</label>
                         <div class="input-group date" id="reservationdate_2" data-target-input="nearest">
                                       <input type="text" name="_datey" class="form-control datetimepicker-input_2" data-target="#reservationdate_2" required @if(isset($previous_filter["_datey"])) value='{{$previous_filter["_datey"] }}' @endif  />
                                       <div class="input-group-append" data-target="#reservationdate_2" data-toggle="datetimepicker">
                                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                       </div>
                                   </div>
-                    </div>
-                    <div class="row">
-                      <label>Branch:</label><br> </div>
-                     <div class="row">
-                         <select id="_branch_id" class="form-control _branch_id multiple_select" name="_branch_id[]" multiple size='2' >
+                      </div>
+
+                      <div class="col-md-6">
+                        <label>Branch:</label>
+                        <select id="_branch_id" class="form-control _branch_id multiple_select" name="_branch_id[]" multiple size='2' >
                           @forelse($permited_branch as $branch )
                           <option value="{{$branch->id}}" 
                             @if(isset($previous_filter["_branch_id"])) 
@@ -62,10 +64,10 @@
                           @empty
                           @endforelse
                          </select>
-                     </div>
-                    <div class="row">
-                      <label>Cost Center:</label><br> </div>
-                     <div class="row">
+                      </div>
+
+                      <div class="col-md-6">
+                        <label>Cost Center:</label>
                          <select class="form-control width_150_px _cost_center multiple_select" multiple name="_cost_center[]" size='2'  >
                                             
                             @forelse($permited_costcenters as $costcenter )
@@ -77,11 +79,16 @@
                             @empty
                             @endforelse
                           </select>
-                     </div>
+                      </div>
+
+                    </div>
+                    
+                    
+                    
                     <div class="row">
                       <label>Ledger Group:</label><br> </div>
                      <div class="row">
-                         <select id="_account_group_id" class="form-control _account_group_id multiple_select" name="_account_group_id[]" multiple  size='3'  required>
+                         <select id="_account_group_id" class="form-control _account_group_id multiple_select" name="_account_group_id[]" multiple  size='6'  required>
                            @forelse($account_groups as $group)
                            <option value="{{$group->id}}"
             @if(isset($previous_filter["_account_group_id"]))
@@ -95,7 +102,7 @@
                      <div class="row">
                       <label>Ledger:</label><br></div>
                      <div class="row">
-                         <select id="_account_ledger_id" class="form-control _account_ledger_id multiple_select" name="_account_ledger_id[]" multiple size='3'>
+                         <select id="_account_ledger_id" class="form-control _account_ledger_id multiple_select" name="_account_ledger_id[]" multiple size='6'>
                           @if(isset($request->_account_ledger_id)  )
                            @forelse($account_groups as $group)
                            <option value="{{$group->id}}">{{$group->_name}}</option>

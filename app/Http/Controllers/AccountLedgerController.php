@@ -124,6 +124,7 @@ class AccountLedgerController extends Controller
         $data->_email = $request->_email;
         $data->_phone = $request->_phone;
         $data->_credit_limit = $request->_credit_limit ?? 0;
+        $data->_short = $request->_short ?? 5;
         $data->_is_user = $request->_is_user;
         $data->_is_sales_form = $request->_is_sales_form;
         $data->_is_purchase_form = $request->_is_purchase_form;
@@ -198,6 +199,7 @@ class AccountLedgerController extends Controller
         $data->_email = $request->_email;
         $data->_phone = $request->_phone;
         $data->_credit_limit = $request->_credit_limit ?? 0;
+        $data->_short = $request->_short ?? 5;
         $data->_is_user = $request->_is_user;
         $data->_is_sales_form = $request->_is_sales_form;
         $data->_is_purchase_form = $request->_is_purchase_form;

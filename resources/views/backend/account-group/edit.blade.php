@@ -69,6 +69,12 @@
                                  <input type="text" name="_code" class="form-control" value="{!! $data->_code ?? '' !!}">
                             </div>
                         </div>
+                         <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <strong>Display Possition:</strong>
+                                {!! Form::text('_short', $data->_short, array('placeholder' => 'Possition','class' => 'form-control')) !!}
+                            </div>
+                        </div>
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
                                 <strong>Details:</strong>

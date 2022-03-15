@@ -25,6 +25,7 @@ class CreateAccountGroupsTable extends Migration
              $table->longText('_details')->nullable();
             
             $table->integer('_parent_id')->default(0);
+            $table->integer('_short')->default(0);
             $table->timestamps();
         });
     }

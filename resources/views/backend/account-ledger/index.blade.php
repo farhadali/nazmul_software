@@ -88,6 +88,7 @@ if($currentURL === $current){
                          <th>Email</th>
                          <th>Phone</th>
                          <th>Balance</th>
+                         <th>Possition</th>
                          <th>Status</th>
                       </tr>
                         @foreach ($datas as $key => $data)
@@ -118,6 +119,7 @@ if($currentURL === $current){
                             <td>{{ $data->_email ?? '' }}</td>
                             <td>{{ $data->_phone ?? '' }}</td>
                             <td>{{ _last_balance($data->id)[0]->_balance ?? 0  }}</td>
+                            <td>{{ $data->_short ?? '' }}</td>
                             <td>{{ ($data->_status==1) ? 'Active' : 'In Active' }}</td>
                            
                         </tr>

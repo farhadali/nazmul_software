@@ -68,6 +68,12 @@
                         {{ $data->_name }}
                     </div>
                 </div>
+                 <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <strong>Possition:</strong>
+                        {{ $data->_short ?? '' }}
+                    </div>
+                </div>
                
                 
               </div>

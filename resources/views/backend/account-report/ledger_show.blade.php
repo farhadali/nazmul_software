@@ -21,19 +21,14 @@
 
 <section class="invoice" id="printablediv">
     <!-- title row -->
-    <div class="row">
-      <div class="col-12">
+    
+    <!-- info row -->
+    <div class="row invoice-info">
+      <div class="col-sm-4 invoice-col">
         <h2 class="page-header">
            <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
           <small class="float-right"></small>
         </h2>
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- info row -->
-    <div class="row invoice-info">
-      <div class="col-sm-4 invoice-col">
-        
         <address>
           <strong>{{$settings->_address ?? '' }}</strong><br>
           {{$settings->_phone ?? '' }}<br>
@@ -53,7 +48,11 @@
         <b>Phone:</b> {{ $ledger_info->_phone ?? '' }}<br>
         <b>Email:</b> {{ $ledger_info->_email ?? '' }}<br>
         <b>Branch:</b> @foreach($permited_branch as $p_branch)
-                        @if(in_array($p_branch->id,$previous_filter["_branch_id"])) <b>{{$p_branch->_name ?? ''}} </b>, @endif
+                      @if(isset($previous_filter["_branch_id"]))
+                        @if(in_array($p_branch->id,$previous_filter["_branch_id"])) 
+                       <span style="background: #f4f6f9;margin-right: 2px;padding: 5px;"><b>{{ $p_branch["_name"] }}</b></span>    
+                        @endif
+                      @endif
                       @endforeach
       </div>
       <!-- /.col -->
