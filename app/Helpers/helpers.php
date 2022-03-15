@@ -213,7 +213,7 @@ if (! function_exists('_last_balance')) {
 }
 
 
-if (! function_exists(' nv_number_to_text')) {
+if (! function_exists('nv_number_to_text')) {
     function  nv_number_to_text($amount)
     {
 
@@ -222,6 +222,46 @@ if (! function_exists(' nv_number_to_text')) {
         
     }
 }
+
+if (! function_exists('_default_amount_dr_cr')) {
+    function  _default_amount_dr_cr()
+    {
+
+        return 1; 
+        
+    }
+}
+
+if (! function_exists('_show_amount_dr_cr')) {
+    function  _show_amount_dr_cr($amount)
+    {
+        $amount = (string) $amount;
+        if($amount[0]==='-'){
+            if(_default_amount_dr_cr()==1){
+                $amount = substr($amount, 1);
+                return $amount." .Cr";
+            }elseif(_default_amount_dr_cr()==2){
+                 $amount = substr($amount, 1);
+                 return "(".$amount.")";
+            }else{
+                return $amount;
+            }
+        }else{
+           if(_default_amount_dr_cr()==1){
+                return $amount." .Dr";
+            }elseif(_default_amount_dr_cr()==2){
+                 return $amount;
+            }else{
+                return $amount;
+            } 
+        }
+        
+        
+    }
+}
+
+
+
 
 
 

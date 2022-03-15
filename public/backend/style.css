@@ -201,3 +201,39 @@ input[type="number"] {
     margin-top: 40px;
     width: 360px;
 }
+.print_content{
+    padding: 5px;
+}
+
+a {
+    color: #343a40;
+    text-decoration: none;
+    background-color: transparent;
+    font-weight: 900;
+}
+
+
+body:not(.layout-fixed) .main-sidebar {
+    height: inherit;
+    min-height: 100%;
+    position: absolute;
+   top: 40px; 
+}
+.sidebar-mini.sidebar-collapse .content-wrapper, .sidebar-mini.sidebar-collapse .main-footer, .sidebar-mini.sidebar-collapse .main-header {
+    margin-left: 0px!important;
+}
+.main-sidebar{
+    display: none;
+}
+#sidebar-overlay {
+    background-color: rgba(0,0,0,.1);
+    bottom: 0;
+    display: none;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 0;
+}
+
+

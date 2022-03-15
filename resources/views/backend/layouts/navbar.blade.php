@@ -2,7 +2,7 @@
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        <a class="nav-link _pushmenu" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <!-- <li class="nav-item d-none d-sm-inline-block">
         <a href="index3.html" class="nav-link">Home</a>
@@ -95,6 +95,54 @@
         </div>
       </li>
       <!-- Notifications Dropdown Menu -->
+       @can('account-report-menu') 
+      <li class="nav-item dropdown remove_from_header">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          
+          Accounts Report <i class="right fas fa-angle-down"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+         
+          <div class="dropdown-divider"></div>
+           @can('ledger-report')
+          <a href="{{url('ledger-report')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Ledger Report
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('group-ledger')
+          <a href="{{url('group-ledger')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Group Ledger Report
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('income-statement')
+          <a href="{{url('income-statement')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Income Statement
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('trail-balance')
+          <a href="{{url('trail-balance')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i>Trail Balance
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('work-sheet')
+          <a href="{{url('work-sheet')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Work Sheet
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('balance-sheet')
+          <a href="{{url('balance-sheet')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Balance Sheet
+          </a>
+         @endcan  
+              
+      </li>
+    @endcan
+
       <li class="nav-item dropdown remove_from_header">
         <a class="nav-link" data-toggle="dropdown" href="#">
           
@@ -125,12 +173,10 @@
           <a href="{{url('voucher')}}" class="dropdown-item">
             <i class="fa fa-fax mr-2" aria-hidden="true"></i> Voucher
           </a>
-         @endcan
-         
-        
-              
+         @endcan  
               
       </li>
+      
       <li class="nav-item dropdown remove_from_header">
         <a class="nav-link" data-toggle="dropdown" href="#">
           

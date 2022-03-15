@@ -89,13 +89,17 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('group-ledger','App\Http\Controllers\AccountReportController@groupLedger');
     Route::post('group-base-ledger-report','App\Http\Controllers\AccountReportController@groupBaseLedgerReport');
     Route::get('group-base-ledger-filter-reset','App\Http\Controllers\AccountReportController@groupBaseLedgerFilterReset');
-
+    Route::get('LedgerReportFilterReset','App\Http\Controllers\AccountReportController@LedgerReportFilterReset');
+    Route::any('trail-balance','App\Http\Controllers\AccountReportController@trailBalance');
+    Route::any('trail-balance-report','App\Http\Controllers\AccountReportController@trailBalanceReport');
+    Route::get('trail-balance-filter-reset','App\Http\Controllers\AccountReportController@trailBalanceReportFilterReset');
 
     
     //Searching section 
     Route::any('ledger-search','App\Http\Controllers\AccountLedgerController@ledger_search');
     Route::any('type_base_group','App\Http\Controllers\AccountLedgerController@type_base_group');
     Route::any('group-base-ledger','App\Http\Controllers\AccountLedgerController@groupBaseLedger');
+    
     
 
     

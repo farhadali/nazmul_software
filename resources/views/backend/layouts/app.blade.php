@@ -46,6 +46,7 @@
     .submit-button{
       min-width: 150px;
     }
+    .multiple_select { resize: auto; }
   </style>
 </head>
 
@@ -251,7 +252,23 @@ $(document).on('click',function(){
     }
 })
 
+
+$(document).on('click','._pushmenu',function(){
+
+if($("._pushmenu").hasClass("_left_menu_show")){
+  $(document).find('._pushmenu').removeClass('_left_menu_show');
+  $(document).find('.main-sidebar').hide();
+}else{
+  $(document).find('._pushmenu').addClass('_left_menu_show');
+  $(document).find('.main-sidebar').show();
+}
   
+
+  
+ 
+
+})
+
 
 </script>
 @yield('script')

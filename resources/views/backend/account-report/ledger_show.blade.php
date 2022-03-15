@@ -1,29 +1,25 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{$page_name}}</title>
+@extends('backend.layouts.app')
+@section('title',$page_name)
 
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome -->
-  
-  <!-- Theme style -->
-  <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
+@section('content')
+<div class="wrapper print_content">
   <style type="text/css">
-    .table td, .table th {
-    padding: 0.25rem;
+  .table td, .table th {
+    padding: 0.10rem;
     vertical-align: top;
     border-top: 1px solid #dee2e6;
 }
   </style>
-</head>
-<body>
-<div class="wrapper">
+  <div style="padding-left: 20px;display: flex;">
+    <a class="nav-link"  href="{{url('ledger-report')}}" role="button">
+          <i class="fas fa-search"></i>
+        </a>
+         <a style="cursor: pointer;" class="nav-link"  title="" data-caption="Print"  onclick="javascript:printDiv('printablediv')"
+    data-original-title="Print"><i class="fas fa-print"></i></a>
+  </div>
 
-<section class="invoice">
+<section class="invoice" id="printablediv">
     <!-- title row -->
     <div class="row">
       <div class="col-12">
@@ -56,7 +52,9 @@
         <b>Address: {{ $ledger_info->_address ?? '' }}</b><br>
         <b>Phone:</b> {{ $ledger_info->_phone ?? '' }}<br>
         <b>Email:</b> {{ $ledger_info->_email ?? '' }}<br>
-        <b>Branch:</b> {{ $ledger_info->_entry_branch->_name ?? '' }}
+        <b>Branch:</b> @foreach($permited_branch as $p_branch)
+                        @if(in_array($p_branch->id,$previous_filter["_branch_id"])) <b>{{$p_branch->_name ?? ''}} </b>, @endif
+                      @endforeach
       </div>
       <!-- /.col -->
     </div>
@@ -68,10 +66,10 @@
         <table class="table ">
           <thead>
           <tr>
-            <th style="width: 6%;">Date</th>
-            <th style="width: 9%;">ID</th>
+            <th style="width: 10%;">Date</th>
+            <th style="width: 10%;">ID</th>
             <th style="width: 25%;">Narration</th>
-            <th style="width: 25%;">Short Narration</th>
+            <th style="width: 20%;">Short Narration</th>
             <th style="width: 10%;" class="text-right" >Dr. Amount</th>
             <th style="width: 10%;" class="text-right" >Cr. Amount</th>
             <th style="width: 10%;" class="text-right" >Balance</th>
@@ -86,7 +84,9 @@
             $cr_total = 0;
             @endphp
             <tr>
-            <th colspan="4" class="text-center"><b>Opening Balance</b></th>
+            <th  class="text-left"></th>
+            <th  class="text-left"></th>
+            <th colspan="2" class="text-left"><b>Opening Balance</b></th>
             <th class="text-right" > {{ _report_amount(  0) }} </th>
             <th class="text-right" > {{ _report_amount(  0) }}</th>
             <th  class="text-right"> {{ _report_amount(  $balance->_opening_dr_amount ?? 0 - $balance->_opening_cr_amount ?? 0 ) }}</th>
@@ -100,8 +100,9 @@
           <tr>
             <td>{!! $detail->_date !!}</td>
             @if($detail->_table_name=="voucher_masters")
-            <td class="text-center"> <a target="__blank" href="{{ route('voucher.edit',$detail->_ref_master_id) }}">
+            <td class="text-center"> <a target="__blank" href="{{ route('voucher.show',$detail->_ref_master_id) }}">
               A-{!! $detail->_ref_master_id ?? '' !!}</a>
+
             </td>
             @else
              <td>  </td>
@@ -116,21 +117,14 @@
 
              $balance +=$detail->_dr_amount - $detail->_cr_amount;
             @endphp
-            <td class="text-right" >{!! _report_amount( $balance) !!}</td>
+            <td class="text-right" >{!! _show_amount_dr_cr(_report_amount( $balance)) !!}</td>
              
           </tr>
           @empty
           @endforelse
           
           </tbody>
-          <tfoot>
-            <tr>
-              <th style="background-color: rgba(0,0,0,.05);" colspan="4" class="text-center">Closing Balance:</th>
-              <th style="background-color: rgba(0,0,0,.05);"  class="text-center"></th>
-              <th style="background-color: rgba(0,0,0,.05);" class="text-right" >{!! _report_amount( $balance) !!}</th>
-              <th style="background-color: rgba(0,0,0,.05);" class="text-right" >{!! _report_amount( $balance) !!}</th>
-            </tr>
-          </tfoot>
+          
         </table>
       </div>
       <!-- /.col -->
@@ -162,10 +156,32 @@
   </section>
 
 </div>
-<!-- ./wrapper -->
-<!-- Page specific script -->
-<script>
-  //window.addEventListener("load", window.print());
+@endsection
+
+@section('script')
+
+<script type="text/javascript">
+
+ function printDiv(divID) {
+            //Get the HTML of div
+            var divElements = document.getElementById(divID).innerHTML;
+            //Get the HTML of whole page
+            var oldPage = document.body.innerHTML;
+
+            //Reset the page's HTML with div's HTML only
+            document.body.innerHTML =
+                "<html><head><title></title></head><body>" +
+                divElements + "</body>";
+
+            //Print Page
+            window.print();
+
+            //Restore orignal HTML
+            document.body.innerHTML = oldPage;
+
+
+        }
+         
+
 </script>
-</body>
-</html>
+@endsection

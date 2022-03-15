@@ -24,7 +24,7 @@
           
          
             <div class="card-body" style="width: 350px;margin:0px auto;margin-bottom: 20px;">
-               <form  action="{{url('group-base-ledger-report')}}" method="POST">
+               <form  action="{{url('trail-balance-report')}}" method="POST">
                 @csrf
                     <div class="row">
                       <label>Start Date:</label>
@@ -109,7 +109,7 @@
                             <button type="submit" class="btn btn-success submit-button form-control"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Report</button>
                         </div>
                          <div class="col-xs-6 col-sm-6 col-md-6 ">
-                                     <a href="{{url('group-base-ledger-filter-reset')}}" class="btn btn-danger form-control" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
+                                     <a href="{{url('trail-balance-filter-reset')}}" class="btn btn-danger form-control" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
                         </div>
                         <br><br>
                      </div>

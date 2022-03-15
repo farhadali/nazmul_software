@@ -1,29 +1,24 @@
+@extends('backend.layouts.app')
+@section('title',$page_name)
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{$page_name}}</title>
-
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome -->
-  
-  <!-- Theme style -->
-  <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
+@section('content')
+<div class="wrapper print_content">
   <style type="text/css">
-    .table td, .table th {
-    padding: 0.25rem;
+  .table td, .table th {
+    padding: 0.10rem;
     vertical-align: top;
     border-top: 1px solid #dee2e6;
 }
   </style>
-</head>
-<body>
-<div class="wrapper">
+  <div style="padding-left: 20px;display: flex;">
+    <a class="nav-link"  href="{{url('group-ledger')}}" role="button">
+          <i class="fas fa-search"></i>
+        </a>
+         <a style="cursor: pointer;" class="nav-link"  title="" data-caption="Print"  onclick="javascript:printDiv('printablediv')"
+    data-original-title="Print"><i class="fas fa-print"></i></a>
+  </div>
 
-<section class="invoice">
+<section class="invoice" id="printablediv">
     
     <!-- info row -->
     <div class="row invoice-info">
@@ -42,10 +37,11 @@
           {{$settings->_phone ?? '' }}<br>
           {{$settings->_email ?? '' }}<br>
         </address>
-        <h3 class="text-center"><b>Ledger Report</b></h3>
+        <h3 class="text-center"><b>Group Ledger Report</b></h3>
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col text-right">
+
       </div>
       <!-- /.col -->
     </div>
@@ -58,8 +54,8 @@
           <thead>
           <tr>
             <th style="width: 15%;">Date</th>
-            <th style="width: 15%;">ID</th>
-            <th style="width: 20%;">Narration</th>
+            <th style="width: 10%;">ID</th>
+            <th style="width: 25%;">Narration</th>
             <th style="width: 20%;">Short Narration</th>
             <th style="width: 10%;" class="text-right" >Dr. Amount</th>
             <th style="width: 10%;" class="text-right" >Cr. Amount</th>
@@ -69,6 +65,10 @@
           
           </thead>
           <tbody>
+            @php
+            $_dr_grand_total = 0;
+            $_cr_grand_total = 0;
+            @endphp
             @forelse($group_array_values as $key=>$value)
             <tr>
               
@@ -84,39 +84,56 @@
 
                
                   <tr>
-                    <td colspan="7" style="text-align: left;background: #f5f9f9;">&nbsp; &nbsp;
+                    <td colspan="7" style="text-align: left;">&nbsp; &nbsp;
                      
                         <b>  {{ $l_key ?? '' }} </b>
                         
                      </td>
                   </tr>
-
+                  @php
+                    $running_sub_dr_total=0;
+                    $running_sub_cr_total=0;
+                    $runing_balance_total = 0;
+                  @endphp
                   @forelse($l_val as $_dkey=>$detail)
+                  @php
+                    $_dr_grand_total +=$detail->_dr_amount ?? 0;
+                    $_cr_grand_total +=$detail->_cr_amount ?? 0;
+                    $running_sub_dr_total +=$detail->_dr_amount ?? 0;
+                    $running_sub_cr_total +=$detail->_cr_amount ?? 0;
+                    $runing_balance_total += (($detail->_balance+$detail->_dr_amount)-$detail->_cr_amount);
+                  @endphp
                   
                     <tr>
                     <td style="text-align: left;">
                       
                       {{ _view_date_formate($detail->_date ?? $_datex) }} </td>
-                    <td style="text-align: left;">{{ $detail->_id ?? '' }} </td>
+                    <td class="text-center">
+                    @if($detail->_table_name=="voucher_masters")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('voucher.show',$detail->_id) }}">
+                  A-{!! $detail->_id ?? '' !!}</a>
+                    @else
+                     
+                    @endif
+             </td>
                     <td style="text-align: left;">{{ $detail->_narration ?? '' }} </td>
                     <td style="text-align: left;">{{ $detail->_short_narration ?? '' }} </td>
-                    <td style="text-align: right;">{{ $detail->_dr_amount ?? '' }} </td>
-                    <td style="text-align: right;">{{ $detail->_cr_amount ?? '' }} </td>
-                    <td style="text-align: right;">{{ $detail->_balance ?? '' }} </td>
+                    <td style="text-align: right;">{{ _report_amount($detail->_dr_amount ?? 0) }} </td>
+                    <td style="text-align: right;">{{ _report_amount($detail->_cr_amount ?? 0) }} </td>
+                    <td style="text-align: right;">{{ _show_amount_dr_cr(_report_amount(  $runing_balance_total )) }} </td>
+
                   </tr>
 
                   @empty
                   @endforelse
 
                   <tr>
-                    <td colspan="4" style="text-align: left;background: #f5f9f9;"> <b>Sub Total of {{ $l_key ?? '' }}: </b> </td>
-                    <td style="text-align: right;background: #f5f9f9;"> </td>
-                    <td style="text-align: right;background: #f5f9f9;"> </td>
-                    <td style="text-align: right;background: #f5f9f9;"> </td>
+                    <td colspan="4" style="text-align: left;background: #f5f9f9;">&nbsp; &nbsp;&nbsp; &nbsp; <b>Sub Total of {{ $l_key ?? '' }}: </b> </td>
+                    <td style="text-align: right;background: #f5f9f9;"><b>{{ _report_amount($running_sub_dr_total ?? 0) }}</b> </td>
+                    <td style="text-align: right;background: #f5f9f9;"><b>{{ _report_amount($running_sub_cr_total ?? 0) }}</b> </td>
+                    <td style="text-align: right;background: #f5f9f9;"><b></b> </td>
                 </tr>
-                <tr>
-                  <td colspan="7"></td>
-                </tr>
+                
 
                 @empty
                 @endforelse
@@ -125,10 +142,13 @@
 
               <tr>
               
-                <td colspan="4" style="text-align: left;background: #f5f9f9;"> <b>Summary of {{ $key ?? '' }}: </b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> </td>
-                <td style="text-align: right;background: #f5f9f9;"> </td>
-                <td style="text-align: right;background: #f5f9f9;"> </td>
+                <td colspan="4" style="text-align: left;"> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<b>Summary of {{ $key ?? '' }}: </b> </td>
+                <td style="text-align: right;"> </td>
+                <td style="text-align: right;"> </td>
+                <td style="text-align: right;"> </td>
+            </tr>
+            <tr>
+                  <td colspan="7"></td>
             </tr>
 
             @empty
@@ -138,10 +158,10 @@
           <tfoot>
             <tr>
               
-                <td colspan="4" style="text-align: left;background: #f5f9f9;"> <b>Grand Total </b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> </td>
-                <td style="text-align: right;background: #f5f9f9;"> </td>
-                <td style="text-align: right;background: #f5f9f9;"> </td>
+                <td colspan="4" style="text-align: left;background: #f5f9f9;"> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<b>Grand Total </b> </td>
+                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_dr_grand_total) }}</b> </td>
+                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_cr_grand_total) }}</b> </td>
+                <td style="text-align: right;background: #f5f9f9;"> <b>{{_show_amount_dr_cr(_report_amount($_dr_grand_total-$_cr_grand_total)) }}</b> </td>
             </tr>
           </tfoot>
         </table>
@@ -154,7 +174,7 @@
       <!-- accepted payments column -->
       <div class="col-12">
         
-        <p> In Words:  </p>
+        
         
       </div>
       <!-- /.col -->
@@ -175,10 +195,32 @@
   </section>
 
 </div>
-<!-- ./wrapper -->
-<!-- Page specific script -->
-<script>
-  //window.addEventListener("load", window.print());
+@endsection
+
+@section('script')
+
+<script type="text/javascript">
+
+ function printDiv(divID) {
+            //Get the HTML of div
+            var divElements = document.getElementById(divID).innerHTML;
+            //Get the HTML of whole page
+            var oldPage = document.body.innerHTML;
+
+            //Reset the page's HTML with div's HTML only
+            document.body.innerHTML =
+                "<html><head><title></title></head><body>" +
+                divElements + "</body>";
+
+            //Print Page
+            window.print();
+
+            //Restore orignal HTML
+            document.body.innerHTML = oldPage;
+
+
+        }
+         
+
 </script>
-</body>
-</html>
+@endsection

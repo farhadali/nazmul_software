@@ -1,6 +1,6 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="/" class="brand-link">
+    <a href="{{url('home')}}" class="brand-link">
       <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">{{$settings->name ?? '' }}</span>
     </a>
@@ -10,14 +10,14 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-item">
+        <!--   <li class="nav-item">
             <a href="{{url('home')}}" class="nav-link">
               <i class="nav-icon far fa-image"></i>
               <p>
                 Dashboard
               </p>
             </a>
-          </li>
+          </li> -->
        
           
           <li class="nav-item {{ Route::is('roles.*') || Route::is('users.*') || Route::is('admin-settings') || Route::is('branch.*') || Route::is('social_media.*') || Route::is('cost-center.*') || Route::is('store-house.*')  ? 'menu-is-opening menu-open' : '' }}">
@@ -137,8 +137,9 @@
               
             </ul>
           </li>
-          <li class="nav-item {{ Route::is('ledger-report.*') || Route::is('group-ledger.*') ? 'menu-is-opening menu-open' : '' }}">
-            <a href="#" class="nav-link {{ Route::is('ledger-report.*') || Route::is('group-ledger.*')    ? 'active' : '' }}">
+            @can('account-report-menu') 
+          <li class="nav-item {{ Route::is('ledger-report.*') || Route::is('group-ledger.*') || Route::is('income-statement.*') || Route::is('trail-balance.*') || Route::is('work-sheet.*') || Route::is('balance-sheet.*') ? 'menu-is-opening menu-open' : '' }}">
+            <a href="#" class="nav-link {{ Route::is('ledger-report.*') || Route::is('group-ledger.*') || Route::is('income-statement.*') || Route::is('trail-balance.*') || Route::is('work-sheet.*') || Route::is('balance-sheet.*')    ? 'active' : '' }}">
              
               <i class="fa fa-file nav-icon" aria-hidden="true"></i>
 
@@ -152,7 +153,7 @@
               <li class="nav-item">
                 <a href="{{url('ledger-report')}}" class="nav-link {{Route::is('ledger-report.*')   ? 'active' : '' }}" >
                   <i class="fa fa-id-card nav-icon"></i>
-                  <p>Ledger Statement</p>
+                  <p>Ledger Report</p>
                 </a>
               </li>
               @endcan
@@ -160,7 +161,39 @@
               <li class="nav-item">
                 <a href="{{url('group-ledger')}}" class="nav-link {{Route::is('group-ledger.*')   ? 'active' : '' }}" >
                   <i class="fa fa-id-card nav-icon"></i>
-                  <p>Group Ledger Statement</p>
+                  <p>Group Ledger Report</p>
+                </a>
+              </li>
+              @endcan
+             @can('income-statement')
+              <li class="nav-item">
+                <a href="{{url('income-statement')}}" class="nav-link {{Route::is('income-statement.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-id-card nav-icon"></i>
+                  <p>Income Statement</p>
+                </a>
+              </li>
+              @endcan
+             @can('trail-balance')
+              <li class="nav-item">
+                <a href="{{url('trail-balance')}}" class="nav-link {{Route::is('trail-balance.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-id-card nav-icon"></i>
+                  <p>Trail Balance</p>
+                </a>
+              </li>
+              @endcan
+             @can('work-sheet')
+              <li class="nav-item">
+                <a href="{{url('work-sheet')}}" class="nav-link {{Route::is('work-sheet.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-id-card nav-icon"></i>
+                  <p>Work Sheet</p>
+                </a>
+              </li>
+              @endcan
+             @can('balance-sheet')
+              <li class="nav-item">
+                <a href="{{url('balance-sheet')}}" class="nav-link {{Route::is('balance-sheet.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-id-card nav-icon"></i>
+                  <p>Balance Sheet</p>
                 </a>
               </li>
               @endcan
@@ -168,7 +201,7 @@
               
             </ul>
           </li>
-          
+          @endcan
          
          
         </ul>
