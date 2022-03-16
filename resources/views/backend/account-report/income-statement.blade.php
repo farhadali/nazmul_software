@@ -7,19 +7,34 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
+
           <div class="card">
+               @if (count($errors) > 0)
+                 <div class="alert alert-danger">
+                      <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                      <ul>
+                      @foreach ($errors->all() as $error)
+                          <li>{{ $error }}</li>
+                      @endforeach
+                      </ul>
+                  </div>
+              @endif
             <div class="card-header">
-                <h4>{{ $page_name ?? '' }}</h4>
-                @if (count($errors) > 0)
-           <div class="alert alert-danger">
-                <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-                </ul>
-            </div>
-        @endif
+              <div class="row">
+                <div class="col-sm-8 text-left">
+                  <h4>{{ $page_name ?? '' }}</h4>
+                </div>
+                <div class="col-sm-4 text-right" >
+                  @can('income-statement-settings')
+                  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default">
+                  <i class="fa fa-cog" aria-hidden="true"></i> 
+                </button>
+                @endcan
+                 
+                </div>
+              </div>
+                
+             
             </div>
           
          
@@ -101,7 +116,61 @@
       </div>
     </div>  
 </div>
+<div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+           <form action="{{url('income-statement-settings')}}" method="post">
+            @csrf
+          <div class="modal-content">
+           
+            <div class="modal-header">
+              <h4 class="modal-title">Income Statement Settings</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <table class="table" style="width: 100%;">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th class="text-right">Show</th>
+                  </tr>
+                  @forelse($_filter_ledgers as $key=>$value)
+                  <tr >
+                    <th style="background: #f7f7f7;" colspan="2">{{$key}}</th>
+                  </tr>
+                      @forelse($value as $v_key=>$led)
+                        <tr class="@if($led->_show==0) _nv_warning @endif">
+                          <th>
+                            <input type="hidden" name="_l_id[]" value="{{$led->id}}">
+                            &nbsp;&nbsp;&nbsp;&nbsp;{{ $led->_name ?? '' }}
+                          </th>
+                          <th class="text-right  " >
+                            <select class="form-control" name="_show[]">
+                              <option value="1" @if($led->_show==1) selected @endif >Show</option>
+                              <option value="0" @if($led->_show==0) selected @endif >Hide</option>
+                            </select>
+                          </th>
+                        </tr>
+                      @empty
+                      @endforelse
+                  @empty
+                  @endforelse
 
+                </thead>
+              </table>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+          </form>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
 
 
 @endsection

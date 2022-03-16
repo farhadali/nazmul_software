@@ -94,13 +94,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::any('trail-balance-report','App\Http\Controllers\AccountReportController@trailBalanceReport');
     Route::get('trail-balance-filter-reset','App\Http\Controllers\AccountReportController@trailBalanceReportFilterReset');
     Route::get('income-statement','App\Http\Controllers\AccountReportController@incomeStatement');
-    Route::get('income-statement-report','App\Http\Controllers\AccountReportController@incomeStatementReport');
-
+    Route::post('income-statement-report','App\Http\Controllers\AccountReportController@incomeStatementReport');
+    Route::post('income-statement-settings','App\Http\Controllers\AccountReportController@incomeStatementSettings');
     
     //Searching section 
     Route::any('ledger-search','App\Http\Controllers\AccountLedgerController@ledger_search');
     Route::any('type_base_group','App\Http\Controllers\AccountLedgerController@type_base_group');
     Route::any('group-base-ledger','App\Http\Controllers\AccountLedgerController@groupBaseLedger');
+    
     
     
 

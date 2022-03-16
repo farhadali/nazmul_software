@@ -242,4 +242,7 @@ body:not(.layout-fixed) .main-sidebar {
     margin-bottom: 20px;
 }
 
+._nv_warning{
+    background: #e9adad;
+}
 

@@ -11,7 +11,7 @@
 }
   </style>
   <div style="padding-left: 20px;display: flex;">
-    <a class="nav-link"  href="{{url('trail-balance')}}" role="button">
+    <a class="nav-link"  href="{{url('income-statement')}}" role="button">
           <i class="fas fa-search"></i>
         </a>
          <a style="cursor: pointer;" class="nav-link"  title="" data-caption="Print"  onclick="javascript:printDiv('printablediv')"
@@ -63,119 +63,136 @@
         <table class="table ">
           <thead>
           <tr>
-            <th style="width: 5%;">ID</th>
-            <th style="width: 35%;">Ledger</th>
-            <th style="width: 10%;" class="text-right">Opening DR</th>
-            <th style="width: 10%;" class="text-right">Opening CR</th>
-            <th style="width: 10%;" class="text-right" >Current DR</th>
-            <th style="width: 10%;" class="text-right" >Current Cr</th>
-            <th style="width: 10%;" class="text-right" >Closing DR</th>
-            <th style="width: 10%;" class="text-right" >Closing CR</th>
+            <th style="width: 15%;">Group</th>
+            <th style="width: 40%;">Ledger</th>
+            <th style="width: 15%;" class="text-right">Upto Previous </th>
+            <th style="width: 15%;" class="text-right">Current Period</th>
+            <th style="width: 15%;" class="text-right" >Amount</th>
           </tr>
           
           
           </thead>
           <tbody>
             @php
-            $_grand_total_opening_dr = 0;
-            $_grand_total_opening_cr = 0;
-            $_grand_total_current_dr = 0;
-            $_grand_total_current_cr = 0;
-            $_grand_total_closing_dr = 0;
-            $_grand_total_closing_cr = 0;
+            $i8_previous_total = 0;
+            $i8_current_total = 0;
+            $net_total =0;
             @endphp
-            @forelse($group_array_values as $key=>$value)
+           @forelse($income_8 as $i8_key=>$i8_value)
+           @php
+            $i8_previous_sub_total=0;
+            $i8_current_sub_total=0;
+            $i8_balance_sub_total=0;
+           @endphp
+           <tr >
+             <td colspan="5" style="text-align: left;" ><b>{{$i8_key}}</b></td>
+           </tr>
+            @forelse($i8_value as $i_val)
+            @php
+              $i8_previous_total += $i_val->_previous_balance ?? 0;
+              $i8_current_total += $i_val->_current_balance ?? 0;
+              $net_total += $i_val->_last_amount ?? 0;
+
+
+
+              $i8_previous_sub_total += $i_val->_previous_balance ?? 0;
+              $i8_current_sub_total += $i_val->_current_balance ?? 0;
+              $i8_balance_sub_total += $i_val->_last_amount ?? 0;
+
+
+            @endphp
+            
+                   <tr>
+                     <td colspan="2" style="text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;{{ $i_val->_l_name ?? '' }}</td>
+                     <td style="text-align: right;">{{ _report_amount( $i_val->_previous_balance ?? 0)  }}</td>
+                     <td style="text-align: right;">{{ _report_amount( $i_val->_current_balance ?? 0) }}</td>
+                     <td style="text-align: right;">{{ _report_amount( $i_val->_last_amount ?? 0 ) }}</td>
+                   </tr>
+            @empty
+            @endforelse
+            @if(sizeof($i8_value)> 1 )
             <tr>
-              
-                <td colspan="8" >
-                  
-                     <b> {{ $key ?? '' }} </b>
-                    
-                
-              
-              </td>
-            </tr>
-             @php
-                    $_running_sub_opening_group_dr = 0;
-                    $_running_sub_opening_group_cr = 0;
-                    $_running_sub_current_group_dr = 0;
-                    $_running_sub_current_group_cr = 0;
-                    $_running_sub_closing_group_dr = 0;
-                    $_running_sub_closing_group_cr = 0;
-                  @endphp
-                @forelse($value as $l_key=>$l_val)
+             <td style="text-align: left;" colspan="2"><b>&nbsp;&nbsp;&nbsp;&nbsp;Sub Total:  </b></td>
+             <td style="text-align: right;"><b>{{ _report_amount($i8_previous_sub_total ?? 0) }}</b></td>
+             <td style="text-align: right;"><b>{{ _report_amount( $i8_current_sub_total ?? 0 ) }}</b></td>
+             <td style="text-align: right;"><b>{{ _report_amount( $i8_balance_sub_total ?? 0 ) }}</b></td>
+           </tr>
+           @endif
 
-               
-                  @forelse($l_val as $_dkey=>$detail)
-                  @php
-                    
+           @empty
+           @endforelse
 
-                     $_grand_total_opening_dr +=$detail->_o_dr_amount ?? 0;
-                    $_grand_total_opening_cr +=$detail->_o_cr_amount ?? 0;
-                    $_grand_total_current_dr +=$detail->_c_dr_amount ?? 0;
-                    $_grand_total_current_cr +=$detail->_c_cr_amount ?? 0;
-                    $_grand_total_closing_dr += ( $detail->_o_dr_amount +$detail->_c_dr_amount);
-                    $_grand_total_closing_cr += ($detail->_o_cr_amount+$detail->_c_cr_amount);
+           <tr>
+             <td style="text-align: left;" colspan="2"><b>Summary for Gross Profit:  </b></td>
+             <td style="text-align: right;"><b>{{ _report_amount($i8_previous_total ?? 0) }}</b></td>
+             <td style="text-align: right;"><b>{{ _report_amount( $i8_current_total ?? 0 ) }}</b></td>
+             <td style="text-align: right;"><b>{{ _report_amount( $net_total ?? 0 ) }}</b></td>
+           </tr>
+           <tr >
+                   <td colspan="5" style="text-align: left;" >&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                 </tr>
+            @php
+            $oi_previous_total = 0;
+            $oi_current_total = 0;
+            $oi_amount_total =0;
+            @endphp
+           @forelse($other_income_expenses as $oi_key=>$oi_value)
+           @php
+            $oi_previous_sub_total =0;
+            $oi_current_sub_total =0;
+            $oi_balance_sub_total =0;
+           @endphp
+                <tr >
+                   <td colspan="5" style="text-align: left;" ><b>{{$oi_key}}</b></td>
+                 </tr>
 
-                    $_running_sub_opening_group_dr  +=$detail->_o_dr_amount ?? 0;
-                    $_running_sub_opening_group_cr +=$detail->_o_cr_amount ?? 0;
-                    $_running_sub_current_group_dr +=$detail->_c_dr_amount ?? 0;
-                    $_running_sub_current_group_cr +=$detail->_c_cr_amount ?? 0;
-                    $_running_sub_closing_group_dr += ( $detail->_o_dr_amount +$detail->_c_dr_amount);
-                    $_running_sub_closing_group_cr += ($detail->_o_cr_amount+$detail->_c_cr_amount);
+                  @forelse($oi_value as $oi_val)
+                   @php
+                    $oi_previous_sub_total +=$oi_val->_previous_balance ?? 0;
+                    $oi_current_sub_total +=$oi_val->_current_balance ?? 0;
+                    $oi_balance_sub_total +=$oi_val->_last_amount ?? 0;
 
-                  @endphp
-                  
+
+                    $oi_previous_total +=$oi_val->_previous_balance ?? 0;
+                    $oi_current_total +=$oi_val->_current_balance ?? 0;
+                    $oi_amount_total +=$oi_val->_last_amount ?? 0;
+                   @endphp
                     <tr>
-                    
-                    <td style="text-align: left;">&nbsp; &nbsp;{{ $detail->_account_ledger ?? '' }} </td>
-                    <td style="text-align: left;">{{ $detail->_l_name ?? '' }} </td>
-                    <td style="text-align: right;">{{ _report_amount($detail->_o_dr_amount ?? 0) }} </td>
-                    <td style="text-align: right;">{{ _report_amount($detail->_o_cr_amount ?? 0) }} </td>
-                    <td style="text-align: right;">{{ _report_amount($detail->_c_dr_amount ?? 0) }} </td>
-                    <td style="text-align: right;">{{ _report_amount($detail->_c_cr_amount ?? 0) }} </td>
-                    <td style="text-align: right;">{{ _report_amount(  $_running_sub_closing_group_dr ) }} </td>
-                    <td style="text-align: right;">{{ _report_amount(  $_running_sub_closing_group_cr ) }} </td>
-
-                  </tr>
+                     <td colspan="2" style="text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;{{ $oi_val->_l_name ?? '' }}</td>
+                     <td style="text-align: right;">{{ _report_amount( $oi_val->_previous_balance ?? 0)  }}</td>
+                     <td style="text-align: right;">{{ _report_amount( $oi_val->_current_balance ?? 0) }}</td>
+                     <td style="text-align: right;">{{ _report_amount( $oi_val->_last_amount ?? 0 ) }}</td>
+                   </tr>
 
                   @empty
                   @endforelse
+                  @if(sizeof($oi_value)> 1 )
+                      <tr>
+                       <td style="text-align: left;" colspan="2"><b>&nbsp;&nbsp;&nbsp;&nbsp;Sub Total:  </b></td>
+                       <td style="text-align: right;"><b>{{ _report_amount($oi_previous_sub_total ?? 0) }}</b></td>
+                       <td style="text-align: right;"><b>{{ _report_amount( $oi_current_sub_total ?? 0 ) }}</b></td>
+                       <td style="text-align: right;"><b>{{ _report_amount( $oi_balance_sub_total ?? 0 ) }}</b></td>
+                     </tr>
+                     @endif
+           @empty
+           @endforelse
+           <tr>
 
-                 
-                
 
-                @empty
-                @endforelse
+             <td style="text-align: left;" colspan="2"><b>&nbsp;&nbsp;&nbsp;&nbsp;Summary :  </b></td>
+             <td style="text-align: right;"><b>{{ _report_amount($oi_previous_total ?? 0) }}</b></td>
+             <td style="text-align: right;"><b>{{ _report_amount( $oi_current_total ?? 0 ) }}</b></td>
+             <td style="text-align: right;"><b>{{ _report_amount( $oi_amount_total ?? 0 ) }}</b></td>
+           </tr>
+           <tr>
+             <td style="text-align: left;" colspan="2"><b>Net Profit\Loss :  </b></td>
+             <td style="text-align: right;"><b>{{ _report_amount($i8_previous_total + $oi_previous_total ?? 0) }}</b></td>
+             <td style="text-align: right;"><b>{{ _report_amount( $i8_current_total + $oi_current_total ?? 0 ) }}</b></td>
+             <td style="text-align: right;"><b>{{ _report_amount( $net_total + $oi_amount_total ?? 0 ) }}</b></td>
+           </tr>
+                  
 
 
-
-              <tr>
-              
-                <td colspan="2" style="text-align: left;background: #f5f9f9;">&nbsp; &nbsp;Sub Total of {{ $key ?? '' }}:  </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{ _report_amount($_running_sub_opening_group_dr ?? 0) }} </b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{ _report_amount($_running_sub_opening_group_cr ?? 0) }}</b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{ _report_amount($_running_sub_current_group_dr ?? 0) }}</b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{ _report_amount($_running_sub_current_group_cr ?? 0) }}</b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{ _report_amount($_running_sub_closing_group_dr ?? 0) }}</b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{ _report_amount($_running_sub_closing_group_cr ?? 0) }}</b> </td>
-
-            </tr>
-           
-
-            @empty
-            @endforelse
-          <tr>
-              
-                <td colspan="2" style="text-align: left;background: #f5f9f9;"> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<b>Grand Total </b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_grand_total_opening_dr) }}</b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_grand_total_opening_cr) }}</b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_grand_total_current_dr) }}</b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_grand_total_current_cr) }}</b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_grand_total_closing_dr) }}</b> </td>
-                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_grand_total_closing_cr) }}</b> </td>
-                
-            </tr>
           </tbody>
           <tfoot>
             <tr>

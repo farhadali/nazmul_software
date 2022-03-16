@@ -32,6 +32,50 @@ if (! function_exists('default_pagination')) {
 
 
 
+
+
+if (! function_exists('filterableBranch')) {
+    function filterableBranch($request_branchs,$permited_branch)
+    {
+        $_branch_ids = array();
+         
+         if(sizeof($request_branchs) > 0){
+            foreach ($request_branchs as $value) {
+                array_push($_branch_ids, (int) $value);
+            }
+        }else{
+                foreach ($permited_branch as $branch) {
+                    array_push($_branch_ids, $branch->id);
+                }
+            
+        }
+        return $_branch_ids;
+    }
+}
+
+
+
+if (! function_exists('filterableCostCenter')) {
+    function filterableCostCenter($request_cost_centers,$permited_costcenters)
+    {
+        
+         $_cost_center_ids=array();
+        if(sizeof($request_cost_centers) > 0){
+            foreach ($request_cost_centers as $value) {
+                array_push($_cost_center_ids, (int) $value);
+            }
+        }else{
+            foreach ($permited_costcenters as $cost_center) {
+                array_push($_cost_center_ids, $cost_center->id);
+            }
+            
+        }
+        return $_cost_center_ids;
+    }
+}
+
+
+
 if (! function_exists('permited_branch')) {
     function permited_branch($branch_ids)
     {

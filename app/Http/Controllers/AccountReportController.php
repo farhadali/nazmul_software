@@ -111,6 +111,10 @@ class AccountReportController extends Controller
 
 
     public function groupBaseLedgerReport(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_datey' => 'required'
+        ]);
 
         session()->put('groupBaseLedgerReportFilter', $request->all());
         $previous_filter= Session::get('groupBaseLedgerReportFilter');
@@ -148,36 +152,13 @@ class AccountReportController extends Controller
             }
         }
 
-        //check branch id is available 
-         $_branch_ids = array();
-         $_branch_id = $request->_branch_id ?? [];
-         if(sizeof($_branch_id) > 0){
-            foreach ($_branch_id as $value) {
-                array_push($_branch_ids, (int) $value);
-            }
-        }else{
-            //if branch id is not selected then defalut branch id wise filter
-            foreach ($permited_branch as $branch) {
-                    array_push($_branch_ids, $branch->id);
-                }
-        }
+       
 
-        //check cost center id is available 
-         $_cost_center_ids=array();
-         $_cost_center_id = $request->_cost_center ?? [];
-          if(sizeof($_cost_center_id) > 0){
-            foreach ($_cost_center_id as $value) {
-                array_push($_cost_center_ids, (int) $value);
-            }
-        }else{
-             //if cost center id is not selected then defalut cost center id wise filter
-           foreach ($permited_costcenters as $cost_center) {
-                array_push($_cost_center_ids, $cost_center->id);
-            }
-        }
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
 
-
-
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
 
       $ledger_id_rows = implode(',', $ledger_ids);
       $_branch_ids_rows = implode(',', $_branch_ids);
@@ -245,6 +226,10 @@ class AccountReportController extends Controller
 
 
     public function trailBalanceReport(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_datey' => 'required'
+        ]);
 
         session()->put('trailBalanceReportFilter', $request->all());
         $previous_filter= Session::get('trailBalanceReportFilter');
@@ -282,32 +267,11 @@ class AccountReportController extends Controller
             }
         }
 
-         $_branch_ids = array();
-         $_branch_id = $request->_branch_id ?? [];
-         if(sizeof($_branch_id) > 0){
-            foreach ($_branch_id as $value) {
-                array_push($_branch_ids, (int) $value);
-            }
-        }else{
-                foreach ($permited_branch as $branch) {
-                    array_push($_branch_ids, $branch->id);
-                }
-            
-        }
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
 
-
-         $_cost_center_ids=array();
-         $_cost_center_id = $request->_cost_center ?? [];
-          if(sizeof($_cost_center_id) > 0){
-            foreach ($_cost_center_id as $value) {
-                array_push($_cost_center_ids, (int) $value);
-            }
-        }else{
-            foreach ($permited_costcenters as $cost_center) {
-                array_push($_cost_center_ids, $cost_center->id);
-            }
-            
-        }
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
 
       $ledger_id_rows = implode(',', $ledger_ids);
       $_branch_ids_rows = implode(',', $_branch_ids);
@@ -362,19 +326,126 @@ class AccountReportController extends Controller
         $users = Auth::user();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $incomeStatementLedgers = DB::table('account_ledgers')
+                                    ->select('account_ledgers.id','account_ledgers._name','account_ledgers._show','account_heads._name as _head_name')
+                                    ->join('account_heads','account_heads.id','account_ledgers._account_head_id')
+                                    ->whereIn('account_heads._account_id',[3,4])
+                                    ->orderBy('account_heads.id','ASC')
+                                    ->orderBy('account_ledgers.id','ASC')
+                                    ->get();
+        $_filter_ledgers = array();
+        foreach ($incomeStatementLedgers as $value) {
+          $_filter_ledgers[$value->_head_name][] = $value;
+        }
+       
+
          
-        return view('backend.account-report.income-statement',compact('request','page_name','previous_filter','permited_branch','permited_costcenters'));
+        return view('backend.account-report.income-statement',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','_filter_ledgers'));
     }
 
 
     public function incomeStatementReport(Request $request){
+        $this->validate($request, [
+            '_datex' => 'required',
+            '_datey' => 'required'
+        ]);
+         session()->put('incomeStatementFillter', $request->all());
         $previous_filter= Session::get('incomeStatementFillter');
         $page_name = "Income Statement";
         $users = Auth::user();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
-         
-        return view('backend.account-report.income-statement-report',compact('request','page_name','previous_filter','permited_branch','permited_costcenters'));
+
+      $_datex =  change_date_format($request->_datex);
+      $_datey=  change_date_format($request->_datey);
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+       $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+
+
+      $income_query = " SELECT t5._account_group,t5._group_name, t5._account_ledger,t5._l_name,t5._branch_id,t5._cost_center, t5._branch_name,  SUM(t5._previous_balance)  AS _previous_balance, SUM(t5._current_balance)  AS _current_balance, SUM(t5._previous_balance+t5._current_balance) as _last_amount FROM (
+
+      SELECT t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name,  SUM(t1._cr_amount-t1._dr_amount)  AS _previous_balance, 0  AS _current_balance
+            FROM accounts as t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+               WHERE t1._date < '".$_datex."' AND t3._show=1 AND t1._account_head IN (8,9)
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger
+            UNION ALL
+            SELECT t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name,  0 AS _previous_balance, SUM(t1._cr_amount-t1._dr_amount)   AS _current_balance
+            FROM accounts as t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+               WHERE t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."'  AND t3._show=1 AND t1._account_head IN (8,9)
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger
+                 ) as t5 GROUP BY t5._account_ledger ";
+      $income_8_result = DB::select($income_query);
+      $income_8 = array();
+      foreach ($income_8_result as $value) {
+        $income_8[$value->_group_name][]=$value;
+      }
+
+
+
+      $other_income_expense_query = " SELECT t5._account_group,t5._group_name, t5._account_ledger,t5._l_name,t5._branch_id,t5._cost_center, t5._branch_name,  SUM(t5._previous_balance)  AS _previous_balance, SUM(t5._current_balance)  AS _current_balance, SUM(t5._previous_balance+t5._current_balance) as _last_amount FROM (
+
+      SELECT t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name,  SUM(t1._cr_amount-t1._dr_amount)  AS _previous_balance, 0  AS _current_balance
+            FROM accounts as t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+               WHERE t1._date < '".$_datex."' AND t3._show=1 AND t1._account_head IN (10,11,15)
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger
+            UNION ALL
+            SELECT t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name,  0 AS _previous_balance, SUM(t1._cr_amount-t1._dr_amount)   AS _current_balance
+            FROM accounts as t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+               WHERE t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."'  AND t3._show=1 AND t1._account_head IN (10,11,15)
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger
+                 ) as t5 GROUP BY t5._account_ledger ";
+      $other_income_expense_result = DB::select($other_income_expense_query);
+      $other_income_expenses = array();
+      foreach ($other_income_expense_result as $value) {
+        $other_income_expenses[$value->_group_name][]=$value;
+      }
+
+        // return $income_8;
+        return view('backend.account-report.income-statement-report',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','income_8','other_income_expenses'));
+    }
+
+
+
+
+
+
+
+    public function incomeStatementSettings(Request $request){
+
+      $_ledger_ids = $request->_l_id ?? [];
+      $_shows = $request->_show ?? [];
+        foreach ($_ledger_ids as  $key=>$value) {
+          $AccountLedger = AccountLedger::find($value);
+          $AccountLedger->_show = $_shows[$key];
+          $AccountLedger->save();
+
+          
+        }
+
+        return redirect()->back();
+
     }
 
 
