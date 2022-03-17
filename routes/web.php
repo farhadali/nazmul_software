@@ -87,15 +87,27 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('ledger-report','App\Http\Controllers\AccountReportController@ledgerReprt');
     Route::get('ledger-report-show','App\Http\Controllers\AccountReportController@ledgerReprtShow');
     Route::get('group-ledger','App\Http\Controllers\AccountReportController@groupLedger');
+
     Route::post('group-base-ledger-report','App\Http\Controllers\AccountReportController@groupBaseLedgerReport');
     Route::get('group-base-ledger-filter-reset','App\Http\Controllers\AccountReportController@groupBaseLedgerFilterReset');
     Route::get('LedgerReportFilterReset','App\Http\Controllers\AccountReportController@LedgerReportFilterReset');
+
     Route::any('trail-balance','App\Http\Controllers\AccountReportController@trailBalance');
     Route::any('trail-balance-report','App\Http\Controllers\AccountReportController@trailBalanceReport');
     Route::get('trail-balance-filter-reset','App\Http\Controllers\AccountReportController@trailBalanceReportFilterReset');
+
     Route::get('income-statement','App\Http\Controllers\AccountReportController@incomeStatement');
+    Route::get('income-statement-filter-reset','App\Http\Controllers\AccountReportController@incomeStatementFilterReset');
     Route::post('income-statement-report','App\Http\Controllers\AccountReportController@incomeStatementReport');
     Route::post('income-statement-settings','App\Http\Controllers\AccountReportController@incomeStatementSettings');
+
+    Route::get('balance-sheet','App\Http\Controllers\AccountReportController@balanceSheet');
+    Route::get('balance-sheet-filter-reset','App\Http\Controllers\AccountReportController@balanceSheetFilterReset');
+    Route::get('balance-sheet-report','App\Http\Controllers\AccountReportController@balanceSheetReport');
+
+    Route::get('work-sheet','App\Http\Controllers\AccountReportController@workSheet');
+    Route::get('work-sheet-filter-reset','App\Http\Controllers\AccountReportController@workSheetFilterReset');
+    Route::get('work-sheet-report','App\Http\Controllers\AccountReportController@workSheetReport');
     
     //Searching section 
     Route::any('ledger-search','App\Http\Controllers\AccountLedgerController@ledger_search');

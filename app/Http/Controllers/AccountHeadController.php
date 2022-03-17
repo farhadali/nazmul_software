@@ -26,7 +26,7 @@ class AccountHeadController extends Controller
     public function index(Request $request)
     {
         $limit = $request->limit ?? 10;
-        $datas = AccountHead::where('_status','!=',"");
+        $datas = AccountHead::with(['_main_account_head']);
         if($request->has('_name') && $request->_name !=''){
             $datas = $datas->where('_name','like',"%$request->_name%");
         }

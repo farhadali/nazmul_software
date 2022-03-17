@@ -41,6 +41,7 @@
                          <th class="_no">No</th>
                          <th class="_action">Action</th>
                          <th>Name</th>
+                         <th>Base Account</th>
                          <th>Status</th>
                       </tr>
                         @foreach ($datas as $key => $data)
@@ -64,6 +65,7 @@
                                 @endcan
                             </td>
                             <td>{{ $data->id }} - {{ $data->_name }}</td>
+                            <td>{{ $data->_main_account_head->_name }}</td>
                             <td>{{ ($data->_status==1) ? 'Active' : 'In Active' }}</td>
                            
                         </tr>

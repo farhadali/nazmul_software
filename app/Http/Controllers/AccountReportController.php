@@ -43,23 +43,15 @@ class AccountReportController extends Controller
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
 
-        $_branch_ids = array();
-        if($request->has('_branch_id')){
-            $_branch_ids = $request->_branch_id;
-        }else{
-           foreach ($permited_branch as $branch) {
-                    array_push($_branch_ids, $branch->id);
-                } 
-        }
+       
+          $request_branchs = $request->_branch_id ?? [];
+          $request_cost_centers = $request->_cost_center ?? [];
 
-        $_cost_center_ids=array();
-        if($request->has('_cost_center')){
-             $_cost_center_ids = $request->_cost_center;
-        }else{
-            foreach ($permited_costcenters as $cost_center) {
-                    array_push($_cost_center_ids, $cost_center->id);
-                }
-        }
+          $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+          $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+          $_branch_ids_rows = implode(',', $_branch_ids);
+          $_cost_center_id_rows = implode(',', $_cost_center_ids);
                 
 
 
@@ -225,6 +217,8 @@ class AccountReportController extends Controller
     }
 
 
+
+
     public function trailBalanceReport(Request $request){
       $this->validate($request, [
             '_datex' => 'required',
@@ -365,7 +359,7 @@ class AccountReportController extends Controller
       $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
 
        $_branch_ids_rows = implode(',', $_branch_ids);
-      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+       $_cost_center_id_rows = implode(',', $_cost_center_ids);
 
 
       $income_query = " SELECT t5._account_group,t5._group_name, t5._account_ledger,t5._l_name,t5._branch_id,t5._cost_center, t5._branch_name,  SUM(t5._previous_balance)  AS _previous_balance, SUM(t5._current_balance)  AS _current_balance, SUM(t5._previous_balance+t5._current_balance) as _last_amount FROM (
@@ -428,6 +422,174 @@ class AccountReportController extends Controller
 
 
 
+    public function balanceSheet(Request $request){
+        $previous_filter= Session::get('balanceSheetFilter');
+        $page_name = "Balance Sheet";
+        
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        
+       
+
+         
+        return view('backend.account-report.balance-sheet',compact('request','page_name','previous_filter','permited_branch','permited_costcenters'));
+    }
+
+
+    public function balanceSheetReport(Request $request){
+        $this->validate($request, [
+            '_datex' => 'required'
+        ]);
+         session()->put('balanceSheetFilter', $request->all());
+        $previous_filter= Session::get('balanceSheetFilter');
+        $page_name = "Balance Sheet";
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+
+      $_datex =  change_date_format($request->_datex);
+      $_datey=  change_date_format($request->_datey);
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+
+
+      $balance_sheet = "   SELECT t5._name as _main_head,t6._name as _head_name, t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name,  SUM(t1._dr_amount-t1._cr_amount)  AS _amount
+            FROM accounts as t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN account_heads as t6 ON t6.id=t1._account_head
+            INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+               WHERE t1._date < '".$_datex."' AND t3._show=1 AND t5.id IN (1,2,5)
+               AND  t1._branch_id IN (".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger
+
+          UNION ALL
+          SELECT 'Capital' as _main_head, 'Owner\'s equity' as _head_name, 'Owner\'s Equity' AS _account_group,'Owner\'s Equity' as _group_name, null  AS _account_ledger,'Income Statement Account' as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name,  SUM(t1._dr_amount-t1._cr_amount)  AS _amount
+            FROM accounts as t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN account_heads as t6 ON t6.id=t1._account_head
+            INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+               WHERE t1._date < '".$_datex."' AND t3._show=1 AND t5.id IN (3,4)
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.") 
+
+
+                   ";
+      $balance_sheet_result = DB::select($balance_sheet);
+      $balance_sheet_filter = array();
+      foreach ($balance_sheet_result as $value) {
+        $balance_sheet_filter[$value->_main_head][$value->_head_name][$value->_group_name][]=$value;
+      }
+
+     
+
+        return view('backend.account-report.balance-sheet-report',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','balance_sheet_filter'));
+    }
+
+
+
+    public function workSheet(Request $request){
+        $previous_filter= Session::get('workSheetFilter');
+        $page_name = "Work Sheet";
+        
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        
+       
+
+         
+        return view('backend.account-report.work-sheet',compact('request','page_name','previous_filter','permited_branch','permited_costcenters'));
+
+    }
+
+    public function workSheetReport(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required'
+        ]);
+         session()->put('balanceSheetFilter', $request->all());
+        $previous_filter= Session::get('balanceSheetFilter');
+        $page_name = "Work Sheet";
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+
+      $_datex =  change_date_format($request->_datex);
+      $_datey=  change_date_format($request->_datey);
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+
+
+      $balance_sheet = "   SELECT t5.id as _main_head,t6._name as _head_name, t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name,  SUM(t1._dr_amount-t1._cr_amount)  AS _amount
+            FROM accounts as t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN account_heads as t6 ON t6.id=t1._account_head
+            INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+               WHERE t1._date < '".$_datex."' 
+               AND  t1._branch_id IN (".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger
+
+          UNION ALL
+          SELECT 6 as _main_head, 4 as _head_name, 'Owner\'s Equity' AS _account_group,'Owner\'s Equity' as _group_name, null  AS _account_ledger,'Income Statement Account' as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name,  SUM(t1._dr_amount-t1._cr_amount)  AS _amount
+            FROM accounts as t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN account_heads as t6 ON t6.id=t1._account_head
+            INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+               WHERE t1._date < '".$_datex."'  AND t3._show=1 AND t5.id IN (3,4)
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.") 
+
+
+                   ";
+       $work_sheet_result = DB::select($balance_sheet);
+      
+
+      
+
+        return view('backend.account-report.work-sheet-report',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','work_sheet_result'));
+      
+    }
+
+    public function workSheetFilterReset(Request $request){
+      Session::flash('workSheetFilter');
+
+        return redirect()->back();
+    }
+
+
+
+
+
+
+    public function incomeStatementFilterReset(){
+        Session::flash('incomeStatementFillter');
+
+        return redirect()->back();
+    }
+
+    public function balanceSheetFilterReset(){
+        Session::flash('balanceSheetFilter');
+
+        return redirect()->back();
+    }
 
 
 

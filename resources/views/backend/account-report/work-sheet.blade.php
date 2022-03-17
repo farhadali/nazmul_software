@@ -25,11 +25,7 @@
                   <h4>{{ $page_name ?? '' }}</h4>
                 </div>
                 <div class="col-sm-4 text-right" >
-                  @can('income-statement-settings')
-                  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default">
-                  <i class="fa fa-cog" aria-hidden="true"></i> 
-                </button>
-                @endcan
+                 
                  
                 </div>
               </div>
@@ -39,11 +35,11 @@
           
          
             <div class="card-body filter_body" style="">
-               <form  action="{{url('income-statement-report')}}" method="POST">
+               <form  action="{{url('work-sheet-report')}}" method="GET">
                 @csrf
                     <div class="row">
-                      <div class="col-md-6">
-                          <label>Start Date:</label>
+                      <div class="col-md-12">
+                          <label>Up To Date:</label>
                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                       <input type="text" name="_datex" class="form-control datetimepicker-input" data-target="#reservationdate" required @if(isset($previous_filter["_datex"])) value='{{$previous_filter["_datex"] }}' @endif  />
                                       <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
@@ -56,15 +52,7 @@
                               @endif
                         </div>
                       </div>
-                      <div class="col-md-6">
-                          <label>End Date:</label>
-                        <div class="input-group date" id="reservationdate_2" data-target-input="nearest">
-                                      <input type="text" name="_datey" class="form-control datetimepicker-input_2" data-target="#reservationdate_2" required @if(isset($previous_filter["_datey"])) value='{{$previous_filter["_datey"] }}' @endif  />
-                                      <div class="input-group-append" data-target="#reservationdate_2" data-toggle="datetimepicker">
-                                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                      </div>
-                                  </div>
-                      </div>
+                      
                       <div class="col-md-12">
                           <label>Branch:</label>
                          <select id="_branch_id" class="form-control _branch_id multiple_select" name="_branch_id[]" multiple size='2' >
@@ -102,7 +90,7 @@
                             <button type="submit" class="btn btn-success submit-button form-control"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Report</button>
                         </div>
                          <div class="col-xs-6 col-sm-6 col-md-6 ">
-                                     <a href="{{url('income-statement-filter-reset')}}" class="btn btn-danger form-control" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
+                                     <a href="{{url('work-sheet-filter-reset')}}" class="btn btn-danger form-control" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
                         </div>
                         <br><br>
                      </div>
@@ -116,61 +104,7 @@
       </div>
     </div>  
 </div>
-<div class="modal fade" id="modal-default">
-        <div class="modal-dialog">
-           <form action="{{url('income-statement-settings')}}" method="post">
-            @csrf
-          <div class="modal-content">
-           
-            <div class="modal-header">
-              <h4 class="modal-title">Income Statement Settings</h4>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <table class="table" style="width: 100%;">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th class="text-right">Show</th>
-                  </tr>
-                  @forelse($_filter_ledgers as $key=>$value)
-                  <tr >
-                    <th style="background: #f7f7f7;" colspan="2">{{$key}}</th>
-                  </tr>
-                      @forelse($value as $v_key=>$led)
-                        <tr class="@if($led->_show==0) _nv_warning @endif">
-                          <th>
-                            <input type="hidden" name="_l_id[]" value="{{$led->id}}">
-                            &nbsp;&nbsp;&nbsp;&nbsp;{{ $led->_name ?? '' }}
-                          </th>
-                          <th class="text-right  " >
-                            <select class="form-control" name="_show[]">
-                              <option value="1" @if($led->_show==1) selected @endif >Show</option>
-                              <option value="0" @if($led->_show==0) selected @endif >Hide</option>
-                            </select>
-                          </th>
-                        </tr>
-                      @empty
-                      @endforelse
-                  @empty
-                  @endforelse
 
-                </thead>
-              </table>
-            </div>
-            <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Save changes</button>
-            </div>
-          </div>
-          </form>
-          <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-      </div>
-      <!-- /.modal -->
 
 
 @endsection
@@ -189,14 +123,14 @@
         format:default_date_formate
     });
 
-     $('#reservationdate_2').datetimepicker({
-        format:default_date_formate
-    });
+    //  $('#reservationdate_2').datetimepicker({
+    //     format:default_date_formate
+    // });
 
      var _old_filter = $(document).find("._old_filter").val();
      if(_old_filter==0){
         $(".datetimepicker-input").val(date__today())
-        $(".datetimepicker-input_2").val(date__today())
+       // $(".datetimepicker-input_2").val(date__today())
      }
      
      

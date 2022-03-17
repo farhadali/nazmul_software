@@ -162,8 +162,8 @@
                           <div class="col-md-8">
                               <div class="form-group">
                                 
-                                    <button type="button" class="btn btn-warning mr-3" data-toggle="modal" data-target="#modal-default" title="Advance Search"><i class="fa fa-search mr-2"></i> </button>
-                                     <a href="{{url('voucher')}}" class="btn btn-danger" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
+                                    <button type="button" class="btn btn-sm btn-warning mr-3" data-toggle="modal" data-target="#modal-default" title="Advance Search"><i class="fa fa-search mr-2"></i> </button>
+                                     <a href="{{url('voucher')}}" class="btn btn-sm btn-danger" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
                               </div>
                           </div>
                         </div><!-- end row -->

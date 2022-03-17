@@ -43,7 +43,7 @@
                     <div class="row">
                       <label>Branch:</label><br> </div>
                      <div class="row">
-                         <select id="_branch_id" class="form-control _branch_id multiple_select" name="_branch_id[]" multiple size='2' required>
+                         <select id="_branch_id" class="form-control _branch_id multiple_select" name="_branch_id[]" multiple size='2' >
                           @forelse($permited_branch as $branch )
                           <option value="{{$branch->id}}" @if(isset($previous_filter["_branch_id"])) 
                                @if(in_array($branch->id,$previous_filter["_branch_id"])) selected @endif
@@ -55,7 +55,7 @@
                     <div class="row">
                       <label>Cost Center:</label><br> </div>
                      <div class="row">
-                         <select class="form-control width_150_px _cost_center multiple_select" multiple name="_cost_center[]" size='2' required >
+                         <select class="form-control width_150_px _cost_center multiple_select" multiple name="_cost_center[]" size='2'  >
                                             
                             @forelse($permited_costcenters as $costcenter )
                             <option value="{{$costcenter->id}}" 
