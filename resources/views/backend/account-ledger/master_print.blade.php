@@ -23,7 +23,6 @@
       <div class="col-sm-4 invoice-col">
         <h2 class="page-header">
            <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
-           
         </h2>
       </div>
       <!-- /.col -->
