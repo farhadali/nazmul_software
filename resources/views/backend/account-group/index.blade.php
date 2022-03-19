@@ -6,14 +6,14 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">{!! $page_name ?? '' !!} </h1>
+            <h1 class="m-0 _page_name">{!! $page_name ?? '' !!} </h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
               <li class="breadcrumb-item active">
-                @can('role-create')
-                        <a class="btn btn-info" href="{{ route('account-group.create') }}"> Create New </a>
+                @can('account-group-create')
+                        <a class="btn btn-info" href="{{ route('account-group.create') }}">  <i class="nav-icon fas fa-plus"></i>  </a>
                 @endcan
                </li>
             </ol>
@@ -32,27 +32,71 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header border-0">
-                 @include('backend.account-group.search')
+                 
+                 <div class="row">
+                   @php
+
+                     $currentURL = URL::full();
+                     $current = URL::current();
+                    if($currentURL === $current){
+                       $print_url = $current."?print=single";
+                       $print_url_detal = $current."?print=detail";
+                    }else{
+                         $print_url = $currentURL."&print=single";
+                         $print_url_detal = $currentURL."&print=detail";
+                    }
+    
+
+                   @endphp
+                    <div class="col-md-4">
+                     @include('backend.account-group.search')
+                    </div>
+                    <div class="col-md-8">
+                      <div class="d-flex flex-row justify-content-end">
+                         @can('voucher-print')
+                        <li class="nav-item dropdown remove_from_header">
+                              <a class="nav-link" data-toggle="dropdown" href="#">
+                                
+                                <i class="fa fa-print " aria-hidden="true"></i> <i class="right fas fa-angle-down "></i>
+                              </a>
+                              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                               
+                                <div class="dropdown-divider"></div>
+                                
+                                <a target="__blank" href="{{$print_url}}" class="dropdown-item">
+                                  <i class="fa fa-print mr-2" aria-hidden="true"></i>Print
+                                </a>
+                               <div class="dropdown-divider"></div>
+                              
+                                
+                              
+                                    
+                            </li>
+                             @endcan   
+                         {!! $datas->render() !!}
+                          </div>
+                    </div>
+                  </div>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-bordered">
                     <thead>
                       <tr>
-                         <th class="_no">No</th>
-                         <th class="_action">Action</th>
-                         <th>Account Type</th>
-                         <th>Code</th>
-                         <th>Name</th>
-                         <th>Details</th>
-                         <th>Status</th>
-                         <th>Possition</th>
+                         <th  style="width: 10%" class="_action">Action</th>
+                         <th  style="width: 5%" class="_no">ID</th>
+                         <th style="width: 10%" >Account Type</th>
+                         <th style="width: 5%" >Code</th>
+                         <th style="width: 20%" >Name</th>
+                         <th style="width: 35%" >Details</th>
+                         <th style="width: 5%" >Status</th>
+                         <th style="width: 5%" >Possition</th>
                       </tr>
                     </thead>
                       <tbody>
                         @foreach ($datas as $key => $data)
                         <tr>
-                            <td>{{ $key+1 }}</td>
+                           
                              <td>
                                 <a class="btn btn-sm btn-info" href="{{ route('account-group.show',$data->id) }}">
                                   <i class="nav-icon fas fa-eye"></i>
@@ -70,6 +114,7 @@
                                     {!! Form::close() !!}
                                 @endcan
                             </td>
+                             <td>{{ $data->id }}</td>
                             <td>{{ $data->account_type->_name ?? '' }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->id ?? '' }} - {{ $data->_name ?? '' }}</td>
@@ -81,18 +126,13 @@
                         </tbody>
                         <tfoot>
                           <tr>
-                            <td colspan="7"> {!! $datas->render() !!}</td>
+                            <td colspan="8">  {!! $datas->render() !!} </td>
                           </tr>
                         </tfoot>
                     </table>
                 </div>
                 <!-- /.d-flex -->
 
-                
-
-                <!-- <div class="d-flex flex-row justify-content-end">
-                 {!! $datas->render() !!}
-                </div> -->
               </div>
             </div>
             <!-- /.card -->

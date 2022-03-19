@@ -19,9 +19,7 @@ input[type=email], input[type=password] {
 }
 
 button {
-  background-color: #4CAF50;
   color: white;
-  padding: 14px 20px;
   margin: 8px 0;
   border: none;
   cursor: pointer;
@@ -40,11 +38,10 @@ button:hover {
 
 .imgcontainer {
   text-align: center;
-  margin: 24px 0 12px 0;
 }
 
 img.avatar {
-  width: 40%;
+  width: 70px;
 }
 
 .container {
@@ -72,7 +69,7 @@ span.psw {
 
 
 <div style="width: 320px;
-    margin: 0px auto;">
+    margin: 0px auto;margin-top: 10vh;">
    
     <h2 style="text-align:center">{{ $settings->title ?? '' }}</h2>
 <form method="POST" action="{!!  route('login')  !!}">
@@ -90,19 +87,11 @@ span.psw {
     <label for="password"><b>{!!  __('Password')  !!}</b></label>
     <input type="password" placeholder="Enter Password" name="password" required>
         
-    <button type="submit">Login</button>
-    <label>
-      <input type="checkbox" name="remember" id="remember" {!!  old('remember') ? 'checked' : ''  !!}> Remember me
-    </label>
+    <button type="submit"><img src="https://img.icons8.com/ios-filled/50/000000/login-rounded-right.png"/></i>
+ </button>
+    
   </div>
 
-  <div class="container" style="background-color:#413c69">
-    @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{!!  route('password.request')  !!}" style="color: #fff">
-                                        {!!  __('Forgot Your Password?')  !!}
-                                    </a>
-                                @endif
-  </div>
 </form>
 </div>
 </body>

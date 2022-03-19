@@ -22,7 +22,7 @@
                     <div class="col-sm-10">
                      <select name="limit" class="form-control" >
                               @forelse($row_numbers as $row)
-                               <option @if(isset($request->limit)) @if($request->limit == $row) selected @endif  @endif value="{{ $row }}">{{$row}}</option>
+                               <option  @if($limit == $row) selected @endif   value="{{ $row }}">{{$row}}</option>
                               @empty
                               @endforelse
                       </select>
@@ -100,7 +100,8 @@
                   </div>
 
 
-                  <div class="form-group row">
+                
+                    <div class="form-group row">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Order By:</label>
                     <div class="col-sm-10">
                       @php
@@ -115,7 +116,6 @@
                         </select>
                     </div>
                   </div>
-                  
 
                   <div class="form-group row">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Sort Order:</label>
@@ -127,6 +127,7 @@
                         </select>
                     </div>
                   </div> 
+
                          
 
                              
@@ -153,17 +154,17 @@
                                 
                                 <select name="limit" class="form-control" onchange="this.form.submit()">
                                         @forelse($row_numbers as $row)
-                                         <option @if(isset($request->limit)) @if($request->limit == $row) selected @endif  @endif value="{{ $row }}">{{$row}}</option>
+                                         <option  @if($limit == $row) selected @endif  value="{{ $row }}">{{$row}}</option>
                                         @empty
                                         @endforelse
                                 </select>
                               </div>
                           </div>
                           <div class="col-md-8">
-                              <div class="form-group">
+                              <div class="form-group mt-1">
                                 
                                     <button type="button" class="btn btn-sm btn-warning mr-3" data-toggle="modal" data-target="#modal-default" title="Advance Search"><i class="fa fa-search mr-2"></i> </button>
-                                     <a href="{{url('voucher')}}" class="btn btn-sm btn-danger" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
+                                     <a href="{{url('voucher-reset')}}" class="btn btn-sm btn-danger" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
                               </div>
                           </div>
                         </div><!-- end row -->

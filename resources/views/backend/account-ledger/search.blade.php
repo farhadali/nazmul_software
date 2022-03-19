@@ -22,7 +22,7 @@
                     <div class="col-sm-10">
                      <select name="limit" class="form-control" >
                               @forelse($row_numbers as $row)
-                               <option @if(isset($request->limit)) @if($request->limit == $row) selected @endif  @endif value="{{ $row }}">{{$row}}</option>
+                               <option @if($limit == $row) selected @endif  value="{{ $row }}">{{$row}}</option>
                               @empty
                               @endforelse
                       </select>
@@ -53,6 +53,12 @@
                     </div>
                   </div>
                   <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">ID:</label>
+                    <div class="col-sm-10">
+                      <input type="text" name="id" class="form-control" placeholder="Exp:1,2,3,4" value="@if(isset($request->id)) {{$request->id ?? ''}}  @endif">
+                    </div>
+                  </div>
+                  <div class="form-group row">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Name:</label>
                     <div class="col-sm-10">
                       <input type="text" name="_name" class="form-control" placeholder="Search By Name" value="@if(isset($request->_name)) {{$request->_name ?? ''}}  @endif">
@@ -73,16 +79,7 @@
                     </div>
                   </div>
 
-                  <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Sort Order:</label>
-                    <div class="col-sm-10">
-                       <select class=" form-control" name="_asc_desc">
-                        @foreach(asc_desc() AS $key=>$val)
-                            <option value="{{$val}}" @if(isset($request->_asc_desc)) @if($val==$request->_asc_desc) selected @endif @endif >{{$val}}</option>
-                        @endforeach
-                        </select>
-                    </div>
-                  </div>
+                  
                   <div class="form-group row">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Order By:</label>
                     <div class="col-sm-10">
@@ -99,7 +96,16 @@
                     </div>
                   </div>
                      
-                         
+                     <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Sort Order:</label>
+                    <div class="col-sm-10">
+                       <select class=" form-control" name="_asc_desc">
+                        @foreach(asc_desc() AS $key=>$val)
+                            <option value="{{$val}}" @if(isset($request->_asc_desc)) @if($val==$request->_asc_desc) selected @endif @endif >{{$val}}</option>
+                        @endforeach
+                        </select>
+                    </div>
+                  </div>    
 
                              
                           
@@ -125,7 +131,7 @@
                                 
                                 <select name="limit" class="form-control" onchange="this.form.submit()">
                                         @forelse($row_numbers as $row)
-                                         <option @if(isset($request->limit)) @if($request->limit == $row) selected @endif  @endif value="{{ $row }}">{{$row}}</option>
+                                         <option @if($limit == $row) selected @endif   value="{{ $row }}">{{$row}}</option>
                                         @empty
                                         @endforelse
                                 </select>
@@ -134,10 +140,10 @@
                           
                           
                           <div class="col-md-8">
-                              <div class="form-group">
+                              <div class="form-group mr-2">
                                 <div class="d-flex">
-                                    <button type="button" class="btn btn-warning mr-3" data-toggle="modal" data-target="#modal-default" title="Advance Search"><i class="fa fa-search mr-2"></i> </button>
-                                     <a href="{{url('account-ledger')}}" class="btn btn-danger" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
+                                    <button type="button" class="btn btn-sm btn-warning mr-3" data-toggle="modal" data-target="#modal-default" title="Advance Search"><i class="fa fa-search mr-2"></i> </button>
+                                     <a href="{{url('account-ledger-reset')}}" class="btn btn-sm btn-danger" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
                                      </div>
                                 </div>
                           </div>

@@ -63,9 +63,11 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('account-type', AccountHeadController::class);
     Route::post('account-type/update', 'App\Http\Controllers\AccountHeadController@update');
+    Route::get('account-type-reset', 'App\Http\Controllers\AccountHeadController@reset');
 
     Route::resource('account-group', AccountGroupController::class);
     Route::post('account-group/update', 'App\Http\Controllers\AccountGroupController@update');
+    Route::get('account-group-reset', 'App\Http\Controllers\AccountGroupController@reset');
 
     Route::resource('cost-center', CostCenterController::class);
     Route::post('cost-center/update', 'App\Http\Controllers\CostCenterController@update');
@@ -75,12 +77,14 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('account-ledger', AccountLedgerController::class);
     Route::post('account-ledger/update', 'App\Http\Controllers\AccountLedgerController@update');
+    Route::get('account-ledger-reset', 'App\Http\Controllers\AccountLedgerController@reset');
 
     Route::resource('voucher', VoucherMasterController::class);
     Route::post('voucher/update', 'App\Http\Controllers\VoucherMasterController@update');
     Route::get('voucher/print/{id}', 'App\Http\Controllers\VoucherMasterController@voucherPrint');
     Route::get('voucher-main-print', 'App\Http\Controllers\VoucherMasterController@voucherMainPrint');
     Route::get('voucher-detail-print', 'App\Http\Controllers\VoucherMasterController@voucherDetailPrint');
+    Route::get('voucher-reset', 'App\Http\Controllers\VoucherMasterController@reset');
 
 
     //Account Report Section 

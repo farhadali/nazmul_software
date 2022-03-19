@@ -6,14 +6,15 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">{!! $page_name ?? '' !!} </h1>
+            <h1 class="m-0 _page_name">{!! $page_name ?? '' !!} </h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
+              @can('account-ledger-list')
               <li class="breadcrumb-item active">
-                 <a class="btn btn-primary" href="{{ route('account-type.index') }}"> {!! $page_name ?? '' !!}</a>
+                 <a class="btn btn-info" href="{{ route('account-ledger.index') }}"> <i class="fa fa-th-list" aria-hidden="true"></i></a>
                </li>
+               @endcan
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -40,42 +41,64 @@
               <div class="card-body">
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>Name:</strong>
+                        <strong>ID:</strong>
+                        {{ $data->id }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <strong>Ledger:</strong>
                         {{ $data->_name }}
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>Name:</strong>
-                        {{ $data->_name }}
+                        <strong>Account Type:</strong>
+                       {{ $data->account_type->_name ?? '' }}
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>Name:</strong>
-                        {{ $data->_name }}
+                        <strong>Account Group:</strong>
+                      {{ $data->account_group->_name ?? '' }}
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>Name:</strong>
-                        {{ $data->_name }}
+                        <strong>Code:</strong>
+                      {{ $data->_code ?? '' }}
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>Name:</strong>
-                        {{ $data->_name }}
+                        <strong>Email:</strong>
+                      {{ $data->_email ?? '' }}
                     </div>
                 </div>
-                 <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <strong>Phone:</strong>
+                      {{ $data->_phone ?? '' }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <strong>Balance:</strong>
+                      {{ _show_amount_dr_cr(_report_amount(_last_balance($data->id)[0]->_balance ?? 0))  }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
                         <strong>Possition:</strong>
-                        {{ $data->_short ?? '' }}
+                    {{ $data->_short ?? '' }}
                     </div>
                 </div>
-               
-                
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <strong>Status:</strong>
+                    {{ selected_status($data->_status) }}
+                    </div>
+                </div>
               </div>
             </div>
             <!-- /.card -->

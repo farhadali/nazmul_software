@@ -6,14 +6,15 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0"> {{ $page_name ?? '' }} </h1>
+            <h1 class="m-0 _page_name"> {{ $page_name ?? '' }} </h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
+             @can('account-ledger-list')
               <li class="breadcrumb-item active">
-                 <a class="btn btn-primary" href="{{ route('account-ledger.index') }}"> {{ $page_name ?? '' }} </a>
+                 <a class="btn btn-info" href="{{ route('account-ledger.index') }}"> <i class="fa fa-th-list" aria-hidden="true"></i></a>
                </li>
+               @endcan
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->

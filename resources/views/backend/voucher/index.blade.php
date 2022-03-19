@@ -32,22 +32,18 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header border-0">
-                
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <div class="row">
+                <div class="row">
                    @php
 
- $currentURL = URL::full();
- $current = URL::current();
-if($currentURL === $current){
-   $print_url = $current."?print=single";
-   $print_url_detal = $current."?print=detail";
-}else{
-     $print_url = $currentURL."&print=single";
-     $print_url_detal = $currentURL."&print=detail";
-}
+                     $currentURL = URL::full();
+                     $current = URL::current();
+                    if($currentURL === $current){
+                       $print_url = $current."?print=single";
+                       $print_url_detal = $current."?print=detail";
+                    }else{
+                         $print_url = $currentURL."&print=single";
+                         $print_url_detal = $currentURL."&print=detail";
+                    }
     
 
                    @endphp
@@ -82,6 +78,10 @@ if($currentURL === $current){
                           </div>
                     </div>
                   </div>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  
                   <table class="table table-bordered">
                       <tr>
                          <th class=" _nv_th_action _action_big"><b>Action</b></th>
@@ -139,7 +139,7 @@ if($currentURL === $current){
                         <tr>
                           <td colspan="12" >
                            <div class="collapse" id="collapseExample__{{$key}}">
-                            <div class="card card-body" style="background: #f4f6f9;">
+                            <div class="card " >
                               <table class="table">
                                 <thead>
                                   <th>ID</th>
@@ -185,9 +185,6 @@ if($currentURL === $current){
                           </div>
                         </td>
                         </tr>
-
-
-                       
                         @endforeach
                         <tr>
                           <td colspan="5" class="text-center"><b>Total</b></td>
@@ -197,9 +194,6 @@ if($currentURL === $current){
                     </table>
                 </div>
                 <!-- /.d-flex -->
-
-                
-
                 
               </div>
             </div>

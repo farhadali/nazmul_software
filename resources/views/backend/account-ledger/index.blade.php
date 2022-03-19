@@ -6,7 +6,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">{!! $page_name ?? '' !!} </h1>
+            <h1 class="m-0 _page_name">{!! $page_name ?? '' !!} </h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -14,7 +14,7 @@
               <li class="breadcrumb-item active">
                 @can('account-ledger-create')
                         
-                    <a title="Add New" class="btn btn-success" href="{{ route('account-ledger.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                    <a title="Add New" class="btn btn-info" href="{{ route('account-ledger.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                 @endcan
                </li>
             </ol>
@@ -79,8 +79,9 @@ if($currentURL === $current){
                 <div class="table-responsive">
                   <table class="table table-bordered">
                       <tr>
-                         <th class="_no">No</th>
+                         
                          <th class="_action">Action</th>
+                         <th>ID</th>
                          <th>Type</th>
                          <th>Group</th>
                          <th>Name</th>
@@ -93,7 +94,7 @@ if($currentURL === $current){
                       </tr>
                         @foreach ($datas as $key => $data)
                         <tr>
-                            <td>{{ $key+1 }}</td>
+                           
                              <td>
                                 <a class="btn btn-sm btn-info _action_button" href="{{ route('account-ledger.show',$data->id) }}">
                                   <i class="nav-icon fas fa-eye"></i>
@@ -111,16 +112,16 @@ if($currentURL === $current){
                                     {!! Form::close() !!}
                                 @endcan
                             </td>
-                            
+                            <td>{{ $data->id }}</td>
                             <td>{{ $data->account_type->_name ?? '' }}</td>
                             <td>{{ $data->account_group->_name ?? '' }}</td>
-                            <td>{{ $data->id }} - {{ $data->_name }}</td>
+                            <td>{{ $data->_name }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_email ?? '' }}</td>
                             <td>{{ $data->_phone ?? '' }}</td>
-                            <td>{{ _last_balance($data->id)[0]->_balance ?? 0  }}</td>
+                            <td>{{ _show_amount_dr_cr(_report_amount(_last_balance($data->id)[0]->_balance ?? 0))  }}</td>
                             <td>{{ $data->_short ?? '' }}</td>
-                            <td>{{ ($data->_status==1) ? 'Active' : 'In Active' }}</td>
+                           <td>{{ selected_status($data->_status) }}</td>
                            
                         </tr>
                         @endforeach

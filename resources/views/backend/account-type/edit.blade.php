@@ -6,14 +6,15 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0"> {{ $page_name ?? '' }} </h1>
+            <h1 class="m-0 _page_name"> {{ $page_name ?? '' }} </h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
+               @can('account-type-list')
               <li class="breadcrumb-item active">
-                 <a class="btn btn-primary" href="{{ route('account-type.index') }}"> {{ $page_name ?? '' }} </a>
+                 <a class="btn btn-primary" href="{{ route('account-type.index') }}"> <i class="fa fa-th-list" aria-hidden="true"></i></a>
                </li>
+               @endcan
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -81,9 +82,11 @@
                         </div>
                        
                        
-                        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                            <button type="submit" class="btn btn-primary submit-button">Submit</button>
+                        <div class="col-xs-6 col-sm-6 col-md-6 offset-md-6 text-right">
+                            <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
+                            
                         </div>
+                        <br><br>
                     </div>
                     </form>
                 

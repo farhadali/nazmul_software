@@ -9,6 +9,7 @@ use App\Models\AccountHead;
 use App\Models\Accounts;
 use App\Models\Branch;
 use Auth;
+use Session;
 
 class AccountLedgerController extends Controller
 {
@@ -29,10 +30,22 @@ class AccountLedgerController extends Controller
      */
     public function index(Request $request)
     {
-        $limit = $request->limit ?? 10;
-        $_asc_desc = $request->_asc_desc ?? 'ASC';
-        $asc_cloumn =  $request->asc_cloumn ?? '_name';
+        if($request->has('limit')){
+            $limit = $request->limit ??  default_pagination();
+            session()->put('_al_limit', $request->limit);
+        }else{
+             $limit= \Session::get('_al_limit') ??  default_pagination();
+            
+        }
+        
+        $_asc_desc = $request->_asc_desc ?? 'DESC';
+        $asc_cloumn =  $request->asc_cloumn ?? 'id';
+
         $datas = AccountLedger::with(['account_type','account_group']);
+        if($request->has('id') && $request->id !=""){
+            $ids =  array_map('intval', explode(',', $request->id ));
+            $datas = $datas->whereIn('id', $ids); 
+        }
         if($request->has('_name') && $request->_name !=''){
             $datas = $datas->where('_name','like',"%$request->_name%");
         }
@@ -60,9 +73,22 @@ class AccountLedgerController extends Controller
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
 
          $page_name = $this->page_name;
+         if($request->has('print')){
+            if($request->print =="single"){
+                return view('backend.account-ledger.master_print',compact('datas','page_name','request','limit'));
+            }
+         }
          $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
-         $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
-        return view('backend.account-ledger.index',compact('datas','page_name','account_types','request','account_groups'));
+         $account_groups = [];
+         //$account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+
+        return view('backend.account-ledger.index',compact('datas','page_name','account_types','request','account_groups','limit'));
+    }
+
+
+     public function reset(){
+        Session::flash('_al_limit');
+       return  \Redirect::to('account-ledger?limit='.default_pagination());
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AccountGroup;
 use App\Models\AccountHead;
 use Illuminate\Http\Request;
+use Session;
 
 class AccountGroupController extends Controller
 {
@@ -25,19 +26,53 @@ class AccountGroupController extends Controller
      */
    public function index(Request $request)
     {
-        $limit = $request->limit ?? 10;
+        if($request->has('limit')){
+            $limit = $request->limit ??  default_pagination();
+            session()->put('_ag_limit', $request->limit);
+        }else{
+             $limit= Session::get('_ag_limit') ??  default_pagination();
+            
+        }
+        
+        $_asc_desc = $request->_asc_desc ?? 'DESC';
+        $asc_cloumn =  $request->asc_cloumn ?? 'id';
+
         $datas = AccountGroup::with(['account_type']);
+        if($request->has('id') && $request->id !=""){
+            $ids =  array_map('intval', explode(',', $request->id ));
+            $datas = $datas->whereIn('id', $ids); 
+        }
         if($request->has('_name') && $request->_name !=''){
             $datas = $datas->where('_name','like',"%$request->_name%");
+        }
+        if($request->has('_code') && $request->_code !=''){
+            $datas = $datas->where('_code','like',"%$request->_code%");
+        }
+        if($request->has('_short') && $request->_short !=''){
+            $datas = $datas->where('_short',$request->_short);
         }
         if ($request->has('_account_head_id') && $request->_account_head_id !="") {
             $datas = $datas->where('_account_head_id','=',$request->_account_head_id);
         }
 
-         $datas = $datas->orderBy('id','desc')->paginate($limit);
+         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
          $page_name = $this->page_name;
+         
+
+        if($request->has('print')){
+            if($request->print =="single"){
+                return view('backend.account-group.master_print',compact('datas','page_name','request','limit'));
+            }
+         }
+
          $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
-        return view('backend.account-group.index',compact('datas','page_name','account_types','request'));
+
+        return view('backend.account-group.index',compact('datas','page_name','account_types','request','limit'));
+    }
+
+    public function reset(){
+        Session::flash('_ag_limit');
+       return  \Redirect::to('account-group?limit='.default_pagination());
     }
 
     /**

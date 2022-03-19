@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AccountHead;
 use Illuminate\Http\Request;
+use Session;
 
 class AccountHeadController extends Controller
 {
@@ -25,16 +26,52 @@ class AccountHeadController extends Controller
 
     public function index(Request $request)
     {
-        $limit = $request->limit ?? 10;
+       if($request->has('limit')){
+            $limit = $request->limit ??  default_pagination();
+            session()->put('_at_limit', $request->limit);
+        }else{
+             $limit= Session::get('_at_limit') ??  default_pagination();
+            
+        }
+       
+        $_asc_desc = $request->_asc_desc ?? 'DESC';
+        $asc_cloumn =  $request->asc_cloumn ?? 'id';
+
         $datas = AccountHead::with(['_main_account_head']);
+        if($request->has('_code') && $request->_code !=''){
+            $datas = $datas->where('_code','like',"%$request->_code%");
+        }
+        if($request->has('id') && $request->id !=""){
+            $ids =  array_map('intval', explode(',', $request->id ));
+            $datas = $datas->whereIn('id', $ids); 
+        }
         if($request->has('_name') && $request->_name !=''){
             $datas = $datas->where('_name','like',"%$request->_name%");
         }
+        if($request->has('_account_id') && $request->_account_id !=''){
+            $datas = $datas->where('_account_id',$request->_account_id);
+        }
 
-         $datas = $datas->orderBy('id','desc')->paginate($limit);
+         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
          $page_name = $this->page_name;
-        return view('backend.account-type.index',compact('datas','request','page_name'));
+        if($request->has('print')){
+            if($request->print =="single"){
+                return view('backend.account-type.master_print',compact('datas','page_name','request','limit'));
+            }
+         }
 
+         $base_accounts =\DB::table('main_account_head')->select('id','_name')->get();
+         
+
+        return view('backend.account-type.index',compact('datas','request','page_name','limit','base_accounts'));
+
+    }
+
+
+
+    public function reset(){
+        Session::flash('_at_limit');
+       return  \Redirect::to('account-type?limit='.default_pagination());
     }
 
     /**
@@ -75,10 +112,10 @@ class AccountHeadController extends Controller
      * @param  \App\Models\AccountHead  $accountHead
      * @return \Illuminate\Http\Response
      */
-    public function show(AccountHead $accountHead)
+    public function show($id)
     {
         $page_name = $this->page_name;
-        $data = $accountHead;
+         $data = AccountHead::with(['_main_account_head'])->find($id);
         return view('backend.account-type.show',compact('data','page_name'));
     }
 

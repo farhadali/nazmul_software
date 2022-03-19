@@ -6,14 +6,16 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">{!! $page_name ?? '' !!} </h1>
+            <h1 class="m-0 _page_name">{!! $page_name ?? '' !!} </h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
+            
+              @can('account-type-list')
               <li class="breadcrumb-item active">
-                 <a class="btn btn-primary" href="{{ route('account-type.index') }}"> {!! $page_name ?? '' !!}</a>
+                 <a class="btn btn-primary" href="{{ route('account-type.index') }}"> <i class="fa fa-th-list" aria-hidden="true"></i></a>
                </li>
+               @endcan
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -40,32 +42,26 @@
               <div class="card-body">
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>Name:</strong>
-                        {{ $data->_name }}
+                        <strong>ID:</strong>
+                        {{ $data->id }}
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>Name:</strong>
-                        {{ $data->_name }}
+                        <strong>Code:</strong>
+                        {{ $data->_code ?? '' }}
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>Name:</strong>
-                        {{ $data->_name }}
+                        <strong>Base Account:</strong>
+                        {{ $data->_main_account_head->_name ?? '' }}
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>Name:</strong>
-                        {{ $data->_name }}
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-12">
-                    <div class="form-group">
-                        <strong>Name:</strong>
-                        {{ $data->_name }}
+                        <strong>Status:</strong>
+                         {{ selected_status($data->_status) }} 
                     </div>
                 </div>
                

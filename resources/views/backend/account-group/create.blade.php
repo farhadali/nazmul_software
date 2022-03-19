@@ -6,14 +6,15 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0"> {{ $page_name ?? '' }} </h1>
+            <h1 class="m-0 _page_name"> {{ $page_name ?? '' }} </h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
+             @can('account-group-list')
               <li class="breadcrumb-item active">
-                 <a class="btn btn-info" href="{{ route('account-group.index') }}"> {{ $page_name ?? '' }} List </a>
+                 <a class="btn btn-info" href="{{ route('account-group.index') }}">  <i class="fa fa-th-list" aria-hidden="true"></i> </a>
                </li>
+               @endcan
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -45,7 +46,7 @@
               <div class="card-body">
                 {!! Form::open(array('route' => 'account-group.store','method'=>'POST')) !!}
                     <div class="row">
-                       <div class="col-xs-12 col-sm-12 col-md-12">
+                       <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <strong>Account Type:</strong>
                                <select class="form-control" name="_account_head_id">
@@ -57,19 +58,19 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <strong>Name:</strong>
                                 {!! Form::text('_name', null, array('placeholder' => 'Name','class' => 'form-control','required' => 'true')) !!}
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <strong>Code:</strong>
                                 {!! Form::text('_code', null, array('placeholder' => 'Code','class' => 'form-control')) !!}
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <strong>Display Possition:</strong>
                                 {!! Form::text('_short', null, array('placeholder' => 'Possition','class' => 'form-control')) !!}
@@ -92,10 +93,12 @@
                             </div>
                         </div>
                        
-                       
-                        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                            <button type="submit" class="btn btn-primary submit-button">Submit</button>
+                        <div class="col-xs-6 col-sm-6 col-md-6 offset-md-6 text-right mb-5">
+                            <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
                         </div>
+                        <br><br>
+
+
                     </div>
                     {!! Form::close() !!}
                 

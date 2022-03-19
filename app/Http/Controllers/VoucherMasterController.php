@@ -39,7 +39,14 @@ class VoucherMasterController extends Controller
         
 
         $auth_user = Auth::user();
-        $limit = $request->limit ?? default_pagination();
+       if($request->has('limit')){
+            $limit = $request->limit ??  default_pagination();
+            session()->put('_vm_limit', $request->limit);
+        }else{
+             $limit= \Session::get('_vm_limit') ??  default_pagination();
+            
+        }
+        
         $_asc_desc = $request->_asc_desc ?? 'DESC';
         $asc_cloumn =  $request->asc_cloumn ?? 'id';
 
@@ -96,11 +103,16 @@ class VoucherMasterController extends Controller
             }
 
             if($request->print =="detail"){
-                return view('backend.voucher.details_print',compact('datas','page_name','account_types','request','account_groups','current_date','current_time'));
+                return view('backend.voucher.details_print',compact('datas','page_name','account_types','request','account_groups','current_date','current_time','limit'));
             }
          }
 
-        return view('backend.voucher.index',compact('datas','page_name','account_types','request','account_groups','current_date'));
+        return view('backend.voucher.index',compact('datas','page_name','account_types','request','account_groups','current_date','limit'));
+    }
+
+     public function reset(){
+        Session::flash('_vm_limit');
+       return  \Redirect::to('voucher?limit='.default_pagination());
     }
     
 
