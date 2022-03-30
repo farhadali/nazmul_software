@@ -156,7 +156,7 @@ class AccountReportController extends Controller
       $_branch_ids_rows = implode(',', $_branch_ids);
       $_cost_center_id_rows = implode(',', $_cost_center_ids);
       
-     
+     if($ledger_id_rows){
      $string_query = " SELECT t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name, null as _id,null as _table_name, null as _date, null as _short_narration, 'Opening Balance' as _narration, 0 AS _dr_amount, 0  AS _cr_amount, SUM(t1._dr_amount-t1._cr_amount) AS _balance  
             FROM accounts as t1
             INNER JOIN account_groups as t2 ON t2.id=t1._account_group
@@ -179,7 +179,9 @@ class AccountReportController extends Controller
        foreach ($datas as $value) {
            $group_array_values[$value->_group_name][$value->_l_name][]=$value;
        }
-
+      }else{
+        $group_array_values =[];
+      }
 
         //return $group_array_values;
         return view('backend.account-report.group_ledger_report',compact('request','page_name','group_array_values','basic_information','_datex','_datey','previous_filter','permited_branch','permited_costcenters'));
@@ -271,7 +273,9 @@ class AccountReportController extends Controller
       $_branch_ids_rows = implode(',', $_branch_ids);
       $_cost_center_id_rows = implode(',', $_cost_center_ids);
       
-     
+     if($ledger_id_rows){
+
+
      $string_query = " 
  SELECT t5._account_group,t5._group_name, t5._account_ledger,t5._l_name,t5._branch_id,t5._cost_center, t5._branch_name,  SUM(t5._o_dr_amount)  AS _o_dr_amount, SUM(t5._o_cr_amount)  AS _o_cr_amount ,SUM(t5._c_dr_amount) as _c_dr_amount,SUM(t5._c_cr_amount) as _c_cr_amount FROM (
      SELECT t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name,  SUM(t1._dr_amount)  AS _o_dr_amount, SUM(t1._cr_amount)  AS _o_cr_amount ,0 as _c_dr_amount,0 as _c_cr_amount 
@@ -298,7 +302,9 @@ class AccountReportController extends Controller
        foreach ($datas as $value) {
            $group_array_values[$value->_group_name][$value->_l_name][]=$value;
        }
-
+ }else{
+  $group_array_values =[];
+ }
      //  return $group_array_values;
 
        
@@ -381,14 +387,14 @@ class AccountReportController extends Controller
                WHERE t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."'  AND t3._show=1 AND t1._account_head IN (8,9)
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
                  GROUP BY t1._account_ledger
-                 ) as t5 GROUP BY t5._account_ledger ";
+                 ) as t5 GROUP BY t5._account_ledger ORDER BY t5._account_group ASC ";
       $income_8_result = DB::select($income_query);
       $income_8 = array();
       foreach ($income_8_result as $value) {
         $income_8[$value->_group_name][]=$value;
       }
 
-
+//return  $income_8;
 
       $other_income_expense_query = " SELECT t5._account_group,t5._group_name, t5._account_ledger,t5._l_name,t5._branch_id,t5._cost_center, t5._branch_name,  SUM(t5._previous_balance)  AS _previous_balance, SUM(t5._current_balance)  AS _current_balance, SUM(t5._previous_balance+t5._current_balance) as _last_amount FROM (
 
