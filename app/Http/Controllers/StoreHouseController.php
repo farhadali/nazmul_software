@@ -103,7 +103,8 @@ class StoreHouseController extends Controller
         $page_name = $this->page_name;
         $data = StoreHouse::find($id);
          $branchs = Branch::orderBy('_name','asc')->get();
-        return view('backend.store-house.edit',compact('data','page_name','branchs'));    }
+        return view('backend.store-house.edit',compact('data','page_name','branchs'));   
+    }
 
     /**
      * Update the specified resource in storage.

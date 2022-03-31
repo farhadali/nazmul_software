@@ -17,6 +17,8 @@ use App\Http\Controllers\StoreHouseController;
 use App\Http\Controllers\AccountLedgerController;
 use App\Http\Controllers\VoucherMasterController;
 use App\Http\Controllers\AccountReportController;
+use App\Http\Controllers\ItemCategoryController;
+use App\Http\Controllers\InventoryController;
 
 
 
@@ -71,6 +73,13 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('cost-center', CostCenterController::class);
     Route::post('cost-center/update', 'App\Http\Controllers\CostCenterController@update');
+
+    Route::resource('item-category', ItemCategoryController::class);
+    Route::post('item-category/update', 'App\Http\Controllers\ItemCategoryController@update');
+
+    Route::resource('item-information', InventoryController::class);
+    Route::post('item-information/update', 'App\Http\Controllers\InventoryController@update');
+    Route::get('item-information-reset', 'App\Http\Controllers\InventoryController@reset');
     
     Route::resource('store-house', StoreHouseController::class);
     Route::post('store-house/update', 'App\Http\Controllers\StoreHouseController@update');

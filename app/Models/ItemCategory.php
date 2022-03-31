@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Inventory extends Model
+class ItemCategory extends Model
 {
     use HasFactory;
 
-
-    public function _category(){
-    	return $this->hasOne(ItemCategory::class,'id','_category_id')->select('id','_name');
+    public function _parents(){
+    	return $this->hasOne(ItemCategory::class,'id','_parent_id')->select('id','_name');
     }
 }

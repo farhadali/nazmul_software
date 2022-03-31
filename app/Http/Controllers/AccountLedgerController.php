@@ -245,14 +245,14 @@ class AccountLedgerController extends Controller
     public function destroy($id)
     {
         
-        $numOfAccount = Accounts::where('_account_ledger',$id)->count();
+      
+          $numOfAccount = Accounts::where('_account_ledger',$id)->count();
         if($numOfAccount ==0){
             AccountLedger::find($id)->delete();
             return redirect('account-ledger')->with('success','Information deleted successfully');
         }else{
              return "You Can not delete this Information";
         }
-        
         
     }
 

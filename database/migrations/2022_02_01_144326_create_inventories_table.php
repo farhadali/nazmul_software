@@ -18,8 +18,8 @@ class CreateInventoriesTable extends Migration
             $table->string('_item',200);
             $table->string('_code')->nullable();
             $table->string('_barcode')->nullable();
-            $table->unsignedBigInteger('_ledger_id');
-            $table->foreign('_ledger_id')->references('id')->on('account_ledgers');
+            $table->unsignedBigInteger('_category_id');
+            $table->foreign('_category_id')->references('id')->on('item_categories');
             $table->string('_image',200)->nullable();
             $table->double('_discount',15,4)->default(0);
             $table->double('_vat',15,4)->default(0);

@@ -94,6 +94,31 @@
           <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
         </div>
       </li>
+       @can('inventory-menu') 
+      <li class="nav-item dropdown remove_from_header">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          
+          Inventory <i class="right fas fa-angle-down"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+         
+          <div class="dropdown-divider"></div>
+           @can('item-category-list')
+          <a href="{{url('item-category')}}" class="dropdown-item">
+            <i class="fa fa-laptop mr-2" aria-hidden="true"></i>Item Category
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('item-information-list')
+          <a href="{{url('item-information')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Item Information
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        
+              
+      </li>
+    @endcan
       <!-- Notifications Dropdown Menu -->
        @can('account-report-menu') 
       <li class="nav-item dropdown remove_from_header">
