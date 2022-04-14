@@ -43,12 +43,17 @@ input[type="number"] {
 	display: block;
 }
 .content-header {
-    padding: 5px;
+    padding-top: 2px;
+    padding-bottom: 0px;
+    background: #fff;
+}
+.content-wrapper>.content {
+    padding: 0px;
 }
 .card-header {
-    padding: 5px;
+    padding: 0 0 0 5px;
     margin-bottom: 0;
-    background-color: rgba(0,0,0,.03);
+    background-color: #fff;
     border-bottom: 0 solid rgba(0,0,0,.125);
 }
 .card-body {
@@ -59,21 +64,74 @@ input[type="number"] {
     padding: 0px 3px;
 }
 .form-control {
-    
-    margin-bottom: 5px;
+    display: block;
+    width: 100%;
+    height: calc(2.0rem + 1px);
+   
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .15rem;
+    box-shadow: inset 0 0 0 transparent;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+._purchase_row_remove,._voucher_row_remove{
+    font-size: 12px;
+    width: 100%;
+    text-align: center;
+}
+.form_body > .table-bordered td, .table-bordered th {
+    border: 1px solid #fff;
+}
+thead{
+    background: #17a2b82b;
+}
+tfoot{
+    background: #17a2b82b;
+}
+.form_body{
+    background: #17a2b82b;
+}
+label{
+    margin-bottom: 1px;
 }
 .margin_bottom_20{
 	margin-bottom: 20px;
 }
 
 .table td, .table th {
-    padding: .25rem;
-    vertical-align: top;
+    padding: 1px;
+    vertical-align: middle;
     border-top: 1px solid #dee2e6;
 }
+.text-middle{
+    vertical-align: middle !important;
+    text-align: center !important;
+}
+.width_200_px{
+    min-width:  200px ;
+    max-width: 100%;
+}
 
-.width_280_px{
-	width: 280px;
+.width_280_px {
+    min-width: 280px;
+    max-width: 100%;
+}
+.width_150_px{
+    min-width: 150px;
+    max-width: 100%;
+}
+.width_100_px{
+    min-width:  100px;
+    max-width: 100%;
+}
+.width_250_px{
+    min-width: 250px;
+    max-width: 100%;
 }
 .search_row{
 	cursor: pointer;
@@ -84,8 +142,18 @@ input[type="number"] {
     background: #fff;
     display: none;
 }
-.search_row:hover{
+.search_box_item{
+   position: absolute;
+    z-index: 9999;
+    background: #fff;
+    display: none;
+}
+.search_row_item:hover{
 	background: #e9ecef;
+    cursor: pointer;
+}
+.search_row:hover{
+    background: #e9ecef;
 }
 .required_border{
 	border: 1px solid red;
@@ -126,7 +194,7 @@ input[type="number"] {
     width: 95%;
     margin: 0px auto;
     max-height: 63px;
-    min-height: 10px;
+    min-height: 1px;
 }
 
 ._nv_th_action{
@@ -248,5 +316,11 @@ body:not(.layout-fixed) .main-sidebar {
 ._page_name{
     font-size: 24px !important;
     font-weight: bold;
+}
+.display_none{
+    display: none;
+}
+.card {
+    margin-bottom: 1px;
 }
 

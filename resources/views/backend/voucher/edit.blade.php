@@ -180,10 +180,10 @@
                                                 <input type="text" name="_short_narr[]" class="form-control width_250_px _short_narr" placeholder="Short Narr" value="{{$details->_short_narr ?? '' }}">
                                               </td>
                                               <td>
-                                                <input type="number" name="_dr_amount[]" class="form-control width_100_px _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',$details->_dr_amount)}}">
+                                                <input type="number" name="_dr_amount[]" class="form-control  _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',$details->_dr_amount)}}">
                                               </td>
                                               <td>
-                                                <input type="number" name="_cr_amount[]" class="form-control width_100_px _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',$details->_cr_amount)}}">
+                                                <input type="number" name="_cr_amount[]" class="form-control  _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',$details->_cr_amount)}}">
 
                                     @php 
                                     $_dr_amount += $details->_dr_amount;   
@@ -290,10 +290,10 @@
                             </td>
                             <td><input type="text" name="_short_narr[]" class="form-control width_250_px" placeholder="Short Narr"></td>
                             <td>
-                              <input type="number" name="_dr_amount[]" class="form-control width_100_px _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',0)}}">
+                              <input type="number" name="_dr_amount[]" class="form-control  _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',0)}}">
                             </td>
                             <td>
-                              <input type="number" name="_cr_amount[]" class="form-control width_100_px _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',0)}}">
+                              <input type="number" name="_cr_amount[]" class="form-control  _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',0)}}">
                               </td>
                             </tr>`;
 

@@ -19,6 +19,8 @@ use App\Http\Controllers\VoucherMasterController;
 use App\Http\Controllers\AccountReportController;
 use App\Http\Controllers\ItemCategoryController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\UnitsController;
 
 
 
@@ -80,6 +82,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('item-information', InventoryController::class);
     Route::post('item-information/update', 'App\Http\Controllers\InventoryController@update');
     Route::get('item-information-reset', 'App\Http\Controllers\InventoryController@reset');
+    Route::get('item-purchase-search', 'App\Http\Controllers\InventoryController@itemPurchaseSearch');
     
     Route::resource('store-house', StoreHouseController::class);
     Route::post('store-house/update', 'App\Http\Controllers\StoreHouseController@update');
@@ -87,6 +90,16 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('account-ledger', AccountLedgerController::class);
     Route::post('account-ledger/update', 'App\Http\Controllers\AccountLedgerController@update');
     Route::get('account-ledger-reset', 'App\Http\Controllers\AccountLedgerController@reset');
+
+    Route::resource('purchase', PurchaseController::class);
+    Route::post('purchase/update', 'App\Http\Controllers\PurchaseController@update');
+    Route::get('purchase-reset', 'App\Http\Controllers\PurchaseController@reset');
+    Route::post('purchase-settings', 'App\Http\Controllers\PurchaseController@purchaseSettings');
+
+
+    Route::resource('unit', UnitsController::class);
+    Route::post('unit/update', 'App\Http\Controllers\UnitsController@update');
+    Route::get('unit-reset', 'App\Http\Controllers\UnitsController@reset');
 
     Route::resource('voucher', VoucherMasterController::class);
     Route::post('voucher/update', 'App\Http\Controllers\VoucherMasterController@update');

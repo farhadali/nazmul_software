@@ -41,14 +41,16 @@
                 <thead>
                     <tr>
                          <th>ID</th>
-                         <th>Type</th>
-                         <th>Group</th>
-                         <th>Name</th>
+                         <th>Item</th>
+                         <th>Unit</th>
                          <th>Code</th>
-                         <th>Email</th>
-                         <th>Phone</th>
-                         <th>Balance</th>
-                         <th>Possition</th>
+                         <th>Model</th>
+                         <th>Category</th>
+                         <th>Purchase Rate</th>
+                         <th>Sales Rate</th>
+                         <th>Manufacture Company</th>
+                         <th>Discount</th>
+                         <th>Vat</th>
                          <th>Status</th>
                         
                       </tr>
@@ -57,23 +59,26 @@
                   
                       @foreach ($datas as $key => $data)
                         <tr>
-                            <td>{{ $data->id }}</td>
-                            <td>{{ $data->account_type->_name ?? '' }}</td>
-                            <td>{{ $data->account_group->_name ?? '' }}</td>
-                            <td>{{ $data->_name }}</td>
+                            <td>{{ $data->id ?? '' }}</td>
+                            <td>{{ $data->_item ?? '' }}</td>
+                            <td>{{ $data->_units->_name ?? '' ?? '' }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
-                            <td>{{ $data->_email ?? '' }}</td>
-                            <td>{{ $data->_phone ?? '' }}</td>
-                           <td>{{ _show_amount_dr_cr(_report_amount(_last_balance($data->id)[0]->_balance ?? 0))  }}</td>
-                            <td>{{ $data->_short ?? '' }}</td>
-                            <td>{{ selected_status($data->_status) }}</td>
+                            <td>{{ $data->_barcode ?? '' }}</td>
+                            <td>{{ $data->_category->_name ?? '' }}</td>
+                            <td>{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>
+                            <td>{{ _report_amount($data->_sale_rate ?? 0 ) }}</td>
+                            <td>{{ $data->_manufacture_company ?? '' }}</td>
+                            <td>{{ _report_amount( $data->_discount ?? 0 ) }}</td>
+                            <td>{{ _report_amount( $data->_vat ?? 0 ) }}</td>
+                            
+                           <td>{{ selected_status($data->_status) }}</td>
                            
                         </tr>
                         @endforeach
                 </tbody>
                 <tfoot>
                    <tr>
-                     <td colspan="10">
+                     <td colspan="11">
                        <div class="col-12 mt-5">
                           <div class="row">
                             <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>

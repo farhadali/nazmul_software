@@ -79,7 +79,8 @@
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
                                 <strong>Details:</strong>
-                                {!! Form::textArea('_details', $data->_details, array('placeholder' => 'Details','class' => 'form-control')) !!}
+                              
+                                 <textarea placeholder="Details" class="form-control" name="_details" cols="10" rows="5">{!!  $data->_details ?? '' !!}</textarea>
                             </div>
                         </div>
                        

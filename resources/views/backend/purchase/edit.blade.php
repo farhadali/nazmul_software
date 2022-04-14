@@ -2,23 +2,7 @@
 @section('title',$page_name)
 
 @section('content')
-<div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class=" col-sm-6 ">
-            <h1 class="m-0"> {{ $page_name ?? '' }} </h1>
-          </div><!-- /.col -->
-          <div class=" col-sm-6 ">
-            <ol class="breadcrumb float-sm-right">
-              <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
-              <li class="breadcrumb-item active">
-                 <a class="btn btn-success" title="List" href="{{ route('voucher.index') }}"> <i class="nav-icon fas fa-list"></i> </a>
-               </li>
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
+
     <div class="message-area">
     @if (count($errors) > 0)
            <div class="alert alert-danger">
@@ -35,23 +19,64 @@
       <p>{{ $message }}</p>
     </div>
     @endif
+  @if ($message = Session::get('error'))
+    <div class="alert alert-danger" >
+      <p>{{ $message }}</p>
+    </div>
+    @endif
     </div>
     <div class="content">
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
+
+              <div class="card-header">
+                <div class="row">
+                  <div class="col-md-6">
+                     <h3> {{ $page_name ?? '' }} </h3>
+                  </div>
+                  <div class="col-md-6 ">
+                    <div class="d-flex right" style="float: right;">
+                        @can('voucher-create')
+                        <a title="Add New" class="btn btn-success mr-3" href="{{ route('voucher.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                        @endcan
+                        @can('voucher-print')
+                        
+                           <a class="btn btn-default mr-3" href="{{ route('voucher.show',$data->id) }}">
+                                 <i class="nav-icon fas fa-eye"></i>
+                            </a>
+                         
+                         @endcan
+                        @can('voucher-print')
+                       
+                           <a target="__blank" title="Print" class="btn btn-default mr-3" href="{{ url('voucher/print') }}/{{$data->id }}"> <i class="fa fa-print _required" aria-hidden="true"></i></a>
+                        
+                         @endcan
+                         @can('voucher-list')
+                       
+                           <a class="btn btn-primary" title="List" href="{{ route('voucher.index') }}"> 
+                              <i class="fa fa-th-list" aria-hidden="true"></i>
+                            </a>
+                        
+                          @endcan
+
+                      </div>
+                  </div>
+                </div>
+              </div>
              
               <div class="card-body">
-                {!! Form::open(array('route' => 'voucher.store','method'=>'POST','class'=>'voucher-form')) !!}
+                 <form action="{{ url('voucher/update') }}" method="POST" class="voucher-form">
+                    @csrf
                     <div class="row">
-
+                         <input type="hidden" name="_master_id" class="form-control" value="{{ $data->id }}" >
                        <div class="col-xs-12 col-sm-12 col-md-2">
                         <input type="hidden" name="_form_name" value="voucher_masters">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                      <input type="text" name="_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                      <input type="text" name="_date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{$data->_date}}" />
                                       <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                       </div>
@@ -59,35 +84,35 @@
                               </div>
                         </div>
 
-                       <div class="col-xs-12 col-sm-12 col-md-5">
+                       <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label>Voucher Type: <span class="_required">*</span></label>
                                <select class="form-control _voucher_type" name="_voucher_type" required="true">
                                   <option value="">--Voucher Type--</option>
                                   @forelse($voucher_types as $voucher_type )
-                                  <option value="{{$voucher_type->_code}}" @if(isset($request->_voucher_type)) @if($request->_voucher_type == $voucher_type->_code) selected @endif   @endif>
+                                  <option value="{{$voucher_type->_code}}" @if(isset($data->_voucher_type)) @if($data->_voucher_type == $voucher_type->_code) selected @endif   @endif>
                                     {{ $voucher_type->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-5">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group ">
                                 <label>Branch:<span class="_required">*</span></label>
                                <select class="form-control" name="_branch_id" required >
                                   
                                   @forelse($permited_branch as $branch )
-                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->id ?? '' }} - {{ $branch->_name ?? '' }}</option>
+                                  <option value="{{$branch->id}}" @if(isset($data->_branch_id)) @if($data->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->id ?? '' }} - {{ $branch->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6 ">
+                        <div class="col-xs-12 col-sm-12 col-md-4 ">
                             <div class="form-group">
                               <label class="mr-2" for="_transection_ref">Reference:</label>
-                              <input type="text" id="_transection_ref" name="_transection_ref" class="form-control _transection_ref" value="{{old('_transection_ref')}}" placeholder="Reference" >
+                              <input type="text" id="_transection_ref" name="_transection_ref" class="form-control _transection_ref" value="{{old('_transection_ref',$data->_transection_ref ?? '')}}" placeholder="Reference" >
                                 
                             </div>
                         </div>
@@ -103,6 +128,7 @@
                                       <table class="table table-bordered" >
                                           <thead>
                                             <th>&nbsp;</th>
+                                            <th>ID</th>
                                             <th>Ledger</th>
                                             <th>Branch</th>
                                             <th>Cost Center</th>
@@ -111,13 +137,22 @@
                                             <th>Cr. Amount</th>
                                           </thead>
                                           <tbody class="area__voucher_details" id="area__voucher_details">
+                                  @php
+                                    $_dr_amount = 0;
+                                    $_cr_amount = 0;
+                                  @endphp
+                                            @forelse($data->_master_details as $mas_key=>$details)
                                             <tr class="_voucher_row">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger">
-                                                <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
+                                                <input type="hidden" name="_detail_id[]" value=" {{ $details->id ?? '' }} ">
+                                                     {{ $details->id ?? '' }}                                      
+                                              </td>
+                                              <td>
+                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger" value="{{$details->_voucher_ledger->_name ?? '' }}">
+                                                <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id"  value="{{$details->_ledger_id}}" >
                                                 <div class="search_box">
                                                   
                                                 </div>
@@ -125,7 +160,7 @@
                                               <td>
                                                 <select class="form-control width_150_px _branch_id_detail" name="_branch_id_detail[]"  required>
                                                   @forelse($permited_branch as $branch )
-                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
+                                                  <option value="{{$branch->id}}" @if(isset($details->_branch_id)) @if($details->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -135,34 +170,41 @@
                                                  <select class="form-control width_150_px _cost_center" name="_cost_center[]" required >
                                             
                                                   @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_cost_center)) @if($request->_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  <option value="{{$costcenter->id}}" @if(isset($details->_cost_center)) @if($details->_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
                                               </td>
                                               
                                               <td>
-                                                <input type="text" name="_short_narr[]" class="form-control width_250_px _short_narr" placeholder="Short Narr">
+                                                <input type="text" name="_short_narr[]" class="form-control width_250_px _short_narr" placeholder="Short Narr" value="{{$details->_short_narr ?? '' }}">
                                               </td>
                                               <td>
-                                                <input type="number" name="_dr_amount[]" class="form-control  _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',0)}}">
+                                                <input type="number" name="_dr_amount[]" class="form-control width_100_px _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',$details->_dr_amount)}}">
                                               </td>
                                               <td>
-                                                <input type="number" name="_cr_amount[]" class="form-control  _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',0)}}">
+                                                <input type="number" name="_cr_amount[]" class="form-control width_100_px _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',$details->_cr_amount)}}">
+
+                                    @php 
+                                    $_dr_amount += $details->_dr_amount;   
+                                    $_cr_amount += $details->_cr_amount;  
+                                    @endphp
                                               </td>
                                             </tr>
+                                            @empty
+                                            @endforelse
                                           </tbody>
                                           <tfoot>
                                             <tr>
                                               <td>
                                                 <a href="#none"  class="btn btn-info" onclick="voucher_row_add(event)"><i class="fa fa-plus"></i></a>
                                               </td>
-                                              <td colspan="4" class="text-right"><b>Total</b></td>
+                                              <td colspan="5" class="text-right"><b>Total</b></td>
                                               <td>
-                                                <input type="number" step="any" min="0" name="_total_dr_amount" class="form-control _total_dr_amount" value="0" readonly required>
+                                                <input type="number" step="any" min="0" name="_total_dr_amount" class="form-control _total_dr_amount" value="{{ $data->_amount ?? 0  }}" readonly required>
                                               </td>
                                               <td>
-                                                <input type="number" step="any" min="0" name="_total_cr_amount" class="form-control _total_cr_amount" value="0" readonly required>
+                                                <input type="number" step="any" min="0" name="_total_cr_amount" class="form-control _total_cr_amount" value="{{ $data->_amount ?? 0  }}" readonly required>
                                               </td>
                                             </tr>
                                           </tfoot>
@@ -180,28 +222,21 @@
                                      <label class="mr-2" for="_note">Note:<span class="_required">*</span></label>
                                   </div>
                                   <div class="col-md-11">
-                                    @if ($_print = Session::get('_print_value'))
-                                     <input type="hidden" name="_after_print" value="{{$_print}}" class="_after_print" >
-                                    @else
-                                    <input type="hidden" name="_after_print" value="0" class="_after_print" >
-                                    @endif
-                                    @if ($_master_id = Session::get('_master_id'))
-                                     <input type="hidden" name="_master_id" value="{{url('voucher/print')}}/{{$_master_id}}" class="_master_id">
-                                    
-                                    @endif
-                                   
-                                       <input type="hidden" name="_print" value="0" class="_save_and_print_value">
-
-                                    <input type="text" id="_note"  name="_note" class="form-control _note" value="{{old('_note')}}" placeholder="Note" required >
+                                    <input type="text" id="_note"  name="_note" class="form-control _note" value="{{old('_note',$data->_note)}}" placeholder="Note" required >
                                   </div>
                                 </div>
                             </div>
                         </div>
                         
                         
-                        <div class="col-xs-6 col-sm-6 col-md-6 offset-md-6 text-right">
+                       
+                       
+                        <div class="col-xs-8 col-sm-8 col-md-8 ">
+                           <!--  <button type="submit" class="btn btn-primary submit-button">Submit</button> -->
+                        </div>
+                       
+                        <div class="col-xs-3 col-sm-3 col-md-3 text-right">
                             <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
-                            <button type="submit" class="btn btn-warning submit-button _save_and_print"><i class="fa fa-print mr-2" aria-hidden="true"></i> Save & Print</button>
                         </div>
                         <br><br>
                     </div>
@@ -226,28 +261,17 @@
 @section('script')
 
 <script type="text/javascript">
-  var default_date_formate = `{{default_date_formate()}}`;
-  var _after_print = $(document).find("._after_print").val();
-  var _master_id = $(document).find("._master_id").val();
-  if(_after_print ==1){
-      var open_new = window.open(_master_id, '_blank');
-      if (open_new) {
-          //Browser has allowed it to be opened
-          open_new.focus();
-      } else {
-          //Browser has blocked it
-          alert('Please allow popups for this website');
-      }
-  }
-
+  var default_date_formate = `{{default_date_formate()}}`
 
  var single_row =  `<tr class="_voucher_row">
                       <td><a  href="" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a></td>
+                       <td><input type="hidden" name="_detail_id[]" value="0">&nbsp;&nbsp;</td>
                       <td><input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger">
                       <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
                       <div class="search_box">
                       </div>
                       </td>
+                     
                       <td>
                       <select class="form-control width_150_px _branch_id_detail" name="_branch_id_detail[]"  required >
                         @forelse($permited_branch as $branch )
@@ -266,10 +290,10 @@
                             </td>
                             <td><input type="text" name="_short_narr[]" class="form-control width_250_px" placeholder="Short Narr"></td>
                             <td>
-                              <input type="number" name="_dr_amount[]" class="form-control  _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',0)}}">
+                              <input type="number" name="_dr_amount[]" class="form-control width_100_px _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',0)}}">
                             </td>
                             <td>
-                              <input type="number" name="_cr_amount[]" class="form-control  _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',0)}}">
+                              <input type="number" name="_cr_amount[]" class="form-control width_100_px _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',0)}}">
                               </td>
                             </tr>`;
 
@@ -331,10 +355,6 @@
     $(document).find('._note').removeClass('required_border');
   })
 
-  $(document).on('click','._save_and_print',function(){
-    $(document).find('._save_and_print_value').val(1);
-  })
-
 
   $(document).on('click','.submit-button',function(event){
     event.preventDefault();
@@ -353,8 +373,9 @@
           empty_ledger.push(1);
         }  
     })
-
+ 
     if(empty_ledger.length > 0){
+      console.log('ok')
       return false;
     }
 
@@ -362,11 +383,11 @@
     if(_total_dr_amount !=_total_cr_amount){
       $(document).find("._total_dr_amount").focus().addClass('required_border');
       $(document).find("._total_cr_amount").focus().addClass('required_border');
+
       return false;
 
     }else if(_voucher_type ==""){
        $(document).find('._voucher_type').focus().addClass('required_border');
-       alert('Please Select Voucher Type.');
       return false;
     }else if(_note ==""){
        
@@ -381,18 +402,13 @@
     }
   })
 
+$(".datetimepicker-input").val(date__today( `{{$data->_date}}` ))
 
-
-
- 
-
-$(".datetimepicker-input").val(date__today())
-
-          function date__today(){
-              var d = new Date();
-            var yyyy = d.getFullYear().toString();
-            var mm = (d.getMonth()+1).toString(); // getMonth() is zero-based
-            var dd  = d.getDate().toString();
+function date__today(_date){
+            var data = _date.split('-');
+            var yyyy =data[0];
+            var mm =data[1];
+            var dd =data[2];
             if(default_date_formate=='DD-MM-YYYY'){
               return (dd[1]?dd:"0"+dd[0]) +"-"+ (mm[1]?mm:"0"+mm[0])+"-"+ yyyy ;
             }

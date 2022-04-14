@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Inventory;
 use App\Models\ItemCategory;
 use App\Models\ItemInventory;
+use App\Models\Units;
 use Illuminate\Http\Request;
 use Session;
 
@@ -37,7 +38,7 @@ class InventoryController extends Controller
         
         $_asc_desc = $request->_asc_desc ?? 'DESC';
         $asc_cloumn =  $request->asc_cloumn ?? 'id';
-        $datas = Inventory::with(['_category']);
+        $datas = Inventory::with(['_category','_units']);
         if($request->has('_item') && $request->_item !=''){
             $datas = $datas->where('_item','like',"%$request->_item%");
         }
@@ -77,14 +78,33 @@ class InventoryController extends Controller
                 return view('backend.item-information.master_print',compact('datas','page_name','request','limit'));
             }
          }
-         
-        return view('backend.item-information.index',compact('datas','request','page_name','limit','categories'));
+          $units = Units::orderBy('_name','asc')->get();
+        return view('backend.item-information.index',compact('datas','request','page_name','limit','categories','units'));
 
     }
 
      public function reset(){
         Session::flash('_i_limit');
        return  \Redirect::to('item-information?limit='.default_pagination());
+    }
+
+
+    public function itemPurchaseSearch(Request $request){
+        $limit = $request->limit ?? default_pagination();
+        $_asc_desc = $request->_asc_desc ?? 'ASC';
+        $asc_cloumn =  $request->asc_cloumn ?? '_item';
+        $text_val = $request->_text_val;
+        $datas = Inventory::select('id','_item as _name','_code','_unit_id','_barcode','_discount','_vat','_pur_rate','_sale_rate')
+            ->where('_status',1);
+         if($request->has('_text_val') && $request->_text_val !=''){
+            $datas = $datas->where('_item','like',"%$request->_text_val%")
+            ->orWhere('id','like',"%$request->_text_val%");
+        }
+        
+        
+        
+        $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
+        return json_encode( $datas);
     }
 
     /**
@@ -96,7 +116,8 @@ class InventoryController extends Controller
     {
         $page_name = $this->page_name;
         $categories = ItemCategory::orderBy('_name','asc')->get();
-       return view('backend.item-information.create',compact('page_name','categories'));
+        $units = Units::orderBy('_name','asc')->get();
+       return view('backend.item-information.create',compact('page_name','categories','units'));
     }
 
     /**
@@ -110,11 +131,13 @@ class InventoryController extends Controller
          $this->validate($request, [
             '_category_id' => 'required',
             '_item' => 'required',
+            '_unit_id' => 'required',
             '_status' => 'required'
         ]);
         $data = new Inventory();
         $data->_item = $request->_item;
         $data->_code = $request->_code;
+        $data->_unit_id = $request->_unit_id;
         $data->_barcode = $request->_barcode;
         $data->_category_id = $request->_category_id;
         $data->_discount = $request->_discount ?? 0;
@@ -138,7 +161,7 @@ class InventoryController extends Controller
     public function show($id)
     {
         $page_name = $this->page_name;
-         $data= Inventory::with(['_category'])->find($id);
+         $data= Inventory::with(['_category','_units'])->find($id);
         $categories = ItemCategory::orderBy('_name','asc')->get();
        return view('backend.item-information.show',compact('page_name','categories','data'));
     }
@@ -154,7 +177,8 @@ class InventoryController extends Controller
          $page_name = $this->page_name;
          $data= Inventory::find($id);
         $categories = ItemCategory::orderBy('_name','asc')->get();
-       return view('backend.item-information.edit',compact('page_name','categories','data'));
+         $units = Units::orderBy('_name','asc')->get();
+       return view('backend.item-information.edit',compact('page_name','categories','data','units'));
     }
 
     /**
@@ -169,12 +193,14 @@ class InventoryController extends Controller
        $this->validate($request, [
             '_category_id' => 'required',
             '_item' => 'required',
+            '_unit_id' => 'required',
             'id' => 'required',
             '_status' => 'required'
         ]);
         $data = Inventory::find($request->id);
         $data->_item = $request->_item;
         $data->_code = $request->_code;
+        $data->_unit_id = $request->_unit_id;
         $data->_barcode = $request->_barcode;
         $data->_category_id = $request->_category_id;
         $data->_discount = $request->_discount ?? 0;

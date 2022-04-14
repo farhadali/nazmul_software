@@ -108,10 +108,23 @@
             <i class="fa fa-laptop mr-2" aria-hidden="true"></i>Item Category
           </a>
          @endcan
+          <div class="dropdown-divider"></div>
+           @can('unit-list')
+          <a href="{{url('unit')}}" class="dropdown-item">
+            <i class="fa fa-laptop mr-2" aria-hidden="true"></i>Unit Of Measurment
+          </a>
+         @endcan
          <div class="dropdown-divider"></div>
         @can('item-information-list')
           <a href="{{url('item-information')}}" class="dropdown-item">
             <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Item Information
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+          <div class="dropdown-divider"></div>
+        @can('purchase-list')
+          <a href="{{url('purchase')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Purchase
           </a>
          @endcan
          <div class="dropdown-divider"></div>

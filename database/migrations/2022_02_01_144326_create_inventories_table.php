@@ -22,6 +22,7 @@ class CreateInventoriesTable extends Migration
             $table->foreign('_category_id')->references('id')->on('item_categories');
             $table->string('_image',200)->nullable();
             $table->double('_discount',15,4)->default(0);
+            $table->integer('_unit_id')->nullable();
             $table->double('_vat',15,4)->default(0);
             $table->double('_pur_rate',15,4)->default(0);
             $table->double('_sale_rate',15,4)->default(0);

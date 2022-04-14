@@ -65,10 +65,22 @@
                             </div>
                         </div>
                        
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label for="_code">Code:</label>
                                 <input type="text" id="_code" name="_code" class="form-control" value="{{old('_code',$data->_code)}}" placeholder="Code" >
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3">
+                            <div class="form-group">
+                                <label for="_unit">Unit:<span class="_required">*</span></label>
+
+                                <select class="form-control _unit_id" id="_unit_id" name="_unit_id" required>
+                                  <option value="" >--Units--</option>
+                                  @foreach($units as $unit)
+                                   <option value="{{$unit->id}}" @if(isset($data->_unit_id)) @if($data->_unit_id==$unit->id) selected @endif @endif >{{$unit->_name ?? ''}}</option>
+                                  @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">

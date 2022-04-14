@@ -12,9 +12,8 @@
             <ol class="breadcrumb float-sm-right">
               <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
               <li class="breadcrumb-item active">
-                @can('item-information-create')
-                        
-                    <a title="Add New" class="btn btn-info" href="{{ route('item-information.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                @can('unit-create')
+                        <a class="btn btn-success" href="{{ route('unit.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                 @endcan
                </li>
             </ol>
@@ -34,24 +33,23 @@
             <div class="card">
               <div class="card-header border-0">
                  
-
-                  <div class="row">
+                 <div class="row">
                    @php
 
- $currentURL = URL::full();
- $current = URL::current();
-if($currentURL === $current){
-   $print_url = $current."?print=single";
-   $print_url_detal = $current."?print=detail";
-}else{
-     $print_url = $currentURL."&print=single";
-     $print_url_detal = $currentURL."&print=detail";
-}
+                     $currentURL = URL::full();
+                     $current = URL::current();
+                    if($currentURL === $current){
+                       $print_url = $current."?print=single";
+                       $print_url_detal = $current."?print=detail";
+                    }else{
+                         $print_url = $currentURL."&print=single";
+                         $print_url_detal = $currentURL."&print=detail";
+                    }
     
 
                    @endphp
                     <div class="col-md-4">
-                      @include('backend.item-information.search')
+                      @include('backend.unit.search')
                     </div>
                     <div class="col-md-8">
                       <div class="d-flex flex-row justify-content-end">
@@ -66,8 +64,13 @@ if($currentURL === $current){
                                 <div class="dropdown-divider"></div>
                                 
                                 <a target="__blank" href="{{$print_url}}" class="dropdown-item">
-                                  <i class="fa fa-print mr-2" aria-hidden="true"></i> Print
-                                </a>  
+                                  <i class="fa fa-print mr-2" aria-hidden="true"></i>Print
+                                </a>
+                               <div class="dropdown-divider"></div>
+                              
+                                
+                              
+                                    
                             </li>
                              @endcan   
                          {!! $datas->render() !!}
@@ -76,57 +79,41 @@ if($currentURL === $current){
                   </div>
               </div>
               <div class="card-body">
-                <div class="table-responsive">
+                <div class="d-flex">
                   <table class="table table-bordered">
                       <tr>
                          
                          <th class="_action">Action</th>
                          <th>ID</th>
-                         <th>Item</th>
-                         <th>Unit</th>
+                         <th>Name</th>
                          <th>Code</th>
-                         <th>Barcode</th>
-                         <th>Category</th>
                          
-                         <th>Discount</th>
-                         <th>Vat</th>
-                         <th>Purchase Rate</th>
-                         <th>Sales Rate</th>
-                         <th>Manufacture Company</th>
-                         <th>Status</th>            
+                         <th>Status</th>
                       </tr>
                         @foreach ($datas as $key => $data)
                         <tr>
-                           
+                            
                              <td>
-                                <a class="btn btn-sm btn-info _action_button" href="{{ route('item-information.show',$data->id) }}">
+                                <a class="btn btn-sm btn-info" href="{{ route('unit.show',$data->id) }}">
                                   <i class="nav-icon fas fa-eye"></i>
                                 </a>
-                                @can('item-information-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('item-information.edit',$data->id) }}">
+                                @can('unit-edit')
+                                    <a class="btn btn-sm btn-primary" href="{{ route('unit.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
                                     </a>
                                 @endcan
-                                @can('item-information-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['item-information.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
+                                @can('unit-delete')
+                                    {!! Form::open(['method' => 'DELETE','route' => ['unit.destroy', $data->id],'style'=>'display:inline']) !!}
+                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger">
                                             <i class="nav-icon fas fa-trash"></i>
                                         </button>
                                     {!! Form::close() !!}
                                 @endcan
                             </td>
-                            <td>{{ $data->id ?? '' }}</td>
-                            <td>{{ $data->_item ?? '' }}</td>
-                            <td>{{ $data->_units->_name ?? '' }}</td>
-                            <td>{{ $data->_code ?? '' }}</td>
-                            <td>{{ $data->_barcode ?? '' }}</td>
-                            <td>{{ $data->_category->_name ?? '' }}</td>
-                            <td>{{ _report_amount( $data->_discount ?? 0 ) }}</td>
-                            <td>{{ _report_amount( $data->_vat ?? 0 ) }}</td>
-                            <td>{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>
-                            <td>{{ _report_amount($data->_sale_rate ?? 0 ) }}</td>
-                            <td>{{ $data->_manufacture_company ?? '' }}</td>
-                           <td>{{ selected_status($data->_status) }}</td>
+                            <td>{{ $data->id }} </td>
+                            <td> {{ $data->_name ?? '' }}</td>
+                            <td> {{ $data->_code ?? '' }}</td>
+                            <td>{{ selected_status($data->_status) }}</td>
                            
                         </tr>
                         @endforeach

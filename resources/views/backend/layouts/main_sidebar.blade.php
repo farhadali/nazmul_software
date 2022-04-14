@@ -202,6 +202,41 @@
             </ul>
           </li>
           @endcan
+
+           @can('inventory-menu') 
+          <li class="nav-item {{ Route::is('item-category.*') || Route::is('item-information.*')  ? 'menu-is-opening menu-open' : '' }}">
+            <a href="#" class="nav-link  Route::is('item-category.*') || Route::is('item-information.*')   ? 'active' : '' }}">
+             
+              <i class="fa fa-file nav-icon" aria-hidden="true"></i>
+
+              <p>
+                Inventory
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+             @can('item-category-list')
+              <li class="nav-item">
+                <a href="{{url('item-category')}}" class="nav-link {{Route::is('item-category.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-id-card nav-icon"></i>
+                  <p>Inventory Category</p>
+                </a>
+              </li>
+              @endcan
+             @can('item-information-list')
+              <li class="nav-item">
+                <a href="{{url('item-information')}}" class="nav-link {{Route::is('item-information.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-id-card nav-icon"></i>
+                  <p>Item Information</p>
+                </a>
+              </li>
+              @endcan
+             
+             
+              
+            </ul>
+          </li>
+          @endcan
          
          
         </ul>

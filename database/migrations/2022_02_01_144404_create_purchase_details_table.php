@@ -20,7 +20,9 @@ class CreatePurchaseDetailsTable extends Migration
             $table->double('_qty',15,4)->default(0);
             $table->double('_rate',15,4)->default(0);
             $table->double('_discount',15,4)->default(0);
+            $table->double('_discount_amount',15,4)->default(0);
             $table->double('_vat',15,4)->default(0);
+            $table->double('_vat_amount',15,4)->default(0);
             $table->double('_value',15,4)->default(0);
             $table->integer('_store_id')->nullable();
             $table->integer('_cost_center_id')->nullable();

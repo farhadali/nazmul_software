@@ -42,6 +42,17 @@
                       <input type="text" name="_item" class="form-control" placeholder="Search By Item" value="@if(isset($request->_item)) {{$request->_item ?? ''}}  @endif">
                     </div>
                   </div>
+                  <div class="form-group row">
+                    <label for="_unit_id" class="col-sm-2 col-form-label">Unit:</label>
+                    <div class="col-sm-10">
+                      <select class="form-control _unit_id" id="_unit_id" name="_unit_id" >
+                                  <option value="" >--Units--</option>
+                                  @foreach($units as $unit)
+                                   <option value="{{$unit->id}}" @if(isset($request->_unit_id)) @if($request->_unit_id==$unit->id) selected @endif @endif >{{$unit->_name ?? ''}}</option>
+                                  @endforeach
+                                </select>
+                    </div>
+                  </div>
 
                   <div class="form-group row">
                     <label for="_code" class="col-sm-2 col-form-label">Code:</label>

@@ -34,10 +34,6 @@ class VoucherMasterController extends Controller
      public function index(Request $request)
     {
 
-        //return $ids =  array_map('intval', explode(',', $request->id )); 
-        //return $request->all();
-        
-
         $auth_user = Auth::user();
        if($request->has('limit')){
             $limit = $request->limit ??  default_pagination();
