@@ -48,8 +48,9 @@
             <div class="card">
              
               <div class="card-body">
-                {!! Form::open(array('route' => 'voucher.store','method'=>'POST','class'=>'voucher-form')) !!}
-                    <div class="row">
+               <form action="{{route('purchase.store')}}" method="POST" class="voucher-form" >
+                @csrf
+                                   <div class="row">
 
                        <div class="col-xs-12 col-sm-12 col-md-3">
                         <input type="hidden" name="_form_name" value="purchases">
@@ -92,8 +93,12 @@
                         </div>
                          <div class="col-xs-12 col-sm-12 col-md-3 ">
                             <div class="form-group">
-                              <label class="mr-2" for="_ledger_id">Supplier:<span class="_required">*</span></label>
-                              <input type="text" id="_ledger_id" name="_ledger_id" class="form-control _ledger_id" value="{{old('_ledger_id')}}" placeholder="Supplier" required>
+                              <label class="mr-2" for="_main_ledger_id">Supplier:<span class="_required">*</span></label>
+                            <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="{{old('_search_main_ledger_id')}}" placeholder="Supplier" required>
+
+                            <input type="hidden" id="_main_ledger_id" name="_main_ledger_id" class="form-control _main_ledger_id" value="{{old('_main_ledger_id')}}" placeholder="Supplier" required>
+                            <div class="search_box_main_ledger"> </div>
+
                                 
                             </div>
                         </div>
@@ -211,7 +216,7 @@
                                               </td>
                                             @if(sizeof($permited_branch) > 1)  
                                               <td>
-                                                <select class="form-control  _branch_id_detail" name="_branch_id_detail[]"  required>
+                                                <select class="form-control  _main_branch_id_detail" name="_main_branch_id_detail[]"  required>
                                                   @forelse($permited_branch as $branch )
                                                   <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
                                                   @empty
@@ -220,7 +225,7 @@
                                               </td>
                                               @else
                                                <td class="display_none">
-                                                <select class="form-control  _branch_id_detail" name="_branch_id_detail[]"  required>
+                                                <select class="form-control  _main_branch_id_detail" name="_main_branch_id_detail[]"  required>
                                                   @forelse($permited_branch as $branch )
                                                   <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
                                                   @empty
@@ -230,20 +235,20 @@
                                               @endif
                                              @if(sizeof($permited_costcenters) > 1)
                                                 <td>
-                                                 <select class="form-control  _cost_center" name="_cost_center[]" required >
+                                                 <select class="form-control  _main_cost_center" name="_main_cost_center[]" required >
                                             
                                                   @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_cost_center)) @if($request->_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  <option value="{{$costcenter->id}}" @if(isset($request->_main_cost_center)) @if($request->_main_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
                                               </td>
                                               @else
                                                <td class="display_none">
-                                                 <select class="form-control  _cost_center" name="_cost_center[]" required >
+                                                 <select class="form-control  _main_cost_center" name="_main_cost_center[]" required >
                                             
                                                   @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_cost_center)) @if($request->_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  <option value="{{$costcenter->id}}" @if(isset($request->_main_cost_center)) @if($request->_main_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -251,7 +256,7 @@
                                               @endif
                                               @if(sizeof($store_houses) > 1)
                                               <td>
-                                                <select class="form-control  _store_id" name="_store_id[]">
+                                                <select class="form-control  _main_store_id" name="_main_store_id[]">
                                                   @forelse($store_houses as $store)
                                                   <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
                                                   @empty
@@ -261,7 +266,7 @@
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <select class="form-control  _store_id" name="_store_id[]">
+                                                <select class="form-control  _main_store_id" name="_main_store_id[]">
                                                   @forelse($store_houses as $store)
                                                   <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
                                                   @empty
@@ -471,7 +476,7 @@
                           </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-12 ">
+                        <div class="col-xs-12 col-sm-12 col-md-12 mb-10">
                           <table class="table" style="border-collapse: collapse;">
                             <tr>
                               <td style="width: 10%;border:0px;"><label for="_note">Note</label></td>
@@ -509,12 +514,23 @@
                                 <input type="text" name="_total_discount" class="form-control width_200_px" id="_total_discount" readonly value="0">
                               </td>
                             </tr>
+                            @if(isset($form_settings->_show_vat)) 
+                            @if($form_settings->_show_vat==1)
                             <tr>
                               <td style="width: 10%;border:0px;"><label for="_total_vat">Total VAT</label></td>
                               <td style="width: 70%;border:0px;">
                                 <input type="text" name="_total_vat" class="form-control width_200_px" id="_total_vat" readonly value="0">
                               </td>
                             </tr>
+                            @else
+                            <tr class="display_none">
+                              <td style="width: 10%;border:0px;"><label for="_total_vat">Total VAT</label></td>
+                              <td style="width: 70%;border:0px;">
+                                <input type="text" name="_total_vat" class="form-control width_200_px" id="_total_vat" readonly value="0">
+                              </td>
+                            </tr>
+                            @endif
+                            @endif
                             <tr>
                               <td style="width: 10%;border:0px;"><label for="_total">NET Total </label></td>
                               <td style="width: 70%;border:0px;">
@@ -522,12 +538,9 @@
                               </td>
                             </tr>
                           </table>
-                           
                         </div>
-                        
-                        
-                        <div class="col-xs-6 col-sm-6 col-md-6 ml-5 text-left">
-                            <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
+                        <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
+                            <button type="submit" class="btn btn-success submit-button ml-5"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
                             <button type="submit" class="btn btn-warning submit-button _save_and_print"><i class="fa fa-print mr-2" aria-hidden="true"></i> Save & Print</button>
                         </div>
                         <br><br>
@@ -581,6 +594,14 @@
         <select class="form-control col-md-7" name="_default_discount">
           @foreach($dis_accounts as $account)
           <option value="{{$account->id}}" @if(isset($form_settings->_default_discount))@if($form_settings->_default_discount==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
+          @endforeach
+        </select>
+      </div>
+      <div class="form-group row">
+        <label for="_default_vat_account" class="col-sm-5 col-form-label">Default VAT Account</label>
+        <select class="form-control col-md-7" name="_default_vat_account">
+          @foreach($vat_accounts as $account)
+          <option value="{{$account->id}}" @if(isset($form_settings->_default_vat_account))@if($form_settings->_default_vat_account==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
           @endforeach
         </select>
       </div>
@@ -648,11 +669,68 @@
       }
   }
 
+  $(document).on('keyup','._search_main_ledger_id',delay(function(e){
+    $(document).find('._search_main_ledger_id').removeClass('required_border');
+    var _gloabal_this = $(this);
+    var _text_val = $(this).val().trim();
+    var _account_head_id = 13;
+
+  var request = $.ajax({
+      url: "{{url('main-ledger-search')}}",
+      method: "GET",
+      data: { _text_val,_account_head_id },
+      dataType: "JSON"
+    });
+     
+    request.done(function( result ) {
+
+      var search_html =``;
+      var data = result.data; 
+      if(data.length > 0 ){
+            search_html +=`<div class="card"><table style="width: 300px;">
+                            <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                         search_html += `<tr class="search_row_ledger" >
+                                        <td>${data[i].id}
+                                        <input type="hidden" name="_id_main_ledger" class="_id_main_ledger" value="${data[i].id}">
+                                        </td><td>${data[i]._name}
+                                        <input type="hidden" name="_name_main_ledger" class="_name_main_ledger" value="${data[i]._name}">
+                                  
+                                   </td></tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
+      }else{
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+      }     
+      _gloabal_this.parent('div').find('.search_box_main_ledger').html(search_html);
+      _gloabal_this.parent('div').find('.search_box_main_ledger').addClass('search_box_show').show();
+      
+    });
+     
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+
+  
+
+}, 500));
+
+
+  $(document).on("click",'.search_row_ledger',function(){
+    var _id = $(this).children('td').find('._id_main_ledger').val();
+    var _name = $(this).find('._name_main_ledger').val();
+    $("._main_ledger_id").val(_id);
+    $("._search_main_ledger_id").val(_name);
+
+    $('.search_box_main_ledger').hide();
+    $('.search_box_main_ledger').removeClass('search_box_show').hide();
+  })
+
   $(document).on('keyup','._search_item_id',delay(function(e){
     $(document).find('._search_item_id').removeClass('required_border');
-  var _gloabal_this = $(this);
-
-  var _text_val = $(this).val().trim();
+    var _gloabal_this = $(this);
+    var _text_val = $(this).val().trim();
 
 
   var request = $.ajax({
@@ -665,11 +743,8 @@
     request.done(function( result ) {
 
       var search_html =``;
-      
       var data = result.data; 
-      console.log(data)
       if(data.length > 0 ){
-        
             search_html +=`<div class="card"><table style="width: 300px;">
                             <tbody>`;
                         for (var i = 0; i < data.length; i++) {
@@ -928,7 +1003,7 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                               </td>
                                               @if(sizeof($permited_branch)>1)
                                               <td>
-                                                <select class="form-control  _branch_id_detail" name="_branch_id_detail[]"  required>
+                                                <select class="form-control  _main_branch_id_detail" name="_main_branch_id_detail[]"  required>
                                                   @forelse($permited_branch as $branch )
                                                   <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
                                                   @empty
@@ -937,7 +1012,7 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <select class="form-control  _branch_id_detail" name="_branch_id_detail[]"  required>
+                                                <select class="form-control  _main_branch_id_detail" name="_main_branch_id_detail[]"  required>
                                                   @forelse($permited_branch as $branch )
                                                   <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
                                                   @empty
@@ -947,20 +1022,20 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                               @endif
                                               @if(sizeof($permited_costcenters)>1)
                                                 <td>
-                                                 <select class="form-control  _cost_center" name="_cost_center[]" required >
+                                                 <select class="form-control  _main_cost_center" name="_main_cost_center[]" required >
                                             
                                                   @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_cost_center)) @if($request->_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  <option value="{{$costcenter->id}}" @if(isset($request->_main_cost_center)) @if($request->_main_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
                                               </td>
                                               @else
                                                <td class="display_none">
-                                                 <select class="form-control  _cost_center" name="_cost_center[]" required >
+                                                 <select class="form-control  _main_cost_center" name="_main_cost_center[]" required >
                                             
                                                   @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_cost_center)) @if($request->_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  <option value="{{$costcenter->id}}" @if(isset($request->_main_cost_center)) @if($request->_main_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -968,7 +1043,7 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                               @endif
                                               @if(sizeof($store_houses) > 1)
                                               <td>
-                                                <select class="form-control  _store_id" name="_store_id[]">
+                                                <select class="form-control  _main_store_id" name="_main_store_id[]">
                                                   @forelse($store_houses as $store)
                                                   <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
                                                   @empty
@@ -978,7 +1053,7 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <select class="form-control  _store_id" name="_store_id[]">
+                                                <select class="form-control  _main_store_id" name="_main_store_id[]">
                                                   @forelse($store_houses as $store)
                                                   <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
                                                   @empty
@@ -1079,14 +1154,20 @@ function purchase_row_add(event){
     var _total_cr_amount = $(document).find("._total_cr_amount").val();
     var _voucher_type = $(document).find('._voucher_type').val();
     var _note = $(document).find('._note').val();
-    var _search_ledger_id = $(document).find('._search_ledger_id').val();
+    var _main_ledger_id = $(document).find('._main_ledger_id').val();
+    if(_main_ledger_id  ==""){
+       alert(" Please Add Ledger  ");
+        $(document).find('._search_main_ledger_id').addClass('required_border').focus();
+        return false;
+    }
 
 
     var empty_ledger = [];
-    $(document).find("._ledger_id").each(function(){
+    $(document).find("._search_item_id").each(function(){
         if($(this).val() ==""){
-          alert(" Please Add Ledger  ");
-          $(document).find('._search_ledger_id').focus().addClass('required_border');
+          console.log($(this))
+          alert(" Please Add Item  ");
+          $(this).addClass('required_border');
           empty_ledger.push(1);
         }  
     })
@@ -1096,22 +1177,22 @@ function purchase_row_add(event){
     }
 
 
-    if(_total_dr_amount !=_total_cr_amount){
-      $(document).find("._total_dr_amount").focus().addClass('required_border');
-      $(document).find("._total_cr_amount").focus().addClass('required_border');
+    if( parseFloat(_total_dr_amount) !=parseFloat(_total_cr_amount)){
+      $(document).find("._total_dr_amount").addClass('required_border').focus();
+      $(document).find("._total_cr_amount").addClass('required_border').focus();
       return false;
 
     }else if(_voucher_type ==""){
-       $(document).find('._voucher_type').focus().addClass('required_border');
+       $(document).find('._voucher_type').addClass('required_border').focus();
        alert('Please Select Voucher Type.');
       return false;
     }else if(_note ==""){
        
        $(document).find('._note').focus().addClass('required_border');
       return false;
-    }else if(_search_ledger_id ==""){
+    }else if(_main_ledger_id ==""){
        
-      $(document).find('._search_ledger_id').focus().addClass('required_border');
+      $(document).find('._search_main_ledger_id').focus().addClass('required_border');
       return false;
     }else{
       $(document).find('.voucher-form').submit();

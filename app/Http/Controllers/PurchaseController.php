@@ -13,6 +13,8 @@ use App\Models\VoucherType;
 use App\Models\VoucherMasterDetail;
 use App\Models\StoreHouse;
 use App\Models\PurchaseFormSettings;
+use App\Models\PurchaseDetail;
+use App\Models\PurchaseAccount;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -135,8 +137,9 @@ class PurchaseController extends Controller
         $inv_accounts = AccountLedger::where('_account_head_id',2)->get();
         $p_accounts = AccountLedger::where('_account_head_id',10)->get();
         $dis_accounts = AccountLedger::where('_account_head_id',11)->get();
+        $vat_accounts = AccountLedger::where('_account_group_id',47)->get();
 
-       return view('backend.purchase.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts'));
+       return view('backend.purchase.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts'));
     }
 
 
@@ -152,6 +155,7 @@ class PurchaseController extends Controller
         $data->_show_vat = $request->_show_vat;
         $data->_show_store = $request->_show_store;
         $data->_show_self = $request->_show_self;
+        $data->_default_vat_account = $request->_default_vat_account;
         $data->save();
 
         return redirect('purchase/create');
@@ -167,7 +171,220 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
+      //  return $request->all();
+       //###########################
+        // Purchase Master information Save Start
+        //###########################
+         $users = Auth::user();
+        $Purchase = new Purchase();
+        $Purchase->_date = change_date_format($request->_date);
+        $Purchase->_time = date('H:i:s');
+        $Purchase->_order_ref_id = $request->_order_ref_id;
+        $Purchase->_referance = $request->_referance;
+        $Purchase->_ledger_id = $request->_main_ledger_id;
+        $Purchase->_user_id = $request->_main_ledger_id;
+        $Purchase->_created_by = $users->id."-".$users->name;
+        $Purchase->_user_id = $users->id;
+        $Purchase->_user_name = $users->name;
+        $Purchase->_note = $request->_note;
+        $Purchase->_sub_total = $request->_sub_total;
+        $Purchase->_discount_input = $request->_discount_input;
+        $Purchase->_total_discount = $request->_total_discount;
+        $Purchase->_total_vat = $request->_total_vat;
+        $Purchase->_total = $request->_total;
+        $Purchase->_branch_id = $request->_branch_id;
+        $Purchase->_status = 1;
+        $Purchase->save();
+        $purchase_id = $Purchase->id;
+
+        //###########################
+        // Purchase Master information Save End
+        //###########################
+
+        //###########################
+        // Purchase Details information Save Start
+        //###########################
+        $_item_ids = $request->_item_id;
+        $_barcodes = $request->_barcode;
+        $_qtys = $request->_qty;
+        $_rates = $request->_rate;
+        $_sales_rates = $request->_sales_rate;
+        $_vats = $request->_vat;
+        $_vat_amounts = $request->_vat_amount;
+        $_values = $request->_value;
+        $_main_branch_id_detail = $request->_main_branch_id_detail;
+        $_main_cost_center = $request->_main_cost_center;
+        $_store_ids = $request->_main_store_id;
+        $_store_salves_ids = $request->_store_salves_id;
+        if(sizeof($_item_ids) > 0){
+            for ($i = 0; $i <sizeof($_item_ids) ; $i++) {
+                $PurchaseDetail = new PurchaseDetail();
+                $PurchaseDetail->_item_id = $_item_ids[$i];
+                $PurchaseDetail->_qty = $_qtys[$i];
+                $PurchaseDetail->_barcode = $_barcodes[$i];
+                $PurchaseDetail->_rate = $_rates[$i];
+                $PurchaseDetail->_sales_rate = $_sales_rates[$i];
+                $PurchaseDetail->_discount = $_discounts[$i] ?? 0;
+                $PurchaseDetail->_discount_amount = $_discount_amounts[$i] ?? 0;
+                $PurchaseDetail->_vat = $_vats[$i] ?? 0;
+                $PurchaseDetail->_vat_amount = $_vat_amounts[$i] ?? 0;
+                $PurchaseDetail->_value = $_values[$i] ?? 0;
+                $PurchaseDetail->_store_id = $_store_ids[$i] ?? 0;
+                $PurchaseDetail->_cost_center_id = $_main_cost_center[$i] ?? 1;
+                $PurchaseDetail->_store_salves_id = $_store_salves_ids[$i] ?? 1;
+                $PurchaseDetail->_branch_id = $_main_branch_id_detail[$i] ?? 1;
+                $PurchaseDetail->_no = $purchase_id;
+                $PurchaseDetail->_status = 1;
+                $PurchaseDetail->_created_by = $users->id."-".$users->name;
+                $PurchaseDetail->save();
+
+
+
+
+
+            }
+        }
+
+        //###########################
+        // Purchase Details information Save End
+        //###########################
+
+        //###########################
+        // Purchase Account information Save End
+        //###########################
+        $_total_dr_amount = 0;
+        $_total_cr_amount = 0;
+
+        $PurchaseFormSettings = PurchaseFormSettings::first();
+        $_default_inventory = $PurchaseFormSettings->_default_inventory;
+        $_default_purchase = $PurchaseFormSettings->_default_purchase;
+        $_default_discount = $PurchaseFormSettings->_default_discount;
+        $_default_vat_account = $PurchaseFormSettings->_default_vat_account;
+
+        $_ref_master_id=$purchase_id;
+        $_ref_detail_id=$purchase_id;
+        $_short_narration='N/A';
+        $_narration = $request->_note;
+        $_reference= $request->_referance;
+        $_transaction= 'Purchase';
+        $_date = change_date_format($request->_date);
+        $_table_name = $request->_form_name;
+        $_branch_id = $request->_branch_id;
+        $_cost_center =  1;
+        $_name =$users->name;
+        if($request->_sub_total > 0){
+            //Default Purchase
+        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_purchase,$_dr_amount=$request->_sub_total,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+        //Default Supplier
+        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_sub_total,$_branch_id,$_cost_center,$_name);
+        }
+
+        if($request->_total_discount > 0){
+            //Default Supplier
+        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+             //Default Discount
+        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_discount,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+        
+        }
+        if($request->_total_vat > 0){
+            //Default Vat Account
+        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_vat_account,$_dr_amount=$request->_total_vat,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+        //Default Supplier
+        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_total_vat,$_branch_id,$_cost_center,$_name);
+        
+        }
+
+        // ############################
+        // Purchase Account         Dr 
+        //      Account Payable     Cr
         //
+        //  Inventory Account       Dr
+        //     Purchase Account     Cr
+        //
+        //  Account Payable         Dr
+        //      Purchase Discount   Cr
+         //
+        //    Vat Account          Dr
+        //      Account Payable   Cr
+        //##################################
+
+        $_ledger_id = $request->_ledger_id;
+        $_short_narr = $request->_short_narr;
+        $_dr_amount = $request->_dr_amount;
+        $_cr_amount = $request->_cr_amount;
+        $_branch_id_detail = $request->_branch_id_detail;
+        $_cost_center = $request->_cost_center;
+        if(sizeof($_ledger_id) > 0){
+                for ($i = 0; $i <sizeof($_ledger_id) ; $i++) {
+                    if($_ledger_id[$i] !=""){
+                        $_account_type_id =  ledger_to_group_type($_ledger_id[$i])->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($_ledger_id[$i])->_account_group_id;
+
+                        $_total_dr_amount += $_dr_amount[$i] ?? 0;
+                        $_total_cr_amount += $_cr_amount[$i] ?? 0;
+
+                        $PurchaseAccount = new PurchaseAccount();
+                        $PurchaseAccount->_no = $purchase_id;
+                        $PurchaseAccount->_account_type_id = $_account_type_id;
+                        $PurchaseAccount->_account_group_id = $_account_group_id;
+                        $PurchaseAccount->_ledger_id = $_ledger_id[$i];
+                        $PurchaseAccount->_cost_center = $_cost_center[$i] ?? 0;
+                        $PurchaseAccount->_branch_id = $_branch_id_detail[$i] ?? 0;
+                        $PurchaseAccount->_short_narr = $_short_narr[$i] ?? 'N/A';
+                        $PurchaseAccount->_dr_amount = $_dr_amount[$i] ?? 0;
+                        $PurchaseAccount->_cr_amount = $_cr_amount[$i] ?? 0;
+                        $PurchaseAccount->_status = 1;
+                        $PurchaseAccount->_created_by = $users->id."-".$users->name;
+                        $PurchaseAccount->save();
+
+                        $purchase_detail_id = $PurchaseAccount->id;
+
+                        //Reporting Account Table Data Insert
+                        $_ref_master_id=$purchase_id;
+                        $_ref_detail_id=$purchase_detail_id;
+                        $_short_narration=$_short_narr[$i] ?? 'N/A';
+                        $_narration = $request->_note;
+                        $_reference= $request->_referance;
+                        $_transaction= 'Purchase';
+                        $_date = change_date_format($request->_date);
+                        $_table_name ='purchase_accounts';
+                        $_account_ledger = $_ledger_id[$i];
+                        $_dr_amount = $_dr_amount[$i] ?? 0;
+                        $_cr_amount = $_cr_amount[$i] ?? 0;
+                        $_branch_id = $_branch_id_detail[$i] ?? 0;
+                        $_cost_center = $_cost_center[$i] ?? 0;
+                        $_name =$users->name;
+                        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount,$_cr_amount,$_branch_id,$_cost_center,$_name);
+                          
+                    }
+                }
+            }
+
+
+    }
+
+
+    public function account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount,$_cr_amount,$_branch_id,$_cost_center,$_name){
+        $_account_head =  ledger_to_group_type($_account_ledger)->_account_head_id;
+        $_account_group =  ledger_to_group_type($_account_ledger)->_account_group_id;
+            $Accounts = new Accounts();
+            $Accounts->_ref_master_id = $_ref_master_id;
+            $Accounts->_ref_detail_id = $_ref_detail_id;
+            $Accounts->_short_narration = $_short_narration;
+            $Accounts->_narration = $_narration;
+            $Accounts->_reference = $_reference;
+            $Accounts->_transaction = $_transaction;
+            $Accounts->_date = $_date;
+            $Accounts->_table_name = $_table_name;
+            $Accounts->_account_head = $_account_head;
+            $Accounts->_account_group = $_account_group;
+            $Accounts->_account_ledger = $_account_ledger;
+            $Accounts->_dr_amount = $_dr_amount;
+            $Accounts->_cr_amount = $_cr_amount;
+            $Accounts->_branch_id = $_branch_id;
+            $Accounts->_cost_center = $_cost_center;
+            $Accounts->_name =$_name;
+            $Accounts->save(); 
     }
 
     /**

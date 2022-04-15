@@ -137,6 +137,7 @@ Route::group(['middleware' => ['auth']], function() {
     
     //Searching section 
     Route::any('ledger-search','App\Http\Controllers\AccountLedgerController@ledger_search');
+    Route::any('main-ledger-search','App\Http\Controllers\AccountLedgerController@mainLedgerSearch');
     Route::any('type_base_group','App\Http\Controllers\AccountLedgerController@type_base_group');
     Route::any('group-base-ledger','App\Http\Controllers\AccountLedgerController@groupBaseLedger');
     

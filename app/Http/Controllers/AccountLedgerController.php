@@ -106,7 +106,6 @@ class AccountLedgerController extends Controller
     }
 
     public function ledger_search(Request $request){
-        //return $request->_text_val;
         $limit = $request->limit ?? 10;
         $_asc_desc = $request->_asc_desc ?? 'ASC';
         $asc_cloumn =  $request->asc_cloumn ?? '_name';
@@ -116,9 +115,23 @@ class AccountLedgerController extends Controller
             $datas = $datas->where('_name','like',"%$request->_text_val%")
             ->orWhere('id','like',"%$request->_text_val%");
         }
-        
-        
-        
+        $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
+        return json_encode( $datas);
+    }
+
+    public function mainLedgerSearch(Request $request){
+        $limit = $request->limit ?? default_pagination();
+        $_asc_desc = $request->_asc_desc ?? 'ASC';
+        $asc_cloumn =  $request->asc_cloumn ?? '_name';
+        $text_val = $request->_text_val;
+        $_account_head_id = $request->_account_head_id;
+        $datas = AccountLedger::select('id','_name','_code')
+                ->where('_account_head_id','=',$_account_head_id)
+                ->where('_status',1);
+         if($request->has('_text_val') && $request->_text_val !=''){
+            $datas = $datas->where('_name','like',"%$request->_text_val%")
+            ->orWhere('id','like',"%$request->_text_val%");
+        }
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
         return json_encode( $datas);
     }
