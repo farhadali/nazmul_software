@@ -94,6 +94,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('purchase', PurchaseController::class);
     Route::post('purchase/update', 'App\Http\Controllers\PurchaseController@update');
     Route::get('purchase-reset', 'App\Http\Controllers\PurchaseController@reset');
+    Route::get('purchase/print/{id}', 'App\Http\Controllers\PurchaseController@purchasePrint');
     Route::post('purchase-settings', 'App\Http\Controllers\PurchaseController@purchaseSettings');
 
 

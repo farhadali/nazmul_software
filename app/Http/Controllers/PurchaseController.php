@@ -15,6 +15,9 @@ use App\Models\StoreHouse;
 use App\Models\PurchaseFormSettings;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseAccount;
+use App\Models\ProductPriceList;
+use App\Models\ItemInventory;
+use App\Models\Inventory;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -52,7 +55,7 @@ class PurchaseController extends Controller
         $_asc_desc = $request->_asc_desc ?? 'DESC';
         $asc_cloumn =  $request->asc_cloumn ?? 'id';
 
-        $datas = Purchase::with(['_master_branch','_master_details']);
+        $datas = Purchase::with(['_master_branch','_master_details','purchase_account','_ledger']);
         $datas = $datas->whereIn('_branch_id',explode(',',\Auth::user()->branch_ids));
         if($auth_user->user_type !='admin'){
             $datas = $datas->where('_user_id',$auth_user->id);   
@@ -97,19 +100,23 @@ class PurchaseController extends Controller
          $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
           $current_date = date('Y-m-d');
           $current_time = date('H:i:s');
-         
-
+          $users = Auth::user();
+           $form_settings = PurchaseFormSettings::first();
+           $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+         $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
+        //return $datas;
          if($request->has('print')){
             if($request->print =="single"){
-                return view('backend.purchase.master_print',compact('datas','page_name','account_types','request','account_groups','current_date','current_time'));
+                return view('backend.purchase.master_print',compact('datas','page_name','account_types','request','account_groups','current_date','current_time','limit','form_settings','permited_branch','permited_costcenters','store_houses'));
             }
 
             if($request->print =="detail"){
-                return view('backend.purchase.details_print',compact('datas','page_name','account_types','request','account_groups','current_date','current_time','limit'));
+                return view('backend.purchase.details_print',compact('datas','page_name','account_types','request','account_groups','current_date','current_time','limit','form_settings','permited_branch','permited_costcenters','store_houses'));
             }
          }
 
-        return view('backend.purchase.index',compact('datas','page_name','account_types','request','account_groups','current_date','limit'));
+        return view('backend.purchase.index',compact('datas','page_name','account_types','request','account_groups','current_date','limit','form_settings','permited_branch','permited_costcenters','store_houses'));
     }
 
      public function reset(){
@@ -171,10 +178,11 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
-      //  return $request->all();
-       //###########################
-        // Purchase Master information Save Start
-        //###########################
+      // return $request->all();
+    //###########################
+    // Purchase Master information Save Start
+    //###########################
+       $_print_value = $request->_print ?? 0;
          $users = Auth::user();
         $Purchase = new Purchase();
         $Purchase->_date = change_date_format($request->_date);
@@ -229,7 +237,7 @@ class PurchaseController extends Controller
                 $PurchaseDetail->_vat = $_vats[$i] ?? 0;
                 $PurchaseDetail->_vat_amount = $_vat_amounts[$i] ?? 0;
                 $PurchaseDetail->_value = $_values[$i] ?? 0;
-                $PurchaseDetail->_store_id = $_store_ids[$i] ?? 0;
+                $PurchaseDetail->_store_id = $_store_ids[$i] ?? 1;
                 $PurchaseDetail->_cost_center_id = $_main_cost_center[$i] ?? 1;
                 $PurchaseDetail->_store_salves_id = $_store_salves_ids[$i] ?? 1;
                 $PurchaseDetail->_branch_id = $_main_branch_id_detail[$i] ?? 1;
@@ -237,11 +245,49 @@ class PurchaseController extends Controller
                 $PurchaseDetail->_status = 1;
                 $PurchaseDetail->_created_by = $users->id."-".$users->name;
                 $PurchaseDetail->save();
+                $_purchase_detail_id = $PurchaseDetail->id;
+
+                $item_info = Inventory::where('id',$_item_ids[$i])->first();
+
+                $ProductPriceList = new ProductPriceList();
+                $ProductPriceList->_item_id = $_item_ids[$i];
+                $ProductPriceList->_item = $item_info->_name ?? '';
+                $ProductPriceList->_barcode =$_barcodes[$i];
+                $ProductPriceList->_manufacture_date =null;
+                $ProductPriceList->_expire_date = null;
+                $ProductPriceList->_qty = $_qtys[$i];
+                $ProductPriceList->_sales_rate = $_sales_rates[$i];
+                $ProductPriceList->_pur_rate = $_rates[$i];
+                $ProductPriceList->_sales_discount = $item_info->_discount ?? 0;
+                $ProductPriceList->_sales_vat = $item_info->_vat ?? 0;;
+                $ProductPriceList->_value =$_values[$i] ?? 0;
+                $ProductPriceList->_purchase_detail_id =$_purchase_detail_id;
+                $ProductPriceList->_branch_id = $_main_branch_id_detail[$i] ?? 1;
+                $ProductPriceList->_status =1;
+                $ProductPriceList->_created_by = $users->id."-".$users->name;
+                $ProductPriceList->save();
 
 
-
-
-
+                $ItemInventory = new ItemInventory();
+                $ItemInventory->_item_id =  $_item_ids[$i];
+                $ItemInventory->_item_name =  $item_info->_name ?? '';
+                $ItemInventory->_date = change_date_format($request->_date);
+                $ItemInventory->_time = date('H:i:s');
+                $ItemInventory->_transection = "Purchase";
+                $ItemInventory->_transection_ref = $purchase_id;
+                $ItemInventory->_transection_detail_ref_id = $_purchase_detail_id;
+                $ItemInventory->_qty = $_qtys[$i];
+                $ItemInventory->_rate = $_sales_rates[$i];
+                $ItemInventory->_cost_rate = $_rates[$i];
+                $ItemInventory->_cost_value = ($_qtys[$i]*$_rates[$i]);
+                $ItemInventory->_value = $_values[$i] ?? 0;
+                $ItemInventory->_branch_id = $_main_branch_id_detail[$i] ?? 1;
+                $ItemInventory->_store_id = $_store_ids[$i] ?? 1;
+                $ItemInventory->_cost_center_id = $_main_cost_center[$i] ?? 1;
+                $ItemInventory->_store_salves_id = $_store_salves_ids[$i] ?? 1;
+                $ItemInventory->_status = 1;
+                $ItemInventory->_created_by = $users->id."-".$users->name;
+                $ItemInventory->save(); 
             }
         }
 
@@ -295,30 +341,33 @@ class PurchaseController extends Controller
         }
 
         // ############################
-        // Purchase Account         Dr 
+        //  Purchase Account         Dr 
         //      Account Payable     Cr
         //
         //  Inventory Account       Dr
         //     Purchase Account     Cr
         //
         //  Account Payable         Dr
-        //      Purchase Discount   Cr
-         //
-        //    Vat Account          Dr
-        //      Account Payable   Cr
+        //    Purchase Discount   Cr
+        //
+        //  Vat Account          Dr
+        //     Account Payable   Cr
         //##################################
 
-        $_ledger_id = $request->_ledger_id;
-        $_short_narr = $request->_short_narr;
-        $_dr_amount = $request->_dr_amount;
-        $_cr_amount = $request->_cr_amount;
-        $_branch_id_detail = $request->_branch_id_detail;
-        $_cost_center = $request->_cost_center;
+        $_ledger_id = (array) $request->_ledger_id;
+        $_short_narr = (array) $request->_short_narr;
+        $_dr_amount = (array) $request->_dr_amount;
+         $_cr_amount = (array) $request->_cr_amount;
+        $_branch_id_detail = (array) $request->_branch_id_detail;
+        $_cost_center = (array) $request->_cost_center;
+       
         if(sizeof($_ledger_id) > 0){
-                for ($i = 0; $i <sizeof($_ledger_id) ; $i++) {
-                    if($_ledger_id[$i] !=""){
-                        $_account_type_id =  ledger_to_group_type($_ledger_id[$i])->_account_head_id;
-                        $_account_group_id =  ledger_to_group_type($_ledger_id[$i])->_account_group_id;
+                foreach($_ledger_id as $i=>$ledger) {
+                    if($ledger !=""){
+                       
+                     // echo  $_cr_amount[$i];
+                        $_account_type_id =  ledger_to_group_type($ledger)->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($ledger)->_account_group_id;
 
                         $_total_dr_amount += $_dr_amount[$i] ?? 0;
                         $_total_cr_amount += $_cr_amount[$i] ?? 0;
@@ -327,12 +376,12 @@ class PurchaseController extends Controller
                         $PurchaseAccount->_no = $purchase_id;
                         $PurchaseAccount->_account_type_id = $_account_type_id;
                         $PurchaseAccount->_account_group_id = $_account_group_id;
-                        $PurchaseAccount->_ledger_id = $_ledger_id[$i];
+                        $PurchaseAccount->_ledger_id = $ledger;
                         $PurchaseAccount->_cost_center = $_cost_center[$i] ?? 0;
                         $PurchaseAccount->_branch_id = $_branch_id_detail[$i] ?? 0;
                         $PurchaseAccount->_short_narr = $_short_narr[$i] ?? 'N/A';
-                        $PurchaseAccount->_dr_amount = $_dr_amount[$i] ?? 0;
-                        $PurchaseAccount->_cr_amount = $_cr_amount[$i] ?? 0;
+                        $PurchaseAccount->_dr_amount = $_dr_amount[$i];
+                        $PurchaseAccount->_cr_amount = $_cr_amount[$i];
                         $PurchaseAccount->_status = 1;
                         $PurchaseAccount->_created_by = $users->id."-".$users->name;
                         $PurchaseAccount->save();
@@ -349,18 +398,18 @@ class PurchaseController extends Controller
                         $_date = change_date_format($request->_date);
                         $_table_name ='purchase_accounts';
                         $_account_ledger = $_ledger_id[$i];
-                        $_dr_amount = $_dr_amount[$i] ?? 0;
-                        $_cr_amount = $_cr_amount[$i] ?? 0;
-                        $_branch_id = $_branch_id_detail[$i] ?? 0;
-                        $_cost_center = $_cost_center[$i] ?? 0;
+                        $_dr_amount_a = $_dr_amount[$i] ?? 0;
+                        $_cr_amount_a = $_cr_amount[$i] ?? 0;
+                        $_branch_id_a = $_branch_id_detail[$i] ?? 0;
+                        $_cost_center_a = $_cost_center[$i] ?? 0;
                         $_name =$users->name;
-                        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount,$_cr_amount,$_branch_id,$_cost_center,$_name);
+                        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name);
                           
                     }
                 }
             }
 
-
+       return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
     }
 
 
@@ -385,6 +434,21 @@ class PurchaseController extends Controller
             $Accounts->_cost_center = $_cost_center;
             $Accounts->_name =$_name;
             $Accounts->save(); 
+    }
+
+
+    public function purchasePrint($id){
+        $users = Auth::user();
+        $page_name = $this->page_name;
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
+         $data =  Purchase::with(['_master_branch','_master_details','purchase_account','_ledger'])->find($id);
+        $form_settings = PurchaseFormSettings::first();
+           $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+         $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
+       return view('backend.purchase.print',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
     }
 
     /**

@@ -119,7 +119,7 @@
                               <div class="card-body">
                                 <div class="table-responsive">
                                       <table class="table table-bordered" >
-                                          <thead class="form_body">
+                                          <thead >
                                             <th class="text-middle" >&nbsp;</th>
                                             <th class="text-middle" >Item</th>
                                            @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
@@ -487,7 +487,7 @@
                                     <input type="hidden" name="_after_print" value="0" class="_after_print" >
                                     @endif
                                     @if ($_master_id = Session::get('_master_id'))
-                                     <input type="hidden" name="_master_id" value="{{url('voucher/print')}}/{{$_master_id}}" class="_master_id">
+                                     <input type="hidden" name="_master_id" value="{{url('purchase/print')}}/{{$_master_id}}" class="_master_id">
                                     
                                     @endif
                                    

@@ -12,6 +12,11 @@
   
   <!-- Theme style -->
   <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
+  <style type="text/css">
+    .display_none{
+    display: none;
+}
+  </style>
 </head>
 <body>
 <div class="wrapper">
@@ -21,7 +26,7 @@
     <div class="row">
       <div class="col-12">
         <h2 class="page-header">
-           <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
+           <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 50px;height: 50px;"> {{$settings->name ?? '' }}
           <small class="float-right">Date: {{ _view_date_formate($data->_date ?? '') }}</small>
         </h2>
       </div>
@@ -39,11 +44,11 @@
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col">
-        <h3 class="text-center"><b>{{ voucher_code_to_name($data->_voucher_type) }}</b></h3>
+        <h3 class="text-center"><b>Purchase Invoice</b></h3>
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col text-right">
-        <b>Voucher ID: {{ $data->_code ?? '' }}</b><br>
+        
         <b>Time:</b> {{$data->_time ?? ''}}<br>
         <b>Created By:</b> {{$data->_user_name ?? ''}}<br>
         <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}
@@ -51,11 +56,201 @@
       <!-- /.col -->
     </div>
     <!-- /.row -->
+    <div class="row">
+      <div class="col-12">
+        <div style="text-align: left;">
+          <b>ID: {{ $data->id ?? '' }}</b><br>
+          <span><b>Supplier:</b>{{$data->_ledger->_name ?? '' }}</span><br>
+          <span><b>Phone:</b>{{$data->_ledger->_phone ?? '' }}</span><br>
+          <span><b>Address:</b>{{$data->_ledger->_address ?? '' }}</span><br>
+        </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 table-responsive">
+         
+            @if(sizeof($data->_master_details) > 0)
+                        
+                              <table class="table">
+                                <thead >
+                                            <th class="text-middle" >SL</th>
+                                            <th class="text-middle" >Item</th>
+                                           @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
+                                            <th class="text-middle" >Barcode</th>
+                                            @else
+                                            <th class="text-middle display_none" >Barcode</th>
+                                            @endif
+                                            @endif
+                                            <th class="text-right" >Qty</th>
+                                            <th class="text-right" >Rate</th>
+                                            <th class="text-right" >Sales Rate</th>
+                                            @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
+                                            <th class="text-right" >VAT%</th>
+                                            <th class="text-right" >VAT</th>
+                                             @else
+                                            <th class="text-right display_none" >VAT%</th>
+                                            <th class="text-right display_none" >VAT Amount</th>
+                                            @endif
+                                            @endif
+
+                                            <th class="text-right" >Value</th>
+                                             @if(sizeof($permited_branch) > 1)
+                                            <th class="text-middle" >Branch</th>
+                                            @else
+                                            <th class="text-middle display_none" >Branch</th>
+                                            @endif
+                                             @if(sizeof($permited_costcenters) > 1)
+                                            <th class="text-middle" >Cost Center</th>
+                                            @else
+                                             <th class="text-middle display_none" >Cost Center</th>
+                                            @endif
+                                             @if(sizeof($store_houses) > 1)
+                                            <th class="text-middle" >Store</th>
+                                            @else
+                                             <th class="text-middle display_none" >Store</th>
+                                            @endif
+                                            @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
+                                            <th class="text-middle" >Shelf</th>
+                                            @else
+                                             <th class="text-middle display_none" >Shelf</th>
+                                            @endif
+                                            @endif
+                                           
+                                          </thead>
+                                <tbody>
+                                  @php
+                                    $_value_total = 0;
+                                    $_vat_total = 0;
+                                    $_qty_total = 0;
+                                  @endphp
+                                  @forelse($data->_master_details AS $item_key=>$_item )
+                                  <tr>
+                                     <td class="" >{{($item_key+1)}}</td>
+                                     @php
+                                      $_value_total +=$_item->_value ?? 0;
+                                      $_vat_total += $_item->_vat_amount ?? 0;
+                                      $_qty_total += $_item->_qty ?? 0;
+                                     @endphp
+                                            <td class="" >{!! $_item->_items->_name ?? '' !!}</td>
+                                           @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
+                                            <td class="" >{!! $_item->_barcode ?? '' !!}</td>
+                                            @else
+                                            <td class=" display_none" >{!! $_item->_barcode ?? '' !!}</td>
+                                            @endif
+                                            @endif
+                                            <td class="text-right" >{!! $_item->_qty ?? 0 !!}</td>
+                                            <td class="text-right" >{!! _report_amount($_item->_rate ?? 0) !!}</td>
+                                            <td class="text-right" >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
+                                            @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
+                                            <td class="text-right" >{!! $_item->_vat ?? 0 !!}</td>
+                                            <td class="text-right" >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
+                                             @else
+                                            <td class="text-right display_none" >{!! $_item->_vat ?? 0 !!}</td>
+                                            <td class="text-right display_none" >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
+                                            @endif
+                                            @endif
+
+                                            <td class="text-right" >{!! _report_amount($_item->_value ?? 0) !!}</td>
+                                             @if(sizeof($permited_branch) > 1)
+                                            <td class="" >{!! $_item->_detail_branch->_name ?? '' !!}</td>
+                                            @else
+                                            <td class=" display_none" >{!! $_item->_detail_branch->_name ?? '' !!}</td>
+                                            @endif
+                                             @if(sizeof($permited_costcenters) > 1)
+                                            <td class="" >{!! $_item->_detail_cost_center->_name ?? '' !!}</td>
+                                            @else
+                                             <td class=" display_none" >{!! $_item->_detail_cost_center->_name ?? '' !!}</td>
+                                            @endif
+                                             @if(sizeof($store_houses) > 1)
+                                            <td class="" >{!! $_item->_store->_name ?? '' !!}</td>
+                                            @else
+                                             <td class=" display_none" >{!! $_item->_store->_name ?? '' !!}</td>
+                                            @endif
+                                            @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
+                                            <td class="" >{!! $_item->_store_salves_id ?? '' !!}</td>
+                                            @else
+                                             <td class=" display_none" >{!! $_item->_store_salves_id ?? '' !!}</td>
+                                            @endif
+                                            @endif
+                                           
+                                          </thead>
+                                  </tr>
+                                  @empty
+                                  @endforelse
+                                </tbody>
+                                <tfoot>
+                                  <tr>
+                                              <td>
+                                                
+                                              </td>
+                                              <td  class="text-right"><b>Total</b></td>
+                                              @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
+                                              <td  class="text-right"></td>
+                                              @else
+                                                <td  class="text-right display_none"></td>
+                                             @endif
+                                            @endif
+                                              <td class="text-right">
+                                                <b>{{ $_qty_total ?? 0}}</b>
+                                                
+
+
+                                              </td>
+                                              <td></td>
+                                              <td></td>
+                                              @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
+                                              <td></td>
+                                              <td class="text-right">
+                                                <b>{{_report_amount($_vat_total ?? 0)}}</b>
+                                              </td>
+                                              @else
+                                              <td class="display_none"></td>
+                                              <td class="text-right display_none">
+                                                 <b>{{ _report_amount($_vat_total ?? 0) }}</b>
+                                              </td>
+                                              @endif
+                                              @endif
+                                              <td class="text-right">
+                                               <b> {{ _report_amount($_value_total ?? 0) }}</b>
+                                              </td>
+                                              @if(sizeof($permited_branch) > 1)
+                                              <td></td>
+                                              @else
+                                               <td class="display_none"></td>
+                                              @endif
+                                              @if(sizeof($permited_costcenters) > 1)
+                                              <td></td>
+                                              @else
+                                               <td class="display_none"></td>
+                                              @endif
+                                              @if(sizeof($store_houses) > 1)
+                                              <td></td>
+                                              @else
+                                               <td class="display_none"></td>
+                                              @endif
+
+                                              @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
+                                              <td></td>
+                                              @else
+                                              @endif
+                                              <td class="display_none"></td>
+                                              @endif
+                                            </tr>
+                                </tfoot>
+                              </table>
+                           
+                          </div>
+                        </td>
+                        </tr>
+                        @endif
+         
+      </div>
 
     <!-- Table row -->
+    @if(sizeof($data->purchase_account) > 0)
     <div class="row">
       <div class="col-12 table-responsive">
-        <table class="table table-striped">
+        <table class="table">
           <thead>
           <tr>
             <th>ID</th>
@@ -68,16 +263,23 @@
           </tr>
           </thead>
           <tbody>
-            @forelse($data->_master_details as $detail_key=>$detail)
+            @php
+            $_total_dr_amount =0;
+            $_total_cr_amount =0;
+            @endphp
+            @forelse($data->purchase_account as $detail_key=>$detail)
           <tr>
             <td>{!! $detail->id ?? '' !!}</td>
-            <td>{!! $detail->_voucher_ledger->_name ?? '' !!}</td>
+            <td>{!! $detail->_ledger->_name ?? '' !!}</td>
             <td>{!! $detail->_detail_branch->_name ?? '' !!}</td>
             <td>{!! $detail->_detail_cost_center->_name ?? '' !!}</td>
             <td>{!! $detail->_short_narr ?? '' !!}</td>
             <td class="text-right" >{!! _report_amount( $detail->_dr_amount ?? 0 ) !!}</td>
             <td class="text-right" >{!! _report_amount($detail->_cr_amount ?? 0 )!!}</td>
-             
+              @php
+            $_total_dr_amount +=$detail->_dr_amount ?? 0;
+            $_total_cr_amount +=$detail->_cr_amount ?? 0;
+            @endphp
           </tr>
           @empty
           @endforelse
@@ -85,9 +287,9 @@
           </tbody>
           <tfoot>
             <tr>
-              <th style="background-color: rgba(0,0,0,.05);" colspan="5" class="text-center">Total:</th>
-              <th style="background-color: rgba(0,0,0,.05);" class="text-right" >{!! _report_amount($data->_amount ?? 0) !!}</th>
-              <th style="background-color: rgba(0,0,0,.05);" class="text-right" >{!! _report_amount($data->_amount ?? 0) !!}</th>
+              <th  colspan="5" class="text-right">Total:</th>
+              <th  class="text-right" >{!! _report_amount($_total_dr_amount ?? 0) !!}</th>
+              <th  class="text-right" >{!! _report_amount($_total_cr_amount ?? 0) !!}</th>
             </tr>
           </tfoot>
         </table>
@@ -95,17 +297,11 @@
       <!-- /.col -->
     </div>
     <!-- /.row -->
+    @endif
 
     <div class="row">
-      <!-- accepted payments column -->
-      <div class="col-12">
-        @php
-$digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
-
-        @endphp
-        <p class="lead"> <b>In Words: {{ prefix_taka() }}. {{ $digit->format($data->_amount ?? 0) }}. </b></p>
-        
-      </div>
+    
+      
       <!-- /.col -->
       <div class="col-12 mt-5">
         <div class="row">

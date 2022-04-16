@@ -1,3 +1,7 @@
+body{
+     font-family: math;
+}
+
 .banner_image{
 	width: 200px;
 	height: 200px;
@@ -88,16 +92,21 @@ input[type="number"] {
     border: 1px solid #CCCCCC;
 }
 thead{
-    background: #17a2b82b;
+    background: #0576a0;
+    color: #fff;
+    font-family: math;
 }
 tfoot{
-    background: #17a2b82b;
+    background: #fff;
+     font-family: math;
 }
-.form_body{
-    background: #17a2b82b;
+.form_body {
+    background: #FFF;
+    font-family: math;
 }
 label{
     margin-bottom: 1px;
+     font-family: math;
 }
 .margin_bottom_20{
 	margin-bottom: 20px;

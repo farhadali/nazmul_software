@@ -294,7 +294,7 @@ class VoucherMasterController extends Controller
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
         $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
-         $data = VoucherMaster::with(['_master_branch','_master_details'])->find($id);
+        $data = VoucherMaster::with(['_master_branch','_master_details'])->find($id);
 
        return view('backend.voucher.print',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','data'));
     }

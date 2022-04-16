@@ -15,6 +15,16 @@ class Purchase extends Model
     }
 
     public function _master_details(){
-    	return $this->hasMany(PurchaseDetail::class,'_no','id');
+    	return $this->hasMany(PurchaseDetail::class,'_no','id')->with(['_detail_branch','_detail_cost_center','_store']);
+    }
+
+    public function purchase_account(){
+    	return $this->hasMany(PurchaseAccount::class,'_no','id')->with(['_ledger','_detail_branch','_detail_cost_center']);
+
+
+    }
+
+    public function _ledger(){
+    	return $this->hasOne(AccountLedger::class,'id','_ledger_id');
     }
 }

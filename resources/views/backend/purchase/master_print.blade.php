@@ -34,7 +34,7 @@
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col">
-        <h3 class="text-center"><b>Voucher </b></h3>
+        <h3 class="text-center"><b>{{$page_name}} List</b></h3>
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col text-right">
@@ -48,57 +48,56 @@
                 <thead>
                     <tr>
                          <th>SL</th>
-                         <th class="_no">ID</th>
-                         <th>Code</th>
-                         <th>Date</th>
-                         <th>Type</th>
-                         <th>Amount</th>
-                         <th>Refarance</th>
-                         <th>Note</th>
-                         <th>Branch</th>
-                         <th>User</th>
+                         <th><b>ID</b></th>
+                         <th><b>Date</b></th>
+                         <th><b>Branch</b></th>
+                         <th><b>Order Number</b></th>
+                         <th><b>Order Ref</b></th>
+                         <th><b>Referance</b></th>
+                         <th><b>Ledger</b></th>
+                         <th><b>Sub Total</b></th>
+                         <th><b>VAT</b></th>
+                         <th><b>Total</b></th>
+                         <th><b>User</b></th>
                         
                       </tr>
                 </thead>
                 <tbody>
-                  @php
-                  $amount_sum = 0;
-                  @endphp
-                      @foreach ($datas as $key => $data)
+                   @php
+                      $sum_of_amount=0;
+                      @endphp
+                        @foreach ($datas as $key => $data)
+                        @php
+                           $sum_of_amount += $data->_total ?? 0;
+                        @endphp
                         <tr>
                             
-                             
-                            <td>{{ ($key+1) }}</td>
+                             <td>
+                                {{($key+1)}}
+                            </td>
                             <td>{{ $data->id }}</td>
-                            <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_date ?? '' }}</td>
-                            <td>{{ $data->_voucher_type ?? '' }}</td>
-                            <td>{{ number_format((float) $data->_amount ?? 0, default_des(), '.', ',') }} </td>
-                            <td>{{ $data->_transection_ref ?? '' }}</td>
-                            <td>{{ $data->_note ?? '' }}</td>
                             <td>{{ $data->_master_branch->_name ?? '' }}</td>
+
+                            <td>{{ $data->_order_number ?? '' }}</td>
+                            <td>{{ $data->_order_ref_id ?? '' }}</td>
+                            <td>{{ $data->_referance ?? '' }}</td>
+                            <td>{{ $data->_ledger->_name ?? '' }}</td>
+                            <td>{{ _report_amount( $data->_sub_total ?? 0) }} </td>
+                            <td>{{ _report_amount( $data->_total_vat ?? 0) }} </td>
+                            <td>{{ _report_amount( $data->_total ?? 0) }} </td>
                             <td>{{ $data->_user_name ?? ''  }}</td>
                             
-                            @php
-                  $amount_sum += $data->_amount ?? 0;
-                  @endphp
+                           
                         </tr>
                         @endforeach
                 </tbody>
                 <tfoot>
-                    <tr>
-                         <th class="_no"></th>
-                         <th class="_no"></th>
-                         <th></th>
-                         <th></th>
-                         <th></th>
-                         <th><b>{{ number_format((float) $amount_sum, default_des(), '.', ',') }}</b></th>
-                         <th></th>
-                         <th></th>
-                         <th></th>
-                         <th></th>
-                        
-                      </tr>
+                     <tr>
+                          <td colspan="10" class="text-center"><b>Total</b></td>
+                          <td><b>{{ _report_amount($sum_of_amount) }} </b></td>
+                          <td></td>
+                        </tr>
                 </tfoot>
                       
                         
