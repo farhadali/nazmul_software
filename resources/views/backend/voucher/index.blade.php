@@ -31,7 +31,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
-              <div class="card-header border-0">
+              <div class="card-header border-0 mt-1">
                 <div class="row">
                    @php
 

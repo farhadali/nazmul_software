@@ -175,6 +175,39 @@ class AccountLedgerController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function ajaxLedgerSave(Request $request)
+    {
+        
+        
+        $data = new AccountLedger();
+        $data->_account_head_id = $request->_account_head_id;
+        $data->_account_group_id = $request->_account_groups;
+        $data->_branch_id = $request->_ledger_branch_id;
+        $data->_name = $request->_ledger_name;
+        $data->_address = $request->_ledger_address;
+        $data->_code = $request->_ledger_code;
+        $data->_nid = $request->_ledger_nid;
+        $data->_email = $request->_ledger_email;
+        $data->_phone = $request->_ledger_phone;
+        $data->_credit_limit = $request->_ledger_credit_limit ?? 0;
+        $data->_short = $request->_ledger_short ?? 5;
+        $data->_is_user = $request->_ledger_is_user;
+        $data->_is_sales_form = $request->_ledger_is_sales_form;
+        $data->_is_purchase_form = $request->_ledger_is_purchase_form;
+        $data->_is_all_branch = $request->_ledger_is_all_branch;
+        $data->_status = $request->_ledger_status;
+        $data->_created_by = Auth::user()->id."-".Auth::user()->name;
+        $data->save();
+        $id = $data->id;
+        return json_encode($id);
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  \App\Models\AccountLedger  $accountLedger

@@ -12,6 +12,13 @@
   
   <!-- Theme style -->
   <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
+  <style type="text/css">
+    .report_print_table td, .report_print_table th {
+        padding: .15rem !important;
+        vertical-align: top;
+        border-top: 1px solid #CCCCCC;
+    }
+  </style>
 </head>
 <body>
 <div class="wrapper">
@@ -37,7 +44,7 @@
     </div>
   
 <div class="table-responsive">
-   <table class="table table-bordered">
+   <table class="table table-bordered report_print_table">
                 <thead>
                     <tr>
                          <th>ID</th>
@@ -48,6 +55,7 @@
                          <th>Category</th>
                          <th>Purchase Rate</th>
                          <th>Sales Rate</th>
+                         <th>Stock</th>
                          <th>Manufacture Company</th>
                          <th>Discount</th>
                          <th>Vat</th>
@@ -67,6 +75,7 @@
                             <td>{{ $data->_category->_name ?? '' }}</td>
                             <td>{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>
                             <td>{{ _report_amount($data->_sale_rate ?? 0 ) }}</td>
+                            <td>{{ $data->_balance ?? 0 }}</td>
                             <td>{{ $data->_manufacture_company ?? '' }}</td>
                             <td>{{ _report_amount( $data->_discount ?? 0 ) }}</td>
                             <td>{{ _report_amount( $data->_vat ?? 0 ) }}</td>
@@ -78,7 +87,7 @@
                 </tbody>
                 <tfoot>
                    <tr>
-                     <td colspan="11">
+                     <td colspan="13">
                        <div class="col-12 mt-5">
                           <div class="row">
                             <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>

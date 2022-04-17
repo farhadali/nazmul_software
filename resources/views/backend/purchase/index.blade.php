@@ -31,7 +31,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
-              <div class="card-header border-0">
+              <div class="card-header border-0 mt-1">
                 <div class="row">
                    @php
 
@@ -99,10 +99,12 @@
                       </tr>
                       @php
                       $sum_of_amount=0;
+                       $sum_of_sub_total=0;
                       @endphp
                         @foreach ($datas as $key => $data)
                         @php
                            $sum_of_amount += $data->_total ?? 0;
+                           $sum_of_sub_total += $data->_sub_total ?? 0;
                         @endphp
                         <tr>
                             
@@ -127,7 +129,7 @@
                                     </a>
                             </td>
                             <td>{{ $data->id }}</td>
-                            <td>{{ $data->_date ?? '' }}</td>
+                            <td>{{ _view_date_formate($data->_date ?? '') }}</td>
                             <td>{{ $data->_master_branch->_name ?? '' }}</td>
 
                             <td>{{ $data->_order_number ?? '' }}</td>
@@ -148,7 +150,7 @@
                             <div class="card " >
                               <table class="table">
                                 <thead >
-                                            <th class="text-middle" >&nbsp;</th>
+                                            <th class="text-middle" >ID</th>
                                             <th class="text-middle" >Item</th>
                                            @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                             <th class="text-middle" >Barcode</th>
@@ -371,7 +373,9 @@
                         @endif
                         @endforeach
                         <tr>
-                          <td colspan="10" class="text-center"><b>Total</b></td>
+                          <td colspan="8" class="text-center"><b>Total</b></td>
+                          <td><b>{{ _report_amount($sum_of_sub_total) }} </b></td>
+                          <td></td>
                           <td><b>{{ _report_amount($sum_of_amount) }} </b></td>
                           <td></td>
                         </tr>
@@ -458,6 +462,69 @@ function after_request_date__today(_date){
           }
 
 });
+
+ $(document).on('keyup','._search_main_ledger_id',delay(function(e){
+    $(document).find('._search_main_ledger_id').removeClass('required_border');
+    var _gloabal_this = $(this);
+    var _text_val = $(this).val().trim();
+    var _account_head_id = 13;
+
+  var request = $.ajax({
+      url: "{{url('main-ledger-search')}}",
+      method: "GET",
+      data: { _text_val,_account_head_id },
+      dataType: "JSON"
+    });
+     
+    request.done(function( result ) {
+
+      var search_html =``;
+      var data = result.data; 
+      if(data.length > 0 ){
+            search_html +=`<div class="card"><table style="width: 300px;">
+                            <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                         search_html += `<tr class="search_row_ledger" >
+                                        <td>${data[i].id}
+                                        <input type="hidden" name="_id_main_ledger" class="_id_main_ledger" value="${data[i].id}">
+                                        </td><td>${data[i]._name}
+                                        <input type="hidden" name="_name_main_ledger" class="_name_main_ledger" value="${data[i]._name}">
+                                  
+                                   </td></tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
+      }else{
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+      }     
+      _gloabal_this.parent('div').find('.search_box_main_ledger').html(search_html);
+      _gloabal_this.parent('div').find('.search_box_main_ledger').addClass('search_box_show').show();
+      
+    });
+     
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+
+  
+
+}, 500));
+
+
+  $(document).on("click",'.search_row_ledger',function(){
+    var _id = $(this).children('td').find('._id_main_ledger').val();
+    var _name = $(this).find('._name_main_ledger').val();
+    $("._ledger_id").val(_id);
+    $("._search_main_ledger_id").val(_name);
+
+    $('.search_box_main_ledger').hide();
+    $('.search_box_main_ledger').removeClass('search_box_show').hide();
+  })
+  
+  $(document).on("click",'.search_modal',function(){
+    $('.search_box_main_ledger').hide();
+    $('.search_box_main_ledger').removeClass('search_box_show').hide();
+  })
 
 
 

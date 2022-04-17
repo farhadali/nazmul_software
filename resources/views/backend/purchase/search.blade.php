@@ -12,28 +12,40 @@
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body search_modal">
                  @php 
                     $row_numbers = filter_page_numbers();
                          
                   @endphp
-                  <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Limit:</label>
-                    <div class="col-sm-10">
-                     <select name="limit" class="form-control" >
-                              @forelse($row_numbers as $row)
-                               <option  @if($limit == $row) selected @endif   value="{{ $row }}">{{$row}}</option>
-                              @empty
-                              @endforelse
-                      </select>
-                    </div>
-                  </div>
+                 
                   
                   
                   <div class="form-group row">
                     <label for="id" class="col-sm-2 col-form-label">ID:</label>
                     <div class="col-sm-10">
-                      <input type="text" id="id" name="id" class="form-control" placeholder="Search By Id" value="@if(isset($request->id)) {{$request->id ?? ''}}  @endif">
+                      <input type="text" id="id" name="id" class="form-control" placeholder="Search By Id" 
+                      value="@if(isset($request->id)){{$request->id ?? ''}}@endif">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="_branch_id " class="col-sm-2 col-form-label">Branch:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" name="_branch_id" required >
+                                  
+                                  @forelse($permited_branch as $branch )
+                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->id ?? '' }} - {{ $branch->_name ?? '' }}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="_ledger_id " class="col-sm-2 col-form-label">Ledger:</label>
+                    <div class="col-sm-10">
+                      <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="@if(isset($request->_search_main_ledger_id)) {{$request->_search_main_ledger_id ?? ''}}  @endif" placeholder="Supplier" >
+
+                            <input type="hidden" id="_ledger_id" name="_ledger_id" class="form-control _ledger_id" value="@if(isset($request->_ledger_id)){{$request->_ledger_id ?? ''}}@endif" placeholder="Supplier" required>
+                            <div class="search_box_main_ledger"> </div>
                     </div>
                   </div>
                   <div class="form-group row">
@@ -50,7 +62,7 @@
                         <div class="col-sm-5">From: 
                           
                           <div class="input-group date" id="reservationdate_datex" data-target-input="nearest">
-                                      <input type="text" name="_datex" class="form-control datetimepicker-input_datex" data-target="#reservationdate_datex" value="@if(isset($request->_datex)) {{$request->_datex ?? ''}}  @endif" />
+                                      <input type="text" name="_datex" class="form-control datetimepicker-input_datex" data-target="#reservationdate_datex" value="@if(isset($request->_datex)){{$request->_datex ?? ''}}@endif" />
                                       <div class="input-group-append" data-target="#reservationdate_datex" data-toggle="datetimepicker">
                                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                       </div>
@@ -58,7 +70,7 @@
                         </div>
                         <div class="col-sm-5">To: 
                           <div class="input-group date" id="reservationdate_datey" data-target-input="nearest">
-                                      <input type="text" name="_datey" class="form-control datetimepicker-input_datey" data-target="#reservationdate_datey" value="@if(isset($request->_datey)) {{$request->_datey ?? ''}}  @endif" />
+                                      <input type="text" name="_datey" class="form-control datetimepicker-input_datey" data-target="#reservationdate_datey" value="@if(isset($request->_datey)){{$request->_datey ?? ''}}@endif" />
                                       <div class="input-group-append" data-target="#reservationdate_datey" data-toggle="datetimepicker">
                                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                       </div>
@@ -69,43 +81,72 @@
                   </div>
                   
                   <div class="form-group row">
-                    <label for="_code" class="col-sm-2 col-form-label">Code:</label>
+                    <label for="_order_ref_id" class="col-sm-2 col-form-label">Order Number:</label>
                     <div class="col-sm-10">
-                      <input type="text" id="_code" name="_code" class="form-control" placeholder="Search By Code" value="@if(isset($request->_code)) {{$request->_code ?? ''}}  @endif">
+                      <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control" placeholder="Search By Order Number" value="@if(isset($request->_order_ref_id)){{$request->_order_ref_id ?? ''}}@endif">
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_amount" class="col-sm-2 col-form-label">Amount:</label>
+                    <label for="_referance" class="col-sm-2 col-form-label">Referance:</label>
                     <div class="col-sm-10">
-                      <input type="text" id="_amount" name="_amount" class="form-control" placeholder="Search By Amount" value="@if(isset($request->_amount)) {{$request->_amount ?? ''}}  @endif">
+                      <input type="text" id="_referance" name="_referance" class="form-control" placeholder="Search By Referance" value="@if(isset($request->_referance)){{$request->_referance ?? ''}}@endif">
                     </div>
                   </div>
-                  <div class="form-group row">
-                    <label for="_transection_ref" class="col-sm-2 col-form-label">Refarance:</label>
-                    <div class="col-sm-10">
-                      <input type="text" id="_transection_ref" name="_transection_ref" class="form-control" placeholder="Search By Refarance" value="@if(isset($request->_transection_ref)) {{$request->_transection_ref ?? ''}}  @endif">
-                    </div>
-                  </div>
+                  
                   <div class="form-group row">
                     <label for="_note" class="col-sm-2 col-form-label">Note:</label>
                     <div class="col-sm-10">
-                      <input type="text" id="_note" name="_note" class="form-control" placeholder="Search By Note" value="@if(isset($request->_note)) {{$request->_note ?? ''}}  @endif">
+                      <input type="text" id="_note" name="_note" class="form-control" placeholder="Search By Note" value="@if(isset($request->_note)){{$request->_note ?? ''}}@endif">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="_sub_total" class="col-sm-2 col-form-label">Sub Total:</label>
+                    <div class="col-sm-10">
+                      <input type="text" id="_sub_total" name="_sub_total" class="form-control" placeholder="Search By Sub Total" value="@if(isset($request->_sub_total)){{$request->_sub_total ?? ''}}@endif">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="_total_discount" class="col-sm-2 col-form-label">Total Discount:</label>
+                    <div class="col-sm-10">
+                      <input type="text" id="_total_discount" name="_total_discount" class="form-control" placeholder="Search By Total Discount" value="@if(isset($request->_total_discount)){{$request->_total_discount ?? ''}}@endif">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="_total_vat" class="col-sm-2 col-form-label">Total VAT:</label>
+                    <div class="col-sm-10">
+                      <input type="text" id="_total_vat" name="_total_vat" class="form-control" placeholder="Search By Total VAT" value="@if(isset($request->_total_vat)){{$request->_total_vat ?? ''}}@endif">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="_total" class="col-sm-2 col-form-label">Total Amount:</label>
+                    <div class="col-sm-10">
+                      <input type="text" id="_total" name="_total" class="form-control" placeholder="Search By Total Amount" value="@if(isset($request->_total)){{$request->_total ?? ''}}@endif">
                     </div>
                   </div>
                   <div class="form-group row">
                     <label for="_user_name" class="col-sm-2 col-form-label">User:</label>
                     <div class="col-sm-10">
-                      <input type="text" id="_user_name" name="_user_name" class="form-control" placeholder="Search By Note" value="@if(isset($request->_user_name)) {{$request->_user_name ?? ''}}  @endif">
+                      <input type="text" id="_user_name" name="_user_name" class="form-control" placeholder="Search By User" value="@if(isset($request->_user_name)){{$request->_user_name ?? ''}}@endif">
                     </div>
                   </div>
-
+                   <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Limit:</label>
+                    <div class="col-sm-10">
+                     <select name="limit" class="form-control" >
+                              @forelse($row_numbers as $row)
+                               <option  @if($limit == $row) selected @endif   value="{{ $row }}">{{$row}}</option>
+                              @empty
+                              @endforelse
+                      </select>
+                    </div>
+                  </div>
 
                 
                     <div class="form-group row">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Order By:</label>
                     <div class="col-sm-10">
                       @php
-             $cloumns = [ 'id'=>'ID','_date'=>'Date','_user_name'=>'User name','_voucher_type'=>'Voucher Type','_transection_ref'=>'Refarance','_note'=>'Note','_amount'=>'Amount', '_branch_id '=>'Branch'];
+             $cloumns = [ 'id'=>'ID','_date'=>'Date','_user_name'=>'User name','_order_number'=>'Order Number','_order_ref_id'=>'Order Refarance','_referance'=>'Referance','_note'=>'Note', '_branch_id '=>'Branch','_ledger_id'=>'Ledger','_sub_total'=>'Sub Total','_total_discount'=>'Total Discount','_total_vat'=>'Total VAT','_total'=>'Total'];
 
                       @endphp
                        <select class="form-control" name="asc_cloumn" >
@@ -161,10 +202,10 @@
                               </div>
                           </div>
                           <div class="col-md-8">
-                              <div class="form-group mt-1">
+                              <div class="form-group ">
                                 
                                     <button type="button" class="btn btn-sm btn-warning mr-3" data-toggle="modal" data-target="#modal-default" title="Advance Search"><i class="fa fa-search mr-2"></i> </button>
-                                     <a href="{{url('voucher-reset')}}" class="btn btn-sm btn-danger" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
+                                     <a href="{{url('purchase-reset')}}" class="btn btn-sm btn-danger" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
                               </div>
                           </div>
                         </div><!-- end row -->

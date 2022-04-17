@@ -56,8 +56,8 @@ class VoucherMasterController extends Controller
             $_datex =  change_date_format($request->_datex);
             $_datey=  change_date_format($request->_datey);
 
-             $datas = $datas->whereDate('_date','<=', $_datex);
-            $datas = $datas->whereDate('_date','>=', $_datey);
+             $datas = $datas->whereDate('_date','>=', $_datex);
+            $datas = $datas->whereDate('_date','<=', $_datey);
         }
 
         if($request->has('id') && $request->id !=""){

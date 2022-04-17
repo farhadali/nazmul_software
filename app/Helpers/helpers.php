@@ -34,6 +34,53 @@ if (! function_exists('default_pagination')) {
 
 
 
+if (! function_exists('inventory_stock_update')) {
+    function inventory_stock_update($item_id)
+    {
+        $balance=\DB::select("SELECT SUM(IFNULL(_qty,0)) as _balance FROM item_inventories WHERE _item_id=$item_id ");
+        \DB::table('inventories')->where('id',$item_id)->update(['_balance'=>$balance[0]->_balance]);
+    }
+}
+
+
+if (! function_exists('ledger_balance_update')) {
+    function ledger_balance_update($ledger)
+    {
+        $balance=\DB::select("SELECT SUM(IFNULL(_dr_amount,0)-IFNULL(_cr_amount,0)) as _balance FROM `accounts` WHERE _account_ledger=$ledger ");
+        \DB::table('account_ledgers')->where('id',$ledger)->update(['_balance'=>$balance[0]->_balance]);
+    }
+}
+
+if (! function_exists('account_data_save')) {
+       function account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount,$_cr_amount,$_branch_id,$_cost_center,$_name){
+        $_account_head =  ledger_to_group_type($_account_ledger)->_account_head_id;
+        $_account_group =  ledger_to_group_type($_account_ledger)->_account_group_id;
+            $Accounts = new Accounts();
+            $Accounts->_ref_master_id = $_ref_master_id;
+            $Accounts->_ref_detail_id = $_ref_detail_id;
+            $Accounts->_short_narration = $_short_narration;
+            $Accounts->_narration = $_narration;
+            $Accounts->_reference = $_reference;
+            $Accounts->_transaction = $_transaction;
+            $Accounts->_date = $_date;
+            $Accounts->_table_name = $_table_name;
+            $Accounts->_account_head = $_account_head;
+            $Accounts->_account_group = $_account_group;
+            $Accounts->_account_ledger = $_account_ledger;
+            $Accounts->_dr_amount = $_dr_amount;
+            $Accounts->_cr_amount = $_cr_amount;
+            $Accounts->_branch_id = $_branch_id;
+            $Accounts->_cost_center = $_cost_center;
+            $Accounts->_name =$_name;
+            $Accounts->save(); 
+
+            ledger_balance_update($_account_ledger);
+    }
+}
+
+
+
+
 if (! function_exists('filterableBranch')) {
     function filterableBranch($request_branchs,$permited_branch)
     {
@@ -283,7 +330,7 @@ if (! function_exists('_show_amount_dr_cr')) {
         if($amount[0]==='-'){
             if(_default_amount_dr_cr()==1){
                 $amount = substr($amount, 1);
-                return $amount." .Cr";
+                return $amount." Cr";
             }elseif(_default_amount_dr_cr()==2){
                  $amount = substr($amount, 1);
                  return "(".$amount.")";
@@ -292,7 +339,7 @@ if (! function_exists('_show_amount_dr_cr')) {
             }
         }else{
            if(_default_amount_dr_cr()==1){
-                return $amount." .Dr";
+                return $amount." Dr";
             }elseif(_default_amount_dr_cr()==2){
                  return $amount;
             }else{

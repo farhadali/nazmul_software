@@ -151,6 +151,34 @@ class InventoryController extends Controller
         return redirect()->back()->with('success','Information save successfully');
                                         
     }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function ajaxItemSave(Request $request)
+    {
+         
+        $data = new Inventory();
+        $data->_item = $request->_item_item;
+        $data->_code = $request->_item_code;
+        $data->_unit_id = $request->_item_unit_id;
+        $data->_barcode = $request->_item_barcode;
+        $data->_category_id = $request->_category_id;
+        $data->_discount = $request->_item_discount ?? 0;
+        $data->_vat = $request->_item_vat ?? 0;
+        $data->_pur_rate = $request->_item_pur_rate ?? 0;
+        $data->_sale_rate = $request->_item_sale_rate ?? 0;
+        $data->_manufacture_company = $request->_item_manufacture_company;
+        $data->_status = $request->_item_status ?? 0;
+        $data->_created_by = \Auth::user()->id."-".\Auth::user()->name;
+        $data->save();
+        $id = $data->id;
+        return json_encode($id);
+
+                                        
+    }
 
     /**
      * Display the specified resource.

@@ -12,6 +12,13 @@
   
   <!-- Theme style -->
   <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
+  <style type="text/css">
+    .table td, .table th {
+        padding: .15rem !important;
+        vertical-align: top;
+        border-top: 1px solid #CCCCCC;
+    }
+  </style>
 </head>
 <body>
 <div class="wrapper">

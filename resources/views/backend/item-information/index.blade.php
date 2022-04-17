@@ -14,7 +14,7 @@
               <li class="breadcrumb-item active">
                 @can('item-information-create')
                         
-                    <a title="Add New" class="btn btn-info" href="{{ route('item-information.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                    <a title="Add New" class="btn btn-info btn-sm" href="{{ route('item-information.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                 @endcan
                </li>
             </ol>
@@ -32,7 +32,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
-              <div class="card-header border-0">
+              <div class="card-header border-0 mt-1">
                  
 
                   <div class="row">
@@ -92,6 +92,7 @@ if($currentURL === $current){
                          <th>Vat</th>
                          <th>Purchase Rate</th>
                          <th>Sales Rate</th>
+                         <th>Stock</th>
                          <th>Manufacture Company</th>
                          <th>Status</th>            
                       </tr>
@@ -125,6 +126,7 @@ if($currentURL === $current){
                             <td>{{ _report_amount( $data->_vat ?? 0 ) }}</td>
                             <td>{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>
                             <td>{{ _report_amount($data->_sale_rate ?? 0 ) }}</td>
+                            <td>{{ $data->_balance ?? 0 }}</td>
                             <td>{{ $data->_manufacture_company ?? '' }}</td>
                            <td>{{ selected_status($data->_status) }}</td>
                            

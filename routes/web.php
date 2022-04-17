@@ -81,6 +81,7 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('item-information', InventoryController::class);
     Route::post('item-information/update', 'App\Http\Controllers\InventoryController@update');
+    Route::post('ajax-item-save', 'App\Http\Controllers\InventoryController@ajaxItemSave');
     Route::get('item-information-reset', 'App\Http\Controllers\InventoryController@reset');
     Route::get('item-purchase-search', 'App\Http\Controllers\InventoryController@itemPurchaseSearch');
     
@@ -89,6 +90,7 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('account-ledger', AccountLedgerController::class);
     Route::post('account-ledger/update', 'App\Http\Controllers\AccountLedgerController@update');
+    Route::post('ajax-ledger-save', 'App\Http\Controllers\AccountLedgerController@ajaxLedgerSave');
     Route::get('account-ledger-reset', 'App\Http\Controllers\AccountLedgerController@reset');
 
     Route::resource('purchase', PurchaseController::class);

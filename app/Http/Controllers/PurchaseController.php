@@ -18,6 +18,8 @@ use App\Models\PurchaseAccount;
 use App\Models\ProductPriceList;
 use App\Models\ItemInventory;
 use App\Models\Inventory;
+use App\Models\ItemCategory;
+use App\Models\Units;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -42,7 +44,7 @@ class PurchaseController extends Controller
      */
     public function index(Request $request)
     {
-
+        //return $request->all();
         $auth_user = Auth::user();
        if($request->has('limit')){
             $limit = $request->limit ??  default_pagination();
@@ -57,16 +59,21 @@ class PurchaseController extends Controller
 
         $datas = Purchase::with(['_master_branch','_master_details','purchase_account','_ledger']);
         $datas = $datas->whereIn('_branch_id',explode(',',\Auth::user()->branch_ids));
-        if($auth_user->user_type !='admin'){
-            $datas = $datas->where('_user_id',$auth_user->id);   
+        if($request->has('_branch_id') && $request->_branch_id !=""){
+            $datas = $datas->where('_user_id',$request->_branch_id);  
+        }else{
+           if($auth_user->user_type !='admin'){
+                $datas = $datas->where('_user_id',$auth_user->id);   
+            } 
         }
+        
 
         if($request->has('_user_date') && $request->_user_date=="yes" && $request->_datex !="" && $request->_datex !=""){
             $_datex =  change_date_format($request->_datex);
             $_datey=  change_date_format($request->_datey);
 
-             $datas = $datas->whereDate('_date','<=', $_datex);
-            $datas = $datas->whereDate('_date','>=', $_datey);
+             $datas = $datas->whereDate('_date','>=', $_datex);
+            $datas = $datas->whereDate('_date','<=', $_datey);
         }
 
         if($request->has('id') && $request->id !=""){
@@ -74,12 +81,12 @@ class PurchaseController extends Controller
             $datas = $datas->whereIn('id', $ids); 
         }
         
-        if($request->has('_code') && $request->_code !=''){
-            $datas = $datas->where('_code','like',"%trim($request->_code)%");
+        if($request->has('_order_ref_id') && $request->_order_ref_id !=''){
+            $datas = $datas->where('_order_ref_id','like',"%trim($request->_order_ref_id)%");
         }
 
-        if($request->has('_transection_ref') && $request->_transection_ref !=''){
-            $datas = $datas->where('_transection_ref','like',"%trim($request->_transection_ref)%");
+        if($request->has('_referance') && $request->_referance !=''){
+            $datas = $datas->where('_referance','like',"%trim($request->_referance)%");
         }
         if($request->has('_note') && $request->_note !=''){
             $datas = $datas->where('_note','like',"%trim($request->_note)%");
@@ -88,8 +95,20 @@ class PurchaseController extends Controller
             $datas = $datas->where('_user_name','like',"%trim($request->_user_name)%");
         }
         
-        if($request->has('_amount') && $request->_amount !=''){
-            $datas = $datas->where('_amount','=',trim($request->_amount));
+        if($request->has('_sub_total') && $request->_sub_total !=''){
+            $datas = $datas->where('_sub_total','=',trim($request->_sub_total));
+        }
+        if($request->has('_total_discount') && $request->_total_discount !=''){
+            $datas = $datas->where('_total_discount','=',trim($request->_total_discount));
+        }
+        if($request->has('_total_vat') && $request->_total_vat !=''){
+            $datas = $datas->where('_total_vat','=',trim($request->_total_vat));
+        }
+        if($request->has('_total') && $request->_total !=''){
+            $datas = $datas->where('_total','=',trim($request->_total));
+        }
+        if($request->has('_ledger_id') && $request->_ledger_id !='' && $request->has('_search_main_ledger_id') && $request->_search_main_ledger_id ){
+            $datas = $datas->where('_ledger_id','=',trim($request->_ledger_id));
         }
         
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)
@@ -145,8 +164,10 @@ class PurchaseController extends Controller
         $p_accounts = AccountLedger::where('_account_head_id',10)->get();
         $dis_accounts = AccountLedger::where('_account_head_id',11)->get();
         $vat_accounts = AccountLedger::where('_account_group_id',47)->get();
+        $categories = ItemCategory::orderBy('_name','asc')->get();
+        $units = Units::orderBy('_name','asc')->get();
 
-       return view('backend.purchase.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts'));
+       return view('backend.purchase.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units'));
     }
 
 
@@ -178,6 +199,7 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
+         
       // return $request->all();
     //###########################
     // Purchase Master information Save Start
@@ -288,6 +310,8 @@ class PurchaseController extends Controller
                 $ItemInventory->_status = 1;
                 $ItemInventory->_created_by = $users->id."-".$users->name;
                 $ItemInventory->save(); 
+
+                inventory_stock_update($_item_ids[$i]);
             }
         }
 
@@ -320,23 +344,23 @@ class PurchaseController extends Controller
         $_name =$users->name;
         if($request->_sub_total > 0){
             //Default Purchase
-        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_purchase,$_dr_amount=$request->_sub_total,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_purchase,$_dr_amount=$request->_sub_total,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
         //Default Supplier
-        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_sub_total,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_sub_total,$_branch_id,$_cost_center,$_name);
         }
 
         if($request->_total_discount > 0){
             //Default Supplier
-        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
              //Default Discount
-        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_discount,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_discount,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
         
         }
         if($request->_total_vat > 0){
             //Default Vat Account
-        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_vat_account,$_dr_amount=$request->_total_vat,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_vat_account,$_dr_amount=$request->_total_vat,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
         //Default Supplier
-        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_total_vat,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_total_vat,$_branch_id,$_cost_center,$_name);
         
         }
 
@@ -403,7 +427,7 @@ class PurchaseController extends Controller
                         $_branch_id_a = $_branch_id_detail[$i] ?? 0;
                         $_cost_center_a = $_cost_center[$i] ?? 0;
                         $_name =$users->name;
-                        $this->account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name);
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name);
                           
                     }
                 }
@@ -413,28 +437,7 @@ class PurchaseController extends Controller
     }
 
 
-    public function account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount,$_cr_amount,$_branch_id,$_cost_center,$_name){
-        $_account_head =  ledger_to_group_type($_account_ledger)->_account_head_id;
-        $_account_group =  ledger_to_group_type($_account_ledger)->_account_group_id;
-            $Accounts = new Accounts();
-            $Accounts->_ref_master_id = $_ref_master_id;
-            $Accounts->_ref_detail_id = $_ref_detail_id;
-            $Accounts->_short_narration = $_short_narration;
-            $Accounts->_narration = $_narration;
-            $Accounts->_reference = $_reference;
-            $Accounts->_transaction = $_transaction;
-            $Accounts->_date = $_date;
-            $Accounts->_table_name = $_table_name;
-            $Accounts->_account_head = $_account_head;
-            $Accounts->_account_group = $_account_group;
-            $Accounts->_account_ledger = $_account_ledger;
-            $Accounts->_dr_amount = $_dr_amount;
-            $Accounts->_cr_amount = $_cr_amount;
-            $Accounts->_branch_id = $_branch_id;
-            $Accounts->_cost_center = $_cost_center;
-            $Accounts->_name =$_name;
-            $Accounts->save(); 
-    }
+  
 
 
     public function purchasePrint($id){
@@ -468,9 +471,28 @@ class PurchaseController extends Controller
      * @param  \App\Models\Purchase  $purchase
      * @return \Illuminate\Http\Response
      */
-    public function edit(Purchase $purchase)
+     
+
+     public function edit($id)
     {
-        //
+        $users = Auth::user();
+        $page_name = $this->page_name;
+        $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
+        $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
+        $form_settings = PurchaseFormSettings::first();
+        $inv_accounts = AccountLedger::where('_account_head_id',2)->get();
+        $p_accounts = AccountLedger::where('_account_head_id',10)->get();
+        $dis_accounts = AccountLedger::where('_account_head_id',11)->get();
+        $vat_accounts = AccountLedger::where('_account_group_id',47)->get();
+        $categories = ItemCategory::orderBy('_name','asc')->get();
+        $units = Units::orderBy('_name','asc')->get();
+         $data =  Purchase::with(['_master_branch','_master_details','purchase_account','_ledger'])->find($id);
+       return view('backend.purchase.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data'));
     }
 
     /**
