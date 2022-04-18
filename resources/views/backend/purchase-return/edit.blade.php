@@ -13,7 +13,7 @@
 
                @can('item-information-create')
              <li class="breadcrumb-item ">
-                 <a target="__blank" href="{{url('purchase/print')}}/{{$data->id}}" class="btn btn-sm btn-warning"> <i class="nav-icon fas fa-print"></i> </a>
+                 <a target="__blank" href="{{url('purchase-return/print')}}/{{$data->id}}" class="btn btn-sm btn-warning"> <i class="nav-icon fas fa-print"></i> </a>
                   
                 
                </li>
@@ -42,11 +42,11 @@
               @endcan
                @can('purchase-create')
               <li class="breadcrumb-item active">
-                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('purchase.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('purchase-return.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                </li>
               @endcan
               <li class="breadcrumb-item ">
-                 <a class="btn btn-sm btn-success" title="List" href="{{ route('purchase.index') }}"> <i class="nav-icon fas fa-list"></i> </a>
+                 <a class="btn btn-sm btn-success" title="List" href="{{ route('purchase-return.index') }}"> <i class="nav-icon fas fa-list"></i> </a>
                </li>
             </ol>
           </div><!-- /.col -->
@@ -85,12 +85,12 @@
               </div>
              
               <div class="card-body">
-               <form action="{{url('purchase/update')}}" method="POST" class="purchase_form" >
+               <form action="{{url('purchase-return/update')}}" method="POST" class="purchase_form" >
                 @csrf
                       <div class="row">
 
                        <div class="col-xs-12 col-sm-12 col-md-3">
-                        <input type="hidden" name="_form_name" value="purchases">
+                        <input type="hidden" name="_form_name" value="purchases_return">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">

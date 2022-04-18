@@ -15,11 +15,11 @@ class Purchase extends Model
     }
 
     public function _master_details(){
-    	return $this->hasMany(PurchaseDetail::class,'_no','id')->with(['_detail_branch','_detail_cost_center','_store','_items']);
+    	return $this->hasMany(PurchaseDetail::class,'_no','id')->with(['_detail_branch','_detail_cost_center','_store','_items'])->where('_status',1);
     }
 
     public function purchase_account(){
-    	return $this->hasMany(PurchaseAccount::class,'_no','id')->with(['_ledger','_detail_branch','_detail_cost_center']);
+    	return $this->hasMany(PurchaseAccount::class,'_no','id')->with(['_ledger','_detail_branch','_detail_cost_center'])->where('_status',1);
 
 
     }

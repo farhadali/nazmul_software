@@ -1,85 +1,56 @@
-@extends('backend.layouts.app')
-@section('title',$page_name)
 
-@section('content')
-<div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0 _page_name">{!! $page_name ?? '' !!} </h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-               @can('purchase-create')
-              <li class="breadcrumb-item active">
-                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('purchase.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
-               </li>
-              @endcan
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{$page_name}}</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
+  <style type="text/css">
+    .table td, .table th {
+        padding: .15rem !important;
+        vertical-align: top;
+        border-top: 1px solid #CCCCCC;
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+<section class="invoice">
+    <!-- title row -->
+    <div class="row">
+      <div class="col-12">
+        <h2 class="page-header">
+           <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
+          <small class="float-right">Date: {{ change_date_format($current_date ?? '') }} Time:{{$current_time}}</small>
+        </h2>
+      </div>
+      <!-- /.col -->
     </div>
-    @if ($message = Session::get('success'))
-    <div class="alert alert-success">
-      <p>{{ $message }}</p>
+    <!-- info row -->
+    <div class="row invoice-info">
+      <div class="col-sm-4 invoice-col">
+        
+      </div>
+      <!-- /.col -->
+      <div class="col-sm-4 invoice-col">
+        <h3 class="text-center"><b>Voucher Details</b></h3>
+      </div>
+      <!-- /.col -->
+      <div class="col-sm-4 invoice-col text-right">
+      
+      </div>
+      <!-- /.col -->
     </div>
-    @endif
-    <div class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="card-header border-0 mt-1">
-                <div class="row">
-                   @php
-
-                     $currentURL = URL::full();
-                     $current = URL::current();
-                    if($currentURL === $current){
-                       $print_url = $current."?print=single";
-                       $print_url_detal = $current."?print=detail";
-                    }else{
-                         $print_url = $currentURL."&print=single";
-                         $print_url_detal = $currentURL."&print=detail";
-                    }
-    
-
-                   @endphp
-                    <div class="col-md-4">
-                       @include('backend.purchase.search')
-                    </div>
-                    <div class="col-md-8">
-                      <div class="d-flex flex-row justify-content-end">
-                         @can('purchase-print')
-                        <li class="nav-item dropdown remove_from_header">
-                              <a class="nav-link" data-toggle="dropdown" href="#">
-                                
-                                <i class="fa fa-print " aria-hidden="true"></i> <i class="right fas fa-angle-down "></i>
-                              </a>
-                              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                               
-                                <div class="dropdown-divider"></div>
-                                
-                                <a target="__blank" href="{{$print_url}}" class="dropdown-item">
-                                  <i class="fa fa-print mr-2" aria-hidden="true"></i>Main  Print
-                                </a>
-                               <div class="dropdown-divider"></div>
-                              
-                                <a target="__blank" href="{{$print_url_detal}}"  class="dropdown-item">
-                                  <i class="fa fa-fax mr-2" aria-hidden="true"></i> Detail Print
-                                </a>
-                              
-                                    
-                            </li>
-                             @endcan   
-                         {!! $datas->render() !!}
-                          </div>
-                    </div>
-                  </div>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
+  
+<div class="table-responsive">
                   
                   <table class="table table-bordered">
                       <tr>
@@ -98,37 +69,18 @@
                       </tr>
                       @php
                       $sum_of_amount=0;
-                       $sum_of_sub_total=0;
                       @endphp
                         @foreach ($datas as $key => $data)
                         @php
                            $sum_of_amount += $data->_total ?? 0;
-                           $sum_of_sub_total += $data->_sub_total ?? 0;
                         @endphp
                         <tr>
                             
                              <td>
-                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('purchase/print')}}/{{$data->id}}" >
-                                  <i class="nav-icon fas fa-print"></i>
-                                </a>
-                                @can('purchase-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('purchase.edit',$data->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
-                                <!-- @can('purchase-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['purchase.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
-                                            <i class="nav-icon fas fa-trash"></i>
-                                        </button>
-                                    {!! Form::close() !!}
-                                @endcan -->
-                                <a class="btn btn-sm btn-default _action_button" data-toggle="collapse" href="#collapseExample__{{$key}}" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                      <i class=" fas fa-angle-down"></i>
-                                    </a>
+                                {{($key+1)}}
                             </td>
                             <td>{{ $data->id }}</td>
-                            <td>{{ _view_date_formate($data->_date ?? '') }}</td>
+                            <td>{{ $data->_date ?? '' }}</td>
                             <td>{{ $data->_master_branch->_name ?? '' }}</td>
 
                             <td>{{ $data->_order_number ?? '' }}</td>
@@ -145,11 +97,10 @@
                         @if(sizeof($data->_master_details) > 0)
                         <tr>
                           <td colspan="12" >
-                           <div class="collapse" id="collapseExample__{{$key}}">
-                            <div class="card " >
+                          
                               <table class="table">
                                 <thead >
-                                            <th class="text-middle" >ID</th>
+                                            <th class="text-middle" >&nbsp;</th>
                                             <th class="text-middle" >Item</th>
                                            @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                             <th class="text-middle" >Barcode</th>
@@ -314,16 +265,14 @@
                                             </tr>
                                 </tfoot>
                               </table>
-                            </div>
-                          </div>
+                           
                         </td>
                         </tr>
                         @endif
                         @if(sizeof($data->purchase_account) > 0)
                         <tr>
                           <td colspan="12" >
-                           <div class="collapse" id="collapseExample__{{$key}}">
-                            <div class="card " >
+                           
                               <table class="table">
                                 <thead>
                                   <th>ID</th>
@@ -365,167 +314,26 @@
                                   </tr>
                                 </tfoot>
                               </table>
-                            </div>
-                          </div>
+                           
                         </td>
                         </tr>
                         @endif
                         @endforeach
                         <tr>
-                          <td colspan="8" class="text-center"><b>Total</b></td>
-                          <td><b>{{ _report_amount($sum_of_sub_total) }} </b></td>
-                          <td></td>
+                          <td colspan="10" class="text-center"><b>Total</b></td>
                           <td><b>{{ _report_amount($sum_of_amount) }} </b></td>
                           <td></td>
                         </tr>
 
                     </table>
                 </div>
-                <!-- /.d-flex -->
-                
-              </div>
-            </div>
-            <!-- /.card -->
+  </section>
 
-            
-        </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
-    </div>
 </div>
-
-@endsection
-
-@section('script')
-
-<script type="text/javascript">
- $(function () {
-   var default_date_formate = `{{default_date_formate()}}`
-   var _datex = `{{$request->_datex ?? '' }}`
-   var _datey = `{{$request->_datey ?? '' }}`
-    
-     $('#reservationdate_datex').datetimepicker({
-        format:'L'
-    });
-     $('#reservationdate_datey').datetimepicker({
-         format:'L'
-    });
- 
-
- 
-
-// if(_datex =='' && _datey =='' ){
-//   $(".datetimepicker-input_datex").val(date__today());
-//   $(".datetimepicker-input_datey").val(date__today());
-//   console.log('Ok new Page')
-// }else{
-//   $(".datetimepicker-input_datex").val(after_request_date__today( `{{$request->_datex}}` ))
-//   $(".datetimepicker-input_datey").val(after_request_date__today( `{{$request->_datey}}` ))
-//   console.log('after search')
-// }
-
-function date__today(){
-              var d = new Date();
-            var yyyy = d.getFullYear().toString();
-            var mm = (d.getMonth()+1).toString(); // getMonth() is zero-based
-            var dd  = d.getDate().toString();
-            if(default_date_formate=='DD-MM-YYYY'){
-              return (dd[1]?dd:"0"+dd[0]) +"-"+ (mm[1]?mm:"0"+mm[0])+"-"+ yyyy ;
-            }
-            if(default_date_formate=='MM-DD-YYYY'){
-              return (mm[1]?mm:"0"+mm[0])+"-" + (dd[1]?dd:"0"+dd[0]) +"-"+  yyyy ;
-            }
-            
-
-            
-          }
-
-
-  
-
-function after_request_date__today(_date){
-            var data = _date.split('-');
-            var yyyy =data[0];
-            var mm =data[1];
-            var dd =data[2];
-            if(default_date_formate=='DD-MM-YYYY'){
-              return (dd[1]?dd:"0"+dd[0]) +"-"+ (mm[1]?mm:"0"+mm[0])+"-"+ yyyy ;
-            }
-            if(default_date_formate=='MM-DD-YYYY'){
-              return (mm[1]?mm:"0"+mm[0])+"-" + (dd[1]?dd:"0"+dd[0]) +"-"+  yyyy ;
-            }
-            
-
-            
-          }
-
-});
-
- $(document).on('keyup','._search_main_ledger_id',delay(function(e){
-    $(document).find('._search_main_ledger_id').removeClass('required_border');
-    var _gloabal_this = $(this);
-    var _text_val = $(this).val().trim();
-    var _account_head_id = 13;
-
-  var request = $.ajax({
-      url: "{{url('main-ledger-search')}}",
-      method: "GET",
-      data: { _text_val,_account_head_id },
-      dataType: "JSON"
-    });
-     
-    request.done(function( result ) {
-
-      var search_html =``;
-      var data = result.data; 
-      if(data.length > 0 ){
-            search_html +=`<div class="card"><table style="width: 300px;">
-                            <tbody>`;
-                        for (var i = 0; i < data.length; i++) {
-                         search_html += `<tr class="search_row_ledger" >
-                                        <td>${data[i].id}
-                                        <input type="hidden" name="_id_main_ledger" class="_id_main_ledger" value="${data[i].id}">
-                                        </td><td>${data[i]._name}
-                                        <input type="hidden" name="_name_main_ledger" class="_name_main_ledger" value="${data[i]._name}">
-                                  
-                                   </td></tr>`;
-                        }                         
-            search_html += ` </tbody> </table></div>`;
-      }else{
-        search_html +=`<div class="card"><table style="width: 300px;"> 
-        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
-      }     
-      _gloabal_this.parent('div').find('.search_box_main_ledger').html(search_html);
-      _gloabal_this.parent('div').find('.search_box_main_ledger').addClass('search_box_show').show();
-      
-    });
-     
-    request.fail(function( jqXHR, textStatus ) {
-      alert( "Request failed: " + textStatus );
-    });
-
-  
-
-}, 500));
-
-
-  $(document).on("click",'.search_row_ledger',function(){
-    var _id = $(this).children('td').find('._id_main_ledger').val();
-    var _name = $(this).find('._name_main_ledger').val();
-    $("._ledger_id").val(_id);
-    $("._search_main_ledger_id").val(_name);
-
-    $('.search_box_main_ledger').hide();
-    $('.search_box_main_ledger').removeClass('search_box_show').hide();
-  })
-  
-  $(document).on("click",'.search_modal',function(){
-    $('.search_box_main_ledger').hide();
-    $('.search_box_main_ledger').removeClass('search_box_show').hide();
-  })
-
-
-
+<!-- ./wrapper -->
+<!-- Page specific script -->
+<script>
+  window.addEventListener("load", window.print());
 </script>
-@endsection
+</body>
+</html>

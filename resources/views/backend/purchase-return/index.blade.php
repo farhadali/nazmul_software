@@ -12,7 +12,7 @@
             <ol class="breadcrumb float-sm-right">
                @can('purchase-create')
               <li class="breadcrumb-item active">
-                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('purchase.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('purchase-return.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                </li>
               @endcan
             </ol>
@@ -47,11 +47,11 @@
 
                    @endphp
                     <div class="col-md-4">
-                       @include('backend.purchase.search')
+                       @include('backend.purchase-return.search')
                     </div>
                     <div class="col-md-8">
                       <div class="d-flex flex-row justify-content-end">
-                         @can('purchase-print')
+                         @can('purchase-return-print')
                         <li class="nav-item dropdown remove_from_header">
                               <a class="nav-link" data-toggle="dropdown" href="#">
                                 
@@ -108,11 +108,11 @@
                         <tr>
                             
                              <td>
-                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('purchase/print')}}/{{$data->id}}" >
+                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('purchase-return/print')}}/{{$data->id}}" >
                                   <i class="nav-icon fas fa-print"></i>
                                 </a>
                                 @can('purchase-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('purchase.edit',$data->id) }}">
+                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('purchase-return.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
                                     </a>
                                 @endcan

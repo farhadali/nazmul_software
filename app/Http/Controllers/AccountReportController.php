@@ -64,6 +64,7 @@ class AccountReportController extends Controller
                     ->whereIn('accounts._branch_id' ,$_branch_ids)
                     ->whereIn('accounts._cost_center' ,$_cost_center_ids)
                     ->select(DB::raw('sum(accounts._dr_amount) as _opening_dr_amount'), DB::raw('sum(accounts._cr_amount) as _opening_cr_amount'))
+                    ->where('accounts._status',1)
                     ->first();
 
          $ledger_details = DB::table('accounts')
@@ -72,6 +73,7 @@ class AccountReportController extends Controller
                         ->whereDate('accounts._date', '<=', $_datey)
                         ->whereIn('accounts._branch_id' ,$_branch_ids)
                         ->whereIn('accounts._cost_center' ,$_cost_center_ids)
+                        ->where('accounts._status',1)
                         ->get();
                   
          $ledger_info = AccountLedger::with(['account_type','account_group','_entry_branch'])->find($request->_ledger_id);
@@ -162,7 +164,7 @@ class AccountReportController extends Controller
             INNER JOIN account_groups as t2 ON t2.id=t1._account_group
             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE t1._date < '".$_datex."' AND t1._account_ledger IN(".$ledger_id_rows.")
+               WHERE t1._status=1 AND t1._date < '".$_datex."' AND t1._account_ledger IN(".$ledger_id_rows.")
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
                  GROUP BY t1._account_ledger
       UNION ALL
@@ -171,7 +173,7 @@ class AccountReportController extends Controller
             INNER JOIN account_groups as t2 ON t2.id=t1._account_group
             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-              WHERE t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+              WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
               AND t1._account_ledger IN(".$ledger_id_rows.") AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")  ";
 
        $datas = DB::select($string_query);
@@ -281,7 +283,7 @@ class AccountReportController extends Controller
             INNER JOIN account_groups as t2 ON t2.id=t1._account_group
             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE t1._date < '".$_datex."' AND t1._account_ledger IN(".$ledger_id_rows.")
+               WHERE  t1._status=1 AND t1._date < '".$_datex."' AND t1._account_ledger IN(".$ledger_id_rows.")
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
                  GROUP BY t1._account_ledger
       UNION ALL
@@ -290,7 +292,7 @@ class AccountReportController extends Controller
             INNER JOIN account_groups as t2 ON t2.id=t1._account_group
             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-              WHERE t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+              WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
               AND t1._account_ledger IN(".$ledger_id_rows.") AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
               GROUP BY t1._account_ledger
               ) as t5 GROUP BY t5._account_ledger  ";
@@ -373,7 +375,7 @@ class AccountReportController extends Controller
             INNER JOIN account_groups as t2 ON t2.id=t1._account_group
             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE t1._date < '".$_datex."' AND t3._show=1 AND t1._account_head IN (8,9)
+               WHERE  t1._status=1 AND t1._date < '".$_datex."' AND t3._show=1 AND t1._account_head IN (8,9)
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
                  GROUP BY t1._account_ledger
             UNION ALL
@@ -382,7 +384,7 @@ class AccountReportController extends Controller
             INNER JOIN account_groups as t2 ON t2.id=t1._account_group
             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."'  AND t3._show=1 AND t1._account_head IN (8,9)
+               WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."'  AND t3._show=1 AND t1._account_head IN (8,9)
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
                  GROUP BY t1._account_ledger
                  ) as t5 GROUP BY t5._account_ledger ";
@@ -401,7 +403,7 @@ class AccountReportController extends Controller
             INNER JOIN account_groups as t2 ON t2.id=t1._account_group
             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE t1._date < '".$_datex."' AND t3._show=1 AND t1._account_head IN (10,11,15)
+               WHERE  t1._status=1 AND t1._date < '".$_datex."' AND t3._show=1 AND t1._account_head IN (10,11,15)
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
                  GROUP BY t1._account_ledger
             UNION ALL
@@ -410,7 +412,7 @@ class AccountReportController extends Controller
             INNER JOIN account_groups as t2 ON t2.id=t1._account_group
             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."'  AND t3._show=1 AND t1._account_head IN (10,11,15)
+               WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."'  AND t3._show=1 AND t1._account_head IN (10,11,15)
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
                  GROUP BY t1._account_ledger
                  ) as t5 GROUP BY t5._account_ledger ";
@@ -471,7 +473,7 @@ class AccountReportController extends Controller
             INNER JOIN account_heads as t6 ON t6.id=t1._account_head
             INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE t1._date < '".$_datex."' AND t3._show=1 AND t5.id IN (1,2,5)
+               WHERE  t1._status=1 AND t1._date < '".$_datex."' AND t3._show=1 AND t5.id IN (1,2,5)
                AND  t1._branch_id IN (".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
                  GROUP BY t1._account_ledger
 
@@ -483,7 +485,7 @@ class AccountReportController extends Controller
             INNER JOIN account_heads as t6 ON t6.id=t1._account_head
             INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE t1._date < '".$_datex."' AND t3._show=1 AND t5.id IN (3,4)
+               WHERE  t1._status=1 AND t1._date < '".$_datex."' AND t3._show=1 AND t5.id IN (3,4)
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.") 
 
 
@@ -546,7 +548,7 @@ class AccountReportController extends Controller
             INNER JOIN account_heads as t6 ON t6.id=t1._account_head
             INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE t1._date < '".$_datex."' 
+               WHERE  t1._status=1 AND t1._date < '".$_datex."' 
                AND  t1._branch_id IN (".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
                  GROUP BY t1._account_ledger
 
@@ -558,7 +560,7 @@ class AccountReportController extends Controller
             INNER JOIN account_heads as t6 ON t6.id=t1._account_head
             INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE t1._date < '".$_datex."'  AND t3._show=1 AND t5.id IN (3,4)
+               WHERE  t1._status=1 AND t1._date < '".$_datex."'  AND t3._show=1 AND t5.id IN (3,4)
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.") 
 
 

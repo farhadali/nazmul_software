@@ -20,6 +20,7 @@ use App\Models\ItemInventory;
 use App\Models\Inventory;
 use App\Models\ItemCategory;
 use App\Models\Units;
+use App\Models\SalesDetail;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -284,6 +285,7 @@ class PurchaseController extends Controller
                 $ProductPriceList->_sales_vat = $item_info->_vat ?? 0;;
                 $ProductPriceList->_value =$_values[$i] ?? 0;
                 $ProductPriceList->_purchase_detail_id =$_purchase_detail_id;
+                $ProductPriceList->_master_id = $purchase_id;
                 $ProductPriceList->_branch_id = $_main_branch_id_detail[$i] ?? 1;
                 $ProductPriceList->_status =1;
                 $ProductPriceList->_created_by = $users->id."-".$users->name;
@@ -492,7 +494,8 @@ class PurchaseController extends Controller
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
          $data =  Purchase::with(['_master_branch','_master_details','purchase_account','_ledger'])->find($id);
-       return view('backend.purchase.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data'));
+          $sales_number = SalesDetail::where('_purchase_invoice_no',$id)->count();
+       return view('backend.purchase.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data','sales_number'));
     }
 
     /**
@@ -502,9 +505,305 @@ class PurchaseController extends Controller
      * @param  \App\Models\Purchase  $purchase
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Purchase $purchase)
+    public function update(Request $request)
     {
+         
+      // return $request->all();
+
+        $this->validate($request, [
+            '_purchase_id' => 'required',
+            '_form_name' => 'required',
+        ]);
+       //######################
+       // Previous information need to make zero for every thing.
+       //#####################
+     $purchase_id = $request->_purchase_id;
+     $sales_number = SalesDetail::where('_purchase_invoice_no',$purchase_id)->count();
+     if($sales_number > 0 ){
+         return redirect()->back()->with('danger','You Can not update This invoice Item.Please Use Purchase Return !');
+     }
+
+   
+    PurchaseDetail::where('_no', $purchase_id)
+            ->update(['_qty'=>0,'_value'=>0,'_status'=>0,'_vat_amount'=>0,'_discount_amount'=>0]);
+    ProductPriceList::where('_master_id',$purchase_id)
+                    ->update(['_qty'=>0,'_value'=>0,'_status'=>0,'_pur_rate'=>0,'_sales_rate'=>0]);
+    ItemInventory::where('_transection',"Purchase")
+        ->where('_transection_ref',$purchase_id)
+        ->update(['_qty'=>0,'_value'=>0,'_status'=>0,'_cost_value'=>0,'_rate'=>0]);
+    PurchaseAccount::where('_no',$purchase_id)                               
+            ->update(['_dr_amount'=>0,'_cr_amount'=>0,'_status'=>0]);
+    Accounts::where('_ref_master_id',$purchase_id)
+                    ->where('_table_name',$request->_form_name)
+                     ->update(['_dr_amount'=>0,'_cr_amount'=>0,'_status'=>0]); 
+    Accounts::where('_ref_master_id',$purchase_id)
+                    ->where('_table_name','purchase_accounts')
+                     ->update(['_dr_amount'=>0,'_cr_amount'=>0,'_status'=>0]);              
+
+    //###########################
+    // Purchase Master information Save Start
+    //###########################
+       $_print_value = $request->_print ?? 0;
+       $users = Auth::user();
+        $Purchase = Purchase::where('id',$purchase_id)->first();
+        if(empty($Purchase)){
+            return redirect()->back()->with('danger','Something Went Wrong !');
+        }
+        $Purchase->_date = change_date_format($request->_date);
+        $Purchase->_time = date('H:i:s');
+        $Purchase->_order_ref_id = $request->_order_ref_id;
+        $Purchase->_referance = $request->_referance;
+        $Purchase->_ledger_id = $request->_main_ledger_id;
+        $Purchase->_user_id = $request->_main_ledger_id;
+        $Purchase->_created_by = $users->id."-".$users->name;
+        $Purchase->_updated_by = $users->id."-".$users->name;
+        $Purchase->_user_id = $users->id;
+        $Purchase->_user_name = $users->name;
+        $Purchase->_note = $request->_note;
+        $Purchase->_sub_total = $request->_sub_total;
+        $Purchase->_discount_input = $request->_discount_input;
+        $Purchase->_total_discount = $request->_total_discount;
+        $Purchase->_total_vat = $request->_total_vat;
+        $Purchase->_total = $request->_total;
+        $Purchase->_branch_id = $request->_branch_id;
+        $Purchase->_status = 1;
+        $Purchase->save();
+        $purchase_id = $Purchase->id;
+
+        //###########################
+        // Purchase Master information Save End
+        //###########################
+
+        //###########################
+        // Purchase Details information Save Start
+        //###########################
+        $_item_ids = $request->_item_id;
+        $_barcodes = $request->_barcode;
+        $_qtys = $request->_qty;
+        $_rates = $request->_rate;
+        $_sales_rates = $request->_sales_rate;
+        $_vats = $request->_vat;
+        $_vat_amounts = $request->_vat_amount;
+        $_values = $request->_value;
+        $_main_branch_id_detail = $request->_main_branch_id_detail;
+        $_main_cost_center = $request->_main_cost_center;
+        $_store_ids = $request->_main_store_id;
+        $_store_salves_ids = $request->_store_salves_id;
+        $purchase_detail_ids = $request->purchase_detail_id;
+        if(sizeof($_item_ids) > 0){
+            for ($i = 0; $i <sizeof($_item_ids) ; $i++) {
+                if($purchase_detail_ids[$i] ==0){
+                    $PurchaseDetail = new PurchaseDetail();
+                    $PurchaseDetail->_created_by = $users->id."-".$users->name;
+                }else{
+                    $PurchaseDetail = PurchaseDetail::where('id',$purchase_detail_ids[$i])->first();
+                }
+                
+                $PurchaseDetail->_item_id = $_item_ids[$i];
+                $PurchaseDetail->_qty = $_qtys[$i];
+                $PurchaseDetail->_barcode = $_barcodes[$i];
+                $PurchaseDetail->_rate = $_rates[$i];
+                $PurchaseDetail->_sales_rate = $_sales_rates[$i];
+                $PurchaseDetail->_discount = $_discounts[$i] ?? 0;
+                $PurchaseDetail->_discount_amount = $_discount_amounts[$i] ?? 0;
+                $PurchaseDetail->_vat = $_vats[$i] ?? 0;
+                $PurchaseDetail->_vat_amount = $_vat_amounts[$i] ?? 0;
+                $PurchaseDetail->_value = $_values[$i] ?? 0;
+                $PurchaseDetail->_store_id = $_store_ids[$i] ?? 1;
+                $PurchaseDetail->_cost_center_id = $_main_cost_center[$i] ?? 1;
+                $PurchaseDetail->_store_salves_id = $_store_salves_ids[$i] ?? 1;
+                $PurchaseDetail->_branch_id = $_main_branch_id_detail[$i] ?? 1;
+                $PurchaseDetail->_no = $purchase_id;
+                $PurchaseDetail->_status = 1;
+                $PurchaseDetail->_updated_by = $users->id."-".$users->name;
+                $PurchaseDetail->save();
+                $_purchase_detail_id = $PurchaseDetail->id;
+
+                $item_info = Inventory::where('id',$_item_ids[$i])->first();
+
+                $ProductPriceList = ProductPriceList::where('_master_id',$purchase_id)
+                                    ->where('_purchase_detail_id',$_purchase_detail_id)
+                                    ->first();
+                if(empty($ProductPriceList)){
+                    $ProductPriceList = new ProductPriceList();
+                    $ProductPriceList->_created_by = $users->id."-".$users->name;
+                }
+                $ProductPriceList->_item_id = $_item_ids[$i];
+                $ProductPriceList->_item = $item_info->_name ?? '';
+                $ProductPriceList->_barcode =$_barcodes[$i];
+                $ProductPriceList->_manufacture_date =null;
+                $ProductPriceList->_expire_date = null;
+                $ProductPriceList->_qty = $_qtys[$i];
+                $ProductPriceList->_sales_rate = $_sales_rates[$i];
+                $ProductPriceList->_pur_rate = $_rates[$i];
+                $ProductPriceList->_sales_discount = $item_info->_discount ?? 0;
+                $ProductPriceList->_sales_vat = $item_info->_vat ?? 0;;
+                $ProductPriceList->_value =$_values[$i] ?? 0;
+                $ProductPriceList->_purchase_detail_id =$_purchase_detail_id;
+                $ProductPriceList->_master_id = $purchase_id;
+                $ProductPriceList->_branch_id = $_main_branch_id_detail[$i] ?? 1;
+                $ProductPriceList->_status =1;
+                $ProductPriceList->_updated_by = $users->id."-".$users->name;
+                $ProductPriceList->save();
+
+
+                $ItemInventory = ItemInventory::where('_transection',"Purchase")
+                                    ->where('_transection_ref',$purchase_id)
+                                    ->where('_transection_detail_ref_id',$_purchase_detail_id)
+                                    ->first();
+                if(empty($ItemInventory)){
+                    $ItemInventory = new ItemInventory();
+                    $ItemInventory->_created_by = $users->id."-".$users->name;
+                }                   
+                
+                $ItemInventory->_item_id =  $_item_ids[$i];
+                $ItemInventory->_item_name =  $item_info->_name ?? '';
+                $ItemInventory->_date = change_date_format($request->_date);
+                $ItemInventory->_time = date('H:i:s');
+                $ItemInventory->_transection = "Purchase";
+                $ItemInventory->_transection_ref = $purchase_id;
+                $ItemInventory->_transection_detail_ref_id = $_purchase_detail_id;
+                $ItemInventory->_qty = $_qtys[$i];
+                $ItemInventory->_rate = $_sales_rates[$i];
+                $ItemInventory->_cost_rate = $_rates[$i];
+                $ItemInventory->_cost_value = ($_qtys[$i]*$_rates[$i]);
+                $ItemInventory->_value = $_values[$i] ?? 0;
+                $ItemInventory->_branch_id = $_main_branch_id_detail[$i] ?? 1;
+                $ItemInventory->_store_id = $_store_ids[$i] ?? 1;
+                $ItemInventory->_cost_center_id = $_main_cost_center[$i] ?? 1;
+                $ItemInventory->_store_salves_id = $_store_salves_ids[$i] ?? 1;
+                $ItemInventory->_status = 1;
+                $ItemInventory->_updated_by = $users->id."-".$users->name;
+                $ItemInventory->save(); 
+
+                inventory_stock_update($_item_ids[$i]);
+            }
+        }
+
+        //###########################
+        // Purchase Details information Save End
+        //###########################
+
+        //###########################
+        // Purchase Account information Save End
+        //###########################
+        $_total_dr_amount = 0;
+        $_total_cr_amount = 0;
+
+        $PurchaseFormSettings = PurchaseFormSettings::first();
+        $_default_inventory = $PurchaseFormSettings->_default_inventory;
+        $_default_purchase = $PurchaseFormSettings->_default_purchase;
+        $_default_discount = $PurchaseFormSettings->_default_discount;
+        $_default_vat_account = $PurchaseFormSettings->_default_vat_account;
+
+        $_ref_master_id=$purchase_id;
+        $_ref_detail_id=$purchase_id;
+        $_short_narration='N/A';
+        $_narration = $request->_note;
+        $_reference= $request->_referance;
+        $_transaction= 'Purchase';
+        $_date = change_date_format($request->_date);
+        $_table_name = $request->_form_name;
+        $_branch_id = $request->_branch_id;
+        $_cost_center =  1;
+        $_name =$users->name;
+        if($request->_sub_total > 0){
+            //Default Purchase
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_purchase,$_dr_amount=$request->_sub_total,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+        //Default Supplier
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_sub_total,$_branch_id,$_cost_center,$_name);
+        }
+
+        if($request->_total_discount > 0){
+            //Default Supplier
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+             //Default Discount
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_discount,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+        
+        }
+        if($request->_total_vat > 0){
+            //Default Vat Account
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_vat_account,$_dr_amount=$request->_total_vat,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+        //Default Supplier
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_total_vat,$_branch_id,$_cost_center,$_name);
+        
+        }
+
+        // ############################
+        //  Purchase Account         Dr 
+        //      Account Payable     Cr
         //
+        //  Inventory Account       Dr
+        //     Purchase Account     Cr
+        //
+        //  Account Payable         Dr
+        //    Purchase Discount   Cr
+        //
+        //  Vat Account          Dr
+        //     Account Payable   Cr
+        //##################################
+
+        $_ledger_id = (array) $request->_ledger_id;
+        $_short_narr = (array) $request->_short_narr;
+        $_dr_amount = (array) $request->_dr_amount;
+         $_cr_amount = (array) $request->_cr_amount;
+        $_branch_id_detail = (array) $request->_branch_id_detail;
+        $_cost_center = (array) $request->_cost_center;
+       
+        if(sizeof($_ledger_id) > 0){
+                foreach($_ledger_id as $i=>$ledger) {
+                    if($ledger !=""){
+                       
+                     // echo  $_cr_amount[$i];
+                        $_account_type_id =  ledger_to_group_type($ledger)->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($ledger)->_account_group_id;
+
+                        $_total_dr_amount += $_dr_amount[$i] ?? 0;
+                        $_total_cr_amount += $_cr_amount[$i] ?? 0;
+                         $PurchaseAccount = PurchaseAccount::where('_no',$purchase_id)
+                                                            ->where('_ledger_id',$ledger)
+                                                            ->first();
+                        if(empty($PurchaseAccount)){
+                            $PurchaseAccount = new PurchaseAccount();
+                        }
+                        
+                        $PurchaseAccount->_no = $purchase_id;
+                        $PurchaseAccount->_account_type_id = $_account_type_id;
+                        $PurchaseAccount->_account_group_id = $_account_group_id;
+                        $PurchaseAccount->_ledger_id = $ledger;
+                        $PurchaseAccount->_cost_center = $_cost_center[$i] ?? 0;
+                        $PurchaseAccount->_branch_id = $_branch_id_detail[$i] ?? 0;
+                        $PurchaseAccount->_short_narr = $_short_narr[$i] ?? 'N/A';
+                        $PurchaseAccount->_dr_amount = $_dr_amount[$i];
+                        $PurchaseAccount->_cr_amount = $_cr_amount[$i];
+                        $PurchaseAccount->_status = 1;
+                        $PurchaseAccount->_updated_by = $users->id."-".$users->name;
+                        $PurchaseAccount->save();
+
+                        $purchase_detail_id = $PurchaseAccount->id;
+
+                        //Reporting Account Table Data Insert
+                        $_ref_master_id=$purchase_id;
+                        $_ref_detail_id=$purchase_detail_id;
+                        $_short_narration=$_short_narr[$i] ?? 'N/A';
+                        $_narration = $request->_note;
+                        $_reference= $request->_referance;
+                        $_transaction= 'Purchase';
+                        $_date = change_date_format($request->_date);
+                        $_table_name ='purchase_accounts';
+                        $_account_ledger = $_ledger_id[$i];
+                        $_dr_amount_a = $_dr_amount[$i] ?? 0;
+                        $_cr_amount_a = $_cr_amount[$i] ?? 0;
+                        $_branch_id_a = $_branch_id_detail[$i] ?? 0;
+                        $_cost_center_a = $_cost_center[$i] ?? 0;
+                        $_name =$users->name;
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name);
+                          
+                    }
+                }
+            }
+
+       return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
     }
 
     /**

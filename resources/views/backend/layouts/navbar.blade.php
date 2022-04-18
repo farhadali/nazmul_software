@@ -121,10 +121,17 @@
           </a>
          @endcan
          <div class="dropdown-divider"></div>
-          <div class="dropdown-divider"></div>
+          
         @can('purchase-list')
           <a href="{{url('purchase')}}" class="dropdown-item">
             <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Purchase
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+          
+        @can('purchase-return-list')
+          <a href="{{url('purchase-return')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Purchase Return
           </a>
          @endcan
          <div class="dropdown-divider"></div>

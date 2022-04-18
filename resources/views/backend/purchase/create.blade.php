@@ -39,31 +39,38 @@
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
-    <div class="message-area">
-    @if (count($errors) > 0)
-           <div class="alert alert-danger">
-                <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-                </ul>
-            </div>
-        @endif
-  @if ($message = Session::get('success'))
-    <div class="alert alert-success">
-      <p>{{ $message }}</p>
-    </div>
-    @endif
-    </div>
+  
     <div class="content">
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
-             
+              <div class="card-header">
+                 
+                    @if (count($errors) > 0)
+                           <div class="alert ">
+                                <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                                <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                  @if ($message = Session::get('success'))
+                    <div class="alert ">
+                      <p>{{ $message }}</p>
+                    </div>
+                    @endif
+                  @if ($message = Session::get('danger'))
+                    <div class="alert ">
+                      <p>{{ $message }}</p>
+                    </div>
+                    @endif
+                    
+              </div>
               <div class="card-body">
-               <form action="{{route('purchase.store')}}" method="POST" class="voucher-form" >
+               <form action="{{route('purchase.store')}}" method="POST" class="purchase_form" >
                 @csrf
                                    <div class="row">
 
@@ -1507,7 +1514,7 @@ function purchase_row_add(event){
           $(this).parent().parent('tr').remove();
         } 
       }
-      _voucher_total_calculation();
+      _purchase_total_calculation();
   })
 
   $(document).on('click','._voucher_row_remove',function(event){
@@ -1613,7 +1620,7 @@ function purchase_row_add(event){
       $(document).find('._search_main_ledger_id').focus().addClass('required_border');
       return false;
     }else{
-      $(document).find('.voucher-form').submit();
+      $(document).find('.purchase_form').submit();
     }
   })
 

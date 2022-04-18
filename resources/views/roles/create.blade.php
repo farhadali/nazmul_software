@@ -60,7 +60,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="col-xs-12 col-sm-12 col-md-12 mb-10">
                             <div class="form-group">
                                 <strong>Permission:</strong>
                                 <br/>
@@ -69,7 +69,7 @@
                                @endphp
                                 @foreach($permission as $key=>$values)
                                 <div class="col-md-12">
-                                  <h4 style="background: #f4f6f9;padding: 5px;border-radius: 5px;">{{$number}} - {{$key}}</h4>
+                                  <h4 style="background: #f4f6f9;padding: 5px;border-radius: 5px;">{{$number}}.{{$key}}</h4>
                                    <div class="row">
                                   @foreach($values as $value)
                                   
@@ -90,9 +90,10 @@
                         
                         
                     </div>
-                    <div class="row submit-button_row">
-                      <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
-                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle ">
+                            <button type="submit" class="btn btn-success submit-button "><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
+                        </div>
+                        <br><br>
                     {!! Form::close() !!}
                 
               </div>
