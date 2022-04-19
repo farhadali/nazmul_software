@@ -27,10 +27,18 @@ class CreateProductPriceListsTable extends Migration
             $table->string('_sales_discount',50)->default(0)->comment('use % if or it will be amount');
             $table->string('_sales_vat',50)->default(0)->comment('use % if or it will be amount');
             $table->double('_value',15,4)->default(0);
+            $table->integer('_p_discount_input')->default(0);
+            $table->integer('_p_discount_amount')->default(0);
+            $table->integer('_p_vat')->default(0);
+            $table->integer('_p_vat_amount')->default(0);
             $table->unsignedBigInteger('_purchase_detail_id');
             $table->foreign('_purchase_detail_id')->references('id')->on('purchase_details');
             $table->unsignedBigInteger('_branch_id');
             $table->foreign('_branch_id')->references('id')->on('branches');
+            $table->integer('_store_id')->default(1);
+            $table->integer('_cost_center_id')->default(1);
+            $table->integer('_master_id')->nullable();
+            $table->string('_store_salves_id',60)->nullable();
             $table->tinyInteger('_status')->default(0);
             $table->string('_created_by',60)->nullable();
             $table->string('_updated_by',60)->nullable();

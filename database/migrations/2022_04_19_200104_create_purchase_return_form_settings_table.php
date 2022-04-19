@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePurchaseFormSettingsTable extends Migration
+class CreatePurchaseReturnFormSettingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePurchaseFormSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('purchase_form_settings', function (Blueprint $table) {
+        Schema::create('purchase_return_form_settings', function (Blueprint $table) {
             $table->id();
             $table->integer('_default_inventory');
             $table->integer('_default_purchase');
@@ -34,6 +34,6 @@ class CreatePurchaseFormSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('purchase_form_settings');
+        Schema::dropIfExists('purchase_return_form_settings');
     }
 }

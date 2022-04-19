@@ -274,7 +274,7 @@ class PurchaseController extends Controller
 
                 $ProductPriceList = new ProductPriceList();
                 $ProductPriceList->_item_id = $_item_ids[$i];
-                $ProductPriceList->_item = $item_info->_name ?? '';
+                $ProductPriceList->_item = $item_info->_item ?? '';
                 $ProductPriceList->_barcode =$_barcodes[$i];
                 $ProductPriceList->_manufacture_date =null;
                 $ProductPriceList->_expire_date = null;
@@ -294,7 +294,7 @@ class PurchaseController extends Controller
 
                 $ItemInventory = new ItemInventory();
                 $ItemInventory->_item_id =  $_item_ids[$i];
-                $ItemInventory->_item_name =  $item_info->_name ?? '';
+                $ItemInventory->_item_name =  $item_info->_item ?? '';
                 $ItemInventory->_date = change_date_format($request->_date);
                 $ItemInventory->_time = date('H:i:s');
                 $ItemInventory->_transection = "Purchase";
@@ -525,20 +525,20 @@ class PurchaseController extends Controller
 
    
     PurchaseDetail::where('_no', $purchase_id)
-            ->update(['_qty'=>0,'_value'=>0,'_status'=>0,'_vat_amount'=>0,'_discount_amount'=>0]);
+            ->update(['_status'=>0]);
     ProductPriceList::where('_master_id',$purchase_id)
-                    ->update(['_qty'=>0,'_value'=>0,'_status'=>0,'_pur_rate'=>0,'_sales_rate'=>0]);
+                    ->update(['_status'=>0]);
     ItemInventory::where('_transection',"Purchase")
         ->where('_transection_ref',$purchase_id)
-        ->update(['_qty'=>0,'_value'=>0,'_status'=>0,'_cost_value'=>0,'_rate'=>0]);
+        ->update(['_status'=>0]);
     PurchaseAccount::where('_no',$purchase_id)                               
-            ->update(['_dr_amount'=>0,'_cr_amount'=>0,'_status'=>0]);
+            ->update(['_status'=>0]);
     Accounts::where('_ref_master_id',$purchase_id)
                     ->where('_table_name',$request->_form_name)
-                     ->update(['_dr_amount'=>0,'_cr_amount'=>0,'_status'=>0]); 
+                     ->update(['_status'=>0]); 
     Accounts::where('_ref_master_id',$purchase_id)
                     ->where('_table_name','purchase_accounts')
-                     ->update(['_dr_amount'=>0,'_cr_amount'=>0,'_status'=>0]);              
+                     ->update(['_status'=>0]);              
 
     //###########################
     // Purchase Master information Save Start
@@ -554,7 +554,7 @@ class PurchaseController extends Controller
         $Purchase->_order_ref_id = $request->_order_ref_id;
         $Purchase->_referance = $request->_referance;
         $Purchase->_ledger_id = $request->_main_ledger_id;
-        $Purchase->_user_id = $request->_main_ledger_id;
+        $Purchase->_user_id = $users->id;
         $Purchase->_created_by = $users->id."-".$users->name;
         $Purchase->_updated_by = $users->id."-".$users->name;
         $Purchase->_user_id = $users->id;
@@ -629,7 +629,7 @@ class PurchaseController extends Controller
                     $ProductPriceList->_created_by = $users->id."-".$users->name;
                 }
                 $ProductPriceList->_item_id = $_item_ids[$i];
-                $ProductPriceList->_item = $item_info->_name ?? '';
+                $ProductPriceList->_item = $item_info->_item ?? '';
                 $ProductPriceList->_barcode =$_barcodes[$i];
                 $ProductPriceList->_manufacture_date =null;
                 $ProductPriceList->_expire_date = null;
@@ -642,6 +642,13 @@ class PurchaseController extends Controller
                 $ProductPriceList->_purchase_detail_id =$_purchase_detail_id;
                 $ProductPriceList->_master_id = $purchase_id;
                 $ProductPriceList->_branch_id = $_main_branch_id_detail[$i] ?? 1;
+                $ProductPriceList->_p_discount_input = $_discounts[$i] ?? 0;
+                $ProductPriceList->_p_discount_amount = $_discount_amounts[$i] ?? 0;
+                $ProductPriceList->_p_vat = $_vats[$i] ?? 0;
+                $ProductPriceList->_p_vat_amount = $_vat_amounts[$i] ?? 0;
+                $ProductPriceList->_store_id = $_store_ids[$i] ?? 1;
+                $ProductPriceList->_cost_center_id = $_main_cost_center[$i] ?? 1;
+                $ProductPriceList->_store_salves_id = $_store_salves_ids[$i] ?? 1;
                 $ProductPriceList->_status =1;
                 $ProductPriceList->_updated_by = $users->id."-".$users->name;
                 $ProductPriceList->save();
@@ -657,7 +664,7 @@ class PurchaseController extends Controller
                 }                   
                 
                 $ItemInventory->_item_id =  $_item_ids[$i];
-                $ItemInventory->_item_name =  $item_info->_name ?? '';
+                $ItemInventory->_item_name =  $item_info->_item ?? '';
                 $ItemInventory->_date = change_date_format($request->_date);
                 $ItemInventory->_time = date('H:i:s');
                 $ItemInventory->_transection = "Purchase";

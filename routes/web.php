@@ -100,12 +100,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('purchase/print/{id}', 'App\Http\Controllers\PurchaseController@purchasePrint');
     Route::post('purchase-settings', 'App\Http\Controllers\PurchaseController@purchaseSettings');
     
+    
     Route::resource('purchase-return', PurchaseReturnController::class);
     Route::post('purchase-return/update', 'App\Http\Controllers\PurchaseReturnController@update');
     Route::get('purchase-return-reset', 'App\Http\Controllers\PurchaseReturnController@reset');
     Route::get('purchase-return/print/{id}', 'App\Http\Controllers\PurchaseReturnController@purchasePrint');
     Route::post('purchase-return-settings', 'App\Http\Controllers\PurchaseReturnController@purchaseSettings');
-
+    Route::get('purchase-order-search', 'App\Http\Controllers\PurchaseReturnController@purchaseOrderSearch');
+    Route::post('purchase-order-details', 'App\Http\Controllers\PurchaseReturnController@purchaseOrderDetails');
 
     Route::resource('unit', UnitsController::class);
     Route::post('unit/update', 'App\Http\Controllers\UnitsController@update');

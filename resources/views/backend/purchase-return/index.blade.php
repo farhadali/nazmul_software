@@ -20,11 +20,30 @@
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
-    @if ($message = Session::get('success'))
-    <div class="alert alert-success">
-      <p>{{ $message }}</p>
-    </div>
-    @endif
+    <div class="card-header">
+                 
+                    @if (count($errors) > 0)
+                           <div class="alert ">
+                                <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                                <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                  @if ($message = Session::get('success'))
+                    <div class="alert ">
+                      <p>{{ $message }}</p>
+                    </div>
+                    @endif
+                  @if ($message = Session::get('danger'))
+                    <div class="alert ">
+                      <p>{{ $message }}</p>
+                    </div>
+                    @endif
+                    
+              </div>
     <div class="content">
       <div class="container-fluid">
         <div class="row">
@@ -116,13 +135,13 @@
                                       <i class="nav-icon fas fa-edit"></i>
                                     </a>
                                 @endcan
-                                <!-- @can('purchase-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['purchase.destroy', $data->id],'style'=>'display:inline']) !!}
+                                @can('purchase-delete')
+                                    {!! Form::open(['method' => 'DELETE','route' => ['purchase-return.destroy', $data->id],'style'=>'display:inline']) !!}
                                         <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
                                             <i class="nav-icon fas fa-trash"></i>
                                         </button>
                                     {!! Form::close() !!}
-                                @endcan -->
+                                @endcan
                                 <a class="btn btn-sm btn-default _action_button" data-toggle="collapse" href="#collapseExample__{{$key}}" role="button" aria-expanded="false" aria-controls="collapseExample">
                                       <i class=" fas fa-angle-down"></i>
                                     </a>

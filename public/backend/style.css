@@ -151,6 +151,12 @@ label{
     background: #fff;
     display: none;
 }
+.search_box_purchase_order{
+    position: absolute;
+    z-index: 9999;
+    background: #fff;
+    display: none;
+}
 .search_box_item{
    position: absolute;
     z-index: 9999;
@@ -159,6 +165,10 @@ label{
 }
 .search_row_item:hover{
 	background: #e9ecef;
+    cursor: pointer;
+}
+.search_row_purchase_order:hover{
+    background: #e9ecef;
     cursor: pointer;
 }
 .search_row:hover{

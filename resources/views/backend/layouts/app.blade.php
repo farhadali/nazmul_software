@@ -271,6 +271,153 @@ if($("._pushmenu").hasClass("_left_menu_show")){
 })
 
 
+$(document).on('click','.save_item',function(){
+    var _category_id = $("._category_id").val();
+    var _item_item = $("._item_item").val();
+    var _item_code = $("._item_code").val();
+    var _item_unit_id = $("._item_unit_id").val();
+    var _item_barcode = $("._item_barcode").val();
+    var _item_discount = $("._item_discount").val();
+    var _item_vat = $("._item_vat").val();
+    var _item_pur_rate = $("._item_pur_rate").val();
+    var _item_sale_rate = $("._item_sale_rate").val();
+    var _item_manufacture_company = $("._item_manufacture_company").val();
+    var _item_status = $("._item_status").val();
+    
+    var reqired_fields = 0;
+    if(_category_id ==""){
+       $(document).find('._category_id').addClass('required_border');
+       reqired_fields =1;
+    }else{
+      $(document).find('._category_id').removeClass('required_border');
+    }
+    if(_item_item ==""){
+       $(document).find('._item_item').addClass('required_border');
+       reqired_fields =1;
+    }else{
+      $(document).find('._item_item').removeClass('required_border');
+    }
+    if(_item_unit_id ==""){
+       $(document).find('._item_unit_id').addClass('required_border');
+       reqired_fields =1;
+    }else{
+      $(document).find('._item_unit_id').removeClass('required_border');
+    }
+    
+    if(reqired_fields ==1){
+      return false;
+    }
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+        $.ajax({
+           type:'POST',
+           url:"{{ url('ajax-item-save') }}",
+           data:{_category_id,_item_item,_item_code,_item_unit_id,_item_barcode,_item_discount,_item_vat,_item_pur_rate,_item_sale_rate,_item_manufacture_company,_item_status
+           },
+           success:function(data){
+              if(data !=""){
+                alert("Information Save Successfully");
+                $(document).find("._item_modal_form").trigger('reset');
+                $(document).find(".modal_close").click();
+                
+              }else{
+                alert("Information Not Save");
+              }
+
+           }
+
+        });
+
+  })
+
+  $(document).on('click','.save_ledger',function(){
+    var _account_head_id = $("._account_head_id").val();
+    var _account_groups = $("._account_groups").val();
+    var _ledger_branch_id = $("._ledger_branch_id").val();
+    var _ledger_name = $("._ledger_name").val();
+    var _ledger_address = $("._ledger_address").val();
+    var _ledger_code = $("._ledger_code").val();
+    var _ledger_short = $("._ledger_short").val();
+    var _ledger_nid = $("._ledger_nid").val();
+    var _ledger_phone = $("._ledger_phone").val();
+    var _ledger_email = $("._ledger_email").val();
+    var _ledger_credit_limit = $("._ledger_credit_limit").val();
+    var _ledger_is_user = $("._ledger_is_user").val();
+    var _ledger_is_sales_form = $("._ledger_is_sales_form").val();
+    var _ledger_is_purchase_form = $("._ledger_is_purchase_form").val();
+    var _ledger_is_all_branch = $("._ledger_is_all_branch").val();
+    var _ledger_status = $("._ledger_status").val();
+    var reqired_fields = 0;
+    if(_account_head_id ==""){
+       $(document).find('._account_head_id').addClass('required_border');
+       reqired_fields =1;
+    }else{
+      $(document).find('._account_head_id').removeClass('required_border');
+    }
+    if(_account_groups ==""){
+       $(document).find('._account_groups').addClass('required_border');
+       reqired_fields =1;
+    }else{
+      $(document).find('._account_groups').removeClass('required_border');
+    }
+    if(_ledger_name ==""){
+       $(document).find('._ledger_name').addClass('required_border');
+       reqired_fields =1;
+    }else{
+      $(document).find('._ledger_name').removeClass('required_border');
+    }
+    if(reqired_fields ==1){
+      return false;
+    }
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+        $.ajax({
+           type:'POST',
+           url:"{{ url('ajax-ledger-save') }}",
+           data:{_account_head_id,_account_groups,_ledger_branch_id,_ledger_name,_ledger_address,_ledger_code,_ledger_short,_ledger_nid,_ledger_phone,_ledger_email,_ledger_credit_limit,_ledger_is_user,_ledger_is_sales_form,_ledger_is_purchase_form,_ledger_is_all_branch,_ledger_status
+           },
+           success:function(data){
+              if(data !=""){
+                alert("Information Save Successfully");
+                $(document).find("._ledger_modal_form").trigger('reset');
+                $(document).find(".modal_close").click();
+                
+              }else{
+                alert("Information Not Save");
+              }
+
+           }
+
+        });
+
+  })
+
+function after_request_date__today(_date){
+            var data = _date.split('-');
+            var yyyy =data[0];
+            var mm =data[1];
+            var dd =data[2];
+            if(default_date_formate=='DD-MM-YYYY'){
+              return (dd[1]?dd:"0"+dd[0]) +"-"+ (mm[1]?mm:"0"+mm[0])+"-"+ yyyy ;
+            }
+            if(default_date_formate=='MM-DD-YYYY'){
+              return (mm[1]?mm:"0"+mm[0])+"-" + (dd[1]?dd:"0"+dd[0]) +"-"+  yyyy ;
+            }
+            
+
+            
+          }
+
 </script>
 @yield('script')
 </body>

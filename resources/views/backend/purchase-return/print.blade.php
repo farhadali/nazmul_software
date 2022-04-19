@@ -51,14 +51,15 @@
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col">
-        <h3 class="text-center"><b>Purchase Invoice</b></h3>
+        <h3 class="text-center"><b>{{$page_name}}</b></h3>
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col text-right">
         
         <b>Time:</b> {{$data->_time ?? ''}}<br>
         <b>Created By:</b> {{$data->_user_name ?? ''}}<br>
-        <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}
+        <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}<br>
+        <b>Purchase Number:</b> {{$data->_order_ref_id ?? ''}}
       </div>
       <!-- /.col -->
     </div>
