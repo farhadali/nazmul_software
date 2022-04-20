@@ -202,9 +202,23 @@ class PurchaseController extends Controller
     {
          
       // return $request->all();
+         $this->validate($request, [
+            '_date' => 'required',
+            '_branch_id' => 'required',
+            '_main_ledger_id' => 'required',
+            '_form_name' => 'required'
+        ]);
     //###########################
     // Purchase Master information Save Start
     //###########################
+      DB::beginTransaction();
+       try {
+        
+         $__sub_total = (float) $request->_sub_total;
+         $__total = (float) $request->_total;
+         $__discount_input = (float) $request->_discount_input;
+         $__total_discount = (float) $request->_total_discount;
+
        $_print_value = $request->_print ?? 0;
          $users = Auth::user();
         $Purchase = new Purchase();
@@ -218,11 +232,11 @@ class PurchaseController extends Controller
         $Purchase->_user_id = $users->id;
         $Purchase->_user_name = $users->name;
         $Purchase->_note = $request->_note;
-        $Purchase->_sub_total = $request->_sub_total;
-        $Purchase->_discount_input = $request->_discount_input;
-        $Purchase->_total_discount = $request->_total_discount;
+        $Purchase->_sub_total = $__sub_total;
+        $Purchase->_discount_input = $__discount_input;
+        $Purchase->_total_discount = $__total_discount;
         $Purchase->_total_vat = $request->_total_vat;
-        $Purchase->_total = $request->_total;
+        $Purchase->_total =  $__total;
         $Purchase->_branch_id = $request->_branch_id;
         $Purchase->_status = 1;
         $Purchase->save();
@@ -247,6 +261,9 @@ class PurchaseController extends Controller
         $_main_cost_center = $request->_main_cost_center;
         $_store_ids = $request->_main_store_id;
         $_store_salves_ids = $request->_store_salves_id;
+       
+
+
         if(sizeof($_item_ids) > 0){
             for ($i = 0; $i <sizeof($_item_ids) ; $i++) {
                 $PurchaseDetail = new PurchaseDetail();
@@ -262,7 +279,7 @@ class PurchaseController extends Controller
                 $PurchaseDetail->_value = $_values[$i] ?? 0;
                 $PurchaseDetail->_store_id = $_store_ids[$i] ?? 1;
                 $PurchaseDetail->_cost_center_id = $_main_cost_center[$i] ?? 1;
-                $PurchaseDetail->_store_salves_id = $_store_salves_ids[$i] ?? 1;
+                $PurchaseDetail->_store_salves_id = $_store_salves_ids[$i] ?? '';
                 $PurchaseDetail->_branch_id = $_main_branch_id_detail[$i] ?? 1;
                 $PurchaseDetail->_no = $purchase_id;
                 $PurchaseDetail->_status = 1;
@@ -275,18 +292,24 @@ class PurchaseController extends Controller
                 $ProductPriceList = new ProductPriceList();
                 $ProductPriceList->_item_id = $_item_ids[$i];
                 $ProductPriceList->_item = $item_info->_item ?? '';
-                $ProductPriceList->_barcode =$_barcodes[$i];
+                $ProductPriceList->_barcode =$_barcodes[$i] ?? '';
                 $ProductPriceList->_manufacture_date =null;
                 $ProductPriceList->_expire_date = null;
                 $ProductPriceList->_qty = $_qtys[$i];
                 $ProductPriceList->_sales_rate = $_sales_rates[$i];
                 $ProductPriceList->_pur_rate = $_rates[$i];
                 $ProductPriceList->_sales_discount = $item_info->_discount ?? 0;
+                $ProductPriceList->_p_discount_input = $_discounts[$i] ?? 0;
+                $ProductPriceList->_p_discount_amount = $_discount_amounts[$i] ?? 0;
+                $ProductPriceList->_p_vat = $_vats[$i] ?? 0;
+                $ProductPriceList->_p_vat_amount = $_vat_amounts[$i] ?? 0;
                 $ProductPriceList->_sales_vat = $item_info->_vat ?? 0;;
                 $ProductPriceList->_value =$_values[$i] ?? 0;
                 $ProductPriceList->_purchase_detail_id =$_purchase_detail_id;
                 $ProductPriceList->_master_id = $purchase_id;
                 $ProductPriceList->_branch_id = $_main_branch_id_detail[$i] ?? 1;
+                $ProductPriceList->_cost_center_id = $_main_cost_center[$i] ?? 1;
+                $ProductPriceList->_store_salves_id = $_store_salves_ids[$i] ?? '';
                 $ProductPriceList->_status =1;
                 $ProductPriceList->_created_by = $users->id."-".$users->name;
                 $ProductPriceList->save();
@@ -308,7 +331,7 @@ class PurchaseController extends Controller
                 $ItemInventory->_branch_id = $_main_branch_id_detail[$i] ?? 1;
                 $ItemInventory->_store_id = $_store_ids[$i] ?? 1;
                 $ItemInventory->_cost_center_id = $_main_cost_center[$i] ?? 1;
-                $ItemInventory->_store_salves_id = $_store_salves_ids[$i] ?? 1;
+                $ItemInventory->_store_salves_id = $_store_salves_ids[$i] ?? '';
                 $ItemInventory->_status = 1;
                 $ItemInventory->_created_by = $users->id."-".$users->name;
                 $ItemInventory->save(); 
@@ -344,25 +367,33 @@ class PurchaseController extends Controller
         $_branch_id = $request->_branch_id;
         $_cost_center =  1;
         $_name =$users->name;
-        if($request->_sub_total > 0){
+        
+        if($__sub_total > 0){
+
             //Default Purchase
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_purchase,$_dr_amount=$request->_sub_total,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,$__sub_total,0,$_branch_id,$_cost_center,$_name,1);
         //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_sub_total,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,0,$__sub_total,$_branch_id,$_cost_center,$_name,2);
+
+            //Default Inventory
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_inventory,$__sub_total,0,$_branch_id,$_cost_center,$_name,3);
+        //Default Purchase 
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,0,$__sub_total,$_branch_id,$_cost_center,$_name,4);
         }
 
-        if($request->_total_discount > 0){
+        if($__total_discount > 0){
             //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$__total_discount,0,$_branch_id,$_cost_center,$_name,5);
              //Default Discount
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_discount,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_discount,$__total_discount,0,$_branch_id,$_cost_center,$_name,6);
         
         }
-        if($request->_total_vat > 0){
+         $__total_vat = (float) $request->_total_vat ?? 0;
+        if($__total_vat > 0){
             //Default Vat Account
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_vat_account,$_dr_amount=$request->_total_vat,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_vat_account,$request->_total_vat,0,$_branch_id,$_cost_center,$_name,7);
         //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_total_vat,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,0,$request->_total_vat,$_branch_id,$_cost_center,$_name,8);
         
         }
 
@@ -429,13 +460,20 @@ class PurchaseController extends Controller
                         $_branch_id_a = $_branch_id_detail[$i] ?? 0;
                         $_cost_center_a = $_cost_center[$i] ?? 0;
                         $_name =$users->name;
-                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name);
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(9+$i));
                           
                     }
                 }
             }
 
-       return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
+            DB::commit();
+            return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
+       } catch (\Exception $e) {
+           DB::rollback();
+           return redirect()->back()->with('danger','There is Something Wrong !');
+        }
+
+       
     }
 
 
@@ -513,7 +551,10 @@ class PurchaseController extends Controller
         $this->validate($request, [
             '_purchase_id' => 'required',
             '_form_name' => 'required',
+            '_date' => 'required',
+            '_main_ledger_id' => 'required',
         ]);
+
        //######################
        // Previous information need to make zero for every thing.
        //#####################
@@ -522,6 +563,12 @@ class PurchaseController extends Controller
      if($sales_number > 0 ){
          return redirect()->back()->with('danger','You Can not update This invoice Item.Please Use Purchase Return !');
      }
+
+    //###########################
+    // Purchase Master information Save Start
+    //###########################
+     DB::beginTransaction();
+       try {
 
    
     PurchaseDetail::where('_no', $purchase_id)
@@ -630,7 +677,7 @@ class PurchaseController extends Controller
                 }
                 $ProductPriceList->_item_id = $_item_ids[$i];
                 $ProductPriceList->_item = $item_info->_item ?? '';
-                $ProductPriceList->_barcode =$_barcodes[$i];
+                $ProductPriceList->_barcode =$_barcodes[$i] ?? '';
                 $ProductPriceList->_manufacture_date =null;
                 $ProductPriceList->_expire_date = null;
                 $ProductPriceList->_qty = $_qtys[$i];
@@ -648,7 +695,7 @@ class PurchaseController extends Controller
                 $ProductPriceList->_p_vat_amount = $_vat_amounts[$i] ?? 0;
                 $ProductPriceList->_store_id = $_store_ids[$i] ?? 1;
                 $ProductPriceList->_cost_center_id = $_main_cost_center[$i] ?? 1;
-                $ProductPriceList->_store_salves_id = $_store_salves_ids[$i] ?? 1;
+                $ProductPriceList->_store_salves_id = $_store_salves_ids[$i] ?? '';
                 $ProductPriceList->_status =1;
                 $ProductPriceList->_updated_by = $users->id."-".$users->name;
                 $ProductPriceList->save();
@@ -678,7 +725,7 @@ class PurchaseController extends Controller
                 $ItemInventory->_branch_id = $_main_branch_id_detail[$i] ?? 1;
                 $ItemInventory->_store_id = $_store_ids[$i] ?? 1;
                 $ItemInventory->_cost_center_id = $_main_cost_center[$i] ?? 1;
-                $ItemInventory->_store_salves_id = $_store_salves_ids[$i] ?? 1;
+                $ItemInventory->_store_salves_id = $_store_salves_ids[$i] ?? '';
                 $ItemInventory->_status = 1;
                 $ItemInventory->_updated_by = $users->id."-".$users->name;
                 $ItemInventory->save(); 
@@ -714,25 +761,37 @@ class PurchaseController extends Controller
         $_branch_id = $request->_branch_id;
         $_cost_center =  1;
         $_name =$users->name;
-        if($request->_sub_total > 0){
+
+        $__sub_total = (float) $request->_sub_total;
+         $__total = (float) $request->_total;
+         $__discount_input = (float) $request->_discount_input;
+         $__total_discount = (float) $request->_total_discount;
+         $__total_vat = (float) $request->_total_vat ?? 0;
+if($__sub_total > 0){
             //Default Purchase
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_purchase,$_dr_amount=$request->_sub_total,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,$__sub_total,0,$_branch_id,$_cost_center,$_name,1);
         //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_sub_total,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,0,$__sub_total,$_branch_id,$_cost_center,$_name,2);
+
+            //Default Inventory
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_inventory,$__sub_total,0,$_branch_id,$_cost_center,$_name,3);
+        //Default Purchase 
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,0,$__sub_total,$_branch_id,$_cost_center,$_name,4);
         }
 
-        if($request->_total_discount > 0){
+        if($__total_discount > 0){
             //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$__total_discount,0,$_branch_id,$_cost_center,$_name,5);
              //Default Discount
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_discount,$_dr_amount=$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_discount,$__total_discount,0,$_branch_id,$_cost_center,$_name,6);
         
         }
-        if($request->_total_vat > 0){
+         
+        if($__total_vat > 0){
             //Default Vat Account
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$_default_vat_account,$_dr_amount=$request->_total_vat,$_cr_amount=0,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_vat_account,$request->_total_vat,0,$_branch_id,$_cost_center,$_name,7);
         //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger=$request->_main_ledger_id,$_dr_amount=0,$_cr_amount=$request->_total_vat,$_branch_id,$_cost_center,$_name);
+            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,0,$request->_total_vat,$_branch_id,$_cost_center,$_name,8);
         
         }
 
@@ -750,12 +809,13 @@ class PurchaseController extends Controller
         //     Account Payable   Cr
         //##################################
 
-        $_ledger_id = (array) $request->_ledger_id;
-        $_short_narr = (array) $request->_short_narr;
-        $_dr_amount = (array) $request->_dr_amount;
-         $_cr_amount = (array) $request->_cr_amount;
-        $_branch_id_detail = (array) $request->_branch_id_detail;
-        $_cost_center = (array) $request->_cost_center;
+        $_ledger_id =  $request->_ledger_id;
+        $_short_narr =  $request->_short_narr;
+        $_dr_amount =  $request->_dr_amount;
+         $_cr_amount =  $request->_cr_amount;
+        $_branch_id_detail =  $request->_branch_id_detail;
+        $_cost_center =  $request->_cost_center;
+        $purchase_account_ids =  $request->purchase_account_id;
        
         if(sizeof($_ledger_id) > 0){
                 foreach($_ledger_id as $i=>$ledger) {
@@ -767,7 +827,7 @@ class PurchaseController extends Controller
 
                         $_total_dr_amount += $_dr_amount[$i] ?? 0;
                         $_total_cr_amount += $_cr_amount[$i] ?? 0;
-                         $PurchaseAccount = PurchaseAccount::where('_no',$purchase_id)
+                         $PurchaseAccount = PurchaseAccount::where('id',$purchase_account_ids[$i])
                                                             ->where('_ledger_id',$ledger)
                                                             ->first();
                         if(empty($PurchaseAccount)){
@@ -804,13 +864,20 @@ class PurchaseController extends Controller
                         $_branch_id_a = $_branch_id_detail[$i] ?? 0;
                         $_cost_center_a = $_cost_center[$i] ?? 0;
                         $_name =$users->name;
-                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name);
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(9+$i));
                           
                     }
                 }
             }
 
-       return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
+                DB::commit();
+        return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
+       } catch (\Exception $e) {
+           DB::rollback();
+           return redirect()->back()->with('danger','There is Something Wrong !');
+        }
+
+       
     }
 
     /**
@@ -819,8 +886,9 @@ class PurchaseController extends Controller
      * @param  \App\Models\Purchase  $purchase
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Purchase $purchase)
+     public function destroy($id)
     {
-        //
+        return redirect()->back()->with('danger','You Can not delete this Information');
+
     }
 }

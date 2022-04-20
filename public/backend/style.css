@@ -55,7 +55,7 @@ input[type="number"] {
     padding: 0px;
 }
 .card-header {
-    padding: 0 0 0 5px;
+    padding: 0 0 0 0px;
     margin-bottom: 0;
     background-color: #fff;
     border-bottom: 0 solid rgba(0,0,0,.125);

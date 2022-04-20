@@ -106,11 +106,11 @@ class AccountLedgerController extends Controller
     }
 
     public function ledger_search(Request $request){
-        $limit = $request->limit ?? 10;
+        $limit = $request->limit ?? default_pagination();
         $_asc_desc = $request->_asc_desc ?? 'ASC';
         $asc_cloumn =  $request->asc_cloumn ?? '_name';
         $text_val = $request->_text_val;
-        $datas = AccountLedger::select('id','_name','_code')->where('_status',1);
+        $datas = AccountLedger::select('id','_name','_code','_balance')->where('_status',1);
          if($request->has('_text_val') && $request->_text_val !=''){
             $datas = $datas->where('_name','like',"%$request->_text_val%")
             ->orWhere('id','like',"%$request->_text_val%");
@@ -125,8 +125,8 @@ class AccountLedgerController extends Controller
         $asc_cloumn =  $request->asc_cloumn ?? '_name';
         $text_val = $request->_text_val;
         $_account_head_id = $request->_account_head_id;
-        $datas = AccountLedger::select('id','_name','_code')
-                ->where('_account_head_id','=',$_account_head_id)
+        $datas = AccountLedger::select('id','_name','_code','_balance')
+                ->where('_is_purchase_form','=',1)
                 ->where('_status',1);
          if($request->has('_text_val') && $request->_text_val !=''){
             $datas = $datas->where('_name','like',"%$request->_text_val%")

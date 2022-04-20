@@ -63,7 +63,7 @@
                     </div>
                     @endif
                   @if ($message = Session::get('danger'))
-                    <div class="alert ">
+                    <div class="alert _required">
                       <p>{{ $message }}</p>
                     </div>
                     @endif
@@ -700,7 +700,7 @@
     $(document).find('._search_main_ledger_id').removeClass('required_border');
     var _gloabal_this = $(this);
     var _text_val = $(this).val().trim();
-    var _account_head_id = 13;
+    var _account_head_id = 12;
 
   var request = $.ajax({
       url: "{{url('main-ledger-search')}}",
@@ -835,8 +835,13 @@ $(document).on('click','.search_row_item',function(){
 
 $(document).on('click',function(){
     var searach_show= $('.search_box_item').hasClass('search_box_show');
+    var search_box_main_ledger= $('.search_box_main_ledger').hasClass('search_box_show');
     if(searach_show ==true){
       $('.search_box_item').removeClass('search_box_show').hide();
+    }
+
+    if(search_box_main_ledger ==true){
+      $('.search_box_main_ledger').removeClass('search_box_show').hide();
     }
 })
 

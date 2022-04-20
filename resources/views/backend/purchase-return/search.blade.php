@@ -81,9 +81,9 @@
                   </div>
                   
                   <div class="form-group row">
-                    <label for="_order_ref_id" class="col-sm-2 col-form-label">Order Number:</label>
+                    <label for="_order_ref_id" class="col-sm-2 col-form-label">Purchase Number:</label>
                     <div class="col-sm-10">
-                      <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control" placeholder="Search By Order Number" value="@if(isset($request->_order_ref_id)){{$request->_order_ref_id ?? ''}}@endif">
+                      <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control" placeholder="Search By Purchase Number" value="@if(isset($request->_order_ref_id)){{$request->_order_ref_id ?? ''}}@endif">
                     </div>
                   </div>
                   <div class="form-group row">

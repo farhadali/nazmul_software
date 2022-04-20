@@ -52,12 +52,14 @@ if (! function_exists('ledger_balance_update')) {
 }
 
 if (! function_exists('account_data_save')) {
-       function account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount,$_cr_amount,$_branch_id,$_cost_center,$_name){
+       function account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount,$_cr_amount,$_branch_id,$_cost_center,$_name,$_serial=0){
         $_account_head =  ledger_to_group_type($_account_ledger)->_account_head_id;
         $_account_group =  ledger_to_group_type($_account_ledger)->_account_group_id;
             $Accounts =  Accounts::where('_ref_master_id',$_ref_master_id)
                                     ->where('_ref_detail_id',$_ref_detail_id)
                                     ->where('_table_name',$_table_name)
+                                    ->where('_account_ledger',$_account_ledger)
+                                    ->where('_serial',$_serial)
                                     ->first();
             if(empty($Accounts)){
                 $Accounts = new Accounts();
@@ -80,9 +82,13 @@ if (! function_exists('account_data_save')) {
             $Accounts->_cost_center = $_cost_center;
             $Accounts->_name =$_name;
             $Accounts->_status =1;
+            $Accounts->_serial =$_serial;
             $Accounts->save(); 
 
+            $id= $Accounts->id;
+
             ledger_balance_update($_account_ledger);
+
     }
 }
 
