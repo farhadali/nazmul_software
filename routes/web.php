@@ -22,6 +22,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\PurchaseReturnController;
+use App\Http\Controllers\SalesController;
 
 
 
@@ -99,6 +100,13 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('purchase-reset', 'App\Http\Controllers\PurchaseController@reset');
     Route::get('purchase/print/{id}', 'App\Http\Controllers\PurchaseController@purchasePrint');
     Route::post('purchase-settings', 'App\Http\Controllers\PurchaseController@purchaseSettings');
+    
+
+    Route::resource('sales', SalesController::class);
+    Route::post('sales/update', 'App\Http\Controllers\SalesController@update');
+    Route::get('sales-reset', 'App\Http\Controllers\SalesController@reset');
+    Route::get('sales/print/{id}', 'App\Http\Controllers\SalesController@Print');
+    Route::post('sales-settings', 'App\Http\Controllers\SalesController@Settings');
     
     
     Route::resource('purchase-return', PurchaseReturnController::class);

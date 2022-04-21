@@ -576,14 +576,14 @@ class PurchaseReturnController extends Controller
     public function update(Request $request)
     {
          
-       return $request->all();
+       // return $request->all();
 
         $this->validate($request, [
-            '_purchase_id' => 'required',
+            '_order_number' => 'required',
             '_form_name' => 'required',
         ]);
 
-$purchase_id = $request->_purchase_id;
+        $purchase_id = $request->_order_number;
         $_item_ids = $request->_item_id;
         $_barcodes = $request->_barcode;
         $_qtys = $request->_qty;
@@ -597,14 +597,38 @@ $purchase_id = $request->_purchase_id;
         $_store_ids = $request->_main_store_id;
         $_store_salves_ids = $request->_store_salves_id;
         $purchase_detail_ids = $request->purchase_detail_id;
-        $_price_list_ids = $request->_price_list_id;
+         $_price_list_ids = $request->_price_list_id;
+         $_purchase_detal_refs = $request->_purchase_detal_ref;
         $checkqty = array();
+        $over_qtys = array();
     //Prevoius Return information
-    $previous_infos = PurchaseDetail::where('_no',$purchase_id)->get();
+     $previous_infos = PurchaseReturnDetail::where('_no',$purchase_id)->get();
     foreach ($previous_infos as $value) {
         $product_prices = ProductPriceList::where('_purchase_detail_id',$value->_purchase_detal_ref)->first();
-        $new_qty = $value->_qty+$product_prices->_qty;
+         $new_qty = ($value->_qty+$product_prices->_qty);
+         array_push($checkqty, ['id'=>$product_prices->_purchase_detail_id,'_qty'=>$new_qty]);
     }
+
+    foreach ($_purchase_detal_refs as $item_key=> $_item) {
+        foreach ($checkqty as $check_item) {
+            if($_item==$check_item["id"] && $_qtys[$item_key] > $check_item["_qty"] ){
+                array_push($over_qtys, $_item);
+            }
+        }
+    }
+
+    if(sizeof($over_qtys) > 0){
+        return redirect()->back()->with('danger','You Can not Return More then available Qty !');
+    }else{
+         foreach ($previous_infos as $value) {
+            $product_prices = ProductPriceList::where('_purchase_detail_id',$value->_purchase_detal_ref)->first();
+             $new_qty = ($value->_qty+$product_prices->_qty);
+             $product_prices->_qty =$new_qty;
+             $product_prices->save();
+
+        }
+    }
+   // return $over_qtys;
 
        //######################
        // Previous information need to make zero for every thing.
@@ -614,10 +638,8 @@ $purchase_id = $request->_purchase_id;
      
      
    
-    PurchaseDetail::where('_no', $purchase_id)
+    PurchaseReturnDetail::where('_no', $purchase_id)
             ->update(['_status'=>0]);
-    ProductPriceList::where('_master_id',$purchase_id)
-                    ->update(['_status'=>0]);
     ItemInventory::where('_transection',"Purchase")
         ->where('_transection_ref',$purchase_id)
         ->update(['_status'=>0]);
@@ -628,7 +650,9 @@ $purchase_id = $request->_purchase_id;
                      ->update(['_status'=>0]); 
     Accounts::where('_ref_master_id',$purchase_id)
                     ->where('_table_name','purchase_return_accounts')
-                     ->update(['_status'=>0]);              
+                     ->update(['_status'=>0]);   
+
+      //  return 6;           
 
     //###########################
     // Purchase Return Master information Save Start
@@ -701,10 +725,11 @@ $purchase_id = $request->_purchase_id;
                 $item_info = Inventory::where('id',$_item_ids[$i])->first();
 
                 
-                $ProductPriceList = ProductPriceList::find($_price_list_ids[$i]);
+                $ProductPriceList = ProductPriceList::where('_purchase_detail_id',$_purchase_detal_refs[$i])
+                                                    ->where('_master_id',$request->_order_ref_id)->first();
                 $_p_qty = $ProductPriceList->_qty;
                
-                $_status = (($_p_qty - $_qtys[$i]) > 0) ? 1 : 0;
+                $_status = (($_p_qty-$_qtys[$i]) > 0) ? 1 : 0;
                
                 $ProductPriceList->_qty = ($_p_qty - $_qtys[$i]);
                 $ProductPriceList->_status = $_status;
@@ -870,7 +895,7 @@ $purchase_id = $request->_purchase_id;
                         $_branch_id_a = $_branch_id_detail[$i] ?? 0;
                         $_cost_center_a = $_cost_center[$i] ?? 0;
                         $_name =$users->name;
-                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name(9+$i));
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(9+$i));
                           
                     }
                 }

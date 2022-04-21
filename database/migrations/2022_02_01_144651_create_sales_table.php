@@ -33,6 +33,12 @@ class CreateSalesTable extends Migration
             $table->double('_total',15,4)->default(0);
             $table->unsignedBigInteger('_branch_id');
             $table->foreign('_branch_id')->references('id')->on('branches');
+            $table->integer('_store_id')->nullable();
+            $table->integer('_cost_center_id')->nullable();
+            $table->string('_store_salves_id')->nullable();
+            $table->integer('_delivery_man_id')->nullable();
+            $table->integer('_sales_man_id')->nullable();
+            $table->string('_sales_type',60)->nullable();
             $table->tinyInteger('_status')->default(0);
             $table->string('_created_by',60)->nullable();
             $table->string('_updated_by',60)->nullable();

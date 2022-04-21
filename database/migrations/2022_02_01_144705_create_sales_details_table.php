@@ -26,9 +26,9 @@ class CreateSalesDetailsTable extends Migration
             $table->double('_value',15,4)->default(0);
             $table->integer('_store_id')->nullable();
             $table->integer('_cost_center_id')->nullable();
-            $table->integer('_store_salves_id')->nullable();
+            $table->string('_store_salves_id')->nullable();
             $table->integer('_purchase_invoice_no')->nullable();
-
+            $table->integer('_purchase_detail_id')->nullable();
             $table->unsignedBigInteger('_no');
             $table->foreign('_no')->references('id')->on('sales');
             $table->unsignedBigInteger('_branch_id');
