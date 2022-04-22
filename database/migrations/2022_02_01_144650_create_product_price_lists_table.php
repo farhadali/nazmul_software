@@ -27,6 +27,7 @@ class CreateProductPriceListsTable extends Migration
             $table->string('_sales_discount',50)->default(0)->comment('use % if or it will be amount');
             $table->string('_sales_vat',50)->default(0)->comment('use % if or it will be amount');
             $table->double('_value',15,4)->default(0);
+            $table->integer('_unit_id')->nullable();
             $table->integer('_p_discount_input')->default(0);
             $table->integer('_p_discount_amount')->default(0);
             $table->integer('_p_vat')->default(0);

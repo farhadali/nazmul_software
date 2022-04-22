@@ -902,12 +902,12 @@ if(data.length > 0 ){
     $(document).find('._search_main_ledger_id').removeClass('required_border');
     var _gloabal_this = $(this);
     var _text_val = $(this).val().trim();
-    var _account_head_id = 13;
+    var _form = 2;
 
   var request = $.ajax({
       url: "{{url('main-ledger-search')}}",
       method: "GET",
-      data: { _text_val,_account_head_id },
+      data: { _text_val,_form },
       dataType: "JSON"
     });
     request.done(function( result ) {

@@ -10,16 +10,6 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        <!--   <li class="nav-item">
-            <a href="{{url('home')}}" class="nav-link">
-              <i class="nav-icon far fa-image"></i>
-              <p>
-                Dashboard
-              </p>
-            </a>
-          </li> -->
-       
-          
           <li class="nav-item {{ Route::is('roles.*') || Route::is('users.*') || Route::is('admin-settings') || Route::is('branch.*') || Route::is('social_media.*') || Route::is('cost-center.*') || Route::is('store-house.*')  ? 'menu-is-opening menu-open' : '' }}">
             <a href="#" class="nav-link {{ Route::is('roles.*') || Route::is('users.*') || Route::is('admin-settings') || Route::is('branch.*')  || Route::is('cost-center.*')  || Route::is('store-house.*')   ? 'active' : '' }}">
             
@@ -93,9 +83,7 @@
 
           <li class="nav-item {{ Route::is('account-type.*') || Route::is('account-group.*')|| Route::is('voucher.*')  || Route::is('account-ledger.*')   ? 'menu-is-opening menu-open' : '' }}">
             <a href="#" class="nav-link {{ Route::is('account-type.*') || Route::is('account-group.*') || Route::is('account-ledger.*') || Route::is('voucher.*')    ? 'active' : '' }}">
-             
               <i class="fa fa-credit-card nav-icon" aria-hidden="true"></i>
-
               <p>
                 Account
                 <i class="right fas fa-angle-left"></i>
@@ -140,9 +128,7 @@
             @can('account-report-menu') 
           <li class="nav-item {{ Route::is('ledger-report.*') || Route::is('group-ledger.*') || Route::is('income-statement.*') || Route::is('trail-balance.*') || Route::is('work-sheet.*') || Route::is('balance-sheet.*') ? 'menu-is-opening menu-open' : '' }}">
             <a href="#" class="nav-link {{ Route::is('ledger-report.*') || Route::is('group-ledger.*') || Route::is('income-statement.*') || Route::is('trail-balance.*') || Route::is('work-sheet.*') || Route::is('balance-sheet.*')    ? 'active' : '' }}">
-             
               <i class="fa fa-file nav-icon" aria-hidden="true"></i>
-
               <p>
                 Accounts Report
                 <i class="right fas fa-angle-left"></i>
@@ -197,8 +183,6 @@
                 </a>
               </li>
               @endcan
-             
-              
             </ul>
           </li>
           @endcan
@@ -206,9 +190,7 @@
            @can('inventory-menu') 
           <li class="nav-item {{ Route::is('item-category.*') || Route::is('item-information.*')  ? 'menu-is-opening menu-open' : '' }}">
             <a href="#" class="nav-link  Route::is('item-category.*') || Route::is('item-information.*')   ? 'active' : '' }}">
-             
               <i class="fa fa-file nav-icon" aria-hidden="true"></i>
-
               <p>
                 Inventory
                 <i class="right fas fa-angle-left"></i>
@@ -231,14 +213,17 @@
                 </a>
               </li>
               @endcan
-             
-             
-              
+             @can('sales-list')
+              <li class="nav-item">
+                <a href="{{url('item-information')}}" class="nav-link {{Route::is('sales.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-id-card nav-icon"></i>
+                    <p>Sales</p>
+                </a>
+              </li>
+              @endcan
             </ul>
           </li>
           @endcan
-         
-         
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

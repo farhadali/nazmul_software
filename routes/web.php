@@ -107,6 +107,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('sales-reset', 'App\Http\Controllers\SalesController@reset');
     Route::get('sales/print/{id}', 'App\Http\Controllers\SalesController@Print');
     Route::post('sales-settings', 'App\Http\Controllers\SalesController@Settings');
+    Route::get('sales-setting-modal', 'App\Http\Controllers\SalesController@formSettingAjax');
+    Route::get('item-sales-search', 'App\Http\Controllers\SalesController@itemSalesSearch');
     
     
     Route::resource('purchase-return', PurchaseReturnController::class);

@@ -154,21 +154,21 @@ class PurchaseController extends Controller
         $users = Auth::user();
         $page_name = $this->page_name;
         $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
-        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = [];
         $branchs = Branch::orderBy('_name','asc')->get();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
-        $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
+        
         $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
         $form_settings = PurchaseFormSettings::first();
         $inv_accounts = AccountLedger::where('_account_head_id',2)->get();
         $p_accounts = AccountLedger::where('_account_head_id',10)->get();
         $dis_accounts = AccountLedger::where('_account_head_id',11)->get();
-        $vat_accounts = AccountLedger::where('_account_group_id',47)->get();
+       
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
 
-       return view('backend.purchase.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units'));
+       return view('backend.purchase.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','categories','units'));
     }
 
 
@@ -298,6 +298,7 @@ class PurchaseController extends Controller
                 $ProductPriceList->_qty = $_qtys[$i];
                 $ProductPriceList->_sales_rate = $_sales_rates[$i];
                 $ProductPriceList->_pur_rate = $_rates[$i];
+                $ProductPriceList->_unit_id = $item_info->_unit_id ?? 1;
                 $ProductPriceList->_sales_discount = $item_info->_discount ?? 0;
                 $ProductPriceList->_p_discount_input = $_discounts[$i] ?? 0;
                 $ProductPriceList->_p_discount_amount = $_discount_amounts[$i] ?? 0;
@@ -325,6 +326,7 @@ class PurchaseController extends Controller
                 $ItemInventory->_transection_detail_ref_id = $_purchase_detail_id;
                 $ItemInventory->_qty = $_qtys[$i];
                 $ItemInventory->_rate = $_sales_rates[$i];
+                $ItemInventory->_unit_id = $item_info->_unit_id ?? '';
                 $ItemInventory->_cost_rate = $_rates[$i];
                 $ItemInventory->_cost_value = ($_qtys[$i]*$_rates[$i]);
                 $ItemInventory->_value = $_values[$i] ?? 0;
@@ -518,22 +520,22 @@ class PurchaseController extends Controller
         $users = Auth::user();
         $page_name = $this->page_name;
         $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
-        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = [];
         $branchs = Branch::orderBy('_name','asc')->get();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
-        $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
+        
         $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
         $form_settings = PurchaseFormSettings::first();
         $inv_accounts = AccountLedger::where('_account_head_id',2)->get();
         $p_accounts = AccountLedger::where('_account_head_id',10)->get();
         $dis_accounts = AccountLedger::where('_account_head_id',11)->get();
-        $vat_accounts = AccountLedger::where('_account_group_id',47)->get();
+        
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
          $data =  Purchase::with(['_master_branch','_master_details','purchase_account','_ledger'])->find($id);
           $sales_number = SalesDetail::where('_purchase_invoice_no',$id)->count();
-       return view('backend.purchase.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data','sales_number'));
+       return view('backend.purchase.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','categories','units','data','sales_number'));
     }
 
     /**

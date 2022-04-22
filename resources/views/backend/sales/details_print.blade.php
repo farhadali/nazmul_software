@@ -41,7 +41,7 @@
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col">
-        <h3 class="text-center"><b>Voucher Details</b></h3>
+        <h3 class="text-center"><b>{{$page_name}} Details</b></h3>
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col text-right">

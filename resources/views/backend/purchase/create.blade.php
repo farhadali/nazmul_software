@@ -621,7 +621,7 @@
       <div class="form-group row">
         <label for="_default_vat_account" class="col-sm-5 col-form-label">Default VAT Account</label>
         <select class="form-control col-md-7" name="_default_vat_account">
-          @foreach($vat_accounts as $account)
+          @foreach($p_accounts as $account)
           <option value="{{$account->id}}" @if(isset($form_settings->_default_vat_account))@if($form_settings->_default_vat_account==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
           @endforeach
         </select>
@@ -700,12 +700,12 @@
     $(document).find('._search_main_ledger_id').removeClass('required_border');
     var _gloabal_this = $(this);
     var _text_val = $(this).val().trim();
-    var _account_head_id = 12;
+    var _form = 2;
 
   var request = $.ajax({
       url: "{{url('main-ledger-search')}}",
       method: "GET",
-      data: { _text_val,_account_head_id },
+      data: { _text_val,_form },
       dataType: "JSON"
     });
      

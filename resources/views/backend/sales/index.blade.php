@@ -10,9 +10,9 @@
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-               @can('purchase-create')
+               @can('sales-create')
               <li class="breadcrumb-item active">
-                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('purchase.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('sales.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                </li>
               @endcan
             </ol>
@@ -47,11 +47,11 @@
 
                    @endphp
                     <div class="col-md-4">
-                       @include('backend.purchase.search')
+                       @include('backend.sales.search')
                     </div>
                     <div class="col-md-8">
                       <div class="d-flex flex-row justify-content-end">
-                         @can('purchase-print')
+                         @can('sales-print')
                         <li class="nav-item dropdown remove_from_header">
                               <a class="nav-link" data-toggle="dropdown" href="#">
                                 
@@ -108,21 +108,21 @@
                         <tr>
                             
                              <td>
-                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('purchase/print')}}/{{$data->id}}" >
+                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('sales/print')}}/{{$data->id}}" >
                                   <i class="nav-icon fas fa-print"></i>
                                 </a>
-                                @can('purchase-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('purchase.edit',$data->id) }}">
+                                @can('sales-edit')
+                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('sales.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
                                     </a>
                                 @endcan
-                                <!-- @can('purchase-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['purchase.destroy', $data->id],'style'=>'display:inline']) !!}
+                                @can('sales-delete')
+                                    {!! Form::open(['method' => 'DELETE','route' => ['sales.destroy', $data->id],'style'=>'display:inline']) !!}
                                         <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
                                             <i class="nav-icon fas fa-trash"></i>
                                         </button>
                                     {!! Form::close() !!}
-                                @endcan -->
+                                @endcan
                                 <a class="btn btn-sm btn-default _action_button" data-toggle="collapse" href="#collapseExample__{{$key}}" role="button" aria-expanded="false" aria-controls="collapseExample">
                                       <i class=" fas fa-angle-down"></i>
                                     </a>
@@ -319,7 +319,7 @@
                         </td>
                         </tr>
                         @endif
-                        @if(sizeof($data->purchase_account) > 0)
+                        @if(sizeof($data->s_account) > 0)
                         <tr>
                           <td colspan="12" >
                            <div class="collapse" id="collapseExample__{{$key}}">
@@ -413,17 +413,6 @@
     });
  
 
- 
-
-// if(_datex =='' && _datey =='' ){
-//   $(".datetimepicker-input_datex").val(date__today());
-//   $(".datetimepicker-input_datey").val(date__today());
-//   console.log('Ok new Page')
-// }else{
-//   $(".datetimepicker-input_datex").val(after_request_date__today( `{{$request->_datex}}` ))
-//   $(".datetimepicker-input_datey").val(after_request_date__today( `{{$request->_datey}}` ))
-//   console.log('after search')
-// }
 
 function date__today(){
               var d = new Date();

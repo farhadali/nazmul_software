@@ -189,7 +189,7 @@ class PurchaseReturnController extends Controller
         $users = Auth::user();
         $page_name = $this->page_name;
         $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
-        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = [];
         $branchs = Branch::orderBy('_name','asc')->get();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
@@ -548,7 +548,7 @@ class PurchaseReturnController extends Controller
         $users = Auth::user();
         $page_name = $this->page_name;
         $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
-        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = [];
         $branchs = Branch::orderBy('_name','asc')->get();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));

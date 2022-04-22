@@ -135,8 +135,15 @@
           </a>
          @endcan
          <div class="dropdown-divider"></div>
+          
+       @can('sales-list')
+          <a href="{{url('sales')}}" class="dropdown-item">
+            <i class="fa fa-shopping-cart mr-2" aria-hidden="true"></i> Sales
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
         
-              
+             
       </li>
     @endcan
       <!-- Notifications Dropdown Menu -->

@@ -124,10 +124,15 @@ class AccountLedgerController extends Controller
         $_asc_desc = $request->_asc_desc ?? 'ASC';
         $asc_cloumn =  $request->asc_cloumn ?? '_name';
         $text_val = $request->_text_val;
-        $_account_head_id = $request->_account_head_id;
-        $datas = AccountLedger::select('id','_name','_code','_balance')
-                ->where('_is_purchase_form','=',1)
-                ->where('_status',1);
+        $_form = $request->_form ?? 1;
+        $datas = AccountLedger::select('id','_name','_code','_balance');
+        if($_form ==2){
+            $datas = $datas->where('_is_sales_form','=',1);
+        }
+        if($_form ==2){
+           $datas = $datas->where('_is_purchase_form','=',1);
+        }
+           $datas = $datas->where('_status',1);
          if($request->has('_text_val') && $request->_text_val !=''){
             $datas = $datas->where('_name','like',"%$request->_text_val%")
             ->orWhere('id','like',"%$request->_text_val%");
