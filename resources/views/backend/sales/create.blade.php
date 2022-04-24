@@ -883,17 +883,19 @@ $(document).on('keyup','._common_keyup',function(){
   var _vat_amount =0;
   var _qty = parseFloat($(this).closest('tr').find('._qty').val());
   var _rate =parseFloat( $(this).closest('tr').find('._rate').val());
+  var _sales_rate =parseFloat( $(this).closest('tr').find('._sales_rate').val());
   var _item_vat = parseFloat($(this).closest('tr').find('._vat').val());
   var _item_discount = parseFloat($(this).closest('tr').find('._discount').val());
 
    if(isNaN(_item_vat)){ _item_vat   = 0 }
    if(isNaN(_qty)){ _qty   = 0 }
    if(isNaN(_rate)){ _rate =0 }
+   if(isNaN(_sales_rate)){ _sales_rate =0 }
    if(isNaN(_item_discount)){ _item_discount =0 }
-   _vat_amount = Math.ceil(((_qty*_rate)*_item_vat)/100)
-   _discount_amount = Math.ceil(((_qty*_rate)*_item_discount)/100)
+   _vat_amount = Math.ceil(((_qty*_sales_rate)*_item_vat)/100)
+   _discount_amount = Math.ceil(((_qty*_sales_rate)*_item_discount)/100)
 
-  $(this).closest('tr').find('._value').val((_qty*_rate));
+  $(this).closest('tr').find('._value').val((_qty*_sales_rate));
   $(this).closest('tr').find('._vat_amount').val(_vat_amount);
   $(this).closest('tr').find('._discount_amount').val(_discount_amount);
     _purchase_total_calculation();
@@ -903,15 +905,17 @@ $(document).on('keyup','._vat_amount',function(){
  var _item_vat =0;
   var _qty = $(this).closest('tr').find('._qty').val();
   var _rate = $(this).closest('tr').find('._rate').val();
+  var _sales_rate = $(this).closest('tr').find('._sales_rate').val();
   var _vat_amount =  $(this).closest('tr').find('._vat_amount').val();
   
    if(isNaN(_vat_amount)){ _vat_amount = 0 }
    if(isNaN(_qty)){ _qty   = 0 }
    if(isNaN(_rate)){ _rate =0 }
-   var _vat = parseFloat((_vat_amount/(_rate*_qty))*100).toFixed(2);
+   if(isNaN(_sales_rate)){ _sales_rate =0 }
+   var _vat = parseFloat((_vat_amount/(_sales_rate*_qty))*100).toFixed(2);
     $(this).closest('tr').find('._vat').val(_vat);
 
-    $(this).closest('tr').find('._value').val((_qty*_rate));
+    $(this).closest('tr').find('._value').val((_qty*_sales_rate));
  
     _purchase_total_calculation();
 })
@@ -929,7 +933,7 @@ $(document).on("change","#_discount_input",function(){
     on_invoice_discount = _discount_input;
   }
 
-   $("#_total_discount").val(on_invoice_discount);
+   $("#_discount_input").val(on_invoice_discount);
     _purchase_total_calculation()
 })
 
@@ -959,11 +963,11 @@ $(document).on("change","#_discount_input",function(){
 
       var _discount_input = parseFloat($("#_discount_input").val());
       if(isNaN(_discount_input)){ _discount_input =0 }
-
+      var _total_discount = parseFloat(_discount_input)+parseFloat(_total_discount_amount);
       $("#_sub_total").val(_total__value);
       $("#_total_vat").val(_total__vat);
       $("#_total_discount").val(parseFloat(_discount_input)+parseFloat(_total_discount_amount));
-      var _total = (parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_discount_input)
+      var _total = (parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_total_discount)
       $("#_total").val(_total);
   }
 
@@ -1060,7 +1064,7 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                 <input type="number" name="_rate[]" class="form-control _rate _common_keyup" >
                                               </td>
                                               <td>
-                                                <input type="number" name="_sales_rate[]" class="form-control _sales_rate " >
+                                                <input type="number" name="_sales_rate[]" class="form-control _sales_rate _common_keyup" >
                                               </td>
                                                @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
                                               <td>

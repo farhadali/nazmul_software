@@ -21,6 +21,7 @@ class CreateSalesDetailsTable extends Migration
             $table->foreign('_p_p_l_id')->references('id')->on('product_price_lists');
             $table->double('_qty',15,4)->default(0);
             $table->double('_rate',15,4)->default(0);
+            $table->double('_sales_rate',15,4)->default(0);
             $table->double('_discount',15,4)->default(0);
             $table->double('_discount_amount',15,4)->default(0);
             $table->double('_vat',15,4)->default(0);
@@ -29,6 +30,7 @@ class CreateSalesDetailsTable extends Migration
             $table->integer('_store_id')->nullable();
             $table->integer('_cost_center_id')->nullable();
             $table->string('_store_salves_id')->nullable();
+            $table->string('_barcode')->nullable();
             $table->integer('_purchase_invoice_no')->nullable();
             $table->integer('_purchase_detail_id')->nullable();
             $table->unsignedBigInteger('_no');

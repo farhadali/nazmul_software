@@ -13,7 +13,7 @@
 
                @can('item-information-create')
              <li class="breadcrumb-item ">
-                 <a target="__blank" href="{{url('purchase/print')}}/{{$data->id}}" class="btn btn-sm btn-warning"> <i class="nav-icon fas fa-print"></i> </a>
+                 <a target="__blank" href="{{url('sales/print')}}/{{$data->id}}" class="btn btn-sm btn-warning"> <i class="nav-icon fas fa-print"></i> </a>
                   
                 
                </li>
@@ -33,20 +33,20 @@
                 </button>
                </li>
                @endcan
-                @can('purchase-form-settings')
+                @can('sales-form-settings')
              <li class="breadcrumb-item ">
                  <button type="button" id="form_settings" class="btn btn-sm btn-default" data-toggle="modal" data-target="#exampleModal">
                    <i class="nav-icon fas fa-cog"></i> 
                 </button>
                </li>
               @endcan
-               @can('purchase-create')
+               @can('sales-create')
               <li class="breadcrumb-item active">
-                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('purchase.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('sales.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                </li>
               @endcan
               <li class="breadcrumb-item ">
-                 <a class="btn btn-sm btn-success" title="List" href="{{ route('purchase.index') }}"> <i class="nav-icon fas fa-list"></i> </a>
+                 <a class="btn btn-sm btn-success" title="List" href="{{ route('sales.index') }}"> <i class="nav-icon fas fa-list"></i> </a>
                </li>
             </ol>
           </div><!-- /.col -->
@@ -85,12 +85,12 @@
               </div>
              
               <div class="card-body">
-               <form action="{{url('purchase/update')}}" method="POST" class="purchase_form" >
+               <form action="{{url('sales/update')}}" method="POST" class="purchase_form" >
                 @csrf
                       <div class="row">
 
                        <div class="col-xs-12 col-sm-12 col-md-3">
-                        <input type="hidden" name="_form_name" value="purchases">
+                        <input type="hidden" name="_form_name" value="sales">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -168,7 +168,7 @@
                                             @endif
                                             @endif
                                             <th class="text-middle" >Qty</th>
-                                            <th class="text-middle" >Rate</th>
+                                            <th class="text-middle display_none" >Rate</th>
                                             <th class="text-middle" >Sales Rate</th>
                                             @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
                                             <th class="text-middle" >VAT%</th>
@@ -176,6 +176,15 @@
                                              @else
                                             <th class="text-middle display_none" >VAT%</th>
                                             <th class="text-middle display_none" >VAT Amount</th>
+                                            @endif
+                                            @endif
+
+                                             @if(isset($form_settings->_inline_discount)) @if($form_settings->_inline_discount==1)
+                                            <th class="text-middle" >Dis%</th>
+                                            <th class="text-middle" >Dis</th>
+                                             @else
+                                            <th class="text-middle display_none" >Dis%</th>
+                                            <th class="text-middle display_none" >Dis</th>
                                             @endif
                                             @endif
 
@@ -207,6 +216,7 @@
                                           $_total_qty_amount = 0;
                                           $_total_vat_amount =0;
                                           $_total_value_amount =0;
+                                          $_total_discount_amount =0;
                                           @endphp
                                           <tbody class="area__purchase_details" id="area__purchase_details">
                                             @forelse($data->_master_details as $detail)
@@ -214,6 +224,7 @@
                                               $_total_qty_amount += $detail->_qty ??  0;
                                               $_total_vat_amount += $detail->_vat_amount ??  0;
                                               $_total_value_amount += $detail->_value ??  0;
+                                              $_total_discount_amount += $detail->_discount_amount ??  0;
                                               @endphp
                                             <tr class="_purchase_row">
                                               <td>
@@ -221,12 +232,18 @@
                                               </td>
                                               <td>
                                                 {{ $detail->id }}
-                                                <input type="hidden" name="purchase_detail_id[]" value="{{ $detail->id }}" class="form-control purchase_detail_id" >
+                                                <input type="hidden" name="_search_item_id[]" value="{{ $detail->id }}" class="form-control _search_item_id" >
                                                 
                                               </td>
                                               <td>
                                                 <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item" value="{{$detail->_items->_name ?? '' }}">
                                                 <input type="hidden" name="_item_id[]" class="form-control _item_id width_200_px" value="{{$detail->_item_id}}">
+
+                                                
+                                                <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id " value="{{$detail->_p_p_l_id}}" >
+                                                <input type="hidden" name="_purchase_invoice_no[]" class="form-control _purchase_invoice_no" value="{{$detail->_purchase_invoice_no}}">
+                                                <input type="hidden" name="_purchase_detail_id[]" class="form-control _purchase_detail_id" value="{{$detail->_purchase_detail_id}}" >
+
                                                 <div class="search_box_item">
                                                   
                                                 </div>
@@ -244,8 +261,8 @@
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup"  value="{{$detail->_qty ?? 0 }}" >
                                               </td>
-                                              <td>
-                                                <input type="number" name="_rate[]" class="form-control _rate _common_keyup" value="{{$detail->_rate ?? 0 }}" >
+                                              <td class="display_none">
+                                                <input type="number" name="_rate[]" class="form-control _rate _common_keyup " value="{{$detail->_rate ?? 0 }}" >
                                               </td>
                                               <td>
                                                 <input type="number" name="_sales_rate[]" class="form-control _sales_rate " value="{{$detail->_sales_rate ?? 0 }}" >
@@ -263,6 +280,22 @@
                                               </td>
                                               <td class="display_none">
                                                 <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" value="{{$detail->_vat_amount ?? 0 }}" >
+                                              </td>
+                                              @endif
+                                              @endif
+                                               @if(isset($form_settings->_inline_discount)) @if($form_settings->_inline_discount==1)
+                                              <td>
+                                                <input type="text" name="_discount[]" class="form-control  _discount _common_keyup" value="{{$detail->_discount}}" >
+                                              </td>
+                                              <td>
+                                                <input type="text" name="_discount_amount[]" class="form-control  _discount_amount" value="{{$detail->_discount_amount}}" >
+                                              </td>
+                                              @else
+                                              <td class="display_none">
+                                                <input type="text" name="_discount[]" class="form-control  _discount _common_keyup" value="{{$detail->_discount}}">
+                                              </td>
+                                              <td class="display_none">
+                                                <input type="text" name="_discount_amount[]" class="form-control  _discount_amount" value="{{$detail->_discount_amount}}">
                                               </td>
                                               @endif
                                               @endif
@@ -361,7 +394,7 @@
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_qty_amount" class="form-control _total_qty_amount" value="{{$_total_qty_amount}}" readonly required>
                                               </td>
-                                              <td></td>
+                                              <td class="display_none"></td>
                                               <td></td>
                                               @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
                                               <td></td>
@@ -372,6 +405,18 @@
                                               <td class="display_none"></td>
                                               <td class="display_none">
                                                 <input type="number" step="any" min="0" name="_total_vat_amount" class="form-control _total_vat_amount" value="{{$_total_vat_amount ?? 0}}" readonly required>
+                                              </td>
+                                              @endif
+                                              @endif
+                                               @if(isset($form_settings->_inline_discount)) @if($form_settings->_inline_discount==1)
+                                              <td></td>
+                                              <td>
+                                                <input type="number" step="any" min="0" name="_total_discount_amount" class="form-control _total_discount_amount"  readonly required value="{{$_total_discount_amount ?? 0}}">
+                                              </td>
+                                              @else
+                                              <td class="display_none"></td>
+                                              <td class="display_none">
+                                                <input type="number" step="any" min="0" name="_total_discount_amount" class="form-control _total_discount_amount"  readonly required value="{{$_total_discount_amount ?? 0}}">
                                               </td>
                                               @endif
                                               @endif
@@ -424,8 +469,6 @@
                                             <th>&nbsp;</th>
                                             <th>ID</th>
                                             <th>Ledger</th>
-                                            
-                                          
                                             @if(sizeof($permited_costcenters)>1)
                                                <th>Branch</th>
                                               @else
@@ -445,7 +488,7 @@
                                               $_account_dr_total = 0;
                                               $_account_cr_total = 0;
                                             @endphp
-                                            @forelse($data->purchase_account as $account)
+                                            @forelse($data->s_account as $account)
 
                                             @php
                                               $_account_dr_total += $account->_dr_amount ?? 0;
@@ -621,12 +664,10 @@
                           </table>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
-                          @if($sales_number > 0 )
-                          <p>You Can not update This invoice Item.Please Use Purchase Return <a href="{{url('purchase-return/create')}}" class="btn btn-sm btn-danger">Purchase Return</a></p>
-                          @else
+                         
                             <button type="submit" class="btn btn-success submit-button ml-5"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
                             <button type="submit" class="btn btn-warning submit-button _save_and_print"><i class="fa fa-print mr-2" aria-hidden="true"></i> Save & Print</button>
-                          @endif
+                         
                             
                         </div>
                         <br><br>
@@ -648,80 +689,16 @@
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <form action="{{ url('purchase-settings')}}" method="POST">
+    <form action="{{ url('sales-settings')}}" method="POST">
         @csrf
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Purchase Form Settings</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Sales Form Settings</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-       
-        <div class="form-group row">
-        <label for="_default_inventory" class="col-sm-5 col-form-label">Default Inventory</label>
-        <select class="form-control col-sm-7" name="_default_inventory">
-          @foreach($inv_accounts as $account)
-          <option value="{{$account->id}}" @if(isset($form_settings->_default_inventory))@if($form_settings->_default_inventory==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
-          @endforeach
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_default_purchase" class="col-sm-5 col-form-label">Default Purchase Account</label>
-        <select class="form-control col-sm-7" name="_default_purchase">
-          @foreach($p_accounts as $account)
-          <option value="{{$account->id}}" @if(isset($form_settings->_default_purchase))@if($form_settings->_default_purchase==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
-          @endforeach
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_default_discount" class="col-sm-5 col-form-label">Default Discount Account</label>
-        <select class="form-control col-md-7" name="_default_discount">
-          @foreach($dis_accounts as $account)
-          <option value="{{$account->id}}" @if(isset($form_settings->_default_discount))@if($form_settings->_default_discount==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
-          @endforeach
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_default_vat_account" class="col-sm-5 col-form-label">Default VAT Account</label>
-        <select class="form-control col-md-7" name="_default_vat_account">
-          @foreach($vat_accounts as $account)
-          <option value="{{$account->id}}" @if(isset($form_settings->_default_vat_account))@if($form_settings->_default_vat_account==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
-          @endforeach
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_show_vat" class="col-sm-5 col-form-label">Show VAT</label>
-        <select class="form-control col-sm-7" name="_show_vat">
-         
-          <option value="0" @if(isset($form_settings->_show_vat))@if($form_settings->_show_vat==0) selected @endif @endif>NO</option>
-          <option value="1" @if(isset($form_settings->_show_vat))@if($form_settings->_show_vat==1) selected @endif @endif>YES</option>
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_show_barcode" class="col-sm-5 col-form-label">Show Barcode</label>
-        <select class="form-control col-sm-7" name="_show_barcode">
-          <option value="0" @if(isset($form_settings->_show_barcode))@if($form_settings->_show_barcode==0) selected @endif @endif>NO</option>
-          <option value="1" @if(isset($form_settings->_show_barcode))@if($form_settings->_show_barcode==1) selected @endif @endif>YES</option>
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_show_store" class="col-sm-5 col-form-label">Show Store</label>
-        <select class="form-control col-sm-7" name="_show_store">
-          <option value="0" @if(isset($form_settings->_show_store))@if($form_settings->_show_store==0) selected @endif @endif>NO</option>
-          <option value="1" @if(isset($form_settings->_show_store))@if($form_settings->_show_store==1) selected @endif @endif>YES</option>
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_show_self" class="col-sm-5 col-form-label">Show Shelf</label>
-        <select class="form-control col-sm-7" name="_show_self">
-          <option value="0" @if(isset($form_settings->_show_self))@if($form_settings->_show_self==0) selected @endif @endif>NO</option>
-          <option value="1" @if(isset($form_settings->_show_self))@if($form_settings->_show_self==1) selected @endif @endif>YES</option>
-        </select>
-      </div>
-         
-      
+      <div class="modal-body display_form_setting_info">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -743,6 +720,7 @@
 <script type="text/javascript">
   @if(empty($form_settings))
     $("#form_settings").click();
+    setting_data_fetch();
   @endif
   var default_date_formate = `{{default_date_formate()}}`;
   var _after_print = $(document).find("._after_print").val();
@@ -759,6 +737,20 @@
   }
 
 
+ $(document).on("click","#form_settings",function(){
+         setting_data_fetch();
+  })
+
+  function setting_data_fetch(){
+      var request = $.ajax({
+            url: "{{url('sales-setting-modal')}}",
+            method: "GET",
+            dataType: "html"
+          });
+         request.done(function( result ) {
+              $(document).find(".display_form_setting_info").html(result);
+         })
+  }
   
 
   $(document).on('keyup','._search_main_ledger_id',delay(function(e){
@@ -907,16 +899,23 @@ $(document).on('click',function(){
 
 $(document).on('keyup','._common_keyup',function(){
   var _vat_amount =0;
-  var _qty = $(this).closest('tr').find('._qty').val();
-  var _rate = $(this).closest('tr').find('._rate').val();
-  var _item_vat = $(this).closest('tr').find('._vat').val();
+  var _qty = parseFloat($(this).closest('tr').find('._qty').val());
+  var _rate =parseFloat( $(this).closest('tr').find('._rate').val());
+  var _sales_rate =parseFloat( $(this).closest('tr').find('._sales_rate').val());
+  var _item_vat = parseFloat($(this).closest('tr').find('._vat').val());
+  var _item_discount = parseFloat($(this).closest('tr').find('._discount').val());
+
    if(isNaN(_item_vat)){ _item_vat   = 0 }
    if(isNaN(_qty)){ _qty   = 0 }
    if(isNaN(_rate)){ _rate =0 }
-   _vat_amount = Math.ceil(((_qty*_rate)*_item_vat)/100)
+   if(isNaN(_sales_rate )){ _sales_rate  =0 }
+   if(isNaN(_item_discount)){ _item_discount =0 }
+   _vat_amount = Math.ceil(((_qty*_sales_rate)*_item_vat)/100)
+   _discount_amount = Math.ceil(((_qty*_sales_rate)*_item_discount)/100)
 
-    $(this).closest('tr').find('._value').val((_qty*_rate));
+  $(this).closest('tr').find('._value').val((_qty*_sales_rate));
   $(this).closest('tr').find('._vat_amount').val(_vat_amount);
+  $(this).closest('tr').find('._discount_amount').val(_discount_amount);
     _purchase_total_calculation();
 })
 
@@ -924,15 +923,17 @@ $(document).on('keyup','._vat_amount',function(){
  var _item_vat =0;
   var _qty = $(this).closest('tr').find('._qty').val();
   var _rate = $(this).closest('tr').find('._rate').val();
+  var _sales_rate = $(this).closest('tr').find('._sales_rate').val();
   var _vat_amount =  $(this).closest('tr').find('._vat_amount').val();
   
    if(isNaN(_vat_amount)){ _vat_amount = 0 }
    if(isNaN(_qty)){ _qty   = 0 }
    if(isNaN(_rate)){ _rate =0 }
-   var _vat = parseFloat((_vat_amount/(_rate*_qty))*100).toFixed(2);
+   if(isNaN(_sales_rate)){ _sales_rate =0 }
+   var _vat = parseFloat((_vat_amount/(_sales_rate*_qty))*100).toFixed(2);
     $(this).closest('tr').find('._vat').val(_vat);
 
-    $(this).closest('tr').find('._value').val((_qty*_rate));
+    $(this).closest('tr').find('._value').val((_qty*_sales_rate));
  
     _purchase_total_calculation();
 })
@@ -973,13 +974,13 @@ $(document).on("change","#_discount_input",function(){
       $("._total_value_amount").val(_total__value);
       $("._total_vat_amount").val(_total__vat);
 
-      var _discount_input = parseFloat($("#_discount_input").val());
-      if(isNaN(_discount_input)){ _discount_input =0 }
+      var _total_discount = parseFloat($("#_total_discount").val());
+      if(isNaN(_total_discount)){ _total_discount =0 }
 
       $("#_sub_total").val(_total__value);
       $("#_total_vat").val(_total__vat);
-      $("#_total_discount").val(_discount_input);
-      var _total = (parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_discount_input)
+      $("#_total_discount").val(_total_discount);
+      var _total = (parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_total_discount)
       $("#_total").val(_total);
   }
 

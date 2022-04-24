@@ -269,7 +269,7 @@
                         </td>
                         </tr>
                         @endif
-                        @if(sizeof($data->purchase_account) > 0)
+                        @if(sizeof($data->s_account) > 0)
                         <tr>
                           <td colspan="12" >
                            
@@ -288,7 +288,7 @@
                                     $_dr_amount = 0;
                                     $_cr_amount = 0;
                                   @endphp
-                                  @forelse($data->purchase_account AS $detail_key=>$_master_val )
+                                  @forelse($data->s_account AS $detail_key=>$_master_val )
                                   <tr>
                                     <td>{{ ($_master_val->id) }}</td>
                                     <td>{{ $_master_val->_ledger->_name ?? '' }}</td>
