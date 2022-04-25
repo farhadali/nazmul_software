@@ -10,7 +10,7 @@ class SalesDetail extends Model
     use HasFactory;
 
     public function _items(){
-    	return $this->hasOne(Inventory::class,'id','_item_id')->select('id','_item as _name');
+    	return $this->hasOne(ProductPriceList::class,'id','_p_p_l_id')->select('id','_item as _name','_qty');
     }
 
 
@@ -25,4 +25,8 @@ class SalesDetail extends Model
     public function _store(){
     	return $this->hasOne(StoreHouse::class,'id','_store_id')->select('id','_name');
     }
+
+    // public function _p_p_l(){
+    // 	return $this->hasOne(ProductPriceList::class,'id','_p_p_l_id')->select('_qty');
+    // }
 }

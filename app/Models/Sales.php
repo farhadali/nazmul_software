@@ -26,4 +26,6 @@ class Sales extends Model
     public function _ledger(){
     	return $this->hasOne(AccountLedger::class,'id','_ledger_id');
     }
+
+    
 }

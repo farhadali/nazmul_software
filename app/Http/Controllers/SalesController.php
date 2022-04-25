@@ -168,6 +168,38 @@ class SalesController extends Controller
        return  \Redirect::to('sales?limit='.default_pagination());
     }
 
+
+    public function checkAvailableQty(Request $request){
+        
+        $unique_p_q = [];
+        foreach($request->_p_p_l_ids_qtys as $index=> $val){
+         $unique_p_q[$val["_p_id"]][]=$val;
+        }
+        $_id_qty=array();
+        foreach ($unique_p_q as $key=>$value) {
+            $qty_sum =0;
+            foreach ($value as $row) {
+                 $qty_sum +=floatval($row["_p_qty"]);
+             }
+            array_push($_id_qty, ['_id'=>$key,'_qty'=>$qty_sum]);  
+        }
+
+        $_over_qty = array();
+
+        if(sizeof($_id_qty) > 0){
+            foreach ($_id_qty as $value) {
+
+                $check_qty = ProductPriceList::where('id',$value["_id"])->where('_qty','<',floatval($value["_qty"]))->first();
+                if($check_qty){
+                    array_push($_over_qty, $value["_id"]);
+                }
+            }
+        }
+       
+
+        return json_encode($_over_qty); 
+    }
+
     /**
      * Show the form for creating a new resource.
      *

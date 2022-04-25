@@ -100,7 +100,7 @@
                                       </div>
                                   </div>
                               </div>
-                              <input type="hidden" name="_purchase_id" value="{{$data->id}}">
+                              <input type="hidden" name="_sales_id" value="{{$data->id}}">
                         </div>
 
                         <div class="col-xs-12 col-sm-12 col-md-3">
@@ -124,8 +124,8 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-3 ">
                             <div class="form-group">
-                              <label class="mr-2" for="_order_ref_id">Purchase Order:</label>
-                              <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id',$data->_order_ref_id)}}" placeholder="Purchase Order" >
+                              <label class="mr-2" for="_order_ref_id">Sales Order:</label>
+                              <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id',$data->_order_ref_id)}}" placeholder="Sales Order" >
                                 
                             </div>
                         </div>
@@ -158,56 +158,56 @@
                                 <div class="table-responsive">
                                       <table class="table table-bordered" >
                                           <thead >
-                                            <th class="text-middle" >&nbsp;</th>
-                                            <th class="text-middle" >ID</th>
-                                            <th class="text-middle" >Item</th>
+                                            <th class="text-left" >&nbsp;</th>
+                                            <th class="text-left" >ID</th>
+                                            <th class="text-left" >Item</th>
                                            @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                            <th class="text-middle" >Barcode</th>
+                                            <th class="text-left" >Barcode</th>
                                             @else
-                                            <th class="text-middle display_none" >Barcode</th>
+                                            <th class="text-left display_none" >Barcode</th>
                                             @endif
                                             @endif
-                                            <th class="text-middle" >Qty</th>
-                                            <th class="text-middle display_none" >Rate</th>
-                                            <th class="text-middle" >Sales Rate</th>
+                                            <th class="text-left" >Qty</th>
+                                            <th class="text-left display_none" >Rate</th>
+                                            <th class="text-left" >Sales Rate</th>
                                             @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                            <th class="text-middle" >VAT%</th>
-                                            <th class="text-middle" >VAT</th>
+                                            <th class="text-left" >VAT%</th>
+                                            <th class="text-left" >VAT</th>
                                              @else
-                                            <th class="text-middle display_none" >VAT%</th>
-                                            <th class="text-middle display_none" >VAT Amount</th>
+                                            <th class="text-left display_none" >VAT%</th>
+                                            <th class="text-left display_none" >VAT Amount</th>
                                             @endif
                                             @endif
 
                                              @if(isset($form_settings->_inline_discount)) @if($form_settings->_inline_discount==1)
-                                            <th class="text-middle" >Dis%</th>
-                                            <th class="text-middle" >Dis</th>
+                                            <th class="text-left" >Dis%</th>
+                                            <th class="text-left" >Dis</th>
                                              @else
-                                            <th class="text-middle display_none" >Dis%</th>
-                                            <th class="text-middle display_none" >Dis</th>
+                                            <th class="text-left display_none" >Dis%</th>
+                                            <th class="text-left display_none" >Dis</th>
                                             @endif
                                             @endif
 
-                                            <th class="text-middle" >Value</th>
+                                            <th class="text-left" >Value</th>
                                              @if(sizeof($permited_branch) > 1)
-                                            <th class="text-middle" >Branch</th>
+                                            <th class="text-left" >Branch</th>
                                             @else
-                                            <th class="text-middle display_none" >Branch</th>
+                                            <th class="text-left display_none" >Branch</th>
                                             @endif
                                              @if(sizeof($permited_costcenters) > 1)
-                                            <th class="text-middle" >Cost Center</th>
+                                            <th class="text-left" >Cost Center</th>
                                             @else
-                                             <th class="text-middle display_none" >Cost Center</th>
+                                             <th class="text-left display_none" >Cost Center</th>
                                             @endif
                                              @if(sizeof($store_houses) > 1)
-                                            <th class="text-middle" >Store</th>
+                                            <th class="text-left" >Store</th>
                                             @else
-                                             <th class="text-middle display_none" >Store</th>
+                                             <th class="text-left display_none" >Store</th>
                                             @endif
                                             @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                            <th class="text-middle" >Shelf</th>
+                                            <th class="text-left" >Shelf</th>
                                             @else
-                                             <th class="text-middle display_none" >Shelf</th>
+                                             <th class="text-left display_none" >Shelf</th>
                                             @endif
                                             @endif
                                            
@@ -236,7 +236,7 @@
                                                 
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item" value="{{$detail->_items->_name ?? '' }}">
+                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item" value="{{ $detail->_purchase_invoice_no ?? '' }},{{$detail->_items->_name ?? '' }}, {{$detail->_items->_qty ?? '' }}">
                                                 <input type="hidden" name="_item_id[]" class="form-control _item_id width_200_px" value="{{$detail->_item_id}}">
 
                                                 

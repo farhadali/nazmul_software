@@ -46,7 +46,9 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header">
-                 
+                 <div class="alert _required ">
+                      <p class="_over_qty"></p>
+                    </div>
                     @if (count($errors) > 0)
                            <div class="alert ">
                                 <strong>Whoops!</strong> There were some problems with your input.<br><br>
@@ -63,7 +65,7 @@
                     </div>
                     @endif
                   @if ($message = Session::get('danger'))
-                    <div class="alert _required">
+                    <div class="alert _required _over_qty">
                       <p>{{ $message }}</p>
                     </div>
                     @endif
@@ -142,54 +144,54 @@
                                 <div class="table-responsive">
                                       <table class="table table-bordered" >
                                           <thead >
-                                            <th class="text-middle" >&nbsp;</th>
-                                            <th class="text-middle" >Item</th>
+                                            <th class="text-left" >&nbsp;</th>
+                                            <th class="text-left" >Item</th>
                                            @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                            <th class="text-middle" >Barcode</th>
+                                            <th class="text-left" >Barcode</th>
                                             @else
-                                            <th class="text-middle display_none" >Barcode</th>
+                                            <th class="text-left display_none" >Barcode</th>
                                             @endif
                                             @endif
-                                            <th class="text-middle" >Qty</th>
-                                            <th class="text-middle display_none" >Rate</th>
-                                            <th class="text-middle" >Sales Rate</th>
+                                            <th class="text-left" >Qty</th>
+                                            <th class="text-left display_none" >Rate</th>
+                                            <th class="text-left" >Sales Rate</th>
                                             @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                            <th class="text-middle" >VAT%</th>
-                                            <th class="text-middle" >VAT</th>
+                                            <th class="text-left" >VAT%</th>
+                                            <th class="text-left" >VAT</th>
                                              @else
-                                            <th class="text-middle display_none" >VAT%</th>
-                                            <th class="text-middle display_none" >VAT Amount</th>
+                                            <th class="text-left display_none" >VAT%</th>
+                                            <th class="text-left display_none" >VAT Amount</th>
                                             @endif
                                             @endif
                                              @if(isset($form_settings->_inline_discount)) @if($form_settings->_inline_discount==1)
-                                            <th class="text-middle" >Dis%</th>
-                                            <th class="text-middle" >Dis</th>
+                                            <th class="text-left" >Dis%</th>
+                                            <th class="text-left" >Dis</th>
                                              @else
-                                            <th class="text-middle display_none" >Dis%</th>
-                                            <th class="text-middle display_none" >Dis</th>
+                                            <th class="text-left display_none" >Dis%</th>
+                                            <th class="text-left display_none" >Dis</th>
                                             @endif
                                             @endif
 
-                                            <th class="text-middle" >Value</th>
+                                            <th class="text-left" >Value</th>
                                              @if(sizeof($permited_branch) > 1)
-                                            <th class="text-middle" >Branch</th>
+                                            <th class="text-left" >Branch</th>
                                             @else
-                                            <th class="text-middle display_none" >Branch</th>
+                                            <th class="text-left display_none" >Branch</th>
                                             @endif
                                              @if(sizeof($permited_costcenters) > 1)
-                                            <th class="text-middle" >Cost Center</th>
+                                            <th class="text-left" >Cost Center</th>
                                             @else
-                                             <th class="text-middle display_none" >Cost Center</th>
+                                             <th class="text-left display_none" >Cost Center</th>
                                             @endif
                                              @if(sizeof($store_houses) > 1)
-                                            <th class="text-middle" >Store</th>
+                                            <th class="text-left" >Store</th>
                                             @else
-                                             <th class="text-middle display_none" >Store</th>
+                                             <th class="text-left display_none" >Store</th>
                                             @endif
                                             @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                            <th class="text-middle" >Shelf</th>
+                                            <th class="text-left" >Shelf</th>
                                             @else
-                                             <th class="text-middle display_none" >Shelf</th>
+                                             <th class="text-left display_none" >Shelf</th>
                                             @endif
                                             @endif
                                            
@@ -669,6 +671,8 @@
           alert('Please allow popups for this website');
       }
   }
+
+
 
 
   $(document).on("click","#form_settings",function(){
@@ -1250,22 +1254,78 @@ function purchase_row_add(event){
 
   $(document).on('click','.submit-button',function(event){
     event.preventDefault();
+
+    var _p_p_l_ids_qtys = new Array();
+     var _only_p_ids = [];
+     var empty_qty = [];
+      var _id_and_qtys = [];
+
+    $(document).find('._p_p_l_id').each(function(index){
+     var _p_id =  $(this).val();
+     var _p_qty = $(document).find('._qty').eq(index).val();
+     if(isNaN(_p_qty)){
+        empty_qty.push(_p_id);
+     }
+     _only_p_ids.push(_p_id);
+      _p_p_l_ids_qtys.push( {_p_id: _p_id, _p_qty: _p_qty});
+     
+
+    })
+     var unique_p_ids = [...new Set(_only_p_ids)];
+     var _stop_sales =0;
+    if(_p_p_l_ids_qtys.length > 0){
+        var request = $.ajax({
+                url: "{{url('check-available-qty')}}",
+                method: "GET",
+                async:false,
+                data: { _p_p_l_ids_qtys,unique_p_ids },
+                dataType: "JSON"
+              });
+               
+              request.done(function( result ) {
+                
+                  if(result.length > 0){
+                     
+                   _stop_sales=1;
+                  }else{
+                     $(document).find("._over_qty").text('');
+                  }
+              })
+    }
+    if(_stop_sales ==1){
+      alert(" You Can not Sales More then Available Qty  ");
+       var _message =" You Can not Sales More then Available Qty";
+        $(document).find("._over_qty").text(_message);
+      return false;
+    }
+
+ 
+    
+   
     var _total_dr_amount = $(document).find("._total_dr_amount").val();
     var _total_cr_amount = $(document).find("._total_cr_amount").val();
     var _voucher_type = $(document).find('._voucher_type').val();
     var _note = $(document).find('._note').val();
     var _main_ledger_id = $(document).find('._main_ledger_id').val();
+
+
+
     if(_main_ledger_id  ==""){
        alert(" Please Add Ledger  ");
         $(document).find('._search_main_ledger_id').addClass('required_border').focus();
         return false;
     }
 
+    if(empty_qty.length > 0){
+       alert(" You Can not sale empty qty !");
+      return false;
+
+    }
+
 
     var empty_ledger = [];
     $(document).find("._search_item_id").each(function(){
         if($(this).val() ==""){
-          console.log($(this))
           alert(" Please Add Item  ");
           $(this).addClass('required_border');
           empty_ledger.push(1);
@@ -1275,6 +1335,9 @@ function purchase_row_add(event){
     if(empty_ledger.length > 0){
       return false;
     }
+   
+
+
 
 
     if( parseFloat(_total_dr_amount) !=parseFloat(_total_cr_amount)){
