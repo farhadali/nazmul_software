@@ -238,6 +238,8 @@ class PurchaseController extends Controller
         $Purchase->_total_vat = $request->_total_vat;
         $Purchase->_total =  $__total;
         $Purchase->_branch_id = $request->_branch_id;
+        $Purchase->_address = $request->_address;
+        $Purchase->_phone = $request->_phone;
         $Purchase->_status = 1;
         $Purchase->save();
         $purchase_id = $Purchase->id;
@@ -615,6 +617,8 @@ class PurchaseController extends Controller
         $Purchase->_total_vat = $request->_total_vat;
         $Purchase->_total = $request->_total;
         $Purchase->_branch_id = $request->_branch_id;
+        $Purchase->_address = $request->_address;
+        $Purchase->_phone = $request->_phone;
         $Purchase->_status = 1;
         $Purchase->save();
         $purchase_id = $Purchase->id;

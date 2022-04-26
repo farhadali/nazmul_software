@@ -110,6 +110,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('sales-setting-modal', 'App\Http\Controllers\SalesController@formSettingAjax');
     Route::get('item-sales-search', 'App\Http\Controllers\SalesController@itemSalesSearch');
     Route::get('check-available-qty', 'App\Http\Controllers\SalesController@checkAvailableQty');
+    Route::get('check-available-qty-update', 'App\Http\Controllers\SalesController@checkAvailableQtyUpdate');
     
     
     Route::resource('purchase-return', PurchaseReturnController::class);

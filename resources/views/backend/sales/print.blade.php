@@ -90,7 +90,7 @@
                                             @endif
                                             @endif
                                             <th class="text-right " >Qty</th>
-                                            <th class="text-right " >Sales Rate</th>
+                                            <th class="text-right " >Rate</th>
                                             @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
                                             <th class="text-right " >VAT%</th>
                                             <th class="text-right " >VAT</th>

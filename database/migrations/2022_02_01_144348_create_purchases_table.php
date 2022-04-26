@@ -36,6 +36,8 @@ class CreatePurchasesTable extends Migration
             $table->tinyInteger('_status')->default(0);
             $table->string('_created_by',60)->nullable();
             $table->string('_updated_by',60)->nullable();
+            $table->string('_address',100)->nullable();
+            $table->string('_phone',60)->nullable();
             $table->timestamps();
         });
     }

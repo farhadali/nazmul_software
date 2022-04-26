@@ -388,3 +388,7 @@ body:not(.layout-fixed) .main-sidebar {
     margin-bottom: 100px;
 }
 
+.form-group {
+    margin-bottom: 2px !important;
+}
+

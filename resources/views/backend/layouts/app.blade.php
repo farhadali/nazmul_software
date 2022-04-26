@@ -198,11 +198,8 @@ console.log($(this).val());
     });
      
     request.done(function( result ) {
-
       var search_html =``;
-      
       var data = result.data; 
-      console.log(data)
       if(data.length > 0 ){
         
             search_html +=`<div class="card"><table style="width: 300px;">
@@ -213,7 +210,11 @@ console.log($(this).val());
                                         <input type="hidden" name="_id_ledger" class="_id_ledger" value="${data[i].id}">
                                         </td><td>${data[i]._name}
                                         <input type="hidden" name="_name_leder" class="_name_leder" value="${data[i]._name}">
-                                        </td></tr>`;
+                                        <input type="hidden" name="_s_l_address" class="_s_l_address" value="${data[i]._address}">
+                                        <input type="hidden" name="_s_l_phone" class="_s_l_phone" value="${data[i]._phone}">
+                                        </td>
+                                        <td>${data[i]._balance}</td>
+                                        </tr>`;
                         }                         
             search_html += ` </tbody> </table></div>`;
       }else{
@@ -245,6 +246,130 @@ $(document).on('click','.search_row',function(){
   $('.search_box').hide();
   $('.search_box').removeClass('search_box_show').hide();
 })
+
+
+$(document).on('keyup','._search_main_ledger_id',delay(function(e){
+    $(document).find('._search_main_ledger_id').removeClass('required_border');
+    var _gloabal_this = $(this);
+    var _text_val = $(this).val().trim();
+    var _form = $("._search_form_value").val();
+  var request = $.ajax({
+      url: "{{url('main-ledger-search')}}",
+      method: "GET",
+      data: { _text_val,_form },
+      dataType: "JSON"
+    });
+     
+    request.done(function( result ) {
+
+      var search_html =``;
+      var data = result.data; 
+      if(data.length > 0 ){
+            search_html +=`<div class="card"><table style="width: 300px;">
+                            <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                         search_html += `<tr class="search_row_ledger" >
+                                        <td>${data[i].id}
+                                        <input type="hidden" name="_id_main_ledger" class="_id_main_ledger" value="${data[i].id}">
+                                        </td><td>${data[i]._name}
+                                        <input type="hidden" name="_name_main_ledger" class="_name_main_ledger" value="${data[i]._name}">
+                                        <input type="hidden" name="_address_main_ledger" class="_address_main_ledger" value="${data[i]._address}">
+                                        <input type="hidden" name="_phone_main_ledger" class="_phone_main_ledger" value="${data[i]._phone}">
+                                  
+                                   </td>
+                                   <td>${data[i]._balance}</td>
+                                   </tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
+      }else{
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+      }     
+      _gloabal_this.parent('div').find('.search_box_main_ledger').html(search_html);
+      _gloabal_this.parent('div').find('.search_box_main_ledger').addClass('search_box_show').show();
+      
+    });
+     
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+
+  
+
+}, 500));
+
+
+  $(document).on("click",'.search_row_ledger',function(){
+    var _id = $(this).children('td').find('._id_main_ledger').val();
+    var _name = $(this).find('._name_main_ledger').val();
+    var _address_main_ledger = $(this).find('._address_main_ledger').val();
+    var _phone_main_ledger = $(this).find('._phone_main_ledger').val();
+    $("._main_ledger_id").val(_id);
+    $("._search_main_ledger_id").val(_name);
+    $("._phone").val(_phone_main_ledger);
+    $("._address").val(_address_main_ledger);
+
+    $('.search_box_main_ledger').hide();
+    $('.search_box_main_ledger').removeClass('search_box_show').hide();
+  })
+
+
+  $(document).on('click','._voucher_row_remove',function(event){
+      event.preventDefault();
+      var ledger_id = $(this).parent().parent('tr').find('._ledger_id').val();
+      if(ledger_id ==""){
+          $(this).parent().parent('tr').remove();
+      }else{
+        if(confirm('Are you sure your want to delete?')){
+          $(this).parent().parent('tr').remove();
+        } 
+      }
+      _voucher_total_calculation();
+  })
+
+  function _voucher_total_calculation(){
+    var _total_dr_amount = 0;
+    var _total_cr_amount = 0;
+      $(document).find("._cr_amount").each(function() {
+          _total_cr_amount +=parseFloat($(this).val());
+      });
+      $(document).find("._dr_amount").each(function() {
+          _total_dr_amount +=parseFloat($(this).val());
+      });
+      $("._total_dr_amount").val(_total_dr_amount);
+      $("._total_cr_amount").val(_total_cr_amount);
+  }
+
+
+  $(document).on('keyup','._dr_amount',function(){
+    $(this).parent().parent('tr').find('._cr_amount').val(0);
+    $(document).find("._total_dr_amount").removeClass('required_border');
+    $(document).find("._total_cr_amount").removeClass('required_border');
+    _voucher_total_calculation();
+  })
+
+
+
+  $(document).on('keyup','._cr_amount',function(){
+     $(this).parent().parent('tr').find('._dr_amount').val(0);
+     $(document).find("._total_dr_amount").removeClass('required_border');
+      $(document).find("._total_cr_amount").removeClass('required_border');
+    _voucher_total_calculation();
+  })
+
+
+  
+  $(document).on('change','._voucher_type',function(){
+    $(document).find('._voucher_type').removeClass('required_border');
+  })
+
+  $(document).on('keyup','._note',function(){
+    $(document).find('._note').removeClass('required_border');
+  })
+
+  $(document).on('click','._save_and_print',function(){
+    $(document).find('._save_and_print_value').val(1);
+  })
 
 $(document).on('click',function(){
     var searach_show= $('.search_box').hasClass('search_box_show');

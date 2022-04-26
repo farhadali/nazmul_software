@@ -39,6 +39,30 @@
         </select>
       </div>
       <div class="form-group row">
+        <label for="_show_cost_rate" class="col-sm-5 col-form-label">Show Cost Rate</label>
+        <select class="form-control col-sm-7" name="_show_cost_rate">
+         
+          <option value="0" @if(isset($form_settings->_show_cost_rate))@if($form_settings->_show_cost_rate==0) selected @endif @endif>NO</option>
+          <option value="1" @if(isset($form_settings->_show_cost_rate))@if($form_settings->_show_cost_rate==1) selected @endif @endif>YES</option>
+        </select>
+      </div>
+      <div class="form-group row">
+        <label for="_show_sales_man" class="col-sm-5 col-form-label">Show Sales Man</label>
+        <select class="form-control col-sm-7" name="_show_sales_man">
+         
+          <option value="0" @if(isset($form_settings->_show_sales_man))@if($form_settings->_show_sales_man==0) selected @endif @endif>NO</option>
+          <option value="1" @if(isset($form_settings->_show_sales_man))@if($form_settings->_show_sales_man==1) selected @endif @endif>YES</option>
+        </select>
+      </div>
+      <div class="form-group row">
+        <label for="_show_delivery_man" class="col-sm-5 col-form-label">Show Delivery Man</label>
+        <select class="form-control col-sm-7" name="_show_delivery_man">
+         
+          <option value="0" @if(isset($form_settings->_show_delivery_man))@if($form_settings->_show_delivery_man==0) selected @endif @endif>NO</option>
+          <option value="1" @if(isset($form_settings->_show_delivery_man))@if($form_settings->_show_delivery_man==1) selected @endif @endif>YES</option>
+        </select>
+      </div>
+      <div class="form-group row">
         <label for="_inline_discount" class="col-sm-5 col-form-label">Show Inline Discount</label>
         <select class="form-control col-sm-7" name="_inline_discount">
          

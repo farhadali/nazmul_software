@@ -20,6 +20,8 @@ class CreateSalesTable extends Migration
             $table->string('_time',60);
             $table->integer('_order_ref_id')->default(0);
             $table->string('_referance')->nullable();
+            $table->string('_address')->nullable();
+            $table->string('_phone')->nullable();
             $table->unsignedBigInteger('_ledger_id');
             $table->foreign('_ledger_id')->references('id')->on('account_ledgers');
             $table->unsignedBigInteger('_user_id');
