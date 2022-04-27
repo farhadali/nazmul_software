@@ -26,6 +26,12 @@ class Sales extends Model
     public function _ledger(){
     	return $this->hasOne(AccountLedger::class,'id','_ledger_id');
     }
+    public function _delivery_man(){
+        return $this->hasOne(AccountLedger::class,'id','_delivery_man_id');
+    } 
+    public function _sales_man(){
+        return $this->hasOne(AccountLedger::class,'id','_sales_man_id');
+    }
 
     
 }

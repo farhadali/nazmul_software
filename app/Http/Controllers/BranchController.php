@@ -92,7 +92,7 @@ class BranchController extends Controller
     {
         $page_name = $this->page_name;
         $data = $branch;
-        return view('backend.branch.show',compact('request','page_name','data'));
+        return view('backend.branch.show',compact('page_name','data'));
     }
 
     /**
@@ -105,6 +105,7 @@ class BranchController extends Controller
     {
         $page_name = $this->page_name;
         $data = Branch::find($id);
+        
         return view('backend.branch.edit',compact('page_name','data'));
     }
 

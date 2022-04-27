@@ -329,7 +329,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
     public function store(Request $request)
     {
          
-     //  return $request->all();
+     // return $request->all();
          $this->validate($request, [
             '_date' => 'required',
             '_branch_id' => 'required',
@@ -341,6 +341,11 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
     //###########################
       // DB::beginTransaction();
       //  try {
+
+         $_sales_man_id = $request->_sales_man_id;
+         $sales_man_name_leder = $request->sales_man_name_leder;
+         $_delivery_man_id = $request->_delivery_man_id;
+         $delivery_man_name_leder = $request->delivery_man_name_leder;
         
          $__sub_total = (float) $request->_sub_total;
          $__total = (float) $request->_total;
@@ -375,6 +380,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $Sales->_status = 1;
         $Sales->save();
         $_master_id = $Sales->id;
+
                                            
 
         //###########################
@@ -601,7 +607,14 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
             }
 
          //   DB::commit();
-            return redirect()->back()->with('success','Information save successfully')->with('_master_id',$_master_id)->with('_print_value',$_print_value);
+            return redirect()->back()
+                ->with('success','Information save successfully')
+                ->with('_master_id',$_master_id)
+                ->with('_print_value',$_print_value)
+                ->with('_sales_man_id',$_sales_man_id)
+                ->with('sales_man_name_leder',$sales_man_name_leder)
+                ->with('_delivery_man_id',$_delivery_man_id)
+                ->with('delivery_man_name_leder',$delivery_man_name_leder);
        // } catch (\Exception $e) {
        //     DB::rollback();
        //     return redirect()->back()->with('danger','There is Something Wrong !');

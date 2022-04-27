@@ -59,6 +59,7 @@ input[type="number"] {
     margin-bottom: 0;
     background-color: #fff;
     border-bottom: 0 solid rgba(0,0,0,.125);
+    margin-top: 2px;
 }
 .card-body {
     -webkit-flex: 1 1 auto;
@@ -184,6 +185,33 @@ label{
 .search_row_ledger:hover{
     background: #e9ecef;
     cursor: pointer;
+}
+
+.search_box_delivery_man{
+   position: absolute;
+    z-index: 9999;
+    background: #fff;
+    display: none;
+}
+.search_row_delivery_man:hover{
+    background: #e9ecef;
+    cursor: pointer;
+}
+.search_row_delivery_man{
+    border: 1px solid #CCCCCC;
+}
+.search_box_sales_man{
+   position: absolute;
+    z-index: 9999;
+    background: #fff;
+    display: none;
+}
+.search_row_sales_man:hover{
+    background: #e9ecef;
+    cursor: pointer;
+}
+.search_row_sales_man{
+    border: 1px solid #CCCCCC;
 }
 .search_row_ledger{
     border: 1px solid #CCCCCC;
@@ -390,5 +418,10 @@ body:not(.layout-fixed) .main-sidebar {
 
 .form-group {
     margin-bottom: 2px !important;
+}
+
+.alert-success {
+    height: 24px !important;
+    margin: 0px auto !important;
 }
 

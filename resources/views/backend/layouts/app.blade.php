@@ -181,15 +181,10 @@ function delay(callback, ms) {
 }
 
 
-// Example usage:
-
-$(document).on('keyup','._search_ledger_id',delay(function(e){
-    $(document).find('._search_ledger_id').removeClass('required_border');
+$(document).on('keyup','._search_main_delivery_man',delay(function(e){
+    $(document).find('._search_main_delivery_man').removeClass('required_border');
   var _gloabal_this = $(this);
-
   var _text_val = $(this).val().trim();
-console.log($(this).val());
-
   var request = $.ajax({
       url: "{{url('ledger-search')}}",
       method: "GET",
@@ -201,9 +196,129 @@ console.log($(this).val());
       var search_html =``;
       var data = result.data; 
       if(data.length > 0 ){
-        
-            search_html +=`<div class="card"><table style="width: 300px;">
-                            <tbody>`;
+            search_html +=`<div class="card"><table style="width: 300px;"> <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                         search_html += `<tr class="search_row_delivery_man" >
+                                        <td>${data[i].id}
+                                        <input type="hidden" name="_delivery_man_ledger" class="_delivery_man_ledger" value="${data[i].id}">
+                                        </td><td>${data[i]._name}
+                                        <input type="hidden" name="delivery_man_name_leder" class="delivery_man_name_leder" value="${data[i]._name}">
+                                        <input type="hidden" name="delivery_man_address" class="delivery_man_address" value="${data[i]._address}">
+                                        <input type="hidden" name="delivery_man_phone" class="delivery_man_phone" value="${data[i]._phone}">
+                                        </td>
+                                       
+                                        </tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
+      }else{
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+      }     
+      $(document).find('.search_box_delivery_man').html(search_html);
+      $(document).find('.search_box_delivery_man').addClass('search_box_show').show();
+      
+    });
+     
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+
+  
+
+}, 500));
+
+
+$(document).on('click','.search_row_delivery_man',function(){
+  var _id = $(document).find('._delivery_man_ledger').val();
+  var _name = $(document).find('.delivery_man_name_leder').val();
+  var _id_name = `${_id} ${_name}`
+  $(document).find('._delivery_man').val(_id);
+  $(document).find('._search_main_delivery_man').val(_id_name);
+
+
+  $('.search_box_delivery_man').hide();
+  $('.search_box_delivery_man').removeClass('search_box_show').hide();
+})
+
+
+$(document).on('keyup','._search_main_sales_man',delay(function(e){
+    $(document).find('._search_main_sales_man').removeClass('required_border');
+  var _gloabal_this = $(this);
+  var _text_val = $(this).val().trim();
+  var request = $.ajax({
+      url: "{{url('ledger-search')}}",
+      method: "GET",
+      data: { _text_val : _text_val },
+      dataType: "JSON"
+    });
+     
+    request.done(function( result ) {
+      var search_html =``;
+      var data = result.data; 
+      if(data.length > 0 ){
+            search_html +=`<div class="card"><table style="width: 300px;"> <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                         search_html += `<tr class="search_row_sales_man" >
+                                        <td>${data[i].id}
+                                        <input type="hidden" name="_sales_man_ledger" class="_sales_man_ledger" value="${data[i].id}">
+                                        </td><td>${data[i]._name}
+                                        <input type="hidden" name="sales_man_name_leder" class="sales_man_name_leder" value="${data[i]._name}">
+                                        <input type="hidden" name="sales_man_address" class="sales_man_address" value="${data[i]._address}">
+                                        <input type="hidden" name="sales_man_phone" class="sales_man_phone" value="${data[i]._phone}">
+                                        </td>
+                                       
+                                        </tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
+      }else{
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+      }     
+      $(document).find('.search_box_sales_man').html(search_html);
+      $(document).find('.search_box_sales_man').addClass('search_box_show').show();
+      
+    });
+     
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+
+  
+
+}, 500));
+
+
+$(document).on('click','.search_row_sales_man',function(){
+  var _id = $(document).find('._sales_man_ledger').val();
+  var _name = $(document).find('.sales_man_name_leder').val();
+  var _id_name = `${_id} ${_name}`
+  $(document).find('._sales_man').val(_id);
+  $(document).find('._search_main_sales_man').val(_id_name);
+
+
+  $('.search_box_sales_man').hide();
+  $('.search_box_sales_man').removeClass('search_box_show').hide();
+})
+
+
+// Example usage:
+
+$(document).on('keyup','._search_ledger_id',delay(function(e){
+    $(document).find('._search_ledger_id').removeClass('required_border');
+  var _gloabal_this = $(this);
+  var _text_val = $(this).val().trim();
+  var request = $.ajax({
+      url: "{{url('ledger-search')}}",
+      method: "GET",
+      data: { _text_val : _text_val },
+      dataType: "JSON"
+    });
+     
+    request.done(function( result ) {
+      var search_html =``;
+      var data = result.data; 
+      if(data.length > 0 ){
+            search_html +=`<div class="card"><table style="width: 300px;"> <tbody>`;
                         for (var i = 0; i < data.length; i++) {
                          search_html += `<tr class="search_row" >
                                         <td>${data[i].id}
