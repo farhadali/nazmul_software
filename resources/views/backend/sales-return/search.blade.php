@@ -19,17 +19,17 @@
                   @endphp
                  
                   <div class="form-group row">
-                    <label for="_date" class="col-sm-2 col-form-label">Date:</label>
-                    <div class="col-sm-10">
+                    <label for="_date" class="col-sm-3 col-form-label">Date:</label>
+                    <div class="col-sm-9">
                       <div class="row">
-                         <div class="col-sm-2">Use Date: 
+                         <div class="col-sm-4">Use Date: 
                           <select class="form-control" name="_user_date">
                             <option value="no" @if(isset($request->_user_date)) @if($request->_user_date=='no') selected @endif  @endif>No</option>
                             <option value="yes" @if(isset($request->_user_date)) @if($request->_user_date=='yes') selected @endif  @endif>Yes</option>
                           </select>
 
                          </div>
-                        <div class="col-sm-5">From: 
+                        <div class="col-sm-4">From: 
                           
                           <div class="input-group date" id="reservationdate_datex" data-target-input="nearest">
                                       <input type="text" name="_datex" class="form-control datetimepicker-input_datex" data-target="#reservationdate_datex" value="@if(isset($request->_datex)){{$request->_datex ?? ''}}@endif" />
@@ -38,7 +38,7 @@
                                       </div>
                                   </div>
                         </div>
-                        <div class="col-sm-5">To: 
+                        <div class="col-sm-4">To: 
                           <div class="input-group date" id="reservationdate_datey" data-target-input="nearest">
                                       <input type="text" name="_datey" class="form-control datetimepicker-input_datey" data-target="#reservationdate_datey" value="@if(isset($request->_datey)){{$request->_datey ?? ''}}@endif" />
                                       <div class="input-group-append" data-target="#reservationdate_datey" data-toggle="datetimepicker">
@@ -51,15 +51,15 @@
                   </div>
                   
                   <div class="form-group row">
-                    <label for="id" class="col-sm-2 col-form-label">ID:</label>
-                    <div class="col-sm-10">
+                    <label for="id" class="col-sm-3 col-form-label">ID:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="id" name="id" class="form-control" placeholder="Search By Id" 
                       value="@if(isset($request->id)){{$request->id ?? ''}}@endif">
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_branch_id " class="col-sm-2 col-form-label">Branch:</label>
-                    <div class="col-sm-10">
+                    <label for="_branch_id " class="col-sm-3 col-form-label">Branch:</label>
+                    <div class="col-sm-9">
                         <select class="form-control" name="_branch_id" required >
                                   
                                   @forelse($permited_branch as $branch )
@@ -70,32 +70,32 @@
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_ledger_id " class="col-sm-2 col-form-label">Ledger:</label>
-                    <div class="col-sm-10">
+                    <label for="_ledger_id " class="col-sm-3 col-form-label">Ledger:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="@if(isset($request->_search_main_ledger_id)) {{$request->_search_main_ledger_id ?? ''}}  @endif" placeholder="Supplier" >
                             <input type="hidden" id="_ledger_id" name="_ledger_id" class="form-control _ledger_id" value="@if(isset($request->_ledger_id)){{$request->_ledger_id ?? ''}}@endif" placeholder="Supplier" required>
                             <div class="search_box_main_ledger"> </div>
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_cost_center_id" class="col-sm-2 col-form-label">Cost Center:</label>
-                    <div class="col-sm-10">
+                    <label for="_cost_center_id" class="col-sm-3 col-form-label">Cost Center:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_search_main_cost_center_id" name="_search_main_cost_center_id" class="form-control _search_main_cost_center_id" value="@if(isset($request->_search_main_cost_center_id)) {{$request->_search_main_cost_center_id ?? ''}}  @endif" placeholder="Cost Center" >
                             <input type="hidden" id="_cost_center_id" name="_cost_center_id" class="form-control _cost_center_id" value="@if(isset($request->_cost_center_id)){{$request->_cost_center_id ?? ''}}@endif" placeholder="Supplier" required>
                             <div class="search_box_main_cost_center"> </div>
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_delivery_man_id" class="col-sm-2 col-form-label">Delivery Man:</label>
-                    <div class="col-sm-10">
+                    <label for="_delivery_man_id" class="col-sm-3 col-form-label">Delivery Man:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_search_main_delivery_man_id" name="_search_main_delivery_man_id" class="form-control _search_main_delivery_man_id" value="@if(isset($request->_search_main_delivery_man_id)) {{$request->_search_main_delivery_man_id ?? ''}}  @endif" placeholder="Delivery Man" >
                             <input type="hidden" id="_delivery_man_id" name="_delivery_man_id" class="form-control _delivery_man_id" value="@if(isset($request->_delivery_man_id)){{$request->_delivery_man_id ?? ''}}@endif" placeholder="Supplier" required>
                             <div class="search_box_delivery_man"> </div>
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_sales_man_id" class="col-sm-2 col-form-label">Delivery Man:</label>
-                    <div class="col-sm-10">
+                    <label for="_sales_man_id" class="col-sm-3 col-form-label">Delivery Man:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_search_main_sales_man_id" name="_search_main_sales_man_id" class="form-control _search_main_sales_man_id" value="@if(isset($request->_search_main_sales_man_id)) {{$request->_search_main_sales_man_id ?? ''}}  @endif" placeholder="Sales Man" >
                             <input type="hidden" id="_sales_man_id" name="_sales_man_id" class="form-control _sales_man_id" value="@if(isset($request->_sales_man_id)){{$request->_sales_man_id ?? ''}}@endif" placeholder="Sales Man" required>
                             <div class="search_box_sales_man"> </div>
@@ -104,65 +104,65 @@
                   
                   
                   <div class="form-group row">
-                    <label for="_order_ref_id" class="col-sm-2 col-form-label">Purchase Number:</label>
-                    <div class="col-sm-10">
+                    <label for="_order_ref_id" class="col-sm-3 col-form-label">Purchase Number:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control" placeholder="Search By Purchase Number" value="@if(isset($request->_order_ref_id)){{$request->_order_ref_id ?? ''}}@endif">
                     </div>
                   </div>
                   
                   <div class="form-group row">
-                    <label for="_store_salves_id" class="col-sm-2 col-form-label">Store Self:</label>
-                    <div class="col-sm-10">
+                    <label for="_store_salves_id" class="col-sm-3 col-form-label">Store Self:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_store_salves_id" name="_store_salves_id" class="form-control" placeholder="Search By Store Self" value="@if(isset($request->_store_salves_id)){{$request->_store_salves_id ?? ''}}@endif">
                     </div>
                   </div>
                   
                   <div class="form-group row">
-                    <label for="_sales_type" class="col-sm-2 col-form-label">Sales Type:</label>
-                    <div class="col-sm-10">
+                    <label for="_sales_type" class="col-sm-3 col-form-label">Sales Type:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_sales_type" name="_sales_type" class="form-control" placeholder="Search By Sales Type" value="@if(isset($request->_sales_type)){{$request->_sales_type ?? ''}}@endif">
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_referance" class="col-sm-2 col-form-label">Referance:</label>
-                    <div class="col-sm-10">
+                    <label for="_referance" class="col-sm-3 col-form-label">Referance:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_referance" name="_referance" class="form-control" placeholder="Search By Referance" value="@if(isset($request->_referance)){{$request->_referance ?? ''}}@endif">
                     </div>
                   </div>
                   
                   <div class="form-group row">
-                    <label for="_note" class="col-sm-2 col-form-label">Note:</label>
-                    <div class="col-sm-10">
+                    <label for="_note" class="col-sm-3 col-form-label">Note:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_note" name="_note" class="form-control" placeholder="Search By Note" value="@if(isset($request->_note)){{$request->_note ?? ''}}@endif">
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_sub_total" class="col-sm-2 col-form-label">Sub Total:</label>
-                    <div class="col-sm-10">
+                    <label for="_sub_total" class="col-sm-3 col-form-label">Sub Total:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_sub_total" name="_sub_total" class="form-control" placeholder="Search By Sub Total" value="@if(isset($request->_sub_total)){{$request->_sub_total ?? ''}}@endif">
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_total_discount" class="col-sm-2 col-form-label">Total Discount:</label>
-                    <div class="col-sm-10">
+                    <label for="_total_discount" class="col-sm-3 col-form-label">Total Discount:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_total_discount" name="_total_discount" class="form-control" placeholder="Search By Total Discount" value="@if(isset($request->_total_discount)){{$request->_total_discount ?? ''}}@endif">
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_total_vat" class="col-sm-2 col-form-label">Total VAT:</label>
-                    <div class="col-sm-10">
+                    <label for="_total_vat" class="col-sm-3 col-form-label">Total VAT:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_total_vat" name="_total_vat" class="form-control" placeholder="Search By Total VAT" value="@if(isset($request->_total_vat)){{$request->_total_vat ?? ''}}@endif">
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_total" class="col-sm-2 col-form-label">Total Amount:</label>
-                    <div class="col-sm-10">
+                    <label for="_total" class="col-sm-3 col-form-label">Total Amount:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_total" name="_total" class="form-control" placeholder="Search By Total Amount" value="@if(isset($request->_total)){{$request->_total ?? ''}}@endif">
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_user_name" class="col-sm-2 col-form-label">User:</label>
-                    <div class="col-sm-10">
+                    <label for="_user_name" class="col-sm-3 col-form-label">User:</label>
+                    <div class="col-sm-9">
                       <input type="text" id="_user_name" name="_user_name" class="form-control" placeholder="Search By User" value="@if(isset($request->_user_name)){{$request->_user_name ?? ''}}@endif">
                     </div>
                   </div>
@@ -170,8 +170,8 @@
 
                 
                     <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Order By:</label>
-                    <div class="col-sm-10">
+                    <label for="inputEmail3" class="col-sm-3 col-form-label">Order By:</label>
+                    <div class="col-sm-9">
                       @php
              $cloumns = [ 'id'=>'ID','_date'=>'Date','_user_name'=>'User name','_order_number'=>'Order Number','_order_ref_id'=>'Order Refarance','_referance'=>'Referance','_note'=>'Note', '_branch_id '=>'Branch','_ledger_id'=>'Ledger','_sub_total'=>'Sub Total','_total_discount'=>'Total Discount','_total_vat'=>'Total VAT','_total'=>'Total','_store_id'=>'Store','_cost_center_id'=>'Cost Center',
              '_store_salves_id'=>'Store Self','_delivery_man_id'=>'Delivery Man','_sales_man_id'=>'Sales Man','_sales_type'=>'Sales Type'];
@@ -187,8 +187,8 @@
                   </div>
 
                   <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Sort Order:</label>
-                    <div class="col-sm-10">
+                    <label for="inputEmail3" class="col-sm-3 col-form-label">Sort Order:</label>
+                    <div class="col-sm-9">
                        <select class=" form-control" name="_asc_desc">
                         @foreach(asc_desc() AS $key=>$val)
                             <option value="{{$val}}" @if(isset($request->_asc_desc)) @if($val==$request->_asc_desc) selected @endif @endif >{{$val}}</option>
@@ -197,8 +197,8 @@
                     </div>
                   </div> 
                    <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Limit:</label>
-                    <div class="col-sm-10">
+                    <label for="inputEmail3" class="col-sm-3 col-form-label">Limit:</label>
+                    <div class="col-sm-9">
                      <select name="limit" class="form-control" >
                               @forelse($row_numbers as $row)
                                <option  @if($limit == $row) selected @endif   value="{{ $row }}">{{$row}}</option>

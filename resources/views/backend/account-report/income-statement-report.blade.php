@@ -20,42 +20,37 @@
 
 <section class="invoice" id="printablediv">
     
-    <!-- info row -->
-    <div class="row invoice-info">
-      <div class="col-sm-4 invoice-col">
-        <h2 class="page-header text-left">
-           <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
-          <small class="float-right"></small>
-        </h2>
-        <address class="text-left ml-3">
-          <strong>{{$settings->_address ?? '' }}</strong><br>
-          {{$settings->_phone ?? '' }}<br>
-          {{$settings->_email ?? '' }}<br>
-        </address>
-        
-      </div>
-      <!-- /.col -->
-      <div class="col-sm-4 invoice-col">
-        <h3 class="text-center"><b>{{$page_name}}</b></h3>
-        <p class="text-center"><strong>Date:{{ $previous_filter["_datex"] ?? '' }} To {{ $previous_filter["_datey"] ?? '' }}</strong><br>
-         
-        @foreach($permited_branch as $p_branch)
+    
+    <div class="row">
+      <div class="col-12">
+        <table class="table" style="border:none;">
+          <tr>
+            <td style="border:none;width: 33%;text-align: left;">
+              
+            </td>
+            <td style="border:none;width: 33%;text-align: center;">
+              <table class="table" style="border:none;">
+                <tr class="_report_header_tr" > <td class="text-center" style="border:none;font-size: 24px;"><b>{{$settings->name ?? '' }}</b></td> </tr>
+                <tr class="_report_header_tr" > <td class="text-center" style="border:none;">{{$settings->_address ?? '' }}</td></tr>
+                <tr class="_report_header_tr" > <td class="text-center" style="border:none;">{{$settings->_phone ?? '' }},{{$settings->_email ?? '' }}</td></tr>
+                 <tr class="_report_header_tr" > <td class="text-center" style="border:none;"><b>{{$page_name}} </b></td> </tr>
+                 <tr class="_report_header_tr" > <td class="text-center" style="border:none;"><strong>Date:{{ $previous_filter["_datex"] ?? '' }} To {{ $previous_filter["_datey"] ?? '' }}</strong></td> </tr>
+                 <tr class="_report_header_tr" > <td class="text-center" style="border:none;"><b>@foreach($permited_branch as $p_branch)
                       @if(isset($previous_filter["_branch_id"]))
                         @if(in_array($p_branch->id,$previous_filter["_branch_id"])) 
                        <span style="background: #f4f6f9;margin-right: 2px;padding: 5px;"><b>{{ $p_branch["_name"] }}</b></span>    
                         @endif
                       @endif
-                      @endforeach
-             
-          </p>
+                      @endforeach </b></td> </tr>
+              </table>
+            </td>
+            <td style="border:none;width: 33%;text-align: right;">
+              <p class="text-right">Print: {{date('d-m-Y H:s:a')}}</p>
+            </td>
+          </tr>
+        </table>
+        </div>
       </div>
-      <!-- /.col -->
-      <div class="col-sm-4 invoice-col text-right">
-           <p class="text-right">Print: {{date('d-m-Y H:s:a')}}</p>
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- /.row -->
 
     <!-- Table row -->
     <div class="row">

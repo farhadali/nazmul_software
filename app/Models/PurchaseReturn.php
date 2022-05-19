@@ -26,4 +26,12 @@ class PurchaseReturn extends Model
     public function _ledger(){
     	return $this->hasOne(AccountLedger::class,'id','_ledger_id');
     }
+
+    public function _master_cost_center(){
+        return $this->hasOne(CostCenter::class,'id','_cost_center_id')->select('id','_name');
+    }
+
+    public function _master_store(){
+        return $this->hasOne(StoreHouse::class,'id','_store_id')->select('id','_name');
+    }
 }

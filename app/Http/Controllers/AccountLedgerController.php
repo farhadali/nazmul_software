@@ -323,6 +323,34 @@ public function groupBaseLedger(Request $request){
         return view('backend.account-ledger.group_base_ledger',compact('data'));
 }
 
+public function groupBaseLedgerPurchaseStatement(Request $request){
+        
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)->select('id','_name')->get();
+        return view('backend.account-ledger.group_base_ledger_pur_statement',compact('data'));
+}
+
+
+public function groupBaseLedgerPurchaseReturnStatement(Request $request){
+        
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)->select('id','_name')->get();
+        return view('backend.account-ledger.group_base_ledger_pur_return',compact('data'));
+}
+
+
+
+public function groupBaseLedgerSalesStatement(Request $request){
+        
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)->select('id','_name')->get();
+        return view('backend.account-ledger.group_base_ledger_sales',compact('data'));
+}
+
+
+public function groupBaseLedgerSalesReturnStatement(Request $request){
+        
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)->select('id','_name')->get();
+        return view('backend.account-ledger.group_base_ledger_sales_return',compact('data'));
+}
+
 
 
 }

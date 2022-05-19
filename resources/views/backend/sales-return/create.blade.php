@@ -25,7 +25,7 @@
                 </button>
                </li>
                @endcan
-                @can('sales-form-settings')
+                @can('sales-return-settings')
              <li class="breadcrumb-item ">
                  <button type="button" id="form_settings" class="btn btn-sm btn-default" data-toggle="modal" data-target="#exampleModal">
                    <i class="nav-icon fas fa-cog"></i> 
@@ -33,7 +33,7 @@
                </li>
               @endcan
               <li class="breadcrumb-item ">
-                 <a class="btn btn-sm btn-success" title="List" href="{{ route('sales.index') }}"> <i class="nav-icon fas fa-list"></i> </a>
+                 <a class="btn btn-sm btn-success" title="List" href="{{ route('sales-return.index') }}"> <i class="nav-icon fas fa-list"></i> </a>
                </li>
             </ol>
           </div><!-- /.col -->
@@ -73,12 +73,21 @@
 
                     
               </div>
+               @php
+    $_show_delivery_man = $form_settings->_show_delivery_man ?? 0;
+    $_show_sales_man = $form_settings->_show_sales_man ?? 0;
+    $_show_barcode = $form_settings->_show_barcode ?? 0;
+    $_show_cost_rate =  $form_settings->_show_cost_rate ?? 0;
+    $_show_vat =  $form_settings->_show_vat ?? 0;
+   $_inline_discount = $form_settings->_inline_discount ?? 0;
+    $_show_self = $form_settings->_show_self ?? 0;
+    @endphp
               <div class="card-body">
-               <form action="{{route('sales.store')}}" method="POST" class="purchase_form" >
+               <form action="{{route('sales-return.store')}}" method="POST" class="purchase_form" >
                 @csrf
                     <div class="row">
                        <div class="col-xs-12 col-sm-12 col-md-2">
-                        <input type="hidden" name="_form_name" value="sales">
+                        <input type="hidden" name="_form_name" value="sales_return">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -88,12 +97,13 @@
                                       </div>
                                   </div>
                               </div>
+                              <input type="hidden" name="_sales_return_id" class="_sales_return_id" value="">
                         </div>
 
                         <div class="col-xs-12 col-sm-12 col-md-2">
                             <div class="form-group ">
                                 <label>Branch:<span class="_required">*</span></label>
-                               <select class="form-control" name="_branch_id" required >
+                               <select class="form-control _master_branch_id" name="_branch_id" required >
                                   
                                   @forelse($permited_branch as $branch )
                                   <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->id ?? '' }} - {{ $branch->_name ?? '' }}</option>
@@ -103,33 +113,39 @@
                             </div>
                         </div>
                         
+                        
                         <div class="col-xs-12 col-sm-12 col-md-2 ">
                             <div class="form-group">
-                              <label class="mr-2" for="_order_ref_id">Sales Order:</label>
-                              <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id')}}" placeholder="Sales Order" >
+                              <label class="mr-2" for="_order_ref_id">Sales Invoice:<span class="_required">*</span></label>
+                              <input type="text" id="_search_order_ref_id" name="_search_order_ref_id" class="form-control _search_order_ref_id" value="{{old('_order_ref_id')}}" placeholder="Sales Invoice" >
+                              <input type="hidden" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id')}}" placeholder="Sales Order" >
+                              <div class="search_box_purchase_order"></div>
                                 
                             </div>
                         </div>
+                        @if($_show_delivery_man ==1)
                         <div class="col-xs-12 col-sm-12 col-md-2 ">
                             <div class="form-group">
                               <label class="mr-2" for="_delivery_man">Delivery Man:</label>
                               <input type="text" id="_search_main_delivery_man" name="_search_main_delivery_man" class="form-control _search_main_delivery_man" 
-                              value="@if ($delivery_man_name_leder = Session::get('delivery_man_name_leder')) {{ $delivery_man_name_leder}} @endif" placeholder="Delivery Man" >
+                               placeholder="Delivery Man" readonly >
 
-                            <input type="hidden" id="_delivery_man" name="_delivery_man_id" class="form-control _delivery_man" value="@if ($_delivery_man_id = Session::get('_delivery_man_id')) {{ $_delivery_man_id}} @endif" placeholder="Delivery Man" >
+                            <input type="hidden" id="_delivery_man" name="_delivery_man_id" class="form-control _delivery_man"  placeholder="Delivery Man" >
                             <div class="search_box_delivery_man"> </div>
                             </div>
                         </div>
-
+                        @endif
+                         @if($_show_sales_man ==1)
                         <div class="col-xs-12 col-sm-12 col-md-2 ">
                             <div class="form-group">
                               <label class="mr-2" for="_sales_man">Sales Man:</label>
-                              <input type="text" id="_search_main_sales_man" name="_search_main_sales_man" class="form-control _search_main_sales_man" value="@if ($sales_man_name_leder = Session::get('sales_man_name_leder')) {{ $sales_man_name_leder}} @endif" placeholder="Sales Man" >
+                              <input type="text" id="_search_main_sales_man" name="_search_main_sales_man" class="form-control _search_main_sales_man"  placeholder="Sales Man" readonly>
 
-                            <input type="hidden" id="_sales_man" name="_sales_man_id" class="form-control _sales_man" value="@if ($_sales_man_id = Session::get('_sales_man_id')) {{ $_sales_man_id}} @endif" placeholder="Sales Man" >
+                            <input type="hidden" id="_sales_man" name="_sales_man_id" class="form-control _sales_man"  placeholder="Sales Man" >
                             <div class="search_box_sales_man"> </div>
                             </div>
                         </div>
+                        @endif
                         <div class="col-xs-12 col-sm-12 col-md-2 ">
                             <div class="form-group">
                               <label class="mr-2" for="_order_number">Order Number:</label>
@@ -137,10 +153,12 @@
                                 
                             </div>
                         </div>
+              </div>
+            <div class="row">
                          <div class="col-xs-12 col-sm-12 col-md-3 ">
                             <div class="form-group">
                               <label class="mr-2" for="_main_ledger_id">Customer:<span class="_required">*</span></label>
-                            <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="{{old('_search_main_ledger_id')}}" placeholder="Customer" required>
+                            <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="{{old('_search_main_ledger_id')}}" placeholder="Customer" required readonly>
 
                             <input type="hidden" id="_main_ledger_id" name="_main_ledger_id" class="form-control _main_ledger_id" value="{{old('_main_ledger_id')}}" placeholder="Customer" required>
                             <div class="search_box_main_ledger"> </div>
@@ -185,18 +203,18 @@
                                             <th class="text-left" >&nbsp;</th>
                                             <th class="text-left" >Item</th>
                                           
-                                            <th class="text-left @if($form_settings->_show_barcode  ==0) display_none @endif" >Barcode</th>
+                                            <th class="text-left @if($_show_barcode  ==0) display_none @endif" >Barcode</th>
                                             
                                             <th class="text-left" >Qty</th>
-                                            <th class="text-left @if($form_settings->_show_cost_rate  ==0) display_none @endif" >Cost</th>
+                                            <th class="text-left @if($_show_cost_rate  ==0) display_none @endif" >Cost</th>
                                             <th class="text-left" >Sales Rate</th>
                                             
-                                            <th class="text-left  @if($form_settings->_show_vat  ==0) display_none @endif" >VAT%</th>
-                                            <th class="text-left  @if($form_settings->_show_vat  ==0) display_none @endif" >VAT Amount</th>
+                                            <th class="text-left  @if($_show_vat  ==0) display_none @endif" >VAT%</th>
+                                            <th class="text-left  @if($_show_vat  ==0) display_none @endif" >VAT Amount</th>
                                            
                                              
-                                            <th class="text-left @if($form_settings->_inline_discount  ==0) display_none @endif" >Dis%</th>
-                                            <th class="text-left @if($form_settings->_inline_discount  ==0) display_none @endif" >Dis</th>
+                                            <th class="text-left @if($_inline_discount  ==0) display_none @endif" >Dis%</th>
+                                            <th class="text-left @if($_inline_discount  ==0) display_none @endif" >Dis</th>
                                             
 
                                             <th class="text-left" >Value</th>
@@ -210,7 +228,7 @@
                                              <th class="text-left @if(sizeof($store_houses)  ==1) display_none @endif" >Store</th>
                                            
                                             
-                                             <th class="text-left  @if($form_settings->_show_self  ==0) display_none @endif " >Shelf</th>
+                                             <th class="text-left  @if($_show_self  ==0) display_none @endif " >Shelf</th>
                                            
                                            
                                           </thead>
@@ -220,7 +238,7 @@
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item">
+                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item" readonly>
 
                                                 <input type="hidden" name="_item_id[]" class="form-control _item_id " >
                                                 <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id " >
@@ -231,32 +249,32 @@
                                                 </div>
                                               </td>
                                              
-                                              <td class=" @if($form_settings->_show_barcode  ==0) display_none @endif ">
+                                              <td class=" @if($_show_barcode  ==0) display_none @endif ">
                                                 <input type="text" name="_barcode[]" class="form-control _barcode " >
                                               </td>
                                               
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" >
                                               </td>
-                                              <td class=" @if($form_settings->_show_cost_rate ==0) display_none @endif " >
+                                              <td class=" @if($_show_cost_rate ==0) display_none @endif " >
                                                 <input type="number" name="_rate[]" class="form-control _rate  " readonly>
                                               </td>
                                               <td>
                                                 <input type="number" name="_sales_rate[]" class="form-control _sales_rate _common_keyup " >
                                               </td>
                                               
-                                              <td class=" @if($form_settings->_show_vat == 0) display_none @endif ">
+                                              <td class=" @if($_show_vat == 0) display_none @endif ">
                                                 <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" placeholder="VAT%" >
                                               </td>
-                                              <td class="@if($form_settings->_show_vat ==0) display_none @endif " >
+                                              <td class="@if($_show_vat ==0) display_none @endif " >
                                                 <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" placeholder="VAT Amount"  >
                                               </td>
                                               
                                               
-                                              <td class="@if($form_settings->_inline_discount ==0) display_none @endif " >
+                                              <td class="@if($_inline_discount ==0) display_none @endif " >
                                                 <input type="text" name="_discount[]" class="form-control  _discount _common_keyup" >
                                               </td>
-                                              <td class="@if($form_settings->_inline_discount ==0) display_none @endif" >
+                                              <td class="@if($_inline_discount ==0) display_none @endif" >
                                                 <input type="text" name="_discount_amount[]" class="form-control  _discount_amount" >
                                               </td>
                                               
@@ -295,7 +313,7 @@
                                               </td>
                                              
                                              
-                                              <td class=" @if($form_settings->_show_self==0) display_none @endif ">
+                                              <td class=" @if($_show_self==0) display_none @endif ">
                                                 <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
                                               </td>
                                               
@@ -305,25 +323,25 @@
                                           <tfoot>
                                             <tr>
                                               <td>
-                                                <a href="#none"  class="btn btn-default btn-sm" onclick="purchase_row_add(event)"><i class="fa fa-plus"></i></a>
+                                                
                                               </td>
                                               <td  class="text-right"><b>Total</b></td>
                                               
-                                                <td  class="text-right @if($form_settings->_show_barcode==0) display_none @endif"></td>
+                                                <td  class="text-right @if($_show_barcode==0) display_none @endif"></td>
                                              
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_qty_amount" class="form-control _total_qty_amount" value="0" readonly required>
                                               </td>
-                                              <td class="@if($form_settings->_show_cost_rate==0) display_none @endif"></td>
+                                              <td class="@if($_show_cost_rate==0) display_none @endif"></td>
                                               <td></td>
                                               
-                                              <td class="@if($form_settings->_show_vat==0) display_none @endif"></td>
-                                              <td class="@if($form_settings->_show_vat==0) display_none @endif">
+                                              <td class="@if($_show_vat==0) display_none @endif"></td>
+                                              <td class="@if($_show_vat==0) display_none @endif">
                                                 <input type="number" step="any" min="0" name="_total_vat_amount" class="form-control _total_vat_amount" value="0" readonly required>
                                               </td>
                                               
-                                              <td class="@if($form_settings->_inline_discount==0) display_none @endif"></td>
-                                              <td class="@if($form_settings->_inline_discount==0) display_none @endif">
+                                              <td class="@if($_inline_discount==0) display_none @endif"></td>
+                                              <td class="@if($_inline_discount==0) display_none @endif">
                                                 <input type="number" step="any" min="0" name="_total_discount_amount" class="form-control _total_discount_amount" value="0" readonly required>
                                               </td>
                                              
@@ -338,7 +356,7 @@
                                              
                                                <td class="@if(sizeof($store_houses) == 1) display_none @endif"></td>
                                               
-                                              <td class="@if($form_settings->_show_self==0) display_none @endif"></td>
+                                              <td class="@if($_show_self==0) display_none @endif"></td>
                                              
                                             </tr>
                                           </tfoot>
@@ -487,7 +505,7 @@
                                     <input type="hidden" name="_after_print" value="0" class="_after_print" >
                                     @endif
                                     @if ($_master_id = Session::get('_master_id'))
-                                     <input type="hidden" name="_master_id" value="{{url('sales/print')}}/{{$_master_id}}" class="_master_id">
+                                     <input type="hidden" name="_master_id" value="{{url('sales-return/print')}}/{{$_master_id}}" class="_master_id">
                                     
                                     @endif
                                    
@@ -515,7 +533,7 @@
                               </td>
                             </tr>
                            
-                            <tr class=" @if($form_settings->_show_vat==0) display_none @endif">
+                            <tr class=" @if($_show_vat==0) display_none @endif">
                               <td style="border:0px;width: 20%;"><label for="_total_vat">Total VAT</label></td>
                               <td style="border:0px;width: 80%;">
                                 <input type="text" name="_total_vat" class="form-control width_200_px" id="_total_vat" readonly value="0">
@@ -552,7 +570,7 @@
 </div>
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <form action="{{ url('sales-settings')}}" method="POST">
+    <form action="{{ url('sales-return-settings')}}" method="POST">
         @csrf
     <div class="modal-content">
       <div class="modal-header">
@@ -608,7 +626,7 @@
 
   function setting_data_fetch(){
       var request = $.ajax({
-            url: "{{url('sales-setting-modal')}}",
+            url: "{{url('sales-return-setting-modal')}}",
             method: "GET",
             dataType: "html"
           });
@@ -616,6 +634,221 @@
               $(document).find(".display_form_setting_info").html(result);
          })
   }
+
+  $(document).on('keyup','._search_order_ref_id',delay(function(e){
+    $(document).find('._search_order_ref_id').removeClass('required_border');
+    var _gloabal_this = $(this);
+    var _text_val = $(this).val().trim();
+    var _branch_id = $(document).find('._master_branch_id').val();
+
+  var request = $.ajax({
+      url: "{{url('sales-order-search')}}",
+      method: "GET",
+      data: { _text_val,_branch_id },
+      dataType: "JSON"
+    });
+    request.done(function( result ) {
+
+      var search_html =``;
+      var data = result.data; 
+       console.log(data)
+      if(data.length > 0 ){
+            search_html +=`<div class="card"><table table-bordered style="width: 100%;">
+                            <thead>
+                              <th style="border:1px solid #ccc;text-align:center;">ID</th>
+                              <th style="border:1px solid #ccc;text-align:center;">Supplier</th>
+                              <th style="border:1px solid #ccc;text-align:center;">Date</th>
+                            </thead>
+                            <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                          var _delivery_man_id = (data[i]._delivery_man ) ? data[i]._delivery_man.id : '' ;
+                          var _delivery_man_name = (data[i]._delivery_man ) ? data[i]._delivery_man._name : '' ;
+                          var _sales_man_id = (data[i]._sales_man ) ? data[i]._sales_man.id : '' ;
+                          var _sales_man_name = (data[i]._sales_man ) ? data[i]._sales_man._name : '' ;
+
+                         search_html += `<tr class="search_row_purchase_order" >
+                                        <td style="border:1px solid #ccc;">${data[i].id}
+                                        <input type="hidden" name="_id_main_ledger" class="_id_main_ledger" value="${data[i]._ledger_id}">
+                                        <input type="hidden" name="_purchase_main_id" class="_purchase_main_id" value="${data[i].id}">
+                                        <input type="hidden" name="_purchase_main_date" class="_purchase_main_date" value="${after_request_date__today(data[i]._date)}">
+                                        </td><td style="border:1px solid #ccc;">${data[i]._ledger._name}
+                                        <input type="hidden" name="_name_main_ledger" class="_name_main_ledger" value="${data[i]._ledger._name}">
+                                        <input type="hidden" name="_address_main_ledger" class="_address_main_ledger" value="${data[i]._ledger._address}">
+                                        <input type="hidden" name="_phone_main_ledger" class="_phone_main_ledger" value="${data[i]._ledger._phone}">
+                                        <input type="hidden" name="_delivery_man_main_id" class="_delivery_man_main_id" value="${_delivery_man_id}">
+                                        <input type="hidden" name="_delivery_man_main_name" class="_delivery_man_main_name" value="${_delivery_man_name}">
+                                        <input type="hidden" name="_sales_man_main_id" class="_sales_man_main_id" value="${_sales_man_id}" >
+                                        <input type="hidden" name="_sales_man_main_name" class="_sales_man_main_name" value="${_sales_man_name}" }">
+                                        <input type="hidden" name="_date_main_ledger" class="_date_main_ledger" value="${after_request_date__today(data[i]._date)}">
+                                   </td>
+                                   <td style="border:1px solid #ccc;">${after_request_date__today(data[i]._date)}
+                                   </td></tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
+      }else{
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+      }     
+      _gloabal_this.parent('div').find('.search_box_purchase_order').html(search_html);
+      _gloabal_this.parent('div').find('.search_box_purchase_order').addClass('search_box_show').show();
+      
+    });
+     
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+
+  
+
+}, 500));
+
+$(document).on("click",'.search_row_purchase_order',function(){
+    var _id = $(this).children('td').find('._id_main_ledger').val();
+    var _name = $(this).find('._name_main_ledger').val();
+    var _purchase_main_id = $(this).find('._purchase_main_id').val();
+    var _purchase_main_date = $(this).find('._purchase_main_date').val();
+    var _main_branch_id = $(this).find('._main_branch_id').val();
+    var _date_main_ledger = $(this).find('._date_main_ledger').val();
+    var _address_main_ledger = $(this).find('._address_main_ledger').val();
+
+
+    var _phone_main_ledger = $(this).find('._phone_main_ledger').val();
+    var _search_main_delivery_man = $(this).find('._delivery_man_main_name').val();
+    var _delivery_man_id = $(this).find('._delivery_man_main_id').val();
+    var _search_main_sales_man = $(this).find('._sales_man_main_name').val();
+    var _sales_man = $(this).find('._sales_man_main_id').val();
+   
+    if(_address_main_ledger =='null' ){ _address_main_ledger =""; } 
+    if(_phone_main_ledger =='null' ){ _phone_main_ledger =""; } 
+
+    $("._main_ledger_id").val(_id);
+    $("._search_main_ledger_id").val(_name);
+    $("._order_ref_id").val(_purchase_main_id);
+    $("._phone").val(_phone_main_ledger);
+    $("._address").val(_address_main_ledger);
+
+
+
+
+    $("._search_main_delivery_man").val(_search_main_delivery_man);
+    $("._delivery_man_id").val(_delivery_man_id);
+    $("._search_main_sales_man").val(_search_main_sales_man);
+    $("._sales_man").val(_sales_man);
+    $("._search_order_ref_id").val(_purchase_main_id+","+_date_main_ledger);
+
+    $.ajaxSetup({ headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+
+    var request = $.ajax({
+      url: "{{url('sales-order-details')}}",
+      method: "POST",
+      data: { _purchase_main_id,_main_branch_id },
+      dataType: "JSON"
+    });
+    request.done(function( result ) {
+      console.log(result)
+      var data = result;
+      var _purchase_row_single = ``;
+      $(document).find("#area__purchase_details").empty();
+     
+if(data.length > 0 ){
+  for (var i = 0; i < data.length; i++) {
+    var _item_name = (data[i]._items._name) ? data[i]._items._name : '' ;
+    var _store_salves_id = (data[i]._store_salves_id) ? data[i]._store_salves_id : '' ;
+    var _barcode  = (data[i]._barcode ) ? data[i]._barcode  : '' ;
+    var _qty   = (data[i]._qty  ) ? data[i]._qty   : 0 ;
+    var _rate    = (data[i]._rate) ? data[i]._rate    : 0 ;
+    var _sales_rate = (data[i]._sales_rate ) ? data[i]._sales_rate : 0 ;
+    var _vat = (  data[i]._vat ) ? data[i]._vat : 0 ;
+
+    var _vat_amount = ( ((data[i]._qty*data[i]._sales_rate)*data[i]._vat)/100 ) ? ( ((data[i]._qty*data[i]._sales_rate)*data[i]._vat)/100 ) : 0 ;
+    var _discount = (data[i]._discount ) ? data[i]._discount : 0 ;
+    var _discount_amount = ( ((data[i]._qty*data[i]._sales_rate)*data[i]._discount)/100 ) ? ( ((data[i]._qty*data[i]._sales_rate)*data[i]._discount)/100 ) : 0 ;
+    var _value = ( (data[i]._qty*data[i]._sales_rate) ) ? (data[i]._qty*data[i]._sales_rate) : 0 ;
+
+       _purchase_row_single +=`<tr class="_purchase_row">
+                                              <td>
+                                                <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
+                                              </td>
+                                              <td>
+                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item" value="${_item_name}" readonly>
+                                                <input type="hidden" name="_item_id[]" class="form-control _item_id " value="${data[i]._item_id}" >
+                                                <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id " value="${data[i]._p_p_l_id}"  >
+                                                <input type="hidden" name="_sales_ref_id[]" class="form-control _sales_ref_id" value="${data[i]._no}" >
+                                                <input type="hidden" name="_sales_detail_ref_id[]" class="form-control _sales_detail_ref_id" value="${data[i].id}" >
+                                                
+                                                
+                                              </td>
+                                             
+                                              <td class="@if($_show_barcode==0) display_none @endif">
+                                                <input type="text" name="_barcode[]" class="form-control _barcode " value="${_barcode}" >
+                                              </td>
+                                              <td>
+                                                <input type="number" name="_qty[]" class="form-control _qty _common_keyup" value="${_qty}"  >
+                                              </td>
+                                              <td class="@if($_show_cost_rate==0) display_none @endif">
+                                                <input type="number" name="_rate[]" class="form-control _rate " readonly value="${_rate}" >
+                                              </td>
+                                              <td>
+                                                <input type="number" name="_sales_rate[]" class="form-control _sales_rate _common_keyup" value="${_sales_rate}">
+                                              </td>
+                                               
+                                                <td class="@if($_show_vat==0) display_none @endif">
+                                                <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" value="${_vat}" >
+                                              </td>
+                                              <td class="@if($_show_vat==0) display_none @endif">
+                                                <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" value="${_vat_amount}" >
+                                              </td>
+                                                <td class="@if($_inline_discount==0) display_none @endif">
+                                                <input type="text" name="_discount[]" class="form-control  _discount _common_keyup" value="${_discount}" >
+                                              </td>
+                                              <td class="@if($_inline_discount==0) display_none @endif">
+                                                <input type="text" name="_discount_amount[]" class="form-control  _discount_amount" value="${_discount_amount}" >
+                                              </td>
+                                             
+                                              <td>
+                                                <input type="number" name="_value[]" class="form-control _value " readonly value="${_value}" >
+                                              </td>
+                                              
+                                              <td class="@if(sizeof($permited_branch)==1) display_none @endif">
+                                              <input type="hidden" class="_main_branch_id_detail" name="_main_branch_id_detail[]" value="${data[i]._branch_id}" />
+                                              <input type="text" readonly class="_main_branch_name_detail" name="_main_branch_name_detail[]" value="${data[i]._detail_branch._name}" />
+                                                
+                                              </td>
+                                              
+                                               <td class="@if(sizeof($permited_costcenters)==1) display_none @endif">
+
+                                                <input type="hidden" class="_main_cost_center" name="_main_cost_center[]" value="${data[i]._cost_center_id}" />
+                                              <input type="text" readonly class="_main_cost_center_name_detail" name="_main_cost_center_name_detail[]" value="${data[i]._detail_cost_center._name}" />
+                                                 
+                                              </td>
+                                              
+                                             
+                                              <td class="@if(sizeof($store_houses)==1) display_none @endif">
+                                              <input type="hidden" class="_main_store_id" name="_main_store_id[]" value="${data[i]._store_id}" />
+                                              <input type="text" readonly class="_main_store_name_detail" name="_main_store_name_detail[]" value="${data[i]._store._name}" />
+
+                                                
+                                                
+                                              </td>
+                                              
+                                              <td class="@if($_show_self==0) display_none @endif">
+                                                <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " value="${_store_salves_id}" >
+                                              </td>
+                                              
+                                              
+                                            </tr>`;
+                                          }
+                                        }else{
+                                          _purchase_row_single += `Returnable Item Not Found !`;
+                                        }
+
+            $(document).find("#area__purchase_details").html(_purchase_row_single);
+              _purchase_total_calculation();
+    })
+
+
+
+  })
 
 
   
@@ -746,12 +979,17 @@ $(document).on('click','.search_row_item',function(){
 $(document).on('click',function(){
     var searach_show= $('.search_box_item').hasClass('search_box_show');
     var search_box_main_ledger= $('.search_box_main_ledger').hasClass('search_box_show');
+    var search_row_purchase_order= $('.search_box_purchase_order').hasClass('search_box_show');
     if(searach_show ==true){
       $('.search_box_item').removeClass('search_box_show').hide();
     }
 
     if(search_box_main_ledger ==true){
       $('.search_box_main_ledger').removeClass('search_box_show').hide();
+    }
+
+    if(search_row_purchase_order ==true){
+      $('.search_box_purchase_order').removeClass('search_box_show').hide();
     }
 })
 
@@ -924,29 +1162,29 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                 </div>
                                               </td>
                                              
-                                              <td class="@if($form_settings->_show_barcode==0) display_none @endif">
+                                              <td class="@if($_show_barcode==0) display_none @endif">
                                                 <input type="text" name="_barcode[]" class="form-control _barcode " >
                                               </td>
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" >
                                               </td>
-                                              <td class="@if($form_settings->_show_cost_rate==0) display_none @endif">
+                                              <td class="@if($_show_cost_rate==0) display_none @endif">
                                                 <input type="number" name="_rate[]" class="form-control _rate " readonly >
                                               </td>
                                               <td>
                                                 <input type="number" name="_sales_rate[]" class="form-control _sales_rate _common_keyup" >
                                               </td>
                                                
-                                                <td class="@if($form_settings->_show_vat==0) display_none @endif">
+                                                <td class="@if($_show_vat==0) display_none @endif">
                                                 <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" >
                                               </td>
-                                              <td class="@if($form_settings->_show_vat==0) display_none @endif">
+                                              <td class="@if($_show_vat==0) display_none @endif">
                                                 <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" >
                                               </td>
-                                                <td class="@if($form_settings->_inline_discount==0) display_none @endif">
+                                                <td class="@if($_inline_discount==0) display_none @endif">
                                                 <input type="text" name="_discount[]" class="form-control  _discount _common_keyup" >
                                               </td>
-                                              <td class="@if($form_settings->_inline_discount==0) display_none @endif">
+                                              <td class="@if($_inline_discount==0) display_none @endif">
                                                 <input type="text" name="_discount_amount[]" class="form-control  _discount_amount" >
                                               </td>
                                              
@@ -984,7 +1222,7 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                 
                                               </td>
                                               
-                                              <td class="@if($form_settings->_show_self==0) display_none @endif">
+                                              <td class="@if($_show_self==0) display_none @endif">
                                                 <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
                                               </td>
                                               
@@ -1016,15 +1254,19 @@ function purchase_row_add(event){
     var _p_p_l_ids_qtys = new Array();
      var _only_p_ids = [];
      var empty_qty = [];
-      var _id_and_qtys = [];
+    var _id_and_qtys = [];
+    var _sales_detail_ref_ids = [];
+    var _sales_return_id = $("._sales_return_id").val();
 
     $(document).find('._p_p_l_id').each(function(index){
      var _p_id =  $(this).val();
      var _p_qty = $(document).find('._qty').eq(index).val();
+     var _s_d_id = $(document).find('._sales_detail_ref_id').eq(index).val();
      if(isNaN(_p_qty)){
         empty_qty.push(_p_id);
      }
      _only_p_ids.push(_p_id);
+     _sales_detail_ref_ids.push({_s_d_id:_s_d_id,_p_qty:_p_qty});
       _p_p_l_ids_qtys.push( {_p_id: _p_id, _p_qty: _p_qty});
      
 
@@ -1033,10 +1275,10 @@ function purchase_row_add(event){
      var _stop_sales =0;
     if(_p_p_l_ids_qtys.length > 0){
         var request = $.ajax({
-                url: "{{url('check-available-qty')}}",
+                url: "{{url('check-sales-return-available-qty')}}",
                 method: "GET",
                 async:false,
-                data: { _p_p_l_ids_qtys,unique_p_ids },
+                data: { _p_p_l_ids_qtys,unique_p_ids,_sales_detail_ref_ids:_sales_detail_ref_ids,_sales_return_id },
                 dataType: "JSON"
               });
                
@@ -1051,8 +1293,8 @@ function purchase_row_add(event){
               })
     }
     if(_stop_sales ==1){
-        alert(" You Can not Sales More then Available Qty  ");
-       var _message =" You Can not Sales More then Available Qty";
+        alert(" You Can not Return More then Sales Qty  ");
+       var _message =" You Can not Return More then Sales Qty";
         $(document).find("._over_qty").text(_message);
         $(".remove_area").hide();
       return false;

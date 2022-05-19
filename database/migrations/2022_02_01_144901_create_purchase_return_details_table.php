@@ -32,7 +32,7 @@ class CreatePurchaseReturnDetailsTable extends Migration
             $table->integer('_cost_center_id')->nullable();
             $table->integer('_store_salves_id')->nullable();
             $table->unsignedBigInteger('_no');
-            $table->foreign('_no')->references('id')->on('purchases');
+            $table->foreign('_no')->references('id')->on('purchase_returns');
             $table->unsignedBigInteger('_branch_id');
             $table->foreign('_branch_id')->references('id')->on('branches');
             $table->tinyInteger('_status')->default(0);

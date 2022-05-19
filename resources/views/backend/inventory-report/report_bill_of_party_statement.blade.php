@@ -11,7 +11,7 @@
 }
   </style>
   <div style="padding-left: 20px;display: flex;">
-    <a class="nav-link"  href="{{url('group-ledger')}}" role="button">
+    <a class="nav-link"  href="{{url('bill-party-statement')}}" role="button">
           <i class="fas fa-search"></i>
         </a>
          <a style="cursor: pointer;" class="nav-link"  title="" data-caption="Print"  onclick="javascript:printDiv('printablediv')"
@@ -113,8 +113,7 @@
                     <td style="text-align: left;">
                       
                       {{ _view_date_formate($detail->_date ?? $_datex) }} </td>
-                     
-                    <td class="text-left">
+                    <td class="text-center">
                     @if($detail->_table_name=="voucher_masters")
                  <a style="text-decoration: none;" target="__blank" href="{{ route('voucher.show',$detail->_id) }}">
                   A-{!! $detail->_id ?? '' !!}</a>
@@ -164,7 +163,7 @@
                   @endforelse
 
                   <tr>
-                    <td colspan="4" style="text-align: left;background: #f5f9f9;"><b>Sub Total of {{ $l_key ?? '' }}: </b> </td>
+                    <td colspan="4" style="text-align: left;background: #f5f9f9;"> <b>Sub Total of {{ $l_key ?? '' }}: </b> </td>
                     <td style="text-align: right;background: #f5f9f9;"><b>{{ _report_amount($running_sub_dr_total ?? 0) }}</b> </td>
                     <td style="text-align: right;background: #f5f9f9;"><b>{{ _report_amount($running_sub_cr_total ?? 0) }}</b> </td>
                     <td style="text-align: right;background: #f5f9f9;"><b></b> </td>
@@ -175,8 +174,6 @@
                 @endforelse
 
 
-
-              
             <tr>
                   <td colspan="7"></td>
             </tr>

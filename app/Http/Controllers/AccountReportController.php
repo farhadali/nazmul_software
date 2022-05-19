@@ -473,7 +473,7 @@ class AccountReportController extends Controller
             INNER JOIN account_heads as t6 ON t6.id=t1._account_head
             INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE  t1._status=1 AND t1._date < '".$_datex."' AND t3._show=1 AND t5.id IN (1,2,5)
+               WHERE  t1._status=1 AND t1._date <= '".$_datex."' AND t3._show=1 AND t5.id IN (1,2,5)
                AND  t1._branch_id IN (".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
                  GROUP BY t1._account_ledger
 
@@ -485,7 +485,7 @@ class AccountReportController extends Controller
             INNER JOIN account_heads as t6 ON t6.id=t1._account_head
             INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE  t1._status=1 AND t1._date < '".$_datex."' AND t3._show=1 AND t5.id IN (3,4)
+               WHERE  t1._status=1 AND t1._date <= '".$_datex."' AND t3._show=1 AND t5.id IN (3,4)
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.") 
 
 
@@ -519,6 +519,7 @@ class AccountReportController extends Controller
     }
 
     public function workSheetReport(Request $request){
+
       $this->validate($request, [
             '_datex' => 'required'
         ]);
@@ -560,7 +561,7 @@ class AccountReportController extends Controller
             INNER JOIN account_heads as t6 ON t6.id=t1._account_head
             INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
-               WHERE  t1._status=1 AND t1._date < '".$_datex."'  AND t3._show=1 AND t5.id IN (3,4)
+               WHERE  t1._status=1 AND t1._date <= '".$_datex."'  AND t3._show=1 AND t5.id IN (3,4)
                AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.") 
 
 

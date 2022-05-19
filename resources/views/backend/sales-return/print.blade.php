@@ -41,8 +41,8 @@
               <table class="table" style="border:none;">
                   <tr> <td style="border:none;" > <b>INVOICE NO: {{ $data->id ?? '' }}</b></td></tr>
                 <tr> <td style="border:none;" > <b> Customer:</b>  {{$data->_ledger->_name ?? '' }}</td></tr>
-                <tr> <td style="border:none;" > <b> Phone:</b>  {{$data->_ledger->_phone ?? '' }} </td></tr>
-                <tr> <td style="border:none;" > <b> Address:</b> {{$data->_ledger->_address ?? '' }} </td></tr>
+                <tr> <td style="border:none;" > <b> Phone:</b>  {{$data->_phone ?? '' }} </td></tr>
+                <tr> <td style="border:none;" > <b> Address:</b> {{$data->_address ?? '' }} </td></tr>
               </table>
             </td>
             <td style="border:none;width: 33%;text-align: center;">

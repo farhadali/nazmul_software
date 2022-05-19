@@ -201,7 +201,7 @@
                                   @endphp
                                   @forelse($data->_master_details AS $item_key=>$_item )
                                   <tr>
-                                     <th class="" >{{$_item->id}}</th>
+                                     <td class="" >{{$_item->id}}</td>
                                      @php
                                       $_value_total +=$_item->_value ?? 0;
                                       $_vat_total += $_item->_vat_amount ?? 0;

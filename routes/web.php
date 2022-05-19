@@ -23,6 +23,8 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\SalesReturnController;
+use App\Http\Controllers\InventoryReportController;
 
 
 
@@ -86,6 +88,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('ajax-item-save', 'App\Http\Controllers\InventoryController@ajaxItemSave');
     Route::get('item-information-reset', 'App\Http\Controllers\InventoryController@reset');
     Route::get('item-purchase-search', 'App\Http\Controllers\InventoryController@itemPurchaseSearch');
+    Route::get('lot-item-information', 'App\Http\Controllers\InventoryController@lotItemInformation');
+    Route::get('lot-item-information-reset', 'App\Http\Controllers\InventoryController@lotReset');
     
     Route::resource('store-house', StoreHouseController::class);
     Route::post('store-house/update', 'App\Http\Controllers\StoreHouseController@update');
@@ -113,6 +117,18 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('check-available-qty-update', 'App\Http\Controllers\SalesController@checkAvailableQtyUpdate');
     
     
+
+    Route::resource('sales-return', SalesReturnController::class);
+    Route::post('sales-return/update', 'App\Http\Controllers\SalesReturnController@update');
+    Route::get('sales-return-reset', 'App\Http\Controllers\SalesReturnController@reset');
+    Route::get('sales-return/print/{id}', 'App\Http\Controllers\SalesReturnController@Print');
+    Route::post('sales-return-settings', 'App\Http\Controllers\SalesReturnController@Settings');
+    Route::get('sales-return-setting-modal', 'App\Http\Controllers\SalesReturnController@formSettingAjax');
+    Route::get('sales-order-search', 'App\Http\Controllers\SalesReturnController@orderSearch');
+    Route::get('check-sales-return-available-qty', 'App\Http\Controllers\SalesReturnController@checkAvailableSalesQty');
+    Route::post('sales-order-details', 'App\Http\Controllers\SalesReturnController@salesOrderDetails');
+    
+
     Route::resource('purchase-return', PurchaseReturnController::class);
     Route::post('purchase-return/update', 'App\Http\Controllers\PurchaseReturnController@update');
     Route::get('purchase-return-reset', 'App\Http\Controllers\PurchaseReturnController@reset');
@@ -142,6 +158,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('group-base-ledger-filter-reset','App\Http\Controllers\AccountReportController@groupBaseLedgerFilterReset');
     Route::get('LedgerReportFilterReset','App\Http\Controllers\AccountReportController@LedgerReportFilterReset');
 
+
+
     Route::any('trail-balance','App\Http\Controllers\AccountReportController@trailBalance');
     Route::any('trail-balance-report','App\Http\Controllers\AccountReportController@trailBalanceReport');
     Route::get('trail-balance-filter-reset','App\Http\Controllers\AccountReportController@trailBalanceReportFilterReset');
@@ -164,10 +182,43 @@ Route::group(['middleware' => ['auth']], function() {
     Route::any('main-ledger-search','App\Http\Controllers\AccountLedgerController@mainLedgerSearch');
     Route::any('type_base_group','App\Http\Controllers\AccountLedgerController@type_base_group');
     Route::any('group-base-ledger','App\Http\Controllers\AccountLedgerController@groupBaseLedger');
+    Route::any('group-base-ledger-purchase-statement','App\Http\Controllers\AccountLedgerController@groupBaseLedgerPurchaseStatement');
     
     
+    
+    
+    //################################
+    //  Inventory Report Section Start
+    //################################
     
 
+    Route::post('report-bill-party-statement','App\Http\Controllers\InventoryReportController@reportBillOfPartyStatement');
+    Route::get('bill-party-statement','App\Http\Controllers\InventoryReportController@filterBillOfPartyStatement');
+    Route::get('reset-bill-party-statement','App\Http\Controllers\InventoryReportController@resetBillOfPartyStatement');   
+
+    Route::post('report-date-wise-purchase','App\Http\Controllers\InventoryReportController@reportDateWisePurchaseStatement');
+    Route::get('date-wise-purchase','App\Http\Controllers\InventoryReportController@filterDateWisePurchaseStatement');
+    Route::get('reset-date-wise-purchase','App\Http\Controllers\InventoryReportController@resetDateWisePurchaseStatement'); 
+
+
+
+    Route::post('report-date-wise-purchase-return','App\Http\Controllers\InventoryReportController@reportDateWisePurchaseReturnStatement');
+    Route::get('purchase-return-detail','App\Http\Controllers\InventoryReportController@filterDateWisePurchaseReturnStatement');
+    Route::get('reset-date-wise-purchase-return','App\Http\Controllers\InventoryReportController@resetDateWisePurchaseReturnStatement');
+    Route::any('group-base-ledger-purchase-return','App\Http\Controllers\AccountLedgerController@groupBaseLedgerPurchaseReturnStatement');
+
+    Route::post('report-date-wise-sales','App\Http\Controllers\InventoryReportController@reportDateWiseSalesStatement');
+    Route::get('date-wise-sales','App\Http\Controllers\InventoryReportController@filterDateWiseSalesStatement');
+    Route::get('reset-date-wise-sales','App\Http\Controllers\InventoryReportController@resetDateWiseSalesStatement');
+    Route::any('group-base-ledger-sales','App\Http\Controllers\AccountLedgerController@groupBaseLedgerSalesStatement');
+
+    Route::post('report-date-wise-sales-return','App\Http\Controllers\InventoryReportController@reportDateWiseSalesReturnStatement');
+    Route::get('sales-return-detail','App\Http\Controllers\InventoryReportController@filterDateWiseSalesReturnStatement');
+    Route::get('reset-date-wise-sales-return','App\Http\Controllers\InventoryReportController@resetDateWiseSalesReturnStatement');
+    Route::any('group-base-ledger-sales-return','App\Http\Controllers\AccountLedgerController@groupBaseLedgerSalesReturnStatement');
+    //################################
+    //  Inventory Report Section End
+    //################################
     
 
     //Admin section end

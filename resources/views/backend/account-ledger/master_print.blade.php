@@ -21,20 +21,29 @@
     <!-- info row -->
     <div class="row invoice-info">
       <div class="col-sm-4 invoice-col">
-        <h2 class="page-header">
-           <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
-        </h2>
+        
       </div>
       <!-- /.col -->
-      <div class="col-sm-4 invoice-col">
-        <h3 class="text-center"><b>{{$page_name}} </b></h3>
+      <div class="col-sm-4 invoice-col text-center">
+        <h2 class="page-header">
+            {{$settings->name ?? '' }}
+          <small class="float-right"></small>
+        </h2>
+        <address>
+          <strong>{{$settings->_address ?? '' }}</strong><br>
+          {{$settings->_phone ?? '' }}<br>
+          {{$settings->_email ?? '' }}<br>
+          <b>Account Ledger</b>
+        </address>
+       
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col text-right">
-      <p class="float-right">Date: {{ change_date_format(date('Y-m-d') ?? '') }} Time:{{ date('H:i:s') }}</p>
+        
       </div>
       <!-- /.col -->
     </div>
+    <!-- /.row -->
   
 <div class="table-responsive">
    <table class="table table-bordered">

@@ -25,4 +25,10 @@ class ProductPriceList extends Model
     public function _store(){
     	return $this->hasOne(StoreHouse::class,'id','_store_id')->select('id','_name');
     }
+
+    
+
+    public function _units(){
+        return $this->hasOne(Units::class,'id','_unit_id')->select('id','_name','_code');
+    }
 }

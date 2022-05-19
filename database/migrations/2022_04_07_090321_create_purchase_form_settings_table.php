@@ -23,6 +23,8 @@ class CreatePurchaseFormSettingsTable extends Migration
             $table->integer('_show_vat');
             $table->integer('_show_store');
             $table->integer('_show_self');
+            $table->integer('_show_manufacture_date');
+            $table->integer('_show_expire_date');
             $table->timestamps();
         });
     }

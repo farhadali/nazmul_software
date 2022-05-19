@@ -336,7 +336,7 @@ label{
 }
 
 a {
-    color: #343a40;
+    color: #0576a0;
     text-decoration: none;
     background-color: transparent;
     font-weight: 900;
@@ -424,4 +424,13 @@ body:not(.layout-fixed) .main-sidebar {
     height: 24px !important;
     margin: 0px auto !important;
 }
+.navbar-light .navbar-nav .nav-link {
+    color: #0c0b0bb8;
+}
 
+.dropdown-divider {
+    height: 0;
+    margin: .5rem 0;
+    overflow: hidden;
+    border-top: 1px solid #0b0b0c;
+}

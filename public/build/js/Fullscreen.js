@@ -42,11 +42,15 @@ class Fullscreen {
       document.mozFullScreenElement ||
       document.webkitFullscreenElement ||
       document.msFullscreenElement) {
+     
       this.windowed()
     } else {
+     
+       
       this.fullscreen()
     }
   }
+
 
   fullscreen() {
     if (document.documentElement.requestFullscreen) {
@@ -58,6 +62,7 @@ class Fullscreen {
     }
 
     $(SELECTOR_ICON).removeClass(this.options.maximizeIcon).addClass(this.options.minimizeIcon)
+    console.log("ok boss")
   }
 
   windowed() {

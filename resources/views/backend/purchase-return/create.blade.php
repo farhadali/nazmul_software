@@ -827,7 +827,7 @@ if(data.length > 0 ){
                                               @endif
                                               @endif
                                               <td>
-                                                <input type="number" name="_value[]" class="form-control _value _value__${i} " readonly value="${data[i]._value}">
+                                                <input type="number" name="_value[]" class="form-control _value _value__${i} " readonly value="${(data[i]._pur_rate*data[i]._qty)}">
                                               </td> 
                                               @if(sizeof($permited_branch)>1)
                                               <td>

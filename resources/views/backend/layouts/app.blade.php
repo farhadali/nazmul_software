@@ -49,9 +49,15 @@
     }
     .multiple_select { resize: auto; }
   </style>
+  
 </head>
 
 <body class="hold-transition sidebar-mini sidebar-collapse">
+  @php
+$currentURL = URL::full();
+  @endphp
+
+   
 <div class="wrapper">
   <div class="ajax_loader"><h5 class="loading_text">Loading.....</span></div>
   <!-- Navbar -->
@@ -79,6 +85,7 @@
 
   <!-- Main Footer -->
   @include('backend.layouts.footer')
+  
 </div>
 <!-- ./wrapper -->
 
@@ -658,7 +665,12 @@ function after_request_date__today(_date){
             
           }
 
+
+
 </script>
+
+
+
 @yield('script')
 </body>
 </html>

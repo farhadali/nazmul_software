@@ -10,9 +10,9 @@
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-               @can('sales-create')
+               @can('sales-return-create')
               <li class="breadcrumb-item active">
-                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('sales.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('sales-return.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                </li>
               @endcan
             </ol>
@@ -24,6 +24,11 @@
     <div class="alert alert-success">
       <p>{{ $message }}</p>
     </div>
+    @elseif($message = Session::get('danger'))
+                    <div class="alert _required _over_qty">
+                      <p>{{ $message }}</p>
+                    </div>
+                
     @endif
     <div class="content">
       <div class="container-fluid">
@@ -47,11 +52,11 @@
 
                    @endphp
                     <div class="col-md-4">
-                       @include('backend.sales.search')
+                       @include('backend.sales-return.search')
                     </div>
                     <div class="col-md-8">
                       <div class="d-flex flex-row justify-content-end">
-                         @can('sales-print')
+                         @can('sales-return-print')
                         <li class="nav-item dropdown remove_from_header">
                               <a class="nav-link" data-toggle="dropdown" href="#">
                                 
@@ -108,16 +113,16 @@
                         <tr>
                             
                              <td>
-                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('sales/print')}}/{{$data->id}}" >
+                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('sales-return/print')}}/{{$data->id}}" >
                                   <i class="nav-icon fas fa-print"></i>
                                 </a>
-                                @can('sales-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('sales.edit',$data->id) }}">
+                                @can('sales-return-edit')
+                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('sales-return.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
                                     </a>
                                 @endcan
-                                @can('sales-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['sales.destroy', $data->id],'style'=>'display:inline']) !!}
+                                @can('sales-return-delete')
+                                    {!! Form::open(['method' => 'DELETE','route' => ['sales-return.destroy', $data->id],'style'=>'display:inline']) !!}
                                         <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
                                             <i class="nav-icon fas fa-trash"></i>
                                         </button>

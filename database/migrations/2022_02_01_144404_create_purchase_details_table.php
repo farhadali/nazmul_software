@@ -27,6 +27,8 @@ class CreatePurchaseDetailsTable extends Migration
             $table->integer('_store_id')->nullable();
             $table->integer('_cost_center_id')->nullable();
             $table->integer('_store_salves_id')->nullable();
+            $table->date('_manufacture_date')->nullable();
+            $table->date('_expire_date')->nullable();
             $table->unsignedBigInteger('_no');
             $table->foreign('_no')->references('id')->on('purchases');
             $table->unsignedBigInteger('_branch_id');

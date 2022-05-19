@@ -351,7 +351,8 @@ class PurchaseReturnController extends Controller
 
                 $ItemInventory = new ItemInventory();
                 $ItemInventory->_item_id =  $_item_ids[$i];
-                $ItemInventory->_item_name =  $item_info->_name ?? '';
+                $ItemInventory->_item_name =  $item_info->_item ?? '';
+                $ItemInventory->_unit_id =  $item_info->_unit_id ?? '';
                 $ItemInventory->_date = change_date_format($request->_date);
                 $ItemInventory->_time = date('H:i:s');
                 $ItemInventory->_transection = "Purchase Return";
@@ -403,29 +404,29 @@ class PurchaseReturnController extends Controller
         $_name =$users->name;
         if($request->_sub_total > 0){
             //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_sub_total,0,$_branch_id,$_cost_center,$_name,1);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_purchase),$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_sub_total,0,$_branch_id,$_cost_center,$_name,1);
             //Default Purchase Return
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,0,$request->_sub_total,$_branch_id,$_cost_center,$_name,2);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,0,$request->_sub_total,$_branch_id,$_cost_center,$_name,2);
         
 
             //Default Purchase Return
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,$request->_sub_total,0,$_branch_id,$_cost_center,$_name,3);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_inventory),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,$request->_sub_total,0,$_branch_id,$_cost_center,$_name,3);
         //Default Inventory
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_inventory,0,$request->_sub_total,$_branch_id,$_cost_center,$_name,4);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_purchase),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_inventory,0,$request->_sub_total,$_branch_id,$_cost_center,$_name,4);
         }
 
         if($request->_total_discount > 0){
             //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name,5);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_discount),$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name,5);
              //Default Discount
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_discount,0,$request->_total_discount,$_branch_id,$_cost_center,$_name,6);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_discount,0,$request->_total_discount,$_branch_id,$_cost_center,$_name,6);
         
         }
         if($request->_total_vat > 0){
             //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_total_vat,$_cr_amount=0,$_branch_id,$_cost_center,$_name,7);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_vat_account),$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_total_vat,$_cr_amount=0,$_branch_id,$_cost_center,$_name,7);
         //Default Vat Account
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_vat_account,$_dr_amount=0,$request->_total_vat,$_branch_id,$_cost_center,$_name,8);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_vat_account,$_dr_amount=0,$request->_total_vat,$_branch_id,$_cost_center,$_name,8);
         
         }
 
@@ -501,7 +502,8 @@ class PurchaseReturnController extends Controller
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
        } catch (\Exception $e) {
            DB::rollback();
-           return redirect()->back()->with('danger','There is Something Wrong !');
+           
+           return redirect()->back()->with('danger',"Information Not Save. There Is an ERROR ");
         }
       
     }
@@ -748,7 +750,8 @@ class PurchaseReturnController extends Controller
                 }
 
                 $ItemInventory->_item_id =  $_item_ids[$i];
-                $ItemInventory->_item_name =  $item_info->_name ?? '';
+                $ItemInventory->_item_name =  $item_info->_item ?? '';
+                 $ItemInventory->_unit_id =  $item_info->_unit_id ?? '';
                 $ItemInventory->_date = change_date_format($request->_date);
                 $ItemInventory->_time = date('H:i:s');
                 $ItemInventory->_transection = "Purchase Return";
@@ -800,29 +803,29 @@ class PurchaseReturnController extends Controller
         $_name =$users->name;
         if($request->_sub_total > 0){
             //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_sub_total,0,$_branch_id,$_cost_center,$_name,1);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_purchase),$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_sub_total,0,$_branch_id,$_cost_center,$_name,1);
             //Default Purchase Return
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,0,$request->_sub_total,$_branch_id,$_cost_center,$_name,2);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,0,$request->_sub_total,$_branch_id,$_cost_center,$_name,2);
         
 
             //Default Purchase Return
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,$request->_sub_total,0,$_branch_id,$_cost_center,$_name,3);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_inventory),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,$request->_sub_total,0,$_branch_id,$_cost_center,$_name,3);
         //Default Inventory
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_inventory,0,$request->_sub_total,$_branch_id,$_cost_center,$_name,4);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_purchase),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_inventory,0,$request->_sub_total,$_branch_id,$_cost_center,$_name,4);
         }
 
         if($request->_total_discount > 0){
             //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name,5);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_discount),$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_total_discount,$_cr_amount=0,$_branch_id,$_cost_center,$_name,5);
              //Default Discount
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_discount,0,$request->_total_discount,$_branch_id,$_cost_center,$_name,6);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_discount,0,$request->_total_discount,$_branch_id,$_cost_center,$_name,6);
         
         }
         if($request->_total_vat > 0){
             //Default Supplier
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_total_vat,$_cr_amount=0,$_branch_id,$_cost_center,$_name,7);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_vat_account),$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$request->_total_vat,$_cr_amount=0,$_branch_id,$_cost_center,$_name,7);
         //Default Vat Account
-            account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_vat_account,$_dr_amount=0,$request->_total_vat,$_branch_id,$_cost_center,$_name,8);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_vat_account,$_dr_amount=0,$request->_total_vat,$_branch_id,$_cost_center,$_name,8);
         
         }
 

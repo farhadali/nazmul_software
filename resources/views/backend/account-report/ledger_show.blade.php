@@ -26,7 +26,7 @@
     <div class="row invoice-info">
       <div class="col-sm-4 invoice-col">
         <h2 class="page-header">
-           <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
+            {{$settings->name ?? '' }}
           <small class="float-right"></small>
         </h2>
         <address>
@@ -98,14 +98,45 @@
             @forelse($ledger_details as $detail_key=>$detail)
           <tr>
             <td>{!! $detail->_date !!}</td>
-            @if($detail->_table_name=="voucher_masters")
-            <td class="text-center"> <a target="__blank" href="{{ route('voucher.show',$detail->_ref_master_id) }}">
-              A-{!! $detail->_ref_master_id ?? '' !!}</a>
-
-            </td>
-            @else
-             <td>  </td>
-            @endif
+           
+                    <td class="text-left">
+                    @if($detail->_table_name=="voucher_masters")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('voucher.show',$detail->_ref_master_id) }}">
+                  A-{!! $detail->_ref_master_id ?? '' !!}</a>
+                    @endif
+                    @if($detail->_table_name=="purchases")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$detail->_ref_master_id) }}">
+                  P-{!! $detail->_ref_master_id ?? '' !!}</a>
+                    @endif
+                    @if($detail->_table_name=="purchase_accounts")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$detail->_ref_master_id) }}">
+                  PA-{!! $detail->_ref_master_id ?? '' !!}</a>
+                    @endif
+                    @if($detail->_table_name=="purchases_return")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase-return.edit',$detail->_ref_master_id) }}">
+                  PR-{!! $detail->_ref_master_id ?? '' !!}</a>
+                    @endif
+                    @if($detail->_table_name=="purchase_return_accounts")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase-return.edit',$detail->_ref_master_id) }}">
+                  PRA-{!! $detail->_ref_master_id ?? '' !!}</a>
+                    @endif
+                    @if($detail->_table_name=="sales")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales.edit',$detail->_ref_master_id) }}">
+                  S-{!! $detail->_ref_master_id ?? '' !!}</a>
+                    @endif
+                    @if($detail->_table_name=="sales_accounts")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales.edit',$detail->_ref_master_id) }}">
+                  SA-{!! $detail->_ref_master_id ?? '' !!}</a>
+                    @endif
+                    @if($detail->_table_name=="sales_return")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales-return.edit',$detail->_ref_master_id) }}">
+                  SR-{!! $detail->_ref_master_id ?? '' !!}</a>
+                    @endif
+                    @if($detail->_table_name=="sales_return_accounts")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales-return.edit',$detail->_ref_master_id) }}">
+                  SRA-{!! $detail->_ref_master_id ?? '' !!}</a>
+                    @endif
+             </td>
             <td>{!! $detail->_narration ?? '' !!}</td>
             <td>{!! $detail->_short_narration ?? '' !!}</td>
             <td class="text-right">{!! _report_amount($detail->_dr_amount ?? 0)  !!}</td>

@@ -21,7 +21,7 @@
     .table td, .table th {
         padding: .15rem !important;
         vertical-align: top;
-        border-top: 1px solid #CCCCCC;
+        border: 1px solid #CCCCCC;
     }
   </style>
 </head>
@@ -29,51 +29,38 @@
 <div class="wrapper">
 
 <section class="invoice">
-    <!-- title row -->
     <div class="row">
       <div class="col-12">
-        <h2 class="page-header">
-           <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 50px;height: 50px;"> {{$settings->name ?? '' }}
-          <small class="float-right">Date: {{ _view_date_formate($data->_date ?? '') }}</small>
-        </h2>
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- info row -->
-    <div class="row invoice-info">
-      <div class="col-sm-4 invoice-col">
-        
-        <address>
-          <strong>{{$settings->_address ?? '' }}</strong><br>
-          {{$settings->_phone ?? '' }}<br>
-          {{$settings->_email ?? '' }}<br>
-        </address>
-      </div>
-      <!-- /.col -->
-      <div class="col-sm-4 invoice-col">
-        <h3 class="text-center"><b>{{$page_name}}</b></h3>
-      </div>
-      <!-- /.col -->
-      <div class="col-sm-4 invoice-col text-right">
-        
-        <b>Time:</b> {{$data->_time ?? ''}}<br>
-        <b>Created By:</b> {{$data->_user_name ?? ''}}<br>
-        <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}<br>
-        <b>Purchase Number:</b> {{$data->_order_ref_id ?? ''}}
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- /.row -->
-    <div class="row">
-      <div class="col-12">
-        <div style="text-align: left;">
-          <b>ID: {{ $data->id ?? '' }}</b><br>
-          <span><b>Supplier:</b>{{$data->_ledger->_name ?? '' }}</span><br>
-          <span><b>Phone:</b>{{$data->_ledger->_phone ?? '' }}</span><br>
-          <span><b>Address:</b>{{$data->_ledger->_address ?? '' }}</span><br>
-        </div>
+        <table class="table" style="border:none;">
+          <tr>
+            <td style="border:none;width: 33%;text-align: left;">
+              <table class="table" style="border:none;">
+                  <tr> <td style="border:none;" > <b>INVOICE NO: {{ $data->id ?? '' }}</b></td></tr>
+                <tr> <td style="border:none;" > <b> Supplier:</b>  {{$data->_ledger->_name ?? '' }}</td></tr>
+                <tr> <td style="border:none;" > <b> Phone:</b>  {{ $data->_phone ?? '' }} </td></tr>
+                <tr> <td style="border:none;" > <b> Address:</b> {{ $data->_address ?? '' }} </td></tr>
+              </table>
+            </td>
+            <td style="border:none;width: 33%;text-align: center;">
+              <table class="table" style="border:none;">
+                <tr> <td class="text-center" style="border:none;font-size: 24px;"><b>{{$settings->name ?? '' }}</b></td> </tr>
+                <tr> <td class="text-center" style="border:none;"><b>{{$settings->_address ?? '' }}</b></td></tr>
+                <tr> <td class="text-center" style="border:none;"><b>{{$settings->_phone ?? '' }}</b>,<b>{{$settings->_email ?? '' }}</b></td></tr>
+                 <tr> <td class="text-center" style="border:none;"><b>{{$page_name}} Invoice</b></td> </tr>
+              </table>
+            </td>
+            <td style="border:none;width: 33%;text-align: right;">
+              <table class="table" style="border:none;">
+                  <tr> <td class="text-right" style="border:none;"  > <b>Time:</b> {{$data->_time ?? ''}} </td></tr>
+                  <tr> <td class="text-right"  style="border:none;" > <b>Created By:</b> {{$data->_user_name ?? ''}}</td></tr>
+                  <tr> <td class="text-right"  style="border:none;" > <b>Branch:</b> {{$data->_master_branch->_name ?? ''}} </td></tr>
+              </table>
+            </td>
+          </tr>
+        </table>
         </div>
       </div>
+    
       <div class="row">
         <div class="col-12 table-responsive">
          

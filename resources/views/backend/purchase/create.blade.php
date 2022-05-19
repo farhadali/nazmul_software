@@ -160,23 +160,16 @@
                                           <thead >
                                             <th class="text-middle" >&nbsp;</th>
                                             <th class="text-middle" >Item</th>
-                                           @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                            <th class="text-middle" >Barcode</th>
-                                            @else
-                                            <th class="text-middle display_none" >Barcode</th>
-                                            @endif
-                                            @endif
+                                           
+                                            <th class="text-middle @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==0) display_none    @endif @endif" >Barcode</th>
+                                         
                                             <th class="text-middle" >Qty</th>
                                             <th class="text-middle" >Rate</th>
                                             <th class="text-middle" >Sales Rate</th>
-                                            @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                            <th class="text-middle" >VAT%</th>
-                                            <th class="text-middle" >VAT</th>
-                                             @else
-                                            <th class="text-middle display_none" >VAT%</th>
-                                            <th class="text-middle display_none" >VAT Amount</th>
-                                            @endif
-                                            @endif
+                                           
+                                            <th class="text-middle @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif @endif" >VAT%</th>
+                                            <th class="text-middle @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif @endif" >VAT Amount</th>
+                                          
 
                                             <th class="text-middle" >Value</th>
                                              @if(sizeof($permited_branch) > 1)
@@ -194,12 +187,14 @@
                                             @else
                                              <th class="text-middle display_none" >Store</th>
                                             @endif
-                                            @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                            <th class="text-middle" >Shelf</th>
-                                            @else
-                                             <th class="text-middle display_none" >Shelf</th>
-                                            @endif
-                                            @endif
+                                            
+                                             <th class="text-middle @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==0) display_none @endif
+                                            @endif" >Shelf</th>
+                                             <th class="text-middle @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
+                                            @endif" >Manu. Date</th>
+                                             <th class="text-middle @if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none @endif
+                                            @endif"> Expired Date </th>
+                                            
                                            
                                           </thead>
                                           <tbody class="area__purchase_details" id="area__purchase_details">
@@ -214,16 +209,11 @@
                                                   
                                                 </div>
                                               </td>
-                                              @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                              <td>
+                                              
+                                              <td class="@if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==0) display_none   @endif @endif">
                                                 <input type="text" name="_barcode[]" class="form-control _barcode " >
                                               </td>
-                                              @else
-                                              <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
-                                              </td>
-                                              @endif
-                                            @endif
+                                            
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" >
                                               </td>
@@ -233,22 +223,14 @@
                                               <td>
                                                 <input type="number" name="_sales_rate[]" class="form-control _sales_rate " >
                                               </td>
-                                              @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                              <td>
+                                             
+                                              <td class="@if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none  @endif @endif ">
                                                 <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" >
                                               </td>
-                                              <td>
+                                              <td class="@if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none  @endif @endif ">
                                                 <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" >
                                               </td>
-                                              @else
-                                              <td class="display_none">
-                                                <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" >
-                                              </td>
-                                              <td class="display_none">
-                                                <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" >
-                                              </td>
-                                              @endif
-                                              @endif
+                                             
                                               <td>
                                                 <input type="number" name="_value[]" class="form-control _value " readonly >
                                               </td>
@@ -313,16 +295,17 @@
                                                 
                                               </td>
                                               @endif
-                                              @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                              <td>
+                                              
+                                              <td class="@if(isset($form_settings->_show_self)) @if($form_settings->_show_self==0) display_none  @endif @endif">
                                                 <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
                                               </td>
-                                              @else
-                                              <td class="display_none">
-                                                <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
+                                              <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " >
                                               </td>
-                                              @endif
-                                              @endif
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " >
+                                              </td>
+                                             
                                               
                                             </tr>
                                           </tbody>
@@ -343,18 +326,12 @@
                                               </td>
                                               <td></td>
                                               <td></td>
-                                              @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                              <td></td>
-                                              <td>
+                                             
+                                              <td class="@if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif  @endif"></td>
+                                              <td class="@if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif  @endif">
                                                 <input type="number" step="any" min="0" name="_total_vat_amount" class="form-control _total_vat_amount" value="0" readonly required>
                                               </td>
-                                              @else
-                                              <td class="display_none"></td>
-                                              <td class="display_none">
-                                                <input type="number" step="any" min="0" name="_total_vat_amount" class="form-control _total_vat_amount" value="0" readonly required>
-                                              </td>
-                                              @endif
-                                              @endif
+                                            
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_value_amount" class="form-control _total_value_amount" value="0" readonly required>
                                               </td>
@@ -374,12 +351,12 @@
                                                <td class="display_none"></td>
                                               @endif
 
-                                              @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                              <td></td>
-                                              @else
-                                              @endif
-                                              <td class="display_none"></td>
-                                              @endif
+                                              
+                                              <td class="@if(isset($form_settings->_show_self)) @if($form_settings->_show_self==0) display_none  @endif  @endif"></td>
+                                              <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif  @endif"></td>
+
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif  @endif"></td>
+                                              
                                             </tr>
                                           </tfoot>
                                       </table>
@@ -671,6 +648,20 @@
           <option value="1" @if(isset($form_settings->_show_self))@if($form_settings->_show_self==1) selected @endif @endif>YES</option>
         </select>
       </div>
+      <div class="form-group row">
+        <label for="_show_manufacture_date" class="col-sm-5 col-form-label">Use Manufacture Date</label>
+        <select class="form-control col-sm-7" name="_show_manufacture_date">
+          <option value="0" @if(isset($form_settings->_show_manufacture_date))@if($form_settings->_show_manufacture_date==0) selected @endif @endif>NO</option>
+          <option value="1" @if(isset($form_settings->_show_manufacture_date))@if($form_settings->_show_manufacture_date==1) selected @endif @endif>YES</option>
+        </select>
+      </div>
+      <div class="form-group row">
+        <label for="_show_expire_date" class="col-sm-5 col-form-label">Use Expired Date</label>
+        <select class="form-control col-sm-7" name="_show_expire_date">
+          <option value="0" @if(isset($form_settings->_show_expire_date))@if($form_settings->_show_expire_date==0) selected @endif @endif>NO</option>
+          <option value="1" @if(isset($form_settings->_show_expire_date))@if($form_settings->_show_expire_date==1) selected @endif @endif>YES</option>
+        </select>
+      </div>
          
       
       </div>
@@ -861,13 +852,20 @@ $(document).on("change","#_discount_input",function(){
     var _total__value = 0;
     var _total__vat =0;
       $(document).find("._value").each(function() {
-          _total__value +=parseFloat($(this).val());
+        var line_value = parseFloat($(this).val());
+        if(isNaN(line_value)){ line_value=0 }
+          _total__value +=parseFloat(line_value);
+        
       });
       $(document).find("._qty").each(function() {
-          _total_qty +=parseFloat($(this).val());
+        var line__qty = parseFloat($(this).val());
+        if(isNaN(line__qty)){ line__qty=0 }
+          _total_qty +=parseFloat(line__qty);
       });
       $(document).find("._vat_amount").each(function() {
-          _total__vat +=parseFloat($(this).val());
+        var line__vat = parseFloat($(this).val());
+        if(isNaN(line__vat)){ line__vat=0 }
+          _total__vat +=parseFloat(line__vat);
       });
       $("._total_qty_amount").val(_total_qty);
       $("._total_value_amount").val(_total__value);
@@ -1065,6 +1063,12 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                               @endif
 
                                               @endif
+                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " >
+                                              </td>
                                               
                                             </tr>`;
 function purchase_row_add(event){

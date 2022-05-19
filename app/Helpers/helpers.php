@@ -309,6 +309,14 @@ if (! function_exists('ledger_to_group_type')) {
     }
 }
 
+if (! function_exists('_find_ledger')) {
+    function _find_ledger($ledger)
+    {
+      $ledger_info =  AccountLedger::where('id',$ledger)->select('_name')->first();
+      return $ledger_info->_name ?? '';
+    }
+}
+
 
 if (! function_exists('_last_balance')) {
     function _last_balance($ledger)

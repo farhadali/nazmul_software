@@ -25,6 +25,18 @@ class Purchase extends Model
     }
 
     public function _ledger(){
-    	return $this->hasOne(AccountLedger::class,'id','_ledger_id');
+    	return $this->hasOne(AccountLedger::class,'id','_ledger_id')->select('id','_name','_account_group_id','_account_head_id')
+        ->with(['account_type','account_group']);
+    }
+
+
+
+
+    public function _master_cost_center(){
+        return $this->hasOne(CostCenter::class,'id','_cost_center_id')->select('id','_name');
+    }
+
+    public function _master_store(){
+        return $this->hasOne(StoreHouse::class,'id','_store_id')->select('id','_name');
     }
 }
