@@ -1350,23 +1350,7 @@ function purchase_row_add(event){
 
  
 
-$(".datetimepicker-input").val(date__today())
 
-          function date__today(){
-              var d = new Date();
-            var yyyy = d.getFullYear().toString();
-            var mm = (d.getMonth()+1).toString(); // getMonth() is zero-based
-            var dd  = d.getDate().toString();
-            if(default_date_formate=='DD-MM-YYYY'){
-              return (dd[1]?dd:"0"+dd[0]) +"-"+ (mm[1]?mm:"0"+mm[0])+"-"+ yyyy ;
-            }
-            if(default_date_formate=='MM-DD-YYYY'){
-              return (mm[1]?mm:"0"+mm[0])+"-" + (dd[1]?dd:"0"+dd[0]) +"-"+  yyyy ;
-            }
-            
-
-            
-          }
 
 </script>
 @endsection

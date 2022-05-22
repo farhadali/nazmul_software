@@ -216,6 +216,18 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('sales-return-detail','App\Http\Controllers\InventoryReportController@filterDateWiseSalesReturnStatement');
     Route::get('reset-date-wise-sales-return','App\Http\Controllers\InventoryReportController@resetDateWiseSalesReturnStatement');
     Route::any('group-base-ledger-sales-return','App\Http\Controllers\AccountLedgerController@groupBaseLedgerSalesReturnStatement');
+
+    Route::post('report-stock-possition','App\Http\Controllers\InventoryReportController@reportStockPossition');
+    Route::get('stock-possition','App\Http\Controllers\InventoryReportController@filterStockPossition');
+    Route::get('reset-stock-possition','App\Http\Controllers\InventoryReportController@resetStockPossition');
+    Route::get('stock-possition-cat-item','App\Http\Controllers\InventoryReportController@stockPossitionCatItem');
+
+
+    Route::post('report-stock-ledger','App\Http\Controllers\InventoryReportController@reportStockLedger');
+    Route::get('stock-ledger','App\Http\Controllers\InventoryReportController@filterStockLedger');
+    Route::get('reset-stock-ledger','App\Http\Controllers\InventoryReportController@resetStockLedger');
+    Route::get('stock-ledger-cat-item','App\Http\Controllers\InventoryReportController@stockLedgerCatItem');
+
     //################################
     //  Inventory Report Section End
     //################################

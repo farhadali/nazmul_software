@@ -301,6 +301,7 @@ class PurchaseController extends Controller
 
                 $ProductPriceList = new ProductPriceList();
                 $ProductPriceList->_item_id = $_item_ids[$i];
+
                 $ProductPriceList->_item = $item_info->_item ?? '';
                 $ProductPriceList->_barcode =$_barcodes[$i] ?? '';
                 $ProductPriceList->_manufacture_date =$_manufacture_dates[$i] ?? null;
@@ -310,6 +311,7 @@ class PurchaseController extends Controller
                 $ProductPriceList->_sales_rate = $_sales_rates[$i];
                 $ProductPriceList->_pur_rate = $_rates[$i];
                 $ProductPriceList->_unit_id = $item_info->_unit_id ?? 1;
+                
                 $ProductPriceList->_sales_discount = $item_info->_discount ?? 0;
                 $ProductPriceList->_p_discount_input = $_discounts[$i] ?? 0;
                 $ProductPriceList->_p_discount_amount = $_discount_amounts[$i] ?? 0;
@@ -330,7 +332,8 @@ class PurchaseController extends Controller
                 $ItemInventory = new ItemInventory();
                 $ItemInventory->_item_id =  $_item_ids[$i];
                 $ItemInventory->_item_name =  $item_info->_item ?? '';
-                 $ItemInventory->_unit_id =  $item_info->_unit_id ?? '';
+                $ItemInventory->_unit_id =  $item_info->_unit_id ?? '';
+                $ItemInventory->_category_id = _item_category($_item_ids[$i]);
                 $ItemInventory->_date = change_date_format($request->_date);
                 $ItemInventory->_time = date('H:i:s');
                 $ItemInventory->_transection = "Purchase";
@@ -736,7 +739,8 @@ class PurchaseController extends Controller
                 
                 $ItemInventory->_item_id =  $_item_ids[$i];
                 $ItemInventory->_item_name =  $item_info->_item ?? '';
-                 $ItemInventory->_unit_id =  $item_info->_unit_id ?? '';
+                $ItemInventory->_unit_id =  $item_info->_unit_id ?? '';
+                $ItemInventory->_category_id = _item_category($_item_ids[$i]);
                 $ItemInventory->_date = change_date_format($request->_date);
                 $ItemInventory->_time = date('H:i:s');
                 $ItemInventory->_transection = "Purchase";

@@ -23,6 +23,7 @@ class CreateItemInventoriesTable extends Migration
             $table->string('_transection');
             $table->integer('_transection_ref');
             $table->integer('_unit_id')->nullable();
+            $table->integer('_category_id')->nullable();
             $table->integer('_transection_detail_ref_id');
             $table->double('_qty',15,4)->default(0);
             $table->double('_rate',15,4)->default(0);

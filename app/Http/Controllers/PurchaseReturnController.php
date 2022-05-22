@@ -353,6 +353,7 @@ class PurchaseReturnController extends Controller
                 $ItemInventory->_item_id =  $_item_ids[$i];
                 $ItemInventory->_item_name =  $item_info->_item ?? '';
                 $ItemInventory->_unit_id =  $item_info->_unit_id ?? '';
+                $ItemInventory->_category_id = _item_category($_item_ids[$i]);
                 $ItemInventory->_date = change_date_format($request->_date);
                 $ItemInventory->_time = date('H:i:s');
                 $ItemInventory->_transection = "Purchase Return";
@@ -752,6 +753,7 @@ class PurchaseReturnController extends Controller
                 $ItemInventory->_item_id =  $_item_ids[$i];
                 $ItemInventory->_item_name =  $item_info->_item ?? '';
                  $ItemInventory->_unit_id =  $item_info->_unit_id ?? '';
+                $ItemInventory->_category_id = _item_category($_item_ids[$i]);
                 $ItemInventory->_date = change_date_format($request->_date);
                 $ItemInventory->_time = date('H:i:s');
                 $ItemInventory->_transection = "Purchase Return";

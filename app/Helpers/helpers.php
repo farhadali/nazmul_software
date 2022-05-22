@@ -7,6 +7,9 @@ use App\Models\AccountHead;
 use App\Models\AccountLedger;
 use App\Models\Accounts;
 use App\Models\VoucherType;
+use App\Models\Inventory;
+use App\Models\StoreHouse;
+use App\Models\ItemCategory;
 
 if (! function_exists('convertLocalToUTC')) {
     function convertLocalToUTC($time)
@@ -93,6 +96,14 @@ if (! function_exists('account_data_save')) {
 }
 
 
+if (! function_exists('_item_category')) {
+    function _item_category($item)
+    {
+        $cates = Inventory::where('id',$item)->select('_category_id')->first();
+        return $cates->_category_id ?? 0;
+    }
+}
+
 
 
 if (! function_exists('filterableBranch')) {
@@ -143,6 +154,51 @@ if (! function_exists('permited_branch')) {
         return Branch::whereIn('id',$branch_ids)->select('id','_name')->get();
     }
 }
+
+
+if (! function_exists('_branch_name')) {
+    function _branch_name($branch_ids)
+    {
+        $branch= Branch::where('id',$branch_ids)->select('_name')->first();
+        return $branch->_name;
+    }
+}
+
+if (! function_exists('_store_name')) {
+    function _store_name($id)
+    {
+        $store= StoreHouse::where('id',$id)->select('_name')->first();
+        return $store->_name;
+    }
+}
+
+if (! function_exists('_cost_center_name')) {
+    function _cost_center_name($id)
+    {
+        $data= CostCenter::where('id',$id)->select('_name')->first();
+        return $data->_name;
+    }
+}
+
+if (! function_exists('_category_name')) {
+    function _category_name($id)
+    {
+        $data= ItemCategory::where('id',$id)->select('_name')->first();
+        return $data->_name;
+    }
+}
+
+if (! function_exists('_item_name')) {
+    function _item_name($id)
+    {
+        $data= Inventory::where('id',$id)->select('_item as _name')->first();
+        return $data->_name;
+    }
+}
+
+
+
+
 
 
 if (! function_exists('permited_costcenters')) {

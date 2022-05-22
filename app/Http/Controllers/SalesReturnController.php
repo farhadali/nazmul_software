@@ -627,6 +627,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 $ItemInventory->_item_id =  $_item_ids[$i];
                 $ItemInventory->_item_name =  $item_info->_item ?? '';
                  $ItemInventory->_unit_id =  $item_info->_unit_id ?? '';
+                $ItemInventory->_category_id = _item_category($_item_ids[$i]);
                 $ItemInventory->_date = change_date_format($request->_date);
                 $ItemInventory->_time = date('H:i:s');
                 $ItemInventory->_transection = "Sales Return";
@@ -1055,6 +1056,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                     $ItemInventory->_created_by = $users->id."-".$users->name;
                 } 
                 $ItemInventory->_item_id =  $_item_ids[$i];
+                $ItemInventory->_category_id = _item_category($_item_ids[$i]);
                 $ItemInventory->_item_name =  $item_info->_item ?? '';
                  $ItemInventory->_unit_id =  $item_info->_unit_id ?? '';
                 $ItemInventory->_date = change_date_format($request->_date);

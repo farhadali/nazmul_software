@@ -493,7 +493,7 @@ SELECT s1._sl, s1._account_group,s1._group_name, s1._account_ledger,s1._l_name,s
         $previous_filter= Session::get('date_wise_sales_return_statement');
         $page_name = "Date Wise Sales Return Statement";
         
-       $users = Auth::user();
+        $users = Auth::user();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
         $datas=[];
@@ -538,8 +538,6 @@ SELECT s1._sl, s1._account_group,s1._group_name, s1._account_ledger,s1._l_name,s
       $_cost_center_id_rows = implode(',', $_cost_center_ids);
       
      if($ledger_id_rows){
-     // return $request->all();
-
        $datas = SalesReturn::with(['_ledger','_master_details'])
                 ->whereIn('_branch_id', $_branch_ids)
                 ->whereIn('_cost_center_id', $_cost_center_ids)
@@ -562,9 +560,269 @@ SELECT s1._sl, s1._account_group,s1._group_name, s1._account_ledger,s1._l_name,s
 
 
     public function resetDateWiseSalesReturnStatement(){
+      
         Session::flash('date_wise_sales_return_statement');
         return redirect()->back();
     }
+
+
+public function filterStockPossition(Request $request){
+      $previous_filter= Session::get('filter_stock_possition');
+      $page_name = "Stock Position";
+      $users = Auth::user();
+      $permited_branch = permited_branch(explode(',',$users->branch_ids));
+      $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+      $datas=[];
+      $_datex =  change_date_format($request->_datex);
+      $_datey=  change_date_format($request->_datey);
+      $stores = StoreHouse::get();
+      $_item_categories = ItemCategory::get();
+      
+        return view('backend.inventory-report.filter_stock_possition',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
+}
+
+
+public function reportStockPossition(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_item_category' => 'required',
+            '_datey' => 'required'
+        ]);
+
+        session()->put('filter_stock_possition', $request->all());
+        $previous_filter= Session::get('filter_stock_possition');
+        $page_name = "Stock Position";
+        
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+
+        $category_ids = array();
+        $_item_categorys = $request->_item_category ?? [];
+        if(sizeof($_item_categorys) > 0){
+            foreach ($_item_categorys as $value) {
+                array_push($category_ids, (int) $value);
+            }
+        }
+
+        $_items_ids = array();
+        $_items = (array) $request->_item_id;
+        if(sizeof($_items) > 0){
+            foreach ($_items as $value) {
+                array_push($_items_ids, (int) $value);
+            }
+
+        }else{
+            $basic_information = Inventory::select('id')->whereIn('_category_id',$_item_categorys)->get();
+            foreach ($basic_information as $value) {
+                array_push($_items_ids, (int) $value->id);
+            }
+        }
+
+     
+
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+      $_stores = $request->_store ?? [];
+      if(sizeof($_stores) ==0){
+        $stores_all = StoreHouse::get();
+        foreach ($stores_all as $value) {
+          array_push($_stores, (int) $value->id);
+        }
+      }
+
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $_items_ids_rows = implode(',', $_items_ids);
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+      $_stores_id_rows = implode(',', $_stores);
+      $category_ids_rows = implode(',', $category_ids);
+      
+     if($_items_ids){
+
+      $group_array_values = DB::select("  SELECT t5._name as _branch_name,t6._name as _store_name,t7._name as _cost_name, s1._item_id,s1._name,s1._category_id,t3._name as _unit,t4._name as _cat_name,s1._unit_id,s1._store_id,s1._branch_id, s1._cost_center_id, SUM(s1._opening) AS _opening,SUM(s1._stockin) as _stockin,SUM(s1._stockout) AS _stockout
+      FROM (
+      SELECT t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, SUM(IFNULL(t1._qty,0)) AS _opening,0 as _stockin,0 AS _stockout 
+        FROM item_inventories as t1 
+        WHERE  t1._status=1 AND t1._date < '".$_datex."' AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center_id IN(".$_cost_center_id_rows.") AND t1._item_id IN(".$_items_ids_rows.")
+        AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
+        GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id 
+      UNION ALL
+      SELECT t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, 0 AS _opening, SUM(IF((t1._qty > 0), t1._qty,0  )) as _stockin,SUM(IF((t1._qty < 0), t1._qty,0  )) AS _stockout 
+        FROM item_inventories as t1 
+        WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+              AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center_id IN(".$_cost_center_id_rows.") AND t1._item_id IN(".$_items_ids_rows.")
+        AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
+        GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id 
+    ) as s1
+    inner join units as t3 ON t3.id=s1._unit_id
+    inner join item_categories as t4 on t4.id=s1._category_id 
+    inner join branches as t5 on t5.id=s1._branch_id 
+    inner join store_houses as t6 on t6.id=s1._store_id 
+    inner join  cost_centers as t7 on t7.id=s1._cost_center_id 
+     GROUP BY s1._branch_id,s1._cost_center_id,s1._store_id,s1._category_id,s1._item_id ");
+
+       
+       
+
+}else{
+   $group_array_values = array();
+}
+      // return $group_array_values;
+        return view('backend.inventory-report.report_stock_possition',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
+    }
+
+public function stockPossitionCatItem(Request $request){
+  $category_id = $request->_category_id;
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  return view('backend.item-category.stock_possition_cat_base_item',compact('data'));
+}
+
+public function resetStockPossition(){
+  Session::flash('filter_stock_possition');
+  return redirect()->back();
+}
+
+public function filterStockLedger(Request $request){
+      $previous_filter= Session::get('filter_stock_ledger');
+      $page_name = "Stock Ledger";
+      $users = Auth::user();
+      $permited_branch = permited_branch(explode(',',$users->branch_ids));
+      $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+      $datas=[];
+      $_datex =  change_date_format($request->_datex);
+      $_datey=  change_date_format($request->_datey);
+      $stores = StoreHouse::get();
+      $_item_categories = ItemCategory::get();
+      
+        return view('backend.inventory-report.filter_stock_ledger',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
+}
+
+public function reportStockLedger(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_item_category' => 'required',
+            '_datey' => 'required'
+        ]);
+
+        session()->put('filter_stock_ledger', $request->all());
+        $previous_filter= Session::get('filter_stock_ledger');
+        $page_name = "Stock Ledger";
+        
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+
+        $category_ids = array();
+        $_item_categorys = $request->_item_category ?? [];
+        if(sizeof($_item_categorys) > 0){
+            foreach ($_item_categorys as $value) {
+                array_push($category_ids, (int) $value);
+            }
+        }
+
+        $_items_ids = array();
+        $_items = (array) $request->_item_id;
+        if(sizeof($_items) > 0){
+            foreach ($_items as $value) {
+                array_push($_items_ids, (int) $value);
+            }
+
+        }else{
+            $basic_information = Inventory::select('id')->whereIn('_category_id',$_item_categorys)->get();
+            foreach ($basic_information as $value) {
+                array_push($_items_ids, (int) $value->id);
+            }
+        }
+
+     
+
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+      $_stores = $request->_store ?? [];
+      if(sizeof($_stores) ==0){
+        $stores_all = StoreHouse::get();
+        foreach ($stores_all as $value) {
+          array_push($_stores, (int) $value->id);
+        }
+      }
+
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $_items_ids_rows = implode(',', $_items_ids);
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+      $_stores_id_rows = implode(',', $_stores);
+      $category_ids_rows = implode(',', $category_ids);
+      
+     if($_items_ids){
+
+      // $datas = DB::select("  
+      // SELECT '' as _transection_ref  ,'Opening' as _transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, SUM(IFNULL(t1._qty,0)) AS _opening,0 as _stockin,0 AS _stockout 
+      //   FROM item_inventories as t1 
+      //   WHERE  t1._status=1 AND t1._date < '".$_datex."' AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center_id IN(".$_cost_center_id_rows.") AND t1._item_id IN(".$_items_ids_rows.")
+      //   AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
+      //   GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id 
+      // UNION ALL
+      // SELECT t1._transection_ref,t1._transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, 0 AS _opening, IF((t1._qty > 0), t1._qty,0  ) as _stockin,IF((t1._qty < 0), t1._qty,0  ) AS _stockout 
+      //   FROM item_inventories as t1 
+      //   WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+      //         AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center_id IN(".$_cost_center_id_rows.") AND t1._item_id IN(".$_items_ids_rows.")
+      //   AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
+      //   GROUP BY t1.id
+      // ");
+      $datas = DB::select("  SELECT '' as _date,'' as _transection_ref ,'Opening' as _transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, 0 as _stockin,0 AS _stockout,SUM(IFNULL(t1._qty,0)) as _balance 
+        FROM item_inventories as t1 
+        WHERE  t1._status=1 AND  t1._date < '".$_datex."' AND  t1._branch_id IN(".$_branch_ids_rows.") 
+        AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
+        AND t1._item_id IN(".$_items_ids_rows.")
+        GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id
+        
+ UNION ALL
+ SELECT t1._date, t1._transection_ref as _transection_ref  ,t1._transection as _transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, SUM(IF((t1._qty > 0), t1._qty,0  )) as _stockin, SUM(IF((t1._qty < 0), t1._qty,0  )) AS _stockout,SUM(IFNULL(t1._qty,0)) as _balance 
+        FROM item_inventories as t1 
+        WHERE  t1._status=1 AND   t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+        AND  t1._branch_id IN(".$_branch_ids_rows.") 
+        AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
+        AND t1._item_id IN(".$_items_ids_rows.")
+        GROUP BY t1.id
+      ");
+    $group_array_values =array();
+      foreach ($datas as $value) {
+        $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id."__".$value->_item_id][]=$value;
+      }
+
+       
+       
+
+}else{
+   $group_array_values = array();
+}
+       //return $group_array_values;
+        return view('backend.inventory-report.report_stock_ledger',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
+    }
+
+public function StockLedgerCatItem(Request $request){
+  $category_id = $request->_category_id;
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  return view('backend.item-category.stock_ledger_cat_base_item',compact('data'));
+}
+
+public function resetStockLedger(){
+  Session::flash('filter_stock_ledger');
+  return redirect()->back();
+}
 
 
 }
