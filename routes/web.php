@@ -238,6 +238,16 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('reset-stock-value-register','App\Http\Controllers\InventoryReportController@resetStockValueRegister');
     Route::get('stock-value-register-cat-item','App\Http\Controllers\InventoryReportController@stockValueRegisterCatItem');
 
+    Route::post('report-gross-profit','App\Http\Controllers\InventoryReportController@reportGrossProfit');
+    Route::get('gross-profit','App\Http\Controllers\InventoryReportController@filterGrossProfit');
+    Route::get('reset-gross-profit','App\Http\Controllers\InventoryReportController@resetGrossProfit');
+    Route::get('gross-profit-cat-item','App\Http\Controllers\InventoryReportController@grossProfitCatItem');
+
+    Route::post('report-expired-item','App\Http\Controllers\InventoryReportController@reportExpiredItem');
+    Route::get('expired-item','App\Http\Controllers\InventoryReportController@filterExpiredItem');
+    Route::get('reset-expired-item','App\Http\Controllers\InventoryReportController@resetExpiredItem');
+    Route::get('expired-item-cat-item','App\Http\Controllers\InventoryReportController@expiredItemCatItem');
+
     //################################
     //  Inventory Report Section End
     //################################

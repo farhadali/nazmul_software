@@ -11,7 +11,7 @@
 }
   </style>
   <div style="padding-left: 20px;display: flex;">
-    <a class="nav-link"  href="{{url('stock-possition')}}" role="button">
+    <a class="nav-link"  href="{{url('expired-item')}}" role="button">
           <i class="fas fa-search"></i>
         </a>
          <a style="cursor: pointer;" class="nav-link"  title="" data-caption="Print"  onclick="javascript:printDiv('printablediv')"
@@ -58,41 +58,45 @@
         <table class="table ">
           <thead>
           <tr>
-             
-
-            <th >Item Name </th>
+            <th>Item Name </th>
             <th style="width: 10%;">Unit</th>
-            <th style="width: 10%;" class="text-right">Opening</th>
-            <th style="width: 10%;" class="text-right">Stock In</th>
-            <th style="width: 10%;" class="text-right">Stock Out</th>
-            <th style="width: 10%;" class="text-right">Closing</th>
+            <th style="width: 10%;" class="text-right">Quantity</th>
+            <th style="width: 10%;" class="text-right">Sales Value </th>
+            <th style="width: 10%;" class="text-right">Cost Value </th>
+            <th style="width: 10%;" class="text-right">Gross Profit</th>
           </tr>
           
           
           </thead>
           <tbody>
             @php
-              $_total_opening = 0;
-              $_total_stockin = 0;
-              $_total_stockout = 0;
-              $_total_balance = 0;
+             
+              $_total_qty = 0;
+              $_total_sales_value = 0;
+              $_total_cost_value = 0;
+              $_total_profit = 0;
                $remove_duplicate_branch=array();
             @endphp
-            @forelse($group_array_values as $key=> $_detail)
+            @forelse($group_array_values as $key=>$_detail)
             @php
               $key_arrays = explode("__",$key);
              $_branch_id =  $key_arrays[0];
              $_cost_center_id =  $key_arrays[1];
              $_store_id =  $key_arrays[2];
              $_category_id =  $key_arrays[3];
+           
               @endphp
-
-            @if(!in_array($key,$remove_duplicate_branch))
+             @if(!in_array($key,$remove_duplicate_branch))
             <tr>
               @php
                 array_push($remove_duplicate_branch,$key);
               @endphp
               <th colspan="7">
+
+
+
+
+
             @if(sizeof($_branch_ids) > 1 )
               {{ _branch_name($_branch_id) }} |
              @endif
@@ -105,63 +109,66 @@
              @if(sizeof($category_ids) > 1 )
                 {{ _category_name($_category_id) }} 
              @endif
-             
+              
               </th>
             </tr>
             @endif
 
-             @php
-              $_sub_total_opening =0;
-              $_sub_total_stockin =0;
-              $_sub_total_stockout =0;
-              $_sub_total_balance =0;
+            @php
+              $_sub_total_qty = 0;
+              $_sub_total_sales_value = 0;
+              $_sub_total_cost_value = 0;
+              $_sub_total_profit = 0;
+              $row_counter =0;
             @endphp
-
-             @forelse($_detail as $g_value)
+            @forelse($_detail as $g_value)
 
             @php
-             $_sub_total_opening += $g_value->_opening;
-              $_sub_total_stockin += $g_value->_stockin;
-              $_sub_total_stockout += $g_value->_stockout;
-              $_sub_total_balance += ($g_value->_opening+$g_value->_stockin+$g_value->_stockout);
+              $row_counter +=1;
 
-              $_total_opening += $g_value->_opening;
-              $_total_stockin += $g_value->_stockin;
-              $_total_stockout += $g_value->_stockout;
-              $_total_balance += ($g_value->_opening+$g_value->_stockin+$g_value->_stockout);
+              $_total_qty += $g_value->_qty;
+              $_total_sales_value += $g_value->_value;
+              $_total_cost_value += $g_value->_cost_value;
+              $_total_profit += ($g_value->_value-$g_value->_cost_value);
+
+              $_sub_total_qty += $g_value->_qty;
+              $_sub_total_sales_value += $g_value->_value;
+              $_sub_total_cost_value += $g_value->_cost_value;
+              $_sub_total_profit += ($g_value->_value-$g_value->_cost_value);
             @endphp
             <tr>
              
 
             <td>{!! $g_value->_name ?? '' !!} </td>
-            <td style="width: 10%;">{!! $g_value->_unit ?? '' !!}</td>
-            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_opening) !!}</td>
-            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_stockin) !!}</td>
-            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_stockout) !!}</td>
-            <td style="width: 10%;" class="text-right">{{ _report_amount($g_value->_opening+$g_value->_stockin+$g_value->_stockout) }}</td>
+            <td style="width: 10%;">{!! $g_value->_unit_name ?? '' !!}</td>
+            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_qty) !!}</td>
+            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_value) !!}</td>
+            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_cost_value) !!}</td>
+            <td style="width: 10%;" class="text-right">{{ _report_amount(($g_value->_value-$g_value->_cost_value)) }}</td>
           </tr>
           @empty
           @endforelse
-           <tr>
-            
+@if($row_counter > 1)
+          <tr>
+           
 
             <th colspan="2" class="text-left" >Sub Total </th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_opening) !!}</th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_stockin) !!}</th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_stockout) !!}</th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_balance) !!}</th>
+            <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_qty) !!}</th>
+            <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_sales_value) !!}</th>
+            <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_cost_value) !!}</th>
+            <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_profit) !!}</th>
           </tr>
-
-           @empty
+@endif
+          @empty
           @endforelse
           <tr>
-            
+           
 
-            <th colspan="2" class="text-left" >Grand Total </th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_total_opening) !!}</th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_total_stockin) !!}</th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_total_stockout) !!}</th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_total_balance) !!}</th>
+            <th colspan="2" class="text-left">Grand Total </th>
+            <th style="width: 10%;" class="text-right">{!! _report_amount($_total_qty) !!}</th>
+            <th style="width: 10%;" class="text-right">{!! _report_amount($_total_sales_value) !!}</th>
+            <th style="width: 10%;" class="text-right">{!! _report_amount($_total_cost_value) !!}</th>
+            <th style="width: 10%;" class="text-right">{!! _report_amount($_total_profit) !!}</th>
           </tr>
             
             

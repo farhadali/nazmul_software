@@ -646,7 +646,7 @@ public function reportStockPossition(Request $request){
       
      if($_items_ids){
 
-      $group_array_values = DB::select("  SELECT t5._name as _branch_name,t6._name as _store_name,t7._name as _cost_name, s1._item_id,s1._name,s1._category_id,t3._name as _unit,t4._name as _cat_name,s1._unit_id,s1._store_id,s1._branch_id, s1._cost_center_id, SUM(s1._opening) AS _opening,SUM(s1._stockin) as _stockin,SUM(s1._stockout) AS _stockout
+      $datas = DB::select("  SELECT t5._name as _branch_name,t6._name as _store_name,t7._name as _cost_name, s1._item_id,s1._name,s1._category_id,t3._name as _unit,t4._name as _cat_name,s1._unit_id,s1._store_id,s1._branch_id, s1._cost_center_id, SUM(s1._opening) AS _opening,SUM(s1._stockin) as _stockin,SUM(s1._stockout) AS _stockout
       FROM (
       SELECT t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, SUM(IFNULL(t1._qty,0)) AS _opening,0 as _stockin,0 AS _stockout 
         FROM item_inventories as t1 
@@ -669,7 +669,10 @@ public function reportStockPossition(Request $request){
      GROUP BY s1._branch_id,s1._cost_center_id,s1._store_id,s1._category_id,s1._item_id ");
 
        
-       
+       $group_array_values =array();
+      foreach ($datas as $value) {
+        $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id][]=$value;
+      }
 
 }else{
    $group_array_values = array();
@@ -804,7 +807,7 @@ public function reportStockLedger(Request $request){
         return view('backend.inventory-report.report_stock_ledger',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
     }
 
-public function StockLedgerCatItem(Request $request){
+public function stockLedgerCatItem(Request $request){
   $category_id = $request->_category_id;
   $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
   return view('backend.item-category.stock_ledger_cat_base_item',compact('data'));
@@ -918,7 +921,7 @@ public function reportStockValueRegister(Request $request){
         return view('backend.inventory-report.report_stock_value_register',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
     }
 
-public function StockValueRegisterCatItem(Request $request){
+public function stockValueRegisterCatItem(Request $request){
   $category_id = $request->_category_id;
   $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
   return view('backend.item-category.stock_value_register_cat_base_item',compact('data'));
@@ -1008,7 +1011,7 @@ public function reportStockValue(Request $request){
      if($_items_ids){
 
       
-      $datas = DB::select("  SELECT t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id,SUM(IFNULL(t1._qty,0)) as _qty , avg( IF((t1._qty > 0), t1._cost_rate,0  ) ) as _cost_rate,SUM( IF((t1._qty > 0), t1._cost_value,-(t1._cost_value)  ) ) as _cost_value
+      $datas = DB::select("  SELECT t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id,SUM(IFNULL(t1._qty,0)) as _qty , avg( IF((t1._qty > 0), t1._cost_rate,0  ) ) as _cost_rate,SUM( t1._qty*t1._cost_rate ) as _cost_value
         FROM item_inventories as t1 
         WHERE  t1._status=1 AND  t1._date <= '".$_datex."' AND  t1._branch_id IN(".$_branch_ids_rows.") 
         AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
@@ -1031,7 +1034,7 @@ public function reportStockValue(Request $request){
         return view('backend.inventory-report.report_stock_value',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
     }
 
-public function StockValueCatItem(Request $request){
+public function stockValueCatItem(Request $request){
   $category_id = $request->_category_id;
   $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
   return view('backend.item-category.stock_value_cat_base_item',compact('data'));
@@ -1039,6 +1042,245 @@ public function StockValueCatItem(Request $request){
 
 public function resetStockValue(){
   Session::flash('filter_stock_value');
+  return redirect()->back();
+}
+
+public function filterGrossProfit(Request $request){
+      $previous_filter= Session::get('filter_gross_profit');
+      $page_name = "Gross Profit";
+      $users = Auth::user();
+      $permited_branch = permited_branch(explode(',',$users->branch_ids));
+      $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+      $datas=[];
+      $_datex =  change_date_format($request->_datex);
+      $_datey=  change_date_format($request->_datey);
+      $stores = StoreHouse::get();
+      $_item_categories = ItemCategory::get();
+      
+        return view('backend.inventory-report.filter_gross_profit',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
+}
+
+public function reportGrossProfit(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_item_category' => 'required',
+            '_datey' => 'required',
+        ]);
+
+        session()->put('filter_gross_profit', $request->all());
+        $previous_filter= Session::get('filter_gross_profit');
+        $page_name = "Gross Profit";
+        
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+
+        $category_ids = array();
+        $_item_categorys = $request->_item_category ?? [];
+        if(sizeof($_item_categorys) > 0){
+            foreach ($_item_categorys as $value) {
+                array_push($category_ids, (int) $value);
+            }
+        }
+
+        $_items_ids = array();
+        $_items = (array) $request->_item_id;
+        if(sizeof($_items) > 0){
+            foreach ($_items as $value) {
+                array_push($_items_ids, (int) $value);
+            }
+
+        }else{
+            $basic_information = Inventory::select('id')->whereIn('_category_id',$_item_categorys)->get();
+            foreach ($basic_information as $value) {
+                array_push($_items_ids, (int) $value->id);
+            }
+        }
+
+     
+
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+      $_stores = $request->_store ?? [];
+      if(sizeof($_stores) ==0){
+        $stores_all = StoreHouse::get();
+        foreach ($stores_all as $value) {
+          array_push($_stores, (int) $value->id);
+        }
+      }
+
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $_items_ids_rows = implode(',', $_items_ids);
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+      $_stores_id_rows = implode(',', $_stores);
+      $category_ids_rows = implode(',', $category_ids);
+      
+     if($_items_ids){
+
+      
+      $datas = DB::select("  
+ SELECT t1._item_id,t1._item_name as _name,t1._category_id,t2._name as _unit_name,t1._store_id,t1._branch_id, t1._cost_center_id,  SUM(IFNULL( -(t1._qty),0  )) AS _qty,SUM(-(t1._qty)*t1._rate) as _value,
+  SUM(-(t1._qty)*t1._cost_rate) as _cost_value 
+        FROM item_inventories as t1 
+        inner JOIN units as t2 on t1._unit_id=t2.id
+        WHERE  t1._status=1 AND   t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+        AND  t1._branch_id IN(".$_branch_ids_rows.") 
+        AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
+        AND t1._item_id IN(".$_items_ids_rows.") AND t1._transection IN('Sales','Sales Return')
+        GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id
+
+
+      ");
+    $group_array_values =array();
+      foreach ($datas as $value) {
+        $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id][]=$value;
+      }
+
+       
+       
+
+}else{
+   $group_array_values = array();
+}
+       //return $group_array_values;
+        return view('backend.inventory-report.report_gross_profit',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
+    }
+
+public function grossProfitCatItem(Request $request){
+  $category_id = $request->_category_id;
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  return view('backend.item-category.gross_profit_cat_base_item',compact('data'));
+}
+
+public function resetGrossProfit(){
+  Session::flash('filter_gross_profit');
+  return redirect()->back();
+}
+
+
+
+public function filterExpiredItem(Request $request){
+      $previous_filter= Session::get('filter_expired_item');
+      $page_name = "Expired Item";
+      $users = Auth::user();
+      $permited_branch = permited_branch(explode(',',$users->branch_ids));
+      $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+      $datas=[];
+      $_datex =  change_date_format($request->_datex);
+      $_datey=  change_date_format($request->_datey);
+      $stores = StoreHouse::get();
+      $_item_categories = ItemCategory::get();
+      
+        return view('backend.inventory-report.filter_expired_item',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
+}
+
+public function reportExpiredItem(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_item_category' => 'required',
+            '_datey' => 'required',
+        ]);
+
+        session()->put('filter_gross_profit', $request->all());
+        $previous_filter= Session::get('filter_expired_item');
+        $page_name = "Expired Item";
+        
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+
+        $category_ids = array();
+        $_item_categorys = $request->_item_category ?? [];
+        if(sizeof($_item_categorys) > 0){
+            foreach ($_item_categorys as $value) {
+                array_push($category_ids, (int) $value);
+            }
+        }
+
+        $_items_ids = array();
+        $_items = (array) $request->_item_id;
+        if(sizeof($_items) > 0){
+            foreach ($_items as $value) {
+                array_push($_items_ids, (int) $value);
+            }
+
+        }else{
+            $basic_information = Inventory::select('id')->whereIn('_category_id',$_item_categorys)->get();
+            foreach ($basic_information as $value) {
+                array_push($_items_ids, (int) $value->id);
+            }
+        }
+
+     
+
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+      $_stores = $request->_store ?? [];
+      if(sizeof($_stores) ==0){
+        $stores_all = StoreHouse::get();
+        foreach ($stores_all as $value) {
+          array_push($_stores, (int) $value->id);
+        }
+      }
+
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $_items_ids_rows = implode(',', $_items_ids);
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+      $_stores_id_rows = implode(',', $_stores);
+      $category_ids_rows = implode(',', $category_ids);
+      
+     if($_items_ids){
+
+      
+      $datas = DB::select("  
+ SELECT t1.`id`, t1.`_item_id`,t2._category_id, t1.`_item`, t1.`_unit_id`, t1.`_barcode`, t1.`_manufacture_date`, t1.`_expire_date`, t1.`_qty`, t1.`_sales_rate`, t1.`_pur_rate`, t1.`_sales_discount`, t1.`_sales_vat`, t1.`_value`, t1.`_master_id`, t1.`_branch_id`, t1.`_cost_center_id`, t1.`_store_id`, t1.`_store_salves_id`, t1.`_status` 
+ FROM `product_price_lists` as t1
+ INNER JOIN inventories as t2 ON t1._item_id=t2.id
+  WHERE  t1._status=1 AND   t1._expire_date  >= '".$_datex."'  AND t1._expire_date <= '".$_datey."' 
+        AND  t1._branch_id IN(".$_branch_ids_rows.") 
+        AND t1._store_id IN(".$_stores_id_rows.") AND t2._category_id IN(".$category_ids_rows.")
+        AND t1._item_id IN(".$_items_ids_rows.")  AND t1._cost_center_id IN(".$_cost_center_id_rows.")
+        ORDER BY t1.`_item` ASC
+
+
+      ");
+    $group_array_values =array();
+      foreach ($datas as $value) {
+        $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id][]=$value;
+      }
+
+       
+       
+
+}else{
+   $group_array_values = array();
+}
+       
+        return view('backend.inventory-report.report_expired_item',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
+    }
+
+public function expiredItemCatItem(Request $request){
+  $category_id = $request->_category_id;
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  return view('backend.item-category.expired_item_cat_base_item',compact('data'));
+}
+
+public function resetExpiredItem(){
+  Session::flash('filter_expired_item');
   return redirect()->back();
 }
 
