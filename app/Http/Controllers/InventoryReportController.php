@@ -768,21 +768,10 @@ public function reportStockLedger(Request $request){
       
      if($_items_ids){
 
-      // $datas = DB::select("  
-      // SELECT '' as _transection_ref  ,'Opening' as _transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, SUM(IFNULL(t1._qty,0)) AS _opening,0 as _stockin,0 AS _stockout 
-      //   FROM item_inventories as t1 
-      //   WHERE  t1._status=1 AND t1._date < '".$_datex."' AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center_id IN(".$_cost_center_id_rows.") AND t1._item_id IN(".$_items_ids_rows.")
-      //   AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
-      //   GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id 
-      // UNION ALL
-      // SELECT t1._transection_ref,t1._transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, 0 AS _opening, IF((t1._qty > 0), t1._qty,0  ) as _stockin,IF((t1._qty < 0), t1._qty,0  ) AS _stockout 
-      //   FROM item_inventories as t1 
-      //   WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
-      //         AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center_id IN(".$_cost_center_id_rows.") AND t1._item_id IN(".$_items_ids_rows.")
-      //   AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
-      //   GROUP BY t1.id
-      // ");
-      $datas = DB::select("  SELECT '' as _date,'' as _transection_ref ,'Opening' as _transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, 0 as _stockin,0 AS _stockout,SUM(IFNULL(t1._qty,0)) as _balance 
+      
+      $datas = DB::select("  
+
+      SELECT '' as id, '' as _date,'' as _transection_ref ,'Opening' as _transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, 0 as _stockin,0 AS _stockout,SUM(IFNULL(t1._qty,0)) as _balance 
         FROM item_inventories as t1 
         WHERE  t1._status=1 AND  t1._date < '".$_datex."' AND  t1._branch_id IN(".$_branch_ids_rows.") 
         AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
@@ -790,13 +779,15 @@ public function reportStockLedger(Request $request){
         GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id
         
  UNION ALL
- SELECT t1._date, t1._transection_ref as _transection_ref  ,t1._transection as _transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, SUM(IF((t1._qty > 0), t1._qty,0  )) as _stockin, SUM(IF((t1._qty < 0), t1._qty,0  )) AS _stockout,SUM(IFNULL(t1._qty,0)) as _balance 
+ SELECT t1.id, t1._date, t1._transection_ref as _transection_ref  ,t1._transection as _transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, SUM(IF((t1._qty > 0), t1._qty,0  )) as _stockin, SUM(IF((t1._qty < 0), t1._qty,0  )) AS _stockout,SUM(IFNULL(t1._qty,0)) as _balance 
         FROM item_inventories as t1 
         WHERE  t1._status=1 AND   t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
         AND  t1._branch_id IN(".$_branch_ids_rows.") 
         AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
         AND t1._item_id IN(".$_items_ids_rows.")
-        GROUP BY t1.id
+        GROUP BY t1.id  
+
+
       ");
     $group_array_values =array();
       foreach ($datas as $value) {
@@ -821,6 +812,233 @@ public function StockLedgerCatItem(Request $request){
 
 public function resetStockLedger(){
   Session::flash('filter_stock_ledger');
+  return redirect()->back();
+}
+
+
+public function filterStockValueRegister(Request $request){
+      $previous_filter= Session::get('filter_stock_value_register');
+      $page_name = "Stock Value Register";
+      $users = Auth::user();
+      $permited_branch = permited_branch(explode(',',$users->branch_ids));
+      $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+      $datas=[];
+      $_datex =  change_date_format($request->_datex);
+      $_datey=  change_date_format($request->_datey);
+      $stores = StoreHouse::get();
+      $_item_categories = ItemCategory::get();
+      
+        return view('backend.inventory-report.filter_stock_value_register',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
+}
+
+public function reportStockValueRegister(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_item_category' => 'required'
+        ]);
+
+        session()->put('filter_stock_value_register', $request->all());
+        $previous_filter= Session::get('filter_stock_value_register');
+        $page_name = "Stock Value Register";
+        
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+
+        $category_ids = array();
+        $_item_categorys = $request->_item_category ?? [];
+        if(sizeof($_item_categorys) > 0){
+            foreach ($_item_categorys as $value) {
+                array_push($category_ids, (int) $value);
+            }
+        }
+
+        $_items_ids = array();
+        $_items = (array) $request->_item_id;
+        if(sizeof($_items) > 0){
+            foreach ($_items as $value) {
+                array_push($_items_ids, (int) $value);
+            }
+
+        }else{
+            $basic_information = Inventory::select('id')->whereIn('_category_id',$_item_categorys)->get();
+            foreach ($basic_information as $value) {
+                array_push($_items_ids, (int) $value->id);
+            }
+        }
+
+     
+
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+      $_stores = $request->_store ?? [];
+      if(sizeof($_stores) ==0){
+        $stores_all = StoreHouse::get();
+        foreach ($stores_all as $value) {
+          array_push($_stores, (int) $value->id);
+        }
+      }
+
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $_items_ids_rows = implode(',', $_items_ids);
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+      $_stores_id_rows = implode(',', $_stores);
+      $category_ids_rows = implode(',', $category_ids);
+      
+     if($_items_ids){
+
+    
+      $datas = DB::select("  SELECT t1._date, t1._transection_ref as _transection_ref  ,t1._transection as _transection,t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, SUM(IF((t1._qty > 0), t1._qty,0  )) as _stockin, SUM(IF((t1._qty < 0), t1._qty,0  )) AS _stockout,SUM(IFNULL(t1._qty,0)) as _balance 
+        FROM item_inventories as t1 
+        WHERE  t1._status=1 AND    t1._date <= '".$_datex."'
+        AND  t1._branch_id IN(".$_branch_ids_rows.") 
+        AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
+        AND t1._item_id IN(".$_items_ids_rows.") AND t1._transection IN('Purchase','Purchase Return')
+        GROUP BY t1.id ORDER by t1.id ASC
+      ");
+    $group_array_values =array();
+      foreach ($datas as $value) {
+        $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id."__".$value->_item_id][]=$value;
+      }
+
+       
+       
+
+}else{
+   $group_array_values = array();
+}
+       //return $group_array_values;
+        return view('backend.inventory-report.report_stock_value_register',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
+    }
+
+public function StockValueRegisterCatItem(Request $request){
+  $category_id = $request->_category_id;
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  return view('backend.item-category.stock_value_register_cat_base_item',compact('data'));
+}
+
+public function resetStockValueRegister(){
+  Session::flash('filter_stock_value_register');
+  return redirect()->back();
+}
+
+public function filterStockValue(Request $request){
+      $previous_filter= Session::get('filter_stock_value');
+      $page_name = "Stock Value";
+      $users = Auth::user();
+      $permited_branch = permited_branch(explode(',',$users->branch_ids));
+      $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+      $datas=[];
+      $_datex =  change_date_format($request->_datex);
+      $_datey=  change_date_format($request->_datey);
+      $stores = StoreHouse::get();
+      $_item_categories = ItemCategory::get();
+      
+        return view('backend.inventory-report.filter_stock_value',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
+}
+
+public function reportStockValue(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_item_category' => 'required'
+        ]);
+
+        session()->put('filter_stock_value', $request->all());
+        $previous_filter= Session::get('filter_stock_value');
+        $page_name = "Stock Value";
+        
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+
+        $category_ids = array();
+        $_item_categorys = $request->_item_category ?? [];
+        if(sizeof($_item_categorys) > 0){
+            foreach ($_item_categorys as $value) {
+                array_push($category_ids, (int) $value);
+            }
+        }
+
+        $_items_ids = array();
+        $_items = (array) $request->_item_id;
+        if(sizeof($_items) > 0){
+            foreach ($_items as $value) {
+                array_push($_items_ids, (int) $value);
+            }
+
+        }else{
+            $basic_information = Inventory::select('id')->whereIn('_category_id',$_item_categorys)->get();
+            foreach ($basic_information as $value) {
+                array_push($_items_ids, (int) $value->id);
+            }
+        }
+
+     
+
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+      $_stores = $request->_store ?? [];
+      if(sizeof($_stores) ==0){
+        $stores_all = StoreHouse::get();
+        foreach ($stores_all as $value) {
+          array_push($_stores, (int) $value->id);
+        }
+      }
+
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $_items_ids_rows = implode(',', $_items_ids);
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+      $_stores_id_rows = implode(',', $_stores);
+      $category_ids_rows = implode(',', $category_ids);
+      
+     if($_items_ids){
+
+      
+      $datas = DB::select("  SELECT t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id,SUM(IFNULL(t1._qty,0)) as _qty , avg( IF((t1._qty > 0), t1._cost_rate,0  ) ) as _cost_rate,SUM( IF((t1._qty > 0), t1._cost_value,-(t1._cost_value)  ) ) as _cost_value
+        FROM item_inventories as t1 
+        WHERE  t1._status=1 AND  t1._date <= '".$_datex."' AND  t1._branch_id IN(".$_branch_ids_rows.") 
+        AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
+        AND t1._item_id IN(".$_items_ids_rows.")
+        GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id
+
+      ");
+    $group_array_values =array();
+      foreach ($datas as $value) {
+        $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id][]=$value;
+      }
+
+       
+       
+
+}else{
+   $group_array_values = array();
+}
+       //return $group_array_values;
+        return view('backend.inventory-report.report_stock_value',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
+    }
+
+public function StockValueCatItem(Request $request){
+  $category_id = $request->_category_id;
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  return view('backend.item-category.stock_value_cat_base_item',compact('data'));
+}
+
+public function resetStockValue(){
+  Session::flash('filter_stock_value');
   return redirect()->back();
 }
 

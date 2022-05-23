@@ -91,11 +91,20 @@ if($currentURL === $current){
                          <th>Vat</th>
                          <th>Purchase Rate</th>
                          <th>Sales Rate</th>
+                         <th>Total Value</th>
                          <th>Manu. Date</th>
                          <th>Exp. Date</th>
                          <th>Status</th>            
                       </tr>
+                      @php
+                        $total_qty=0;
+                        $total_value=0;
+                      @endphp
                         @foreach ($datas as $key => $data)
+                         @php
+                        $total_qty +=$data->_qty;
+                        $total_value +=($data->_qty*$data->_pur_rate);
+                      @endphp
                         <tr>
                            
                            
@@ -107,17 +116,25 @@ if($currentURL === $current){
                             <td>{{ $data->_units->_name ?? '' }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_barcode ?? '' }}</td>
-                            <td>{{ $data->_qty ?? 0 }}</td>
-                            <td>{{ _report_amount( $data->_discount ?? 0 ) }}</td>
-                            <td>{{ _report_amount( $data->_vat ?? 0 ) }}</td>
-                            <td>{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>
-                            <td>{{ _report_amount($data->_sales_rate ?? 0 ) }}</td>
+                            <td class="text-right">{{ $data->_qty ?? 0 }}</td>
+                            <td class="text-right">{{ _report_amount( $data->_discount ?? 0 ) }}</td>
+                            <td class="text-right">{{ _report_amount( $data->_vat ?? 0 ) }}</td>
+                            <td class="text-right">{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>
+                            <td class="text-right">{{ _report_amount($data->_sales_rate ?? 0 ) }}</td>
+                            <td class="text-right">{{ _report_amount(($data->_qty*$data->_pur_rate) ) }}</td>
                             <td>{{ $data->_manufacture_date ?? '' }}</td>
                             <td>{{ $data->_expire_date ?? '' }}</td>
                            <td>{{ selected_status($data->_status) }}</td>
                            
                         </tr>
                         @endforeach
+                        <tr>
+                          <th colspan="6" class="text-left">Total</th>
+                          <th class="text-right">{{_report_amount($total_qty)}}</th>
+                          <th colspan="4"></th>
+                          <th class="text-right">{{_report_amount($total_value)}}</th>
+                          <th colspan="3"></th>
+                        </tr>
                     </table>
                 </div>
                 <!-- /.d-flex -->

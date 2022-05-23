@@ -10,6 +10,7 @@ use App\Models\VoucherType;
 use App\Models\Inventory;
 use App\Models\StoreHouse;
 use App\Models\ItemCategory;
+use App\Models\Units;
 
 if (! function_exists('convertLocalToUTC')) {
     function convertLocalToUTC($time)
@@ -161,6 +162,14 @@ if (! function_exists('_branch_name')) {
     {
         $branch= Branch::where('id',$branch_ids)->select('_name')->first();
         return $branch->_name;
+    }
+}
+
+if (! function_exists('_unit_name')) {
+    function _unit_name($id)
+    {
+        $data= Units::where('id',$id)->select('_name')->first();
+        return $data->_name;
     }
 }
 

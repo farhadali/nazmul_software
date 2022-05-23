@@ -12,7 +12,6 @@
                 <h4>{{ $page_name ?? '' }}</h4>
                 @if (count($errors) > 0)
            <div class="alert alert-danger">
-                <strong>Whoops!</strong> There were some problems with your input.<br><br>
                 <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -24,11 +23,11 @@
           
          
             <div class="card-body filter_body" >
-               <form  action="{{url('report-stock-ledger')}}" method="POST">
+               <form  action="{{url('report-stock-value')}}" method="POST">
                 @csrf
                     <div class="row">
                       <div class="col-md-6">
-                      <label>Start Date:</label>
+                      <label>As on Date:</label>
                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                       <input type="text" name="_datex" class="form-control datetimepicker-input" data-target="#reservationdate" required @if(isset($previous_filter["_datex"])) value='{{$previous_filter["_datex"] }}' @endif  />
                                       <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
@@ -42,7 +41,7 @@
                         </div>
                       </div>
 
-                      <div class="col-md-6">
+                     <!--  <div class="col-md-6">
                         <label>End Date:</label>
                         <div class="input-group date" id="reservationdate_2" data-target-input="nearest">
                                       <input type="text" name="_datey" class="form-control datetimepicker-input_2" data-target="#reservationdate_2" required @if(isset($previous_filter["_datey"])) value='{{$previous_filter["_datey"] }}' @endif  />
@@ -50,7 +49,7 @@
                                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                       </div>
                                   </div>
-                      </div>
+                      </div> -->
                     @if(sizeof($permited_branch) > 1)
                       <div class="col-md-12">
                         <label>Branch:</label>
@@ -130,7 +129,7 @@
                             <button type="submit" class="btn btn-success submit-button form-control"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Report</button>
                         </div>
                          <div class="col-xs-6 col-sm-6 col-md-6 ">
-                                     <a href="{{url('reset-stock-ledger')}}" class="btn btn-danger form-control" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
+                                     <a href="{{url('reset-stock-value')}}" class="btn btn-danger form-control" title="Search Reset"><i class="fa fa-retweet mr-2"></i> </a>
                         </div>
                         <br><br>
                      </div>

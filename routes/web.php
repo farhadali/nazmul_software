@@ -228,6 +228,16 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('reset-stock-ledger','App\Http\Controllers\InventoryReportController@resetStockLedger');
     Route::get('stock-ledger-cat-item','App\Http\Controllers\InventoryReportController@stockLedgerCatItem');
 
+    Route::post('report-stock-value','App\Http\Controllers\InventoryReportController@reportStockValue');
+    Route::get('stock-value','App\Http\Controllers\InventoryReportController@filterStockValue');
+    Route::get('reset-stock-value','App\Http\Controllers\InventoryReportController@resetStockValue');
+    Route::get('stock-value-cat-item','App\Http\Controllers\InventoryReportController@stockValueCatItem');
+
+    Route::post('report-stock-value-register','App\Http\Controllers\InventoryReportController@reportStockValueRegister');
+    Route::get('stock-value-register','App\Http\Controllers\InventoryReportController@filterStockValueRegister');
+    Route::get('reset-stock-value-register','App\Http\Controllers\InventoryReportController@resetStockValueRegister');
+    Route::get('stock-value-register-cat-item','App\Http\Controllers\InventoryReportController@stockValueRegisterCatItem');
+
     //################################
     //  Inventory Report Section End
     //################################
