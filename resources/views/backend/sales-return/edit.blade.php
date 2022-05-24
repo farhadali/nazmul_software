@@ -223,6 +223,10 @@
                                             
 
                                             <th class="text-left" >Value</th>
+                                             <th class="text-middle @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
+                                            @endif" >Manu. Date</th>
+                                             <th class="text-middle @if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none @endif
+                                            @endif"> Expired Date </th>
                                            
                                             <th class="text-left  @if(sizeof($permited_branch)  ==1) display_none @endif " >Branch</th>
                                             
@@ -299,6 +303,12 @@
                                               <td>
                                                 <input type="number" name="_value[]" class="form-control _value " readonly value="{{$_detail->_value ?? 0 }}" >
                                               </td>
+                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " value="{{ $_detail->_manufacture_date ?? '' }}" >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " value="{{ $_detail->_expire_date ?? '' }}" >
+                                              </td>
                                             
                                                <td class="@if(sizeof($permited_branch) == 1) display_none @endif ">
                                                 <select class="form-control  _main_branch_id_detail" name="_main_branch_id_detail[]"  required>
@@ -360,6 +370,10 @@
                                               </td>
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_value_amount" class="form-control _total_value_amount" value="{{$_total_value ?? 0}}" readonly required>
+                                              </td>
+                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
                                               </td>
                                              
                                                <td class="@if(sizeof($permited_branch) == 1) display_none @endif"></td>

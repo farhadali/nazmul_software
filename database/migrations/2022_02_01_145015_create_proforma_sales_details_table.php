@@ -24,6 +24,8 @@ class CreateProformaSalesDetailsTable extends Migration
             $table->double('_discount',15,4)->default(0);
             $table->double('_vat',15,4)->default(0);
             $table->double('_value',15,4)->default(0);
+            $table->date('_manufacture_date')->nullable();
+            $table->date('_expire_date')->nullable();
             $table->unsignedBigInteger('_no');
             $table->foreign('_no')->references('id')->on('proforma_sales');
             $table->unsignedBigInteger('_branch_id');

@@ -53,7 +53,7 @@
                         </div>
                       </div>
                       
-                      <div class="col-md-12">
+                      <div class="col-md-12 @if(sizeof($permited_branch) == 1) display_none @endif " >
                           <label>Branch:</label>
                          <select id="_branch_id" class="form-control _branch_id multiple_select" name="_branch_id[]" multiple size='2' >
                           @forelse($permited_branch as $branch )
@@ -66,7 +66,7 @@
                           @endforelse
                          </select>
                       </div>
-                      <div class="col-md-12">
+                      <div class="col-md-12 @if(sizeof($permited_costcenters) == 1) display_none @endif ">
                           <label>Cost Center:</label>
                          <select class="form-control width_150_px _cost_center multiple_select" multiple name="_cost_center[]" size='2'  >
                                             

@@ -137,6 +137,18 @@ class InventoryController extends Controller
         if($request->has('_category_id') && $request->_category_id !=''){
             $datas = $datas->where('_category_id','=',$request->_category_id);
         }
+        if($request->has('_unit_id') && $request->_unit_id !=''){
+            $datas = $datas->where('_unit_id','=',$request->_unit_id);
+        }
+        if($request->has('_branch_id') && $request->_branch_id !=''){
+            $datas = $datas->where('_branch_id','=',$request->_branch_id);
+        }
+        if($request->has('_cost_center_id') && $request->_cost_center_id !=''){
+            $datas = $datas->where('_cost_center_id','=',$request->_cost_center_id);
+        }
+        if($request->has('_store_id') && $request->_store_id !=''){
+            $datas = $datas->where('_store_id','=',$request->_store_id);
+        }
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
         $page_name = $this->page_name;
 

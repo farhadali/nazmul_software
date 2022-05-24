@@ -210,9 +210,12 @@
                                              
                                             <th class="text-left @if($_inline_discount  ==0) display_none @endif" >Dis%</th>
                                             <th class="text-left @if($_inline_discount  ==0) display_none @endif" >Dis</th>
-                                            
-
                                             <th class="text-left" >Value</th>
+
+                                            <th class="text-middle @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
+                                            @endif" >Manu. Date</th>
+                                             <th class="text-middle @if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none @endif
+                                            @endif"> Expired Date </th>
                                            
                                             <th class="text-left  @if(sizeof($permited_branch)  ==1) display_none @endif " >Branch</th>
                                             
@@ -259,22 +262,28 @@
                                               </td>
                                               
                                               <td class=" @if($_show_vat == 0) display_none @endif ">
-                                                <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" placeholder="VAT%" >
+                                                <input type="number" name="_vat[]" class="form-control  _vat _common_keyup" placeholder="VAT%" >
                                               </td>
                                               <td class="@if($_show_vat ==0) display_none @endif " >
-                                                <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" placeholder="VAT Amount"  >
+                                                <input type="number" name="_vat_amount[]" class="form-control  _vat_amount" placeholder="VAT Amount"  >
                                               </td>
                                               
                                               
                                               <td class="@if($_inline_discount ==0) display_none @endif " >
-                                                <input type="text" name="_discount[]" class="form-control  _discount _common_keyup" >
+                                                <input type="number" name="_discount[]" class="form-control  _discount _common_keyup" >
                                               </td>
                                               <td class="@if($_inline_discount ==0) display_none @endif" >
-                                                <input type="text" name="_discount_amount[]" class="form-control  _discount_amount" >
+                                                <input type="number" name="_discount_amount[]" class="form-control  _discount_amount" >
                                               </td>
                                               
                                               <td>
                                                 <input type="number" name="_value[]" class="form-control _value " readonly >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " >
                                               </td>
                                             
                                                <td class="@if(sizeof($permited_branch) == 1) display_none @endif ">
@@ -342,6 +351,10 @@
                                              
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_value_amount" class="form-control _total_value_amount" value="0" readonly required>
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
                                               </td>
                                              
                                                <td class="@if(sizeof($permited_branch) == 1) display_none @endif"></td>
@@ -959,20 +972,26 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                               </td>
                                                
                                                 <td class="@if($_show_vat==0) display_none @endif">
-                                                <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" >
+                                                <input type="number" name="_vat[]" class="form-control  _vat _common_keyup" >
                                               </td>
                                               <td class="@if($_show_vat==0) display_none @endif">
-                                                <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" >
+                                                <input type="number" name="_vat_amount[]" class="form-control  _vat_amount" >
                                               </td>
                                                 <td class="@if($_inline_discount==0) display_none @endif">
-                                                <input type="text" name="_discount[]" class="form-control  _discount _common_keyup" >
+                                                <input type="number" name="_discount[]" class="form-control  _discount _common_keyup" >
                                               </td>
                                               <td class="@if($_inline_discount==0) display_none @endif">
-                                                <input type="text" name="_discount_amount[]" class="form-control  _discount_amount" >
+                                                <input type="number" name="_discount_amount[]" class="form-control  _discount_amount" >
                                               </td>
                                              
                                               <td>
                                                 <input type="number" name="_value[]" class="form-control _value " readonly >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " >
                                               </td>
                                               
                                               <td class="@if(sizeof($permited_branch)==1) display_none @endif">

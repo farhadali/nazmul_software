@@ -218,6 +218,10 @@
                                             
 
                                             <th class="text-left" >Value</th>
+                                             <th class="text-middle @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
+                                            @endif" >Manu. Date</th>
+                                             <th class="text-middle @if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none @endif
+                                            @endif"> Expired Date </th>
                                            
                                             <th class="text-left  @if(sizeof($permited_branch)  ==1) display_none @endif " >Branch</th>
                                             
@@ -280,6 +284,12 @@
                                               
                                               <td>
                                                 <input type="number" name="_value[]" class="form-control _value " readonly >
+                                              </td>
+                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date "  >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date "  >
                                               </td>
                                             
                                                <td class="@if(sizeof($permited_branch) == 1) display_none @endif ">
@@ -347,6 +357,10 @@
                                              
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_value_amount" class="form-control _total_value_amount" value="0" readonly required>
+                                              </td>
+                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
                                               </td>
                                              
                                                <td class="@if(sizeof($permited_branch) == 1) display_none @endif"></td>
@@ -760,6 +774,9 @@ if(data.length > 0 ){
     var _sales_rate = (data[i]._sales_rate ) ? data[i]._sales_rate : 0 ;
     var _vat = (  data[i]._vat ) ? data[i]._vat : 0 ;
 
+    var _manufacture_date = (data[i]._manufacture_date) ? data[i]._manufacture_date : '' ;
+    var _expire_date = (data[i]._expire_date) ? data[i]._expire_date : '' ;
+
     var _vat_amount = ( ((data[i]._qty*data[i]._sales_rate)*data[i]._vat)/100 ) ? ( ((data[i]._qty*data[i]._sales_rate)*data[i]._vat)/100 ) : 0 ;
     var _discount = (data[i]._discount ) ? data[i]._discount : 0 ;
     var _discount_amount = ( ((data[i]._qty*data[i]._sales_rate)*data[i]._discount)/100 ) ? ( ((data[i]._qty*data[i]._sales_rate)*data[i]._discount)/100 ) : 0 ;
@@ -808,7 +825,12 @@ if(data.length > 0 ){
                                               <td>
                                                 <input type="number" name="_value[]" class="form-control _value " readonly value="${_value}" >
                                               </td>
-                                              
+                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " value="${_manufacture_date}" >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " value="${_expire_date }" >
+                                              </td>
                                               <td class="@if(sizeof($permited_branch)==1) display_none @endif">
                                               <input type="hidden" class="_main_branch_id_detail" name="_main_branch_id_detail[]" value="${data[i]._branch_id}" />
                                               <input type="text" readonly class="_main_branch_name_detail" name="_main_branch_name_detail[]" value="${data[i]._detail_branch._name}" />

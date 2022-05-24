@@ -33,6 +33,8 @@ class CreateSalesDetailsTable extends Migration
             $table->string('_barcode')->nullable();
             $table->integer('_purchase_invoice_no')->nullable();
             $table->integer('_purchase_detail_id')->nullable();
+            $table->date('_manufacture_date')->nullable();
+            $table->date('_expire_date')->nullable();
             $table->unsignedBigInteger('_no');
             $table->foreign('_no')->references('id')->on('sales');
             $table->unsignedBigInteger('_branch_id');

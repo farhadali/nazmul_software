@@ -312,6 +312,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $data->_show_delivery_man = $request->_show_delivery_man ?? 1;
         $data->_show_sales_man = $request->_show_sales_man ?? 1;
         $data->_show_cost_rate = $request->_show_cost_rate ?? 1;
+        $data->_show_manufacture_date = $request->_show_manufacture_date ?? 1;
+        $data->_show_expire_date = $request->_show_expire_date ?? 1;
         $data->save();
 
 
@@ -407,6 +409,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $_purchase_detail_ids = $request->_purchase_detail_id;
         $_discounts = $request->_discount;
         $_discount_amounts = $request->_discount_amount;
+        $_manufacture_dates = $request->_manufacture_date;
+        $_expire_dates = $request->_expire_date;
        
         $_total_cost_value=0;
 
@@ -421,6 +425,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 $SalesDetail->_purchase_detail_id = $_purchase_detail_ids[$i];
                 $SalesDetail->_qty = $_qtys[$i];
                 $SalesDetail->_barcode = $_barcodes[$i];
+                $SalesDetail->_manufacture_date = $_manufacture_dates[$i];
+                $SalesDetail->_expire_date = $_expire_dates[$i];
                 $SalesDetail->_rate = $_rates[$i];
                 $SalesDetail->_sales_rate = $_sales_rates[$i];
                 $SalesDetail->_discount = $_discounts[$i] ?? 0;
@@ -460,6 +466,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 $ItemInventory->_qty = -($_qtys[$i]);
                 $ItemInventory->_rate = $_sales_rates[$i];
                 $ItemInventory->_cost_rate = $_rates[$i];
+                $ItemInventory->_manufacture_date = $_manufacture_dates[$i];
+                $ItemInventory->_expire_date = $_expire_dates[$i];
                 $ItemInventory->_cost_value = ($_qtys[$i]*$_rates[$i]);
                 $ItemInventory->_value = $_values[$i] ?? 0;
                 $ItemInventory->_branch_id = $_main_branch_id_detail[$i] ?? 1;
@@ -801,6 +809,9 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $_discounts = $request->_discount;
         $_discount_amounts = $request->_discount_amount;
         $_sales_detail_row_ids = $request->_sales_detail_row_id;
+         $_manufacture_dates = $request->_manufacture_date;
+        $_expire_dates = $request->_expire_date;
+
 
 
         
@@ -831,6 +842,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 $SalesDetail->_vat = $_vats[$i] ?? 0;
                 $SalesDetail->_vat_amount = $_vat_amounts[$i] ?? 0;
                 $SalesDetail->_value = $_values[$i] ?? 0;
+                $SalesDetail->_manufacture_date = $_manufacture_dates[$i];
+                $SalesDetail->_expire_date = $_expire_dates[$i];
                 $SalesDetail->_store_id = $_store_ids[$i] ?? 1;
                 $SalesDetail->_cost_center_id = $_main_cost_center[$i] ?? 1;
                 $SalesDetail->_store_salves_id = $_store_salves_ids[$i] ?? '';
@@ -872,6 +885,9 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 $ItemInventory->_cost_rate = $_rates[$i];
                 $ItemInventory->_cost_value = ($_qtys[$i]*$_rates[$i]);
                 $ItemInventory->_value = $_values[$i] ?? 0;
+
+                $ItemInventory->_manufacture_date = $_manufacture_dates[$i];
+                $ItemInventory->_expire_date = $_expire_dates[$i];
                 $ItemInventory->_branch_id = $_main_branch_id_detail[$i] ?? 1;
                 $ItemInventory->_store_id = $_store_ids[$i] ?? 1;
                 $ItemInventory->_cost_center_id = $_main_cost_center[$i] ?? 1;

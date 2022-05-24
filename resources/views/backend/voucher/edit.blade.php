@@ -213,7 +213,7 @@
                             </div>
                           </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12 ">
+                        <div class="col-xs-12 col-sm-12 col-md-12 mb-10">
                             <div class="form-group">
                                
                                 
@@ -231,12 +231,9 @@
                         
                        
                        
-                        <div class="col-xs-8 col-sm-8 col-md-8 ">
-                           <!--  <button type="submit" class="btn btn-primary submit-button">Submit</button> -->
-                        </div>
-                       
-                        <div class="col-xs-3 col-sm-3 col-md-3 text-right">
-                            <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
+                       <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
+                            <button type="submit" class="btn btn-success submit-button ml-5"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
+                            <button type="submit" class="btn btn-warning submit-button _save_and_print"><i class="fa fa-print mr-2" aria-hidden="true"></i> Save & Print</button>
                         </div>
                         <br><br>
                     </div>

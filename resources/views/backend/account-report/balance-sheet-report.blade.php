@@ -70,6 +70,9 @@
           
           </thead>
           <tbody>
+            @php
+            $total_liabilites = 0;
+           @endphp
            @forelse($balance_sheet_filter as $l_1key=>$l_1_value)
            @php
             $summary_l1 = 0;
@@ -98,6 +101,7 @@
                       $summary_l1 +=$l_4value->_amount ?? 0; 
                       $summary_l2 +=$l_4value->_amount ?? 0;
                       $summary_l3 +=$l_4value->_amount ?? 0;
+                      $total_liabilites +=$l_4value->_amount ?? 0;
                      @endphp
                           <tr>
                              <td  style="text-align: left;">&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;{!! $l_4value->_l_name ?? '' !!}</td>
@@ -129,12 +133,16 @@
                      <td style="text-align: left;"><b>Summary for {!! $l_1key !!}:</b></td>
                      <td style="text-align: right;padding-right: 10px;"><b> {!! _show_amount_dr_cr(_report_amount(  $summary_l1 ))  !!}</b></td>
                    </tr>
-                   <tr>
-                     <td colspan="2">&nbsp; &nbsp;</td>
-                   </tr>
+                   
 
            @empty
            @endforelse
+           @if($total_liabilites !=0)
+           <tr>
+                     <td class="text-left">Diffrance of Balance Sheet</td>
+                     <td class="text-right">{{_show_amount_dr_cr(_report_amount($total_liabilites))}}</td>
+            </tr>
+            @endif
                   
 
 

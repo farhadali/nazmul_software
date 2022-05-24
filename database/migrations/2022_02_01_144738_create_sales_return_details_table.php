@@ -30,6 +30,8 @@ class CreateSalesReturnDetailsTable extends Migration
             $table->integer('_store_id')->default(0);
             $table->integer('_cost_center_id')->default(0);
             $table->integer('_store_salves_id')->default(0);
+            $table->date('_manufacture_date')->nullable();
+            $table->date('_expire_date')->nullable();
             $table->unsignedBigInteger('_no');
             $table->foreign('_no')->references('id')->on('sales_returns');
             $table->unsignedBigInteger('_branch_id');

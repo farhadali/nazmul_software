@@ -99,3 +99,18 @@
           <option value="1" @if(isset($form_settings->_show_self))@if($form_settings->_show_self==1) selected @endif @endif>YES</option>
         </select>
       </div>
+
+      <div class="form-group row">
+        <label for="_show_expire_date" class="col-sm-5 col-form-label">Show Expire Date</label>
+        <select class="form-control col-sm-7" name="_show_expire_date">
+          <option value="0" @if(isset($form_settings->_show_expire_date))@if($form_settings->_show_expire_date==0) selected @endif @endif>NO</option>
+          <option value="1" @if(isset($form_settings->_show_expire_date))@if($form_settings->_show_expire_date==1) selected @endif @endif>YES</option>
+        </select>
+      </div>
+      <div class="form-group row">
+        <label for="_show_manufacture_date" class="col-sm-5 col-form-label">Show Manufacture Date</label>
+        <select class="form-control col-sm-7" name="_show_manufacture_date">
+          <option value="0" @if(isset($form_settings->_show_manufacture_date))@if($form_settings->_show_manufacture_date==0) selected @endif @endif>NO</option>
+          <option value="1" @if(isset($form_settings->_show_manufacture_date))@if($form_settings->_show_manufacture_date==1) selected @endif @endif>YES</option>
+        </select>
+      </div>

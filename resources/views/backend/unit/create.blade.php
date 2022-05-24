@@ -66,9 +66,9 @@
                         </div>
                        
                        
-                        <div class="col-xs-6 col-sm-6 col-md-6 offset-md-6 text-right">
-                            <button type="submit" class="btn btn-success submit-button"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
-                            
+                        <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
+                            <button type="submit" class="btn btn-success submit-button ml-5"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
+                           
                         </div>
                         <br><br>
 
