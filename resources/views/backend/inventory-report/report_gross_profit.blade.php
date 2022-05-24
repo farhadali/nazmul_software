@@ -60,7 +60,7 @@
           <tr>
             <th>Item Name </th>
             <th style="width: 10%;">Unit</th>
-            <th style="width: 10%;" class="text-right">Quantity</th>
+            <th style="width: 10%;" class="text-right">QTY</th>
             <th style="width: 10%;" class="text-right">Sales Value </th>
             <th style="width: 10%;" class="text-right">Cost Value </th>
             <th style="width: 10%;" class="text-right">Gross Profit</th>

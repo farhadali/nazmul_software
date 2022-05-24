@@ -14,205 +14,10 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-      <!-- Navbar Search -->
-      <li class="nav-item">
-        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-          <i class="fas fa-search"></i>
-        </a>
-        <div class="navbar-search-block">
-          <form class="form-inline">
-            <div class="input-group input-group-sm">
-              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-              <div class="input-group-append">
-                <button class="btn btn-navbar" type="submit">
-                  <i class="fas fa-search"></i>
-                </button>
-                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </li>
+     
 
       <!-- Messages Dropdown Menu -->
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-comments"></i>
-          <span class="badge badge-danger navbar-badge">3</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="{{asset('dist/img/user1-128x128.jpg')}}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Brad Diesel
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Call me whenever you can...</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="{{asset('dist/img/user8-128x128.jpg')}}" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  John Pierce
-                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">I got your message bro</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="{{asset('dist/img/user3-128x128.jpg')}}" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Nora Silvester
-                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">The subject goes here</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-        </div>
-      </li>
-       @can('inventory-report') 
-      <li class="nav-item dropdown remove_from_header">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          
-          Inventory Report <i class="right fas fa-angle-down"></i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-         
-        @can('bill-party-statement')
-          
-           <div style="display: flex;">
-           <a href="{{url('bill-party-statement')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Bill of Party Statement
-          </a>
-        </div>
-         @endcan
-         <div class="dropdown-divider"></div>
-          
-        @can('date-wise-purchase')
-        <div style="display: flex;">
-           <a href="{{url('date-wise-purchase')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Date Wise Purchase
-          </a>
-        </div>
-         
-         @endcan
-         
-       <!--    
-       @can('purchase-summary-statement')
-        <div style="display: flex;">
-           <a href="{{url('purchase-summary-statement')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Purchase Summary Statement
-          </a>
-        </div>
-         @endcan -->
-           
-       @can('purchase-return-detail')
-        <div style="display: flex;">
-           <a href="{{url('purchase-return-detail')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Purchase Return Detail
-          </a>
-        </div>
-         @endcan 
-         <div class="dropdown-divider"></div>  
-       @can('date-wise-sales')
-        <div style="display: flex;">
-           <a href="{{url('date-wise-sales')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Date Wise Sales
-          </a>
-        </div>
-         @endcan 
-          
-      <!--  @can('sales-summary-statement')
-        <div style="display: flex;">
-           <a href="{{url('sales-summary-statement')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Sales Summary Statement
-          </a>
-        </div>
-         @endcan  -->
-          
-       @can('sales-return-detail')
-        <div style="display: flex;">
-           <a href="{{url('sales-return-detail')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Sales Return Details
-          </a>
-        </div>
-         @endcan 
-         <div class="dropdown-divider"></div>  
-       @can('stock-possition')
-        <div style="display: flex;">
-           <a href="{{url('stock-possition')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Stock Possition
-          </a>
-        </div>
-         @endcan 
-          
-       @can('stock-ledger')
-        <div style="display: flex;">
-           <a href="{{url('stock-ledger')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Stock Ledger
-          </a>
-        </div>
-         @endcan 
-          
-       @can('stock-value')
-        <div style="display: flex;">
-           <a href="{{url('stock-value')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Stock Value
-          </a>
-        </div>
-         @endcan 
-          
-       @can('stock-value-register')
-        <div style="display: flex;">
-           <a href="{{url('stock-value-register')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Stock Value Register
-          </a>
-        </div>
-         @endcan 
-          <div class="dropdown-divider"></div>
-       @can('gross-profit')
-        <div style="display: flex;">
-           <a href="{{url('gross-profit')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Gross Profit
-          </a>
-        </div>
-         @endcan
-         <div class="dropdown-divider"></div>  
-       @can('expired-item')
-        <div style="display: flex;">
-           <a href="{{url('expired-item')}}" class="dropdown-item">
-            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Expired Item
-          </a>
-        </div>
-         @endcan 
-
-
-      </li>
-    @endcan
+      <li class="nav-item dropdown"> </li>
        @can('inventory-menu') 
       <li class="nav-item dropdown remove_from_header">
         <a class="nav-link" data-toggle="dropdown" href="#">
@@ -284,7 +89,163 @@
          @endcan   
       </li>
     @endcan
-       @can('inventory-menu') 
+       @can('inventory-report') 
+      <li class="nav-item dropdown remove_from_header">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          
+          Inventory Report <i class="right fas fa-angle-down"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+         
+        @can('bill-party-statement')
+          
+           <div style="display: flex;">
+           <a href="{{url('bill-party-statement')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Bill of Party Statement
+          </a>
+        </div>
+         @endcan
+         <div class="dropdown-divider"></div>
+          
+        @can('date-wise-purchase')
+        <div style="display: flex;">
+           <a href="{{url('date-wise-purchase')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Date Wise Purchase
+          </a>
+        </div>
+         
+         @endcan
+         
+    
+           
+       @can('purchase-return-detail')
+        <div style="display: flex;">
+           <a href="{{url('purchase-return-detail')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Purchase Return Detail
+          </a>
+        </div>
+         @endcan 
+         <div class="dropdown-divider"></div>  
+       @can('date-wise-sales')
+        <div style="display: flex;">
+           <a href="{{url('date-wise-sales')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Date Wise Sales
+          </a>
+        </div>
+         @endcan 
+          
+      
+          
+       @can('sales-return-detail')
+        <div style="display: flex;">
+           <a href="{{url('sales-return-detail')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Sales Return Details
+          </a>
+        </div>
+         @endcan 
+         <div class="dropdown-divider"></div>  
+       @can('stock-possition')
+        <div style="display: flex;">
+           <a href="{{url('stock-possition')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Stock Possition
+          </a>
+        </div>
+         @endcan 
+          
+       @can('stock-ledger')
+        <div style="display: flex;">
+           <a href="{{url('stock-ledger')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Stock Ledger
+          </a>
+        </div>
+         @endcan 
+          
+       @can('stock-value')
+        <div style="display: flex;">
+           <a href="{{url('stock-value')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Stock Value
+          </a>
+        </div>
+         @endcan 
+          
+       @can('stock-value-register')
+        <div style="display: flex;">
+           <a href="{{url('stock-value-register')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Stock Value Register
+          </a>
+        </div>
+         @endcan 
+          <div class="dropdown-divider"></div>
+       @can('gross-profit')
+        <div style="display: flex;">
+           <a href="{{url('gross-profit')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Gross Profit
+          </a>
+        </div>
+         @endcan
+         <div class="dropdown-divider"></div>  
+       @can('expired-item')
+        <div style="display: flex;">
+           <a href="{{url('expired-item')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Expired Item
+          </a>
+        </div>
+         @endcan 
+
+
+      </li>
+    @endcan
+      
+      
+      <!-- Notifications Dropdown Menu -->
+       @can('account-report-menu') 
+      <li class="nav-item dropdown remove_from_header">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          
+          Accounts Report <i class="right fas fa-angle-down"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+         
+          <div class="dropdown-divider"></div>
+           @can('ledger-report')
+          <a href="{{url('ledger-report')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Ledger Report
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('group-ledger')
+          <a href="{{url('group-ledger')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Group Ledger Report
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('income-statement')
+          <a href="{{url('income-statement')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Income Statement
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('trail-balance')
+          <a href="{{url('trail-balance')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i>Trail Balance
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('work-sheet')
+          <a href="{{url('work-sheet')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Work Sheet
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('balance-sheet')
+          <a href="{{url('balance-sheet')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Balance Sheet
+          </a>
+         @endcan  
+              
+      </li>
+    @endcan
+     @can('inventory-menu') 
       <li class="nav-item dropdown remove_from_header">
         <a class="nav-link" data-toggle="dropdown" href="#">
           
@@ -369,102 +330,6 @@
          <div class="dropdown-divider"></div>  
       </li>
     @endcan
-      <!-- Notifications Dropdown Menu -->
-       @can('account-report-menu') 
-      <li class="nav-item dropdown remove_from_header">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          
-          Accounts Report <i class="right fas fa-angle-down"></i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-         
-          <div class="dropdown-divider"></div>
-           @can('ledger-report')
-          <a href="{{url('ledger-report')}}" class="dropdown-item">
-            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Ledger Report
-          </a>
-         @endcan
-         <div class="dropdown-divider"></div>
-        @can('group-ledger')
-          <a href="{{url('group-ledger')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Group Ledger Report
-          </a>
-         @endcan
-         <div class="dropdown-divider"></div>
-        @can('income-statement')
-          <a href="{{url('income-statement')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Income Statement
-          </a>
-         @endcan
-         <div class="dropdown-divider"></div>
-        @can('trail-balance')
-          <a href="{{url('trail-balance')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i>Trail Balance
-          </a>
-         @endcan
-         <div class="dropdown-divider"></div>
-        @can('work-sheet')
-          <a href="{{url('work-sheet')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Work Sheet
-          </a>
-         @endcan
-         <div class="dropdown-divider"></div>
-        @can('balance-sheet')
-          <a href="{{url('balance-sheet')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Balance Sheet
-          </a>
-         @endcan  
-              
-      </li>
-    @endcan
-
-    <!--   <li class="nav-item dropdown remove_from_header">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          
-          Accounts <i class="right fas fa-angle-down"></i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-         
-          <div class="dropdown-divider"></div>
-           @can('account-type-list')
-          <a href="{{url('account-type')}}" class="dropdown-item">
-            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Account Type
-          </a>
-         @endcan
-         <div class="dropdown-divider"></div>
-        @can('account-group-list')
-          <a href="{{url('account-group')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Account Group
-          </a>
-         @endcan
-         <div class="dropdown-divider"></div>
-        @can('account-ledger-list')
-          
-        <div style="display: flex;">
-          <a href="{{url('account-ledger')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Account Ledger
-          </a>
-           <a  href="{{route('account-ledger.create')}}" class="dropdown-item text-right">
-            <i class="nav-icon fas fa-plus"></i>
-          </a>
-        </div>
-          
-         @endcan
-         <div class="dropdown-divider"></div>
-        @can('voucher-list')
-          
-        <div style="display: flex;">
-         <a href="{{url('voucher')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Voucher
-          </a>
-           <a  href="{{route('voucher.create')}}" class="dropdown-item text-right">
-            <i class="nav-icon fas fa-plus"></i>
-          </a>
-        </div>
-          
-         @endcan  
-              
-      </li> -->
       
       <li class="nav-item dropdown remove_from_header">
         <a class="nav-link" data-toggle="dropdown" href="#">

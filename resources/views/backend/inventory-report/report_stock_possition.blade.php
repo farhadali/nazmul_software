@@ -78,37 +78,40 @@
               $_total_balance = 0;
                $remove_duplicate_branch=array();
             @endphp
-            @forelse($group_array_values as $key=> $_detail)
-            @php
-              $key_arrays = explode("__",$key);
-             $_branch_id =  $key_arrays[0];
-             $_cost_center_id =  $key_arrays[1];
-             $_store_id =  $key_arrays[2];
-             $_category_id =  $key_arrays[3];
-              @endphp
-
-            @if(!in_array($key,$remove_duplicate_branch))
+            @forelse($group_array_values as $branch_key=> $branch_data)
+             @if(sizeof($_branch_ids) > 1 )
             <tr>
-              @php
-                array_push($remove_duplicate_branch,$key);
-              @endphp
               <th colspan="7">
-            @if(sizeof($_branch_ids) > 1 )
-              {{ _branch_name($_branch_id) }} |
-             @endif
-             @if(sizeof($_cost_center_ids) > 1 )
-                {{ _cost_center_name($_cost_center_id) }} |
-             @endif
-             @if(sizeof($_stores) > 1 )
-                {{ _store_name($_store_id) }} |
-             @endif
-             @if(sizeof($category_ids) > 1 )
-                {{ _category_name($_category_id) }} 
-             @endif
-             
+                Branch: {{ _branch_name($branch_key) }}
               </th>
             </tr>
             @endif
+
+            @forelse($branch_data as $cost_key=> $cost_data)
+             @if(sizeof($_cost_center_ids) > 1 )
+            <tr>
+              <th colspan="7">
+                Cost Center: {{ _cost_center_name($cost_key) }}
+              </th>
+            </tr>
+            @endif
+
+             @forelse($cost_data as $store_key=> $store_data)
+              @if(sizeof($_stores) > 1 )
+             <tr>
+              <th colspan="7">
+                Store: {{ _store_name($store_key) }}
+              </th>
+            </tr>
+            @endif
+
+             @forelse($store_data as $category_key=> $category_data)
+             <tr>
+              <th colspan="7">
+               Category: {{ _category_name($category_key) }}
+              </th>
+            </tr>
+
 
              @php
               $_sub_total_opening =0;
@@ -117,7 +120,7 @@
               $_sub_total_balance =0;
             @endphp
 
-             @forelse($_detail as $g_value)
+             @forelse($category_data as $g_value)
 
             @php
              $_sub_total_opening += $g_value->_opening;
@@ -142,7 +145,8 @@
           </tr>
           @empty
           @endforelse
-           <tr>
+
+          <tr>
             
 
             <th colspan="2" class="text-left" >Sub Total </th>
@@ -151,6 +155,16 @@
             <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_stockout) !!}</th>
             <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_balance) !!}</th>
           </tr>
+
+          @empty
+          @endforelse
+
+          @empty
+          @endforelse
+
+          @empty
+          @endforelse
+           
 
            @empty
           @endforelse

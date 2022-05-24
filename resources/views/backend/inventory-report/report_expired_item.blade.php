@@ -58,12 +58,15 @@
         <table class="table ">
           <thead>
           <tr>
-            <th>Item Name </th>
+            <th style="width: 10%;" >Purchase ID</th>
+            <th class="text-left">Item Name </th>
             <th style="width: 10%;">Unit</th>
-            <th style="width: 10%;" class="text-right">Quantity</th>
-            <th style="width: 10%;" class="text-right">Sales Value </th>
-            <th style="width: 10%;" class="text-right">Cost Value </th>
-            <th style="width: 10%;" class="text-right">Gross Profit</th>
+            <th style="width: 10%;">Manufacture Date</th>
+            <th style="width: 10%;">Expire Date</th>
+            <th style="width: 10%;" class="text-right">Stock </th>
+            <th style="width: 10%;" class="text-right">Purchase Rate </th>
+            <th style="width: 10%;" class="text-right">Sales Rate </th>
+            <th style="width: 10%;" class="text-right">Purchase Value</th>
           </tr>
           
           
@@ -72,9 +75,7 @@
             @php
              
               $_total_qty = 0;
-              $_total_sales_value = 0;
               $_total_cost_value = 0;
-              $_total_profit = 0;
                $remove_duplicate_branch=array();
             @endphp
             @forelse($group_array_values as $key=>$_detail)
@@ -91,24 +92,24 @@
               @php
                 array_push($remove_duplicate_branch,$key);
               @endphp
-              <th colspan="7">
+              <th colspan="9">
 
 
 
 
 
             @if(sizeof($_branch_ids) > 1 )
-              {{ _branch_name($_branch_id) }} |
+             Branch: {{ _branch_name($_branch_id) }} |
              @endif
              @if(sizeof($_cost_center_ids) > 1 )
-                {{ _cost_center_name($_cost_center_id) }} |
+               Cost Center: {{ _cost_center_name($_cost_center_id) }} |
              @endif
              @if(sizeof($_stores) > 1 )
-                {{ _store_name($_store_id) }} |
+               Store: {{ _store_name($_store_id) }} |
              @endif
-             @if(sizeof($category_ids) > 1 )
-                {{ _category_name($_category_id) }} 
-             @endif
+            
+              Category:  {{ _category_name($_category_id) }} 
+            
               
               </th>
             </tr>
@@ -116,9 +117,7 @@
 
             @php
               $_sub_total_qty = 0;
-              $_sub_total_sales_value = 0;
               $_sub_total_cost_value = 0;
-              $_sub_total_profit = 0;
               $row_counter =0;
             @endphp
             @forelse($_detail as $g_value)
@@ -127,24 +126,24 @@
               $row_counter +=1;
 
               $_total_qty += $g_value->_qty;
-              $_total_sales_value += $g_value->_value;
-              $_total_cost_value += $g_value->_cost_value;
-              $_total_profit += ($g_value->_value-$g_value->_cost_value);
+              $_total_cost_value += ($g_value->_qty*$g_value->_pur_rate);
 
               $_sub_total_qty += $g_value->_qty;
-              $_sub_total_sales_value += $g_value->_value;
-              $_sub_total_cost_value += $g_value->_cost_value;
-              $_sub_total_profit += ($g_value->_value-$g_value->_cost_value);
+              $_sub_total_cost_value += ($g_value->_qty*$g_value->_pur_rate);
             @endphp
             <tr>
              
-
-            <td>{!! $g_value->_name ?? '' !!} </td>
-            <td style="width: 10%;">{!! $g_value->_unit_name ?? '' !!}</td>
+              <td style="width: 10%;"><a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$g_value->_master_id) }}">
+                  P- {!! $g_value->_master_id ?? '' !!}</a></td>
+            <td class="text-left">{!! $g_value->_item ?? '' !!} </td>
+            <td class="text-left" style="width: 10%;">{!! $g_value->_unit_name ?? '' !!}</td>
+            
+            <td style="width: 10%;">{!! _view_date_formate($g_value->_manufacture_date ) !!}</td>
+            <td style="width: 10%;">{!! _view_date_formate($g_value->_expire_date ) !!}</td>
             <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_qty) !!}</td>
-            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_value) !!}</td>
-            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_cost_value) !!}</td>
-            <td style="width: 10%;" class="text-right">{{ _report_amount(($g_value->_value-$g_value->_cost_value)) }}</td>
+            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_pur_rate) !!}</td>
+            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_sales_rate) !!}</td>
+            <td style="width: 10%;" class="text-right">{{ _report_amount(($g_value->_qty*$g_value->_pur_rate)) }}</td>
           </tr>
           @empty
           @endforelse
@@ -152,23 +151,23 @@
           <tr>
            
 
-            <th colspan="2" class="text-left" >Sub Total </th>
+            <th colspan="5" class="text-left" >Sub Total </th>
             <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_qty) !!}</th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_sales_value) !!}</th>
+            <th style="width: 10%;" class="text-right"></th>
+            <th style="width: 10%;" class="text-right"></th>
             <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_cost_value) !!}</th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_sub_total_profit) !!}</th>
           </tr>
 @endif
           @empty
           @endforelse
-          <tr>
+           <tr>
            
 
-            <th colspan="2" class="text-left">Grand Total </th>
+            <th colspan="5" class="text-left" >Grand Total </th>
             <th style="width: 10%;" class="text-right">{!! _report_amount($_total_qty) !!}</th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_total_sales_value) !!}</th>
+            <th style="width: 10%;" class="text-right"></th>
+            <th style="width: 10%;" class="text-right"></th>
             <th style="width: 10%;" class="text-right">{!! _report_amount($_total_cost_value) !!}</th>
-            <th style="width: 10%;" class="text-right">{!! _report_amount($_total_profit) !!}</th>
           </tr>
             
             

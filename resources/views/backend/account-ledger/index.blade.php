@@ -82,8 +82,6 @@ if($currentURL === $current){
                          
                          <th class="_action">Action</th>
                          <th>ID</th>
-                         <th>Type</th>
-                         <th>Group</th>
                          <th>Name</th>
                          <th>Code</th>
                          <th>Email</th>
@@ -92,7 +90,25 @@ if($currentURL === $current){
                          <th>Possition</th>
                          <th>Status</th>
                       </tr>
-                        @foreach ($datas as $key => $data)
+                      @php
+                       $_new_datas=array();
+                        foreach ($datas as $value) {
+                            $_new_datas[$value->_account_head_id."-".$value->account_type->_name][$value->_account_group_id."-".$value->account_group->_name][]=$value;
+                        }
+                      @endphp
+                        @foreach ($_new_datas as $key => $dat)
+                        <tr>
+                          
+                          <th colspan="9">{{ $key }} </th>
+                         </tr>
+                        
+                          @forelse($dat as $key2=>$dates)
+                         <tr>
+                          <th></th>
+                          <th colspan="8">{{ $key2 }} </th>
+                         </tr>
+                           @forelse($dates as $key3=>$data)
+
                         <tr>
                            
                              <td>
@@ -113,8 +129,6 @@ if($currentURL === $current){
                                 @endcan
                             </td>
                             <td>{{ $data->id }}</td>
-                            <td>{{ $data->account_type->_name ?? '' }}</td>
-                            <td>{{ $data->account_group->_name ?? '' }}</td>
                             <td>{{ $data->_name }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_email ?? '' }}</td>
@@ -124,6 +138,10 @@ if($currentURL === $current){
                            <td>{{ selected_status($data->_status) }}</td>
                            
                         </tr>
+                        @empty
+                        @endforelse
+                        @empty
+                        @endforelse
                         @endforeach
                     </table>
                 </div>

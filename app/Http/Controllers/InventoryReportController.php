@@ -646,7 +646,7 @@ public function reportStockPossition(Request $request){
       
      if($_items_ids){
 
-      $datas = DB::select("  SELECT t5._name as _branch_name,t6._name as _store_name,t7._name as _cost_name, s1._item_id,s1._name,s1._category_id,t3._name as _unit,t4._name as _cat_name,s1._unit_id,s1._store_id,s1._branch_id, s1._cost_center_id, SUM(s1._opening) AS _opening,SUM(s1._stockin) as _stockin,SUM(s1._stockout) AS _stockout
+      $datas = DB::select("  SELECT  s1._item_id,s1._name,s1._category_id,t3._name as _unit,s1._unit_id,s1._store_id,s1._branch_id, s1._cost_center_id, SUM(s1._opening) AS _opening,SUM(s1._stockin) as _stockin,SUM(s1._stockout) AS _stockout
       FROM (
       SELECT t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, SUM(IFNULL(t1._qty,0)) AS _opening,0 as _stockin,0 AS _stockout 
         FROM item_inventories as t1 
@@ -662,16 +662,16 @@ public function reportStockPossition(Request $request){
         GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id 
     ) as s1
     inner join units as t3 ON t3.id=s1._unit_id
-    inner join item_categories as t4 on t4.id=s1._category_id 
-    inner join branches as t5 on t5.id=s1._branch_id 
-    inner join store_houses as t6 on t6.id=s1._store_id 
-    inner join  cost_centers as t7 on t7.id=s1._cost_center_id 
      GROUP BY s1._branch_id,s1._cost_center_id,s1._store_id,s1._category_id,s1._item_id ");
 
        
        $group_array_values =array();
+      // foreach ($datas as $value) {
+      //   $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id][]=$value;
+      // }
+
       foreach ($datas as $value) {
-        $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id][]=$value;
+        $group_array_values[$value->_branch_id][$value->_cost_center_id][$value->_store_id][$value->_category_id][]=$value;
       }
 
 }else{
@@ -797,7 +797,9 @@ public function reportStockLedger(Request $request){
         $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id."__".$value->_item_id][]=$value;
       }
 
-       
+      //   foreach ($datas as $value) {
+      //   $group_array_values[$value->_branch_id][$value->_cost_center_id][$value->_store_id][$value->_category_id][$value->_item_id][]=$value;
+      // }
        
 
 }else{
@@ -1188,7 +1190,7 @@ public function reportExpiredItem(Request $request){
             '_datey' => 'required',
         ]);
 
-        session()->put('filter_gross_profit', $request->all());
+        session()->put('filter_expired_item', $request->all());
         $previous_filter= Session::get('filter_expired_item');
         $page_name = "Expired Item";
         
@@ -1247,11 +1249,12 @@ public function reportExpiredItem(Request $request){
 
       
       $datas = DB::select("  
- SELECT t1.`id`, t1.`_item_id`,t2._category_id, t1.`_item`, t1.`_unit_id`, t1.`_barcode`, t1.`_manufacture_date`, t1.`_expire_date`, t1.`_qty`, t1.`_sales_rate`, t1.`_pur_rate`, t1.`_sales_discount`, t1.`_sales_vat`, t1.`_value`, t1.`_master_id`, t1.`_branch_id`, t1.`_cost_center_id`, t1.`_store_id`, t1.`_store_salves_id`, t1.`_status` 
+ SELECT t1.`id`, t1.`_item_id`,t2._category_id, t1.`_item`, t1.`_unit_id`,t3._name as _unit_name, t1.`_barcode`, t1.`_manufacture_date`, t1.`_expire_date`, t1.`_qty`, t1.`_sales_rate`, t1.`_pur_rate`, t1.`_sales_discount`, t1.`_sales_vat`, t1.`_value`, t1.`_master_id`, t1.`_branch_id`, t1.`_cost_center_id`, t1.`_store_id`, t1.`_store_salves_id`, t1.`_status` 
  FROM `product_price_lists` as t1
  INNER JOIN inventories as t2 ON t1._item_id=t2.id
+ INNER JOIN units as t3 on t3.id=t1._unit_id
   WHERE  t1._status=1 AND   t1._expire_date  >= '".$_datex."'  AND t1._expire_date <= '".$_datey."' 
-        AND  t1._branch_id IN(".$_branch_ids_rows.") 
+        AND  t1._branch_id IN(".$_branch_ids_rows.") AND t1._qty !=0
         AND t1._store_id IN(".$_stores_id_rows.") AND t2._category_id IN(".$category_ids_rows.")
         AND t1._item_id IN(".$_items_ids_rows.")  AND t1._cost_center_id IN(".$_cost_center_id_rows.")
         ORDER BY t1.`_item` ASC
@@ -1263,13 +1266,17 @@ public function reportExpiredItem(Request $request){
         $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id][]=$value;
       }
 
+      // foreach ($datas as $value) {
+      //   $group_array_values[$value->_branch_id][$value->_cost_center_id][$value->_store_id][$value->_category_id][]=$value;
+      // }
+
        
        
 
 }else{
    $group_array_values = array();
 }
-       
+       //return $group_array_values;
         return view('backend.inventory-report.report_expired_item',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
     }
 

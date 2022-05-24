@@ -71,6 +71,7 @@ class AccountLedgerController extends Controller
             $datas = $datas->where('_account_head_id','=',$request->_account_head_id);
         }
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
+       
 
          $page_name = $this->page_name;
          if($request->has('print')){
