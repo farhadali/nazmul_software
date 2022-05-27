@@ -87,6 +87,7 @@ if($currentURL === $current){
                          <th>Email</th>
                          <th>Phone</th>
                          <th>Balance</th>
+                         <th>Note</th>
                          <th>Possition</th>
                          <th>Status</th>
                       </tr>
@@ -135,6 +136,7 @@ if($currentURL === $current){
                             <td>{{ $data->_phone ?? '' }}</td>
                             <td>{{ _show_amount_dr_cr(_report_amount(_last_balance($data->id)[0]->_balance ?? 0))  }}</td>
                             <td>{{ $data->_short ?? '' }}</td>
+                            <td>{{ $data->_note ?? '' }}</td>
                            <td>{{ selected_status($data->_status) }}</td>
                            
                         </tr>

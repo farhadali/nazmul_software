@@ -38,6 +38,7 @@
             <td style="border:none;width: 33%;text-align: left;">
               <table class="table" style="border:none;">
                   <tr> <td style="border:none;" > <b>INVOICE NO: {{ $data->id ?? '' }}</b></td></tr>
+                  <tr> <td style="border:none;" > <b>Date: </b>{{ $data->id ?? '' }}</td></tr>
                 <tr> <td style="border:none;" > <b> Supplier:</b>  {{$data->_ledger->_name ?? '' }}</td></tr>
                 <tr> <td style="border:none;" > <b> Phone:</b>  {{$data->_phone ?? '' }} </td></tr>
                 <tr> <td style="border:none;" > <b> Address:</b> {{$data->_address ?? '' }} </td></tr>
@@ -243,6 +244,39 @@
                         @endif
          
       </div>
+      <div class="row">
+      <div class="col-12 table-responsive">
+        <table class="table">
+          
+          <tbody>
+           
+          <tr>
+            <th class="text-right" ><b>Sub Total</b></th>
+            <th class="text-right">{!! _report_amount($data->_sub_total ?? 0) !!}</th>
+          </tr>
+         
+          <tr>
+            <th class="text-right" ><b>Discount</b></th>
+            <th class="text-right">{!! _report_amount($data->_total_discount ?? 0) !!}</th>
+          </tr>
+         
+          @if($form_settings->_show_vat==1)
+          <tr>
+            <th class="text-right" ><b>VAT</b></th>
+            <th class="text-right">{!! _report_amount($data->_total_vat ?? 0) !!}</th>
+          </tr>
+          @endif
+          <tr>
+            <th class="text-right" ><b>NET Total</b></th>
+            <th class="text-right">{!! _report_amount($data->_total ?? 0) !!}</th>
+          </tr>
+          
+          </tbody>
+          
+        </table>
+      </div>
+      <!-- /.col -->
+    </div>
 
     <!-- Table row -->
     @if(sizeof($data->purchase_account) > 0)

@@ -14,8 +14,8 @@
     <a class="nav-link"  href="{{url('work-sheet')}}" role="button">
           <i class="fas fa-search"></i>
         </a>
-         <a style="cursor: pointer;" class="nav-link"  title="" data-caption="Print"  onclick="javascript:printDiv('printablediv')"
-    data-original-title="Print"><i class="fas fa-print"></i></a>
+ <a style="cursor: pointer;" class="nav-link"  title="Print" onclick="javascript:printDiv('printablediv')"><i class="fas fa-print"></i></a>
+      <a style="cursor: pointer;" onclick="fnExcelReport();" class="nav-link"  title="Excel Download" ><i class="fa fa-file-excel" aria-hidden="true"></i></a>
   </div>
 
 <section class="invoice" id="printablediv">

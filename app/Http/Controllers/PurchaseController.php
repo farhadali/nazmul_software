@@ -389,7 +389,7 @@ class PurchaseController extends Controller
 
             //Default Purchase
             account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_purchase,$__sub_total,0,$_branch_id,$_cost_center,$_name,1);
-        //Default Supplier
+            //Default Supplier
             account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_purchase),$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,0,$__sub_total,$_branch_id,$_cost_center,$_name,2);
 
             //Default Inventory
@@ -702,6 +702,7 @@ class PurchaseController extends Controller
                 
                 $ProductPriceList->_item_id = $_item_ids[$i];
                 $ProductPriceList->_item = $item_info->_item ?? '';
+                $ProductPriceList->_unit_id =  $item_info->_unit_id ?? 1;
                 $ProductPriceList->_barcode =$_barcodes[$i] ?? '';
                 $ProductPriceList->_manufacture_date =$_manufacture_dates[$i] ?? null;
                 $ProductPriceList->_expire_date = $_expire_dates[$i] ?? null;
@@ -858,7 +859,7 @@ if($__sub_total > 0){
 
                         $_total_dr_amount += $_dr_amount[$i] ?? 0;
                         $_total_cr_amount += $_cr_amount[$i] ?? 0;
-                         $PurchaseAccount = PurchaseAccount::where('id',$purchase_account_ids[$i])
+                         $PurchaseAccount = PurchaseAccount::where('id',$purchase_account_ids[$i] ?? 0)
                                                             ->where('_ledger_id',$ledger)
                                                             ->first();
                         if(empty($PurchaseAccount)){

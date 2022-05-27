@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>@yield('title')</title>
   <meta name="csrf-token" content="{{ csrf_token() }}" />
+  <link rel="icon" type="image/x-icon" href="{{asset('/')}}{{$settings->logo ?? ''}}">
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -458,8 +459,8 @@ $(document).on('keyup','._search_main_ledger_id',delay(function(e){
       $(document).find("._dr_amount").each(function() {
           _total_dr_amount +=parseFloat($(this).val());
       });
-      $("._total_dr_amount").val(_total_dr_amount);
-      $("._total_cr_amount").val(_total_cr_amount);
+      $("._total_dr_amount").val(_math_round(_total_dr_amount));
+      $("._total_cr_amount").val(_math_round(_total_cr_amount));
   }
 
 
@@ -478,6 +479,12 @@ $(document).on('keyup','._search_main_ledger_id',delay(function(e){
       $(document).find("._total_cr_amount").removeClass('required_border');
     _voucher_total_calculation();
   })
+
+
+  function _math_round(_amount,_param=1){
+    return Math.round(_amount);
+      
+  }
 
 
   
@@ -665,10 +672,36 @@ function after_request_date__today(_date){
             
           }
 
-
-
 </script>
 
+<script type="text/javascript">
+
+ function printDiv(divID) {
+            var divElements = document.getElementById(divID).innerHTML;
+            var oldPage = document.body.innerHTML;
+            document.body.innerHTML ="<html><head><title></title></head><body>" +
+                divElements + "</body>";
+            window.print();
+            document.body.innerHTML = oldPage;
+        }
+     function fnExcelReport() {
+      var tab_text= $("#printablediv").html();
+      var ua = window.navigator.userAgent;
+      var msie = ua.indexOf("MSIE "); 
+      if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+      {
+        document.open("txt/html","replace");
+        document.write(tab_text);
+        document.close(); 
+        sa=document.execCommand("SaveAs",true,"Say Thanks to Sumit.xls");
+      }  
+      else                 //other browser not tested on IE 11
+        sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));  
+
+      return (sa);
+    }     
+
+</script>
 
 
 @yield('script')

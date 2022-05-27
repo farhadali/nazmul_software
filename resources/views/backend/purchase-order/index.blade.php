@@ -7,15 +7,14 @@
         <div class="row mb-2">
           <div class="col-sm-12" style="display: flex;">
             <h1 class="m-0 _page_name">{!! $page_name ?? '' !!} </h1>
-            <ol class="breadcrumb float-sm-right">
-               @can('sales-return-create')
-              <li class="breadcrumb-item active ml-2">
-                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('sales-return.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+            <ol class="breadcrumb float-sm-right ml-2">
+               @can('purchase-create')
+              <li class="breadcrumb-item active">
+                        <a title="Add New" class="btn btn-success btn-sm" href="{{ route('purchase-order.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                </li>
               @endcan
             </ol>
-          </div><!-- /.col -->
-          
+          </div>
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
@@ -23,11 +22,6 @@
     <div class="alert alert-success">
       <p>{{ $message }}</p>
     </div>
-    @elseif($message = Session::get('danger'))
-                    <div class="alert _required _over_qty">
-                      <p>{{ $message }}</p>
-                    </div>
-                
     @endif
     <div class="content">
       <div class="container-fluid">
@@ -51,11 +45,11 @@
 
                    @endphp
                     <div class="col-md-4">
-                       @include('backend.sales-return.search')
+                       @include('backend.purchase-order.search')
                     </div>
                     <div class="col-md-8">
                       <div class="d-flex flex-row justify-content-end">
-                         @can('sales-return-print')
+                         @can('purchase-print')
                         <li class="nav-item dropdown remove_from_header">
                               <a class="nav-link" data-toggle="dropdown" href="#">
                                 
@@ -112,21 +106,15 @@
                         <tr>
                             
                              <td>
-                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('sales-return/print')}}/{{$data->id}}" >
+                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('purchase-order/print')}}/{{$data->id}}" >
                                   <i class="nav-icon fas fa-print"></i>
                                 </a>
-                                @can('sales-return-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('sales-return.edit',$data->id) }}">
+                                @can('purchase-order-edit')
+                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('purchase-order.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
                                     </a>
                                 @endcan
-                                @can('sales-return-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['sales-return.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
-                                            <i class="nav-icon fas fa-trash"></i>
-                                        </button>
-                                    {!! Form::close() !!}
-                                @endcan
+                                
                                 <a class="btn btn-sm btn-default _action_button" data-toggle="collapse" href="#collapseExample__{{$key}}" role="button" aria-expanded="false" aria-controls="collapseExample">
                                       <i class=" fas fa-angle-down"></i>
                                     </a>
@@ -155,24 +143,8 @@
                                 <thead >
                                             <th class="text-middle" >ID</th>
                                             <th class="text-middle" >Item</th>
-                                           @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                            <th class="text-middle" >Barcode</th>
-                                            @else
-                                            <th class="text-middle display_none" >Barcode</th>
-                                            @endif
-                                            @endif
                                             <th class="text-middle" >Qty</th>
                                             <th class="text-middle" >Rate</th>
-                                            <th class="text-middle" >Sales Rate</th>
-                                            @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                            <th class="text-middle" >VAT%</th>
-                                            <th class="text-middle" >VAT</th>
-                                             @else
-                                            <th class="text-middle display_none" >VAT%</th>
-                                            <th class="text-middle display_none" >VAT Amount</th>
-                                            @endif
-                                            @endif
-
                                             <th class="text-middle" >Value</th>
                                              @if(sizeof($permited_branch) > 1)
                                             <th class="text-middle" >Branch</th>
@@ -184,17 +156,7 @@
                                             @else
                                              <th class="text-middle display_none" >Cost Center</th>
                                             @endif
-                                             @if(sizeof($store_houses) > 1)
-                                            <th class="text-middle" >Store</th>
-                                            @else
-                                             <th class="text-middle display_none" >Store</th>
-                                            @endif
-                                            @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                            <th class="text-middle" >Shelf</th>
-                                            @else
-                                             <th class="text-middle display_none" >Shelf</th>
-                                            @endif
-                                            @endif
+                                           
                                            
                                           </thead>
                                 <tbody>
@@ -220,15 +182,6 @@
                                             @endif
                                             <td class="text-right" >{!! $_item->_qty ?? 0 !!}</td>
                                             <td class="text-right" >{!! _report_amount($_item->_rate ?? 0) !!}</td>
-                                            <td class="text-right" >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
-                                            @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                            <td class="text-right" >{!! $_item->_vat ?? 0 !!}</td>
-                                            <td class="text-right" >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
-                                             @else
-                                            <td class="text-right display_none" >{!! $_item->_vat ?? 0 !!}</td>
-                                            <td class="text-right display_none" >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
-                                            @endif
-                                            @endif
 
                                             <td class="text-right" >{!! _report_amount($_item->_value ?? 0) !!}</td>
                                              @if(sizeof($permited_branch) > 1)
@@ -241,17 +194,7 @@
                                             @else
                                              <td class=" display_none" >{!! $_item->_detail_cost_center->_name ?? '' !!}</td>
                                             @endif
-                                             @if(sizeof($store_houses) > 1)
-                                            <td class="" >{!! $_item->_store->_name ?? '' !!}</td>
-                                            @else
-                                             <td class=" display_none" >{!! $_item->_store->_name ?? '' !!}</td>
-                                            @endif
-                                            @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                            <td class="" >{!! $_item->_store_salves_id ?? '' !!}</td>
-                                            @else
-                                             <td class=" display_none" >{!! $_item->_store_salves_id ?? '' !!}</td>
-                                            @endif
-                                            @endif
+                                            
                                            
                                           </thead>
                                   </tr>
@@ -264,12 +207,7 @@
                                                 
                                               </td>
                                               <td  class="text-right"><b>Total</b></td>
-                                              @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                              <td  class="text-right"></td>
-                                              @else
-                                                <td  class="text-right display_none"></td>
-                                             @endif
-                                            @endif
+                                             
                                               <td class="text-right">
                                                 <b>{{ $_qty_total ?? 0}}</b>
                                                 
@@ -277,19 +215,7 @@
 
                                               </td>
                                               <td></td>
-                                              <td></td>
-                                              @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                              <td></td>
-                                              <td class="text-right">
-                                                <b>{{_report_amount($_vat_total ?? 0)}}</b>
-                                              </td>
-                                              @else
-                                              <td class="display_none"></td>
-                                              <td class="text-right display_none">
-                                                 <b>{{ _report_amount($_vat_total ?? 0) }}</b>
-                                              </td>
-                                              @endif
-                                              @endif
+                                              
                                               <td class="text-right">
                                                <b> {{ _report_amount($_value_total ?? 0) }}</b>
                                               </td>
@@ -303,18 +229,7 @@
                                               @else
                                                <td class="display_none"></td>
                                               @endif
-                                              @if(sizeof($store_houses) > 1)
-                                              <td></td>
-                                              @else
-                                               <td class="display_none"></td>
-                                              @endif
-
-                                              @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                              <td></td>
-                                              @else
-                                              @endif
-                                              <td class="display_none"></td>
-                                              @endif
+                                              
                                             </tr>
                                 </tfoot>
                               </table>
@@ -323,57 +238,7 @@
                         </td>
                         </tr>
                         @endif
-                        @if(sizeof($data->s_account) > 0)
-                        <tr>
-                          <td colspan="12" >
-                           <div class="collapse" id="collapseExample__{{$key}}">
-                            <div class="card " >
-                              <table class="table">
-                                <thead>
-                                  <th>ID</th>
-                                  <th>Ledger</th>
-                                  <th>Branch</th>
-                                  <th>Cost Center</th>
-                                  <th>Short Narr.</th>
-                                  <th class="text-right" >Dr. Amount</th>
-                                  <th class="text-right" >Cr. Amount</th>
-                                </thead>
-                                <tbody>
-                                  @php
-                                    $_dr_amount = 0;
-                                    $_cr_amount = 0;
-                                  @endphp
-                                  @forelse($data->s_account AS $detail_key=>$_master_val )
-                                  <tr>
-                                    <td>{{ ($_master_val->id) }}</td>
-                                    <td>{{ $_master_val->_ledger->_name ?? '' }}</td>
-                                    <td>{{ $_master_val->_detail_branch->_name ?? '' }}</td>
-                                    <td>{{ $_master_val->_detail_cost_center->_name ?? '' }}</td>
-                                    <td>{{ $_master_val->_short_narr ?? '' }}</td>
-                  <td class="text-right">{{ _report_amount( $_master_val->_dr_amount ?? 0) }}</td>
-                  <td class="text-right"> {{ _report_amount( $_master_val->_cr_amount ?? 0) }} </td>
-                                    @php 
-                                    $_dr_amount += $_master_val->_dr_amount;   
-                                    $_cr_amount += $_master_val->_cr_amount;  
-                                    @endphp
-                                  </tr>
-                                  @empty
-                                  @endforelse
-                                </tbody>
-                                <tfoot>
-                                  <tr>
-                                    <td colspan="5" class="text-right"><b>Total</b></td>
-                                    <td  class="text-right"><b>{{ _report_amount($_dr_amount ?? 0 ) }} </b></td>
-                                    <td  class="text-right"><b>{{ _report_amount( $_cr_amount ?? 0 ) }} </b></td>
-                                    
-                                  </tr>
-                                </tfoot>
-                              </table>
-                            </div>
-                          </div>
-                        </td>
-                        </tr>
-                        @endif
+                        
                         @endforeach
                         <tr>
                           <td colspan="8" class="text-center"><b>Total</b></td>
@@ -417,6 +282,17 @@
     });
  
 
+ 
+
+// if(_datex =='' && _datey =='' ){
+//   $(".datetimepicker-input_datex").val(date__today());
+//   $(".datetimepicker-input_datey").val(date__today());
+//   console.log('Ok new Page')
+// }else{
+//   $(".datetimepicker-input_datex").val(after_request_date__today( `{{$request->_datex}}` ))
+//   $(".datetimepicker-input_datey").val(after_request_date__today( `{{$request->_datey}}` ))
+//   console.log('after search')
+// }
 
 function date__today(){
               var d = new Date();

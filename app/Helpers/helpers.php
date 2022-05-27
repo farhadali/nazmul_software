@@ -33,6 +33,13 @@ if (! function_exists('default_pagination')) {
     }
 }
 
+if (! function_exists('_php_round')) {
+    function _php_round($_amount,$_param=1)
+    {
+        return round($_amount);
+    }
+}
+
 
 
 

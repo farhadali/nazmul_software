@@ -8,6 +8,7 @@
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="icon" type="image/x-icon" href="{{asset('/')}}{{$settings->logo ?? ''}}">
   <!-- Font Awesome -->
   
   <!-- Theme style -->
@@ -40,6 +41,7 @@
             <td style="border:none;width: 33%;text-align: left;">
               <table class="table" style="border:none;">
                   <tr> <td style="border:none;" > <b>INVOICE NO: {{ $data->id ?? '' }}</b></td></tr>
+                  <tr> <td style="border:none;" > <b>Date: </b>{{ _view_date_formate($data->_date ?? '') }}</td></tr>
                 <tr> <td style="border:none;" > <b> Customer:</b>  {{$data->_ledger->_name ?? '' }}</td></tr>
                 <tr> <td style="border:none;" > <b> Phone:</b>  {{$data->_phone ?? '' }} </td></tr>
                 <tr> <td style="border:none;" > <b> Address:</b> {{$data->_address ?? '' }} </td></tr>
@@ -175,18 +177,51 @@
          
       </div>
 
-    <!-- Table row -->
+   
+     <div class="row">
+      <div class="col-12 table-responsive">
+        <table class="table">
+          
+          <tbody>
+           
+          <tr>
+            <th class="text-right" ><b>Sub Total</b></th>
+            <th class="text-right">{!! _report_amount($data->_sub_total ?? 0) !!}</th>
+          </tr>
+         
+          <tr>
+            <th class="text-right" ><b>Discount</b></th>
+            <th class="text-right">{!! _report_amount($data->_total_discount ?? 0) !!}</th>
+          </tr>
+         
+          @if($form_settings->_show_vat==1)
+          <tr>
+            <th class="text-right" ><b>VAT</b></th>
+            <th class="text-right">{!! _report_amount($data->_total_vat ?? 0) !!}</th>
+          </tr>
+          @endif
+          <tr>
+            <th class="text-right" ><b>NET Total</b></th>
+            <th class="text-right">{!! _report_amount($data->_total ?? 0) !!}</th>
+          </tr>
+          
+          </tbody>
+          
+        </table>
+      </div>
+      <!-- /.col -->
+    </div>
+     <!-- Table row -->
     @if(sizeof($data->s_account) > 0)
     <div class="row">
       <div class="col-12 table-responsive">
+        <span><b>Account Details</b></span>
         <table class="table">
           <thead>
           <tr>
             <th>ID</th>
             <th>Ledger</th>
-            <th>Branch</th>
-            <th>Cost Center</th>
-            <th>Short Narr.</th>
+            
             <th class="text-right" >Dr. Amount</th>
             <th class="text-right" >Cr. Amount</th>
           </tr>
@@ -197,12 +232,11 @@
             $_total_cr_amount =0;
             @endphp
             @forelse($data->s_account as $detail_key=>$detail)
+            
           <tr>
             <td>{!! $detail->id ?? '' !!}</td>
             <td>{!! $detail->_ledger->_name ?? '' !!}</td>
-            <td>{!! $detail->_detail_branch->_name ?? '' !!}</td>
-            <td>{!! $detail->_detail_cost_center->_name ?? '' !!}</td>
-            <td>{!! $detail->_short_narr ?? '' !!}</td>
+            
             <td class="text-right" >{!! _report_amount( $detail->_dr_amount ?? 0 ) !!}</td>
             <td class="text-right" >{!! _report_amount($detail->_cr_amount ?? 0 )!!}</td>
               @php
@@ -210,13 +244,14 @@
             $_total_cr_amount +=$detail->_cr_amount ?? 0;
             @endphp
           </tr>
+         
           @empty
           @endforelse
           
           </tbody>
           <tfoot>
             <tr>
-              <th  colspan="5" class="text-right">Total:</th>
+              <th  colspan="2" class="text-right">Total:</th>
               <th  class="text-right" >{!! _report_amount($_total_dr_amount ?? 0) !!}</th>
               <th  class="text-right" >{!! _report_amount($_total_cr_amount ?? 0) !!}</th>
             </tr>
@@ -228,8 +263,14 @@
     <!-- /.row -->
     @endif
 
-    <div class="row">
     
+
+    <div class="row">
+    <div class="col-12">
+       
+        <p class="lead"> <b>In Words:  {{ nv_number_to_text($data->_total ?? 0) }} </b></p>
+        
+      </div>
       
       <!-- /.col -->
       <div class="col-12 mt-5">

@@ -20,8 +20,8 @@ class CreatePurchaseOrderDetailsTable extends Migration
             $table->double('_qty',15,4)->default(0);
             $table->double('_rate',15,4)->default(0);
             $table->double('_value',15,4)->default(0);
-            $table->unsignedBigInteger('_purchase_order_id');
-            $table->foreign('_purchase_order_id')->references('id')->on('purchase_orders');
+            $table->unsignedBigInteger('_no');
+            $table->foreign('_no')->references('id')->on('purchase_orders');
             $table->unsignedBigInteger('_branch_id');
             $table->foreign('_branch_id')->references('id')->on('branches');
             $table->tinyInteger('_status')->default(0);

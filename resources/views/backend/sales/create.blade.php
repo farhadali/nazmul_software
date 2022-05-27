@@ -763,6 +763,9 @@ $(document).on('click','.search_row_item',function(){
   $(this).parent().parent().parent().parent().parent().parent().find('._qty').val(1);
   $(this).parent().parent().parent().parent().parent().parent().find('._value').val(_sales_rate);
   $(this).parent().parent().parent().parent().parent().parent().find('._store_salves_id').val(_store_salves_id);
+  $(this).parent().parent().parent().parent().parent().parent().find('._manufacture_date').val(_manufacture_date);
+  $(this).parent().parent().parent().parent().parent().parent().find('._expire_date').val(_expire_date);
+
 
   _purchase_total_calculation();
   $('.search_box_item').hide();
@@ -822,6 +825,26 @@ $(document).on('keyup','._vat_amount',function(){
     _purchase_total_calculation();
 })
 
+
+$(document).on('keyup','._discount_amount',function(){
+ var _item_vat =0;
+  var _qty = $(this).closest('tr').find('._qty').val();
+  var _rate = $(this).closest('tr').find('._rate').val();
+  var _sales_rate = $(this).closest('tr').find('._sales_rate').val();
+  var _discount_amount =  $(this).closest('tr').find('._discount_amount').val();
+  
+   if(isNaN(_discount_amount)){ _discount_amount = 0 }
+   if(isNaN(_qty)){ _qty   = 0 }
+   if(isNaN(_rate)){ _rate =0 }
+   if(isNaN(_sales_rate)){ _sales_rate =0 }
+   var _discount = parseFloat((_discount_amount/(_sales_rate*_qty))*100).toFixed(2);
+    $(this).closest('tr').find('._discount').val(_discount);
+
+    $(this).closest('tr').find('._value').val((_qty*_sales_rate));
+ 
+    _purchase_total_calculation();
+})
+
 $(document).on("change","#_discount_input",function(){
   var _discount_input = $(this).val();
   var res = _discount_input.match(/%/gi);
@@ -874,10 +897,10 @@ $(document).on("change","#_discount_input",function(){
       var _discount_input = parseFloat($("#_discount_input").val());
       if(isNaN(_discount_input)){ _discount_input =0 }
       var _total_discount = parseFloat(_discount_input)+parseFloat(_total_discount_amount);
-      $("#_sub_total").val(_total__value);
+      $("#_sub_total").val(_math_round(_total__value));
       $("#_total_vat").val(_total__vat);
       $("#_total_discount").val(parseFloat(_discount_input)+parseFloat(_total_discount_amount));
-      var _total = (parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_total_discount)
+      var _total = _math_round((parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_total_discount));
       $("#_total").val(_total);
   }
 

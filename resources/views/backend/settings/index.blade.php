@@ -71,6 +71,24 @@
                                <input type="text" name="url" required class="form-control" value="{{old('url',$settings->url ?? '' )}}">
                             </div>
                         </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <strong>Email:</strong>
+                               <input type="text" name="_email" required class="form-control" value="{{old('_email',$settings->_email ?? '' )}}">
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <strong>Phone:</strong>
+                               <input type="text" name="_phone" required class="form-control" value="{{old('_phone',$settings->_phone ?? '' )}}">
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <strong>Address:</strong>
+                               <input type="text" name="_address" required class="form-control" value="{{old('_address',$settings->_address ?? '' )}}">
+                            </div>
+                        </div>
                         <div class="col-xs-6 col-sm-6 col-md-6 mb-5">
                             <div class="form-group">
                                 <strong>LOGO:</strong>

@@ -5,11 +5,10 @@
 <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-sm-6">
+          <div class="col-sm-12" style="display: flex;">
             <h1 class="m-0 _page_name">{!! $page_name ?? '' !!} </h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
+
+            <ol class="breadcrumb float-sm-right ml-2">
                @can('sales-create')
               <li class="breadcrumb-item active">
                         <a title="Add New" class="btn btn-success btn-sm" href="{{ route('sales.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
@@ -17,6 +16,7 @@
               @endcan
             </ol>
           </div><!-- /.col -->
+         
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>

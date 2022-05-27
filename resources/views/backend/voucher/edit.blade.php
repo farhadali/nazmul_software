@@ -201,10 +201,10 @@
                                               </td>
                                               <td colspan="5" class="text-right"><b>Total</b></td>
                                               <td>
-                                                <input type="number" step="any" min="0" name="_total_dr_amount" class="form-control _total_dr_amount" value="{{ $data->_amount ?? 0  }}" readonly required>
+                                                <input type="number" step="any" min="0" name="_total_dr_amount" class="form-control _total_dr_amount" value="{{ round($data->_amount ?? 0)  }}" readonly required>
                                               </td>
                                               <td>
-                                                <input type="number" step="any" min="0" name="_total_cr_amount" class="form-control _total_cr_amount" value="{{ $data->_amount ?? 0  }}" readonly required>
+                                                <input type="number" step="any" min="0" name="_total_cr_amount" class="form-control _total_cr_amount" value="{{ round($data->_amount ?? 0)  }}" readonly required>
                                               </td>
                                             </tr>
                                           </tfoot>
@@ -314,18 +314,18 @@
       _voucher_total_calculation();
   })
 
-  function _voucher_total_calculation(){
-    var _total_dr_amount = 0;
-    var _total_cr_amount = 0;
-      $(document).find("._cr_amount").each(function() {
-          _total_cr_amount +=parseFloat($(this).val());
-      });
-      $(document).find("._dr_amount").each(function() {
-          _total_dr_amount +=parseFloat($(this).val());
-      });
-      $("._total_dr_amount").val(_total_dr_amount);
-      $("._total_cr_amount").val(_total_cr_amount);
-  }
+  // function _voucher_total_calculation(){
+  //   var _total_dr_amount = 0;
+  //   var _total_cr_amount = 0;
+  //     $(document).find("._cr_amount").each(function() {
+  //         _total_cr_amount +=parseFloat($(this).val());
+  //     });
+  //     $(document).find("._dr_amount").each(function() {
+  //         _total_dr_amount +=parseFloat($(this).val());
+  //     });
+  //     $("._total_dr_amount").val(Math.round(_total_dr_amount));
+  //     $("._total_cr_amount").val(Math.round(_total_cr_amount));
+  // }
 
 
   $(document).on('keyup','._dr_amount',function(){

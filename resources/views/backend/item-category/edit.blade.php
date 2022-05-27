@@ -48,6 +48,7 @@
                                 <strong>Parents Categories:</strong>
                                 
                                 <select class="form-control" name="_parent_id" required>
+                                  <option value="0">Base Category</option>
                                   @forelse($parents_categories as $parent)
                                   <option value="{{$parent->id}}" @if($data->_parent_id==$parent->id) selected @endif>{{ $parent->_name ?? '' }}</option>
                                   @empty

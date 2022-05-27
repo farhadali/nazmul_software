@@ -21,6 +21,8 @@ class CreatePurchaseOrdersTable extends Migration
             $table->unsignedBigInteger('_ledger_id');
             $table->foreign('_ledger_id')->references('id')->on('account_ledgers');
             $table->string('_referance')->nullable();
+            $table->string('_address')->nullable();
+            $table->string('phone')->nullable();
             $table->unsignedBigInteger('_user_id');
             $table->foreign('_user_id')->references('id')->on('users');
             $table->string('_user_name')->nullable();

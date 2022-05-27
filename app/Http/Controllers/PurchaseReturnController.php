@@ -863,7 +863,7 @@ class PurchaseReturnController extends Controller
 
                         $_total_dr_amount += $_dr_amount[$i] ?? 0;
                         $_total_cr_amount += $_cr_amount[$i] ?? 0;
-                         $PurchaseReturnAccount = PurchaseReturnAccount::where('id',$purchase_account_ids[$i])
+                         $PurchaseReturnAccount = PurchaseReturnAccount::where('id',$purchase_account_ids[$i] ?? 0)
                                                                         ->where('_ledger_id',$ledger)
                                                             ->first();
                         if(empty($PurchaseReturnAccount)){

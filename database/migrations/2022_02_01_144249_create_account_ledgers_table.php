@@ -26,6 +26,7 @@ class CreateAccountLedgersTable extends Migration
             $table->string('_email',60)->nullable();
             $table->string('_phone',60)->nullable();
             $table->string('_address',200)->nullable();
+            $table->string('_note',200)->nullable();
             $table->double('_credit_limit',15,4)->default(0);
             $table->integer('_branch_id')->nullable();
             $table->integer('_is_user')->default(0);

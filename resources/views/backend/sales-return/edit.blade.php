@@ -514,7 +514,7 @@
                             <tr>
                               <td style="border:0px;width: 20%;"><label for="_sub_total">Sub Total</label></td>
                               <td style="border:0px;width: 80%;">
-                                <input type="text" name="_sub_total" class="form-control width_200_px" id="_sub_total" readonly value="{{$data->_sub_total ?? 0}}">
+                                <input type="text" name="_sub_total" class="form-control width_200_px" id="_sub_total" readonly value="{{ _php_round( $data->_sub_total ?? 0) }}">
                               </td>
                             </tr>
                             <tr>
@@ -540,7 +540,7 @@
                             <tr>
                               <td style="border:0px;width: 20%;"><label for="_total">NET Total </label></td>
                               <td style="border:0px;width: 80%;">
-                          <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{$data->_total ?? 0}}">
+                          <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{ _php_round($data->_total ?? 0 ) }}">
                               </td>
                             </tr>
                           </table>
@@ -1075,10 +1075,10 @@ $(document).on("change","#_discount_input",function(){
       var _discount_input = parseFloat($("#_discount_input").val());
       if(isNaN(_discount_input)){ _discount_input =0 }
       var _total_discount = parseFloat(_discount_input)+parseFloat(_total_discount_amount);
-      $("#_sub_total").val(_total__value);
+      $("#_sub_total").val(_math_round(_total__value));
       $("#_total_vat").val(_total__vat);
       $("#_total_discount").val(parseFloat(_discount_input)+parseFloat(_total_discount_amount));
-      var _total = (parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_total_discount)
+      var _total = _math_round((parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_total_discount));
       $("#_total").val(_total);
   }
 

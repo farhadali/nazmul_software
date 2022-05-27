@@ -492,12 +492,12 @@
                                               <td class="@if(sizeof($permited_costcenters)==1) display_none @endif"></td>
                                               <td  class="text-right"><b>Total</b></td>
                                               <td>
-                                                <input type="number" min="0"  step="any" min="0" name="_total_dr_amount" class="form-control _total_dr_amount" value="{{$_account_dr_total}}" readonly required>
+                                                <input type="number" min="0"  step="any" min="0" name="_total_dr_amount" class="form-control _total_dr_amount" value="{{_php_round($_account_dr_total)}}" readonly required>
                                               </td>
 
 
                                               <td>
-                                                <input type="number" min="0"  step="any" min="0" name="_total_cr_amount" class="form-control _total_cr_amount" value="{{$_account_cr_total}}" readonly required>
+                                                <input type="number" min="0"  step="any" min="0" name="_total_cr_amount" class="form-control _total_cr_amount" value="{{_php_round($_account_cr_total)}}" readonly required>
                                               </td>
                                             </tr>
                                           </tfoot>
@@ -530,7 +530,7 @@
                             <tr>
                               <td style="width: 10%;border:0px;"><label for="_sub_total">Sub Total</label></td>
                               <td style="width: 70%;border:0px;">
-                                <input type="text" name="_sub_total" class="form-control width_200_px" id="_sub_total" readonly value="{{ $data->_sub_total ?? 0 }}">
+                                <input type="text" name="_sub_total" class="form-control width_200_px" id="_sub_total" readonly value="{{ _php_round($data->_sub_total ?? 0) }}">
                               </td>
                             </tr>
                             <tr>
@@ -556,7 +556,7 @@
                             <tr>
                               <td style="width: 10%;border:0px;"><label for="_total">NET Total </label></td>
                               <td style="width: 70%;border:0px;">
-                          <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{$data->_total ?? 0}}">
+                          <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{_php_round($data->_total ?? 0)}}">
                               </td>
                             </tr>
                           </table>
@@ -768,6 +768,8 @@ $(document).on('click','.search_row_item',function(){
   $(this).parent().parent().parent().parent().parent().parent().find('._qty').val(1);
   $(this).parent().parent().parent().parent().parent().parent().find('._value').val(_sales_rate);
   $(this).parent().parent().parent().parent().parent().parent().find('._store_salves_id').val(_store_salves_id);
+  $(this).parent().parent().parent().parent().parent().parent().find('._manufacture_date').val(_manufacture_date);
+  $(this).parent().parent().parent().parent().parent().parent().find('._expire_date').val(_expire_date);
 
   _purchase_total_calculation();
   $('.search_box_item').hide();
@@ -827,6 +829,25 @@ $(document).on('keyup','._vat_amount',function(){
     _purchase_total_calculation();
 })
 
+$(document).on('keyup','._discount_amount',function(){
+ var _item_vat =0;
+  var _qty = $(this).closest('tr').find('._qty').val();
+  var _rate = $(this).closest('tr').find('._rate').val();
+  var _sales_rate = $(this).closest('tr').find('._sales_rate').val();
+  var _discount_amount =  $(this).closest('tr').find('._discount_amount').val();
+  
+   if(isNaN(_discount_amount)){ _discount_amount = 0 }
+   if(isNaN(_qty)){ _qty   = 0 }
+   if(isNaN(_rate)){ _rate =0 }
+   if(isNaN(_sales_rate)){ _sales_rate =0 }
+   var _discount = parseFloat((_discount_amount/(_sales_rate*_qty))*100).toFixed(2);
+    $(this).closest('tr').find('._discount').val(_discount);
+
+    $(this).closest('tr').find('._value').val((_qty*_sales_rate));
+ 
+    _purchase_total_calculation();
+})
+
 $(document).on("change","#_discount_input",function(){
   var _discount_input = $(this).val();
   var res = _discount_input.match(/%/gi);
@@ -870,10 +891,10 @@ $(document).on("change","#_discount_input",function(){
       var _discount_input = parseFloat($("#_discount_input").val());
       if(isNaN(_discount_input)){ _discount_input =0 }
       var _total_discount = parseFloat(_discount_input)+parseFloat(_total_discount_amount);
-      $("#_sub_total").val(_total__value);
+      $("#_sub_total").val(_math_round(_total__value));
       $("#_total_vat").val(_total__vat);
       $("#_total_discount").val(parseFloat(_discount_input)+parseFloat(_total_discount_amount));
-      var _total = (parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_total_discount)
+      var _total = _math_round((parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_total_discount));
       $("#_total").val(_total);
   }
 

@@ -573,7 +573,7 @@
                             <tr>
                               <td style="width: 10%;border:0px;"><label for="_sub_total">Sub Total</label></td>
                               <td style="width: 70%;border:0px;">
-                                <input type="text" name="_sub_total" class="form-control width_200_px" id="_sub_total" readonly value="{{ $data->_sub_total ?? 0 }}">
+                                <input type="text" name="_sub_total" class="form-control width_200_px" id="_sub_total" readonly value="{{ _php_round($data->_sub_total ?? 0) }}">
                               </td>
                             </tr>
                             <tr>
@@ -608,7 +608,7 @@
                             <tr>
                               <td style="width: 10%;border:0px;"><label for="_total">NET Total </label></td>
                               <td style="width: 70%;border:0px;">
-                          <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{$data->_total ?? 0}}">
+                          <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{_php_round($data->_total ?? 0)}}">
                               </td>
                             </tr>
                           </table>
@@ -1167,10 +1167,10 @@ $(document).on("change","#_discount_input",function(){
       var _discount_input = parseFloat($("#_discount_input").val());
       if(isNaN(_discount_input)){ _discount_input =0 }
 
-      $("#_sub_total").val(_total__value);
+      $("#_sub_total").val(_math_round(_total__value));
       $("#_total_vat").val(_total__vat);
       $("#_total_discount").val(_discount_input);
-      var _total = (parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_discount_input)
+      var _total = _math_round((parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_discount_input));
       $("#_total").val(_total);
   }
 
@@ -1393,18 +1393,18 @@ function purchase_row_add(event){
       _voucher_total_calculation();
   })
 
-  function _voucher_total_calculation(){
-    var _total_dr_amount = 0;
-    var _total_cr_amount = 0;
-      $(document).find("._cr_amount").each(function() {
-          _total_cr_amount +=parseFloat($(this).val());
-      });
-      $(document).find("._dr_amount").each(function() {
-          _total_dr_amount +=parseFloat($(this).val());
-      });
-      $("._total_dr_amount").val(_total_dr_amount);
-      $("._total_cr_amount").val(_total_cr_amount);
-  }
+  // function _voucher_total_calculation(){
+  //   var _total_dr_amount = 0;
+  //   var _total_cr_amount = 0;
+  //     $(document).find("._cr_amount").each(function() {
+  //         _total_cr_amount +=parseFloat($(this).val());
+  //     });
+  //     $(document).find("._dr_amount").each(function() {
+  //         _total_dr_amount +=parseFloat($(this).val());
+  //     });
+  //     $("._total_dr_amount").val(_total_dr_amount);
+  //     $("._total_cr_amount").val(_total_cr_amount);
+  // }
 
 
   $(document).on('keyup','._dr_amount',function(){

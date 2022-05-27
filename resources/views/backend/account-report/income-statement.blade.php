@@ -137,7 +137,7 @@
                   </tr>
                   @forelse($_filter_ledgers as $key=>$value)
                   <tr >
-                    <th style="background: #f7f7f7;" colspan="2">{{$key}}</th>
+                    <th  colspan="2">{{$key}}</th>
                   </tr>
                       @forelse($value as $v_key=>$led)
                         <tr class="@if($led->_show==0) _nv_warning @endif">

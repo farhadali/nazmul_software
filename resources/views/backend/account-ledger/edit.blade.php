@@ -180,6 +180,12 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-xs-12 col-sm-12 col-md-9">
+                            <div class="form-group">
+                                <strong>Note:</strong>
+                                <input type="text" name="_note" class="form-control" placeholder="Note" value="{{$data->_note ?? ''}}">
+                            </div>
+                        </div>
                        
                        
                        <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">

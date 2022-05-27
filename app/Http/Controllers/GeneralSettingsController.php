@@ -40,6 +40,13 @@ class GeneralSettingsController extends Controller
     	$settings->keywords = $request->keywords ?? '';
     	$settings->author = $request->author ?? '';
     	$settings->url = $request->url ?? '';
+        $settings->_email = $request->_email ?? '';
+        $settings->_phone = $request->_phone ?? '';
+        $settings->_address = $request->_address ?? '';
+
+        
+
+
     	if($request->hasFile('logo')){ 
                 $logo = $this->UserImageUpload($request->logo); 
                 $settings->logo = $logo;

@@ -41,6 +41,18 @@
         </div>
           
          @endcan 
+          @can('purchase-order-list')
+          
+           <div style="display: flex;">
+           <a href="{{url('purchase-order')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i> Purchase Order
+          </a>
+           <a  href="{{route('purchase-order.create')}}" class="dropdown-item text-right">
+            <i class="nav-icon fas fa-plus"></i>
+          </a>
+        </div>
+         @endcan
+         <div class="dropdown-divider"></div>
         @can('purchase-list')
           
            <div style="display: flex;">

@@ -24,15 +24,9 @@
                 </button>
                </li>
                @endcan
-                @can('purchase-form-settings')
-             <li class="breadcrumb-item ">
-                 <button type="button" id="form_settings" class="btn btn-sm btn-default" data-toggle="modal" data-target="#exampleModal">
-                   <i class="nav-icon fas fa-cog"></i> 
-                </button>
-               </li>
-              @endcan
+               
               <li class="breadcrumb-item ">
-                 <a class="btn btn-sm btn-success" title="List" href="{{ route('purchase.index') }}"> <i class="nav-icon fas fa-list"></i> </a>
+                 <a class="btn btn-sm btn-success" title="List" href="{{ route('purchase-order.index') }}"> <i class="nav-icon fas fa-list"></i> </a>
                </li>
             </ol>
           </div><!-- /.col -->
@@ -70,7 +64,7 @@
                     
               </div>
               <div class="card-body">
-               <form action="{{route('purchase.store')}}" method="POST" class="purchase_form" >
+               <form action="{{route('purchase-order.store')}}" method="POST" class="purchase_form" >
                 @csrf
                                    <div class="row">
 
@@ -161,14 +155,11 @@
                                             <th class="text-middle" >&nbsp;</th>
                                             <th class="text-middle" >Item</th>
                                            
-                                            <th class="text-middle @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==0) display_none    @endif @endif" >Barcode</th>
+                                            
                                          
                                             <th class="text-middle" >Qty</th>
                                             <th class="text-middle" >Rate</th>
-                                            <th class="text-middle" >Sales Rate</th>
                                            
-                                            <th class="text-middle @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif @endif" >VAT%</th>
-                                            <th class="text-middle @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif @endif" >VAT Amount</th>
                                           
 
                                             <th class="text-middle" >Value</th>
@@ -182,18 +173,7 @@
                                             @else
                                              <th class="text-middle display_none" >Cost Center</th>
                                             @endif
-                                             @if(sizeof($store_houses) > 1)
-                                            <th class="text-middle" >Store</th>
-                                            @else
-                                             <th class="text-middle display_none" >Store</th>
-                                            @endif
-                                            
-                                             <th class="text-middle @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==0) display_none @endif
-                                            @endif" >Shelf</th>
-                                             <th class="text-middle @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
-                                            @endif" >Manu. Date</th>
-                                             <th class="text-middle @if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none @endif
-                                            @endif"> Expired Date </th>
+                                             
                                             
                                            
                                           </thead>
@@ -210,9 +190,7 @@
                                                 </div>
                                               </td>
                                               
-                                              <td class="@if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==0) display_none   @endif @endif">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
-                                              </td>
+                                              
                                             
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" >
@@ -220,16 +198,10 @@
                                               <td>
                                                 <input type="number" name="_rate[]" class="form-control _rate _common_keyup" >
                                               </td>
-                                              <td>
-                                                <input type="number" name="_sales_rate[]" class="form-control _sales_rate " >
-                                              </td>
                                              
-                                              <td class="@if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none  @endif @endif ">
-                                                <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" >
-                                              </td>
-                                              <td class="@if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none  @endif @endif ">
-                                                <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" >
-                                              </td>
+                                             
+                                             
+                                              
                                              
                                               <td>
                                                 <input type="number" name="_value[]" class="form-control _value " readonly >
@@ -274,37 +246,9 @@
                                                 </select>
                                               </td>
                                               @endif
-                                              @if(sizeof($store_houses) > 1)
-                                              <td>
-                                                <select class="form-control  _main_store_id" name="_main_store_id[]">
-                                                  @forelse($store_houses as $store)
-                                                  <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                                
-                                              </td>
-                                              @else
-                                              <td class="display_none">
-                                                <select class="form-control  _main_store_id" name="_main_store_id[]">
-                                                  @forelse($store_houses as $store)
-                                                  <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                                
-                                              </td>
-                                              @endif
+                                            
                                               
-                                              <td class="@if(isset($form_settings->_show_self)) @if($form_settings->_show_self==0) display_none  @endif @endif">
-                                                <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
-                                              </td>
-                                              <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
-                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " >
-                                              </td>
-                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
-                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " >
-                                              </td>
+                                             
                                              
                                               
                                             </tr>
@@ -315,23 +259,11 @@
                                                 <a href="#none"  class="btn btn-default btn-sm" onclick="purchase_row_add(event)"><i class="fa fa-plus"></i></a>
                                               </td>
                                               <td  class="text-right"><b>Total</b></td>
-                                              @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                              <td  class="text-right"></td>
-                                              @else
-                                                <td  class="text-right display_none"></td>
-                                             @endif
-                                            @endif
+                                             
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_qty_amount" class="form-control _total_qty_amount" value="0" readonly required>
                                               </td>
                                               <td></td>
-                                              <td></td>
-                                             
-                                              <td class="@if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif  @endif"></td>
-                                              <td class="@if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif  @endif">
-                                                <input type="number" step="any" min="0" name="_total_vat_amount" class="form-control _total_vat_amount" value="0" readonly required>
-                                              </td>
-                                            
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_value_amount" class="form-control _total_value_amount" value="0" readonly required>
                                               </td>
@@ -345,17 +277,9 @@
                                               @else
                                                <td class="display_none"></td>
                                               @endif
-                                              @if(sizeof($store_houses) > 1)
-                                              <td></td>
-                                              @else
-                                               <td class="display_none"></td>
-                                              @endif
+                                              
 
                                               
-                                              <td class="@if(isset($form_settings->_show_self)) @if($form_settings->_show_self==0) display_none  @endif  @endif"></td>
-                                              <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif  @endif"></td>
-
-                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif  @endif"></td>
                                               
                                             </tr>
                                           </tfoot>
@@ -366,130 +290,7 @@
                         </div>
                         
                        
-                          <div class="col-md-12  ">
-                             <div class="card">
-                              <div class="card-header">
-                                <strong>Account Details</strong>
-                              </div>
-                              <div class="card-body">
-                                <div class="table-responsive">
-                                      <table class="table table-bordered" >
-                                          <thead>
-                                            <th>&nbsp;</th>
-                                            <th>Ledger</th>
-                                            
-                                          
-                                            @if(sizeof($permited_costcenters)>1)
-                                               <th>Branch</th>
-                                              @else
-                                               <th class="display_none">Branch</th>
-                                              @endif
-                                              @if(sizeof($permited_costcenters)>1)
-                                                <th>Cost Center</th>
-                                              @else
-                                                <th class="display_none">Cost Center</th>
-                                              @endif
-                                            <th>Short Narr.</th>
-                                            <th>Dr. Amount</th>
-                                            <th>Cr. Amount</th>
-                                          </thead>
-                                          <tbody class="area__voucher_details form_body" id="area__voucher_details">
-                                            <tr class="_voucher_row">
-                                              <td>
-                                                <a  href="#none" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a>
-                                              </td>
-                                              <td>
-                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger">
-                                                <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
-                                                <div class="search_box">
-                                                  
-                                                </div>
-                                              </td>
-                                               @if(sizeof($permited_costcenters)>1)
-                                              <td>
-                                                <select class="form-control width_150_px _branch_id_detail" name="_branch_id_detail[]"  required>
-                                                  @forelse($permited_branch as $branch )
-                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                              </td>
-                                              @else
-                                              <td class="display_none">
-                                                <select class="form-control width_150_px _branch_id_detail" name="_branch_id_detail[]"  required>
-                                                  @forelse($permited_branch as $branch )
-                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                              </td>
-                                              @endif
-
-                                              @if(sizeof($permited_costcenters)>1)
-                                                <td>
-                                                 <select class="form-control width_150_px _cost_center" name="_cost_center[]" required >
-                                            
-                                                  @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_cost_center)) @if($request->_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                              </td>
-                                              @else
-                                              <td class="display_none">
-                                                 <select class="form-control width_150_px _cost_center" name="_cost_center[]" required >
-                                            
-                                                  @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_cost_center)) @if($request->_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                              </td>
-                                              @endif
-                                              
-                                              <td>
-                                                <input type="text" name="_short_narr[]" class="form-control width_250_px _short_narr" placeholder="Short Narr">
-                                              </td>
-                                              <td>
-                                                <input type="number" name="_dr_amount[]" class="form-control  _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',0)}}">
-                                              </td>
-                                              <td>
-                                                <input type="number" name="_cr_amount[]" class="form-control  _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',0)}}">
-                                              </td>
-                                            </tr>
-                                          </tbody>
-                                          <tfoot>
-                                            <tr>
-                                              <td>
-                                                <a href="#none"  class="btn btn-default btn-sm" onclick="voucher_row_add(event)"><i class="fa fa-plus"></i></a>
-                                              </td>
-                                              <td></td>
-                                              @if(sizeof($permited_costcenters)>1)
-                                               <td></td>
-                                              @else
-                                               <td class="display_none"></td>
-                                              @endif
-                                              @if(sizeof($permited_costcenters)>1)
-                                              <td></td>
-                                              @else
-                                              <td class="display_none"></td>
-                                              @endif
-                                             
-                                              
-                                              <td  class="text-right"><b>Total</b></td>
-                                              <td>
-                                                <input type="number" step="any" min="0" name="_total_dr_amount" class="form-control _total_dr_amount" value="0" readonly required>
-                                              </td>
-                                              <td>
-                                                <input type="number" step="any" min="0" name="_total_cr_amount" class="form-control _total_cr_amount" value="0" readonly required>
-                                              </td>
-                                            </tr>
-                                          </tfoot>
-                                      </table>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
+                         
 
                         <div class="col-xs-12 col-sm-12 col-md-12 mb-10">
                           <table class="table" style="border-collapse: collapse;">
@@ -502,7 +303,7 @@
                                     <input type="hidden" name="_after_print" value="0" class="_after_print" >
                                     @endif
                                     @if ($_master_id = Session::get('_master_id'))
-                                     <input type="hidden" name="_master_id" value="{{url('purchase/print')}}/{{$_master_id}}" class="_master_id">
+                                     <input type="hidden" name="_master_id" value="{{url('purchase-order/print')}}/{{$_master_id}}" class="_master_id">
                                     
                                     @endif
                                    
@@ -511,42 +312,26 @@
                                     <input type="text" id="_note"  name="_note" class="form-control _note" value="{{old('_note')}}" placeholder="Note" required >
                               </td>
                             </tr>
-                            <tr>
+                            <tr class="display_none">
                               <td style="width: 10%;border:0px;"><label for="_sub_total">Sub Total</label></td>
                               <td style="width: 70%;border:0px;">
                                 <input type="text" name="_sub_total" class="form-control width_200_px" id="_sub_total" readonly value="0">
                               </td>
                             </tr>
-                            <tr>
+                            <tr class="display_none">
                               <td style="width: 10%;border:0px;"><label for="_discount_input">Invoice Discount</label></td>
                               <td style="width: 70%;border:0px;">
                                 <input type="text" name="_discount_input" class="form-control width_200_px" id="_discount_input" value="0" >
                               </td>
                             </tr>
-                            <tr>
+                            <tr  class="display_none">
                               <td style="width: 10%;border:0px;"><label for="_total_discount">Total Discount</label></td>
                               <td style="width: 70%;border:0px;">
                                 <input type="text" name="_total_discount" class="form-control width_200_px" id="_total_discount" readonly value="0">
                               </td>
                             </tr>
-                            @if(isset($form_settings->_show_vat)) 
-                            @if($form_settings->_show_vat==1)
-                            <tr>
-                              <td style="width: 10%;border:0px;"><label for="_total_vat">Total VAT</label></td>
-                              <td style="width: 70%;border:0px;">
-                                <input type="text" name="_total_vat" class="form-control width_200_px" id="_total_vat" readonly value="0">
-                              </td>
-                            </tr>
-                            @else
-                            <tr class="display_none">
-                              <td style="width: 10%;border:0px;"><label for="_total_vat">Total VAT</label></td>
-                              <td style="width: 70%;border:0px;">
-                                <input type="text" name="_total_vat" class="form-control width_200_px" id="_total_vat" readonly value="0">
-                              </td>
-                            </tr>
-                            @endif
-                            @endif
-                            <tr>
+                           
+                            <tr >
                               <td style="width: 10%;border:0px;"><label for="_total">NET Total </label></td>
                               <td style="width: 70%;border:0px;">
                           <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="0">
@@ -574,104 +359,7 @@
       <!-- /.container-fluid -->
     </div>
 </div>
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <form action="{{ url('purchase-settings')}}" method="POST">
-        @csrf
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Purchase Form Settings</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-       
-        <div class="form-group row">
-        <label for="_default_inventory" class="col-sm-5 col-form-label">Default Inventory</label>
-        <select class="form-control col-sm-7" name="_default_inventory">
-          @foreach($inv_accounts as $account)
-          <option value="{{$account->id}}" @if(isset($form_settings->_default_inventory))@if($form_settings->_default_inventory==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
-          @endforeach
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_default_purchase" class="col-sm-5 col-form-label">Default Purchase Account</label>
-        <select class="form-control col-sm-7" name="_default_purchase">
-          @foreach($p_accounts as $account)
-          <option value="{{$account->id}}" @if(isset($form_settings->_default_purchase))@if($form_settings->_default_purchase==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
-          @endforeach
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_default_discount" class="col-sm-5 col-form-label">Default Discount Account</label>
-        <select class="form-control col-md-7" name="_default_discount">
-          @foreach($dis_accounts as $account)
-          <option value="{{$account->id}}" @if(isset($form_settings->_default_discount))@if($form_settings->_default_discount==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
-          @endforeach
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_default_vat_account" class="col-sm-5 col-form-label">Default VAT Account</label>
-        <select class="form-control col-md-7" name="_default_vat_account">
-          @foreach($p_accounts as $account)
-          <option value="{{$account->id}}" @if(isset($form_settings->_default_vat_account))@if($form_settings->_default_vat_account==$account->id) selected @endif @endif>{{ $account->_name ?? '' }}</option>
-          @endforeach
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_show_vat" class="col-sm-5 col-form-label">Show VAT</label>
-        <select class="form-control col-sm-7" name="_show_vat">
-         
-          <option value="0" @if(isset($form_settings->_show_vat))@if($form_settings->_show_vat==0) selected @endif @endif>NO</option>
-          <option value="1" @if(isset($form_settings->_show_vat))@if($form_settings->_show_vat==1) selected @endif @endif>YES</option>
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_show_barcode" class="col-sm-5 col-form-label">Show Barcode</label>
-        <select class="form-control col-sm-7" name="_show_barcode">
-          <option value="0" @if(isset($form_settings->_show_barcode))@if($form_settings->_show_barcode==0) selected @endif @endif>NO</option>
-          <option value="1" @if(isset($form_settings->_show_barcode))@if($form_settings->_show_barcode==1) selected @endif @endif>YES</option>
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_show_store" class="col-sm-5 col-form-label">Show Store</label>
-        <select class="form-control col-sm-7" name="_show_store">
-          <option value="0" @if(isset($form_settings->_show_store))@if($form_settings->_show_store==0) selected @endif @endif>NO</option>
-          <option value="1" @if(isset($form_settings->_show_store))@if($form_settings->_show_store==1) selected @endif @endif>YES</option>
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_show_self" class="col-sm-5 col-form-label">Show Shelf</label>
-        <select class="form-control col-sm-7" name="_show_self">
-          <option value="0" @if(isset($form_settings->_show_self))@if($form_settings->_show_self==0) selected @endif @endif>NO</option>
-          <option value="1" @if(isset($form_settings->_show_self))@if($form_settings->_show_self==1) selected @endif @endif>YES</option>
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_show_manufacture_date" class="col-sm-5 col-form-label">Use Manufacture Date</label>
-        <select class="form-control col-sm-7" name="_show_manufacture_date">
-          <option value="0" @if(isset($form_settings->_show_manufacture_date))@if($form_settings->_show_manufacture_date==0) selected @endif @endif>NO</option>
-          <option value="1" @if(isset($form_settings->_show_manufacture_date))@if($form_settings->_show_manufacture_date==1) selected @endif @endif>YES</option>
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="_show_expire_date" class="col-sm-5 col-form-label">Use Expired Date</label>
-        <select class="form-control col-sm-7" name="_show_expire_date">
-          <option value="0" @if(isset($form_settings->_show_expire_date))@if($form_settings->_show_expire_date==0) selected @endif @endif>NO</option>
-          <option value="1" @if(isset($form_settings->_show_expire_date))@if($form_settings->_show_expire_date==1) selected @endif @endif>YES</option>
-        </select>
-      </div>
-         
-      
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save changes</button>
-      </div>
-       </form>
-    </div>
-  </div>
+
 
 
 
@@ -953,41 +641,15 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                   
                                                 </div>
                                               </td>
-                                              @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                              <td>
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
-                                              </td>
-                                              @else
-                                              <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
-                                              </td>
-                                              @endif
-                                              @endif
+                                              
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" >
                                               </td>
                                               <td>
                                                 <input type="number" name="_rate[]" class="form-control _rate _common_keyup" >
                                               </td>
-                                              <td>
-                                                <input type="number" name="_sales_rate[]" class="form-control _sales_rate " >
-                                              </td>
-                                               @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                              <td>
-                                                <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" >
-                                              </td>
-                                              <td>
-                                                <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" >
-                                              </td>
-                                              @else
-                                                <td class="display_none">
-                                                <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" >
-                                              </td>
-                                              <td class="display_none">
-                                                <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" >
-                                              </td>
-                                              @endif
-                                              @endif
+                                              
+                                             
                                               <td>
                                                 <input type="number" name="_value[]" class="form-control _value " readonly >
                                               </td>
@@ -1031,44 +693,11 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                 </select>
                                               </td>
                                               @endif
-                                              @if(sizeof($store_houses) > 1)
-                                              <td>
-                                                <select class="form-control  _main_store_id" name="_main_store_id[]">
-                                                  @forelse($store_houses as $store)
-                                                  <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                                
-                                              </td>
-                                              @else
-                                              <td class="display_none">
-                                                <select class="form-control  _main_store_id" name="_main_store_id[]">
-                                                  @forelse($store_houses as $store)
-                                                  <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                                
-                                              </td>
-                                              @endif
-                                              @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                              <td>
-                                                <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
-                                              </td>
-                                              @else
-                                              <td class="display_none">
-                                                <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
-                                              </td>
-                                              @endif
+                                             
+                                             
 
-                                              @endif
-                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
-                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " >
-                                              </td>
-                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
-                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " >
-                                              </td>
+                                              
+                                             
                                               
                                             </tr>`;
 function purchase_row_add(event){
@@ -1094,9 +723,6 @@ function purchase_row_add(event){
 
   $(document).on('click','.submit-button',function(event){
     event.preventDefault();
-    var _total_dr_amount = $(document).find("._total_dr_amount").val();
-    var _total_cr_amount = $(document).find("._total_cr_amount").val();
-    var _voucher_type = $(document).find('._voucher_type').val();
     var _note = $(document).find('._note').val();
     var _main_ledger_id = $(document).find('._main_ledger_id').val();
     if(_main_ledger_id  ==""){
@@ -1121,16 +747,7 @@ function purchase_row_add(event){
     }
 
 
-    if( parseFloat(_total_dr_amount) !=parseFloat(_total_cr_amount)){
-      $(document).find("._total_dr_amount").addClass('required_border').focus();
-      $(document).find("._total_cr_amount").addClass('required_border').focus();
-      return false;
-
-    }else if(_voucher_type ==""){
-       $(document).find('._voucher_type').addClass('required_border').focus();
-       alert('Please Select Voucher Type.');
-      return false;
-    }else if(_note ==""){
+    if(_note ==""){
        
        $(document).find('._note').focus().addClass('required_border');
       return false;

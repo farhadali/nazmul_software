@@ -1198,7 +1198,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                         $_total_dr_amount += $_dr_amount[$i] ?? 0;
                         $_total_cr_amount += $_cr_amount[$i] ?? 0;
                        
-                         $SalesReturnAccount = SalesReturnAccount::where('id',$_sales_account_detail_ids[$i])
+                         $SalesReturnAccount = SalesReturnAccount::where('id',$_sales_account_detail_ids[$i] ?? 0)
                                                             ->where('_ledger_id',$ledger)
                                                             ->first();
                         if(empty($SalesReturnAccount)){

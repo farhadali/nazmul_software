@@ -58,6 +58,9 @@ class AccountLedgerController extends Controller
         if($request->has('_nid') && $request->_nid !=''){
             $datas = $datas->where('_nid','like',"%$request->_nid%");
         }
+        if($request->has('_note') && $request->_note !=''){
+            $datas = $datas->where('_note','like',"%$request->_note%");
+        }
         if($request->has('_email') && $request->_email !=''){
             $datas = $datas->where('_email','like',"%$request->_email%");
         }
@@ -166,6 +169,7 @@ class AccountLedgerController extends Controller
         $data->_address = $request->_address;
         $data->_code = $request->_code;
         $data->_nid = $request->_nid;
+        $data->_note = $request->_note;
         $data->_email = $request->_email;
         $data->_phone = $request->_phone;
         $data->_credit_limit = $request->_credit_limit ?? 0;
@@ -198,6 +202,7 @@ class AccountLedgerController extends Controller
         $data->_address = $request->_ledger_address;
         $data->_code = $request->_ledger_code;
         $data->_nid = $request->_ledger_nid;
+        
         $data->_email = $request->_ledger_email;
         $data->_phone = $request->_ledger_phone;
         $data->_credit_limit = $request->_ledger_credit_limit ?? 0;
@@ -274,6 +279,7 @@ class AccountLedgerController extends Controller
         $data->_address = $request->_address;
         $data->_code = $request->_code;
         $data->_nid = $request->_nid;
+        $data->_note = $request->_note;
         $data->_email = $request->_email;
         $data->_phone = $request->_phone;
         $data->_credit_limit = $request->_credit_limit ?? 0;
