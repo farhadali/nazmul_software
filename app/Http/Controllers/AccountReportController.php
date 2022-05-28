@@ -31,57 +31,110 @@ class AccountReportController extends Controller
 
 
     public function ledgerReprtShow(Request $request){
-
+        //return $request->all();
     	 $this->validate($request, [
             '_datex' => 'required',
             '_datey' => 'required',
             '_ledger_id' => 'required'
         ]);
-        $_datex =  change_date_format($request->_datex);
-        $_datey=  change_date_format($request->_datey);
-        $users = Auth::user();
-        $permited_branch = permited_branch(explode(',',$users->branch_ids));
-        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+         $_datex =  change_date_format($request->_datex);
+         $_datey=  change_date_format($request->_datey);
+     //    $users = Auth::user();
+     //    $permited_branch = permited_branch(explode(',',$users->branch_ids));
+     //    $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
 
        
-          $request_branchs = $request->_branch_id ?? [];
-          $request_cost_centers = $request->_cost_center ?? [];
+     //      $request_branchs = $request->_branch_id ?? [];
+     //      $request_cost_centers = $request->_cost_center ?? [];
 
-          $_branch_ids = filterableBranch($request_branchs,$permited_branch);
-          $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+     //      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+     //      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
 
-          $_branch_ids_rows = implode(',', $_branch_ids);
-          $_cost_center_id_rows = implode(',', $_cost_center_ids);
+     //      $_branch_ids_rows = implode(',', $_branch_ids);
+     //      $_cost_center_id_rows = implode(',', $_cost_center_ids);
                 
 
 
        session()->put('ledgerReprtFilter', $request->all());
-        $previous_filter= Session::get('ledgerReprtFilter');
+       $previous_filter= Session::get('ledgerReprtFilter');
 
-        $balance = DB::table('accounts')
-                    ->where('accounts._account_ledger','=',$request->_ledger_id)
-                    ->whereDate('accounts._date','<' ,$_datex)
-                    ->whereIn('accounts._branch_id' ,$_branch_ids)
-                    ->whereIn('accounts._cost_center' ,$_cost_center_ids)
-                    ->select(DB::raw('sum(accounts._dr_amount) as _opening_dr_amount'), DB::raw('sum(accounts._cr_amount) as _opening_cr_amount'))
-                    ->where('accounts._status',1)
-                    ->first();
+     //    $balance = DB::table('accounts')
+     //                ->where('accounts._account_ledger','=',$request->_ledger_id)
+     //                ->whereDate('accounts._date','<=' ,$_datex)
+     //                ->whereIn('accounts._branch_id' ,$_branch_ids)
+     //                ->whereIn('accounts._cost_center' ,$_cost_center_ids)
+     //                ->select(DB::raw('sum(accounts._dr_amount) as _opening_dr_amount'), DB::raw('sum(accounts._cr_amount) as _opening_cr_amount'))
+     //                ->where('accounts._status',1)
+     //                ->first();
 
-         $ledger_details = DB::table('accounts')
-                        ->where('accounts._account_ledger','=',$request->_ledger_id)
-                       ->whereDate('accounts._date', '>=', $_datex)
-                        ->whereDate('accounts._date', '<=', $_datey)
-                        ->whereIn('accounts._branch_id' ,$_branch_ids)
-                        ->whereIn('accounts._cost_center' ,$_cost_center_ids)
-                        ->where('accounts._status',1)
-                        ->get();
+     //     $ledger_details = DB::table('accounts')
+     //                    ->where('accounts._account_ledger','=',$request->_ledger_id)
+     //                   ->whereDate('accounts._date', '>', $_datex)
+     //                    ->whereDate('accounts._date', '<=', $_datey)
+     //                    ->whereIn('accounts._branch_id' ,$_branch_ids)
+     //                    ->whereIn('accounts._cost_center' ,$_cost_center_ids)
+     //                    ->where('accounts._status',1)
+     //                    ->get();
                   
-         $ledger_info = AccountLedger::with(['account_type','account_group','_entry_branch'])->find($request->_ledger_id);
-    	$page_name = "Ledger Report";
-        $users = Auth::user();
+     //     $ledger_info = AccountLedger::with(['account_type','account_group','_entry_branch'])->find($request->_ledger_id);
+    	// $page_name = "Ledger Report";
+     //    $users = Auth::user();
+     //    $permited_branch = permited_branch(explode(',',$users->branch_ids));
+     //    $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+       $users = Auth::user();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
-    	return view('backend.account-report.ledger_show',compact('request','page_name','balance','ledger_details','ledger_info','previous_filter','permited_branch','permited_costcenters'));
+        $datas=[];
+         $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+
+       
+
+        
+$page_name = "Ledger Report";
+       
+
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $ledger_id_rows = (int) $request->_ledger_id;
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+      
+     if($ledger_id_rows){
+     $string_query = " SELECT t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name, null as _id,null as _table_name, null as _date, null as _short_narration, 'Opening Balance' as _narration, 0 AS _dr_amount, 0  AS _cr_amount, SUM(t1._dr_amount-t1._cr_amount) AS _balance  
+            FROM accounts as t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+               WHERE t1._status=1 AND t1._date < '".$_datex."' AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger
+      UNION ALL
+            SELECT t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name, t1._ref_master_id as _id, t1._table_name AS _table_name, t1._date as _date, t1._short_narration as _short_narration, t1._narration as _narration, t1._dr_amount AS _dr_amount, t1._cr_amount  AS _cr_amount, 0 AS _balance 
+            FROM accounts AS t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+              WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+              AND t1._account_ledger IN(".$ledger_id_rows.") AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")  ";
+
+       $datas = DB::select($string_query);
+       $group_array_values = array();
+       foreach ($datas as $value) {
+           $group_array_values[$value->_group_name][$value->_l_name][]=$value;
+       }
+
+}else{
+   $group_array_values = array();
+}
+$ledger_details =[];
+
+      //return $group_array_values;
+    	return view('backend.account-report.ledger_show',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','group_array_values','_datex','_datey','ledger_id_rows'));
 
     }
 

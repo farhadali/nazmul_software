@@ -662,6 +662,13 @@
           <option value="1" @if(isset($form_settings->_show_expire_date))@if($form_settings->_show_expire_date==1) selected @endif @endif>YES</option>
         </select>
       </div>
+      <div class="form-group row">
+        <label for="_show_p_balance" class="col-sm-5 col-form-label">Invoice Show Previous Balance</label>
+        <select class="form-control col-sm-7" name="_show_p_balance">
+          <option value="0" @if(isset($form_settings->_show_p_balance))@if($form_settings->_show_p_balance==0) selected @endif @endif>NO</option>
+          <option value="1" @if(isset($form_settings->_show_p_balance))@if($form_settings->_show_p_balance==1) selected @endif @endif>YES</option>
+        </select>
+      </div>
          
       
       </div>

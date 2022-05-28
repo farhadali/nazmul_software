@@ -775,12 +775,20 @@ $(document).on('click','.search_row_item',function(){
 $(document).on('click',function(){
     var searach_show= $('.search_box_item').hasClass('search_box_show');
     var search_box_main_ledger= $('.search_box_main_ledger').hasClass('search_box_show');
+    var search_box_delivery_man= $('.search_box_delivery_man').hasClass('search_box_show');
+    var search_box_sales_man= $('.search_box_sales_man').hasClass('search_box_show');
     if(searach_show ==true){
       $('.search_box_item').removeClass('search_box_show').hide();
     }
 
     if(search_box_main_ledger ==true){
       $('.search_box_main_ledger').removeClass('search_box_show').hide();
+    }
+    if(search_box_delivery_man ==true){
+      $('.search_box_delivery_man').removeClass('search_box_show').hide();
+    }
+    if(search_box_sales_man ==true){
+      $('.search_box_sales_man').removeClass('search_box_show').hide();
     }
 })
 

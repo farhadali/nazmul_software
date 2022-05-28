@@ -204,6 +204,16 @@
             <th class="text-right" ><b>NET Total</b></th>
             <th class="text-right">{!! _report_amount($data->_total ?? 0) !!}</th>
           </tr>
+          @if($form_settings->_show_p_balance==1)
+          <tr>
+            <th class="text-right" ><b>Previous Balance</b></th>
+            <th class="text-right">{!! _report_amount($data->_p_balance ?? 0) !!}</th>
+          </tr>
+          <tr>
+            <th class="text-right" ><b>Current Balance</b></th>
+            <th class="text-right">{!! _report_amount($data->_l_balance ?? 0) !!}</th>
+          </tr>
+          @endif
           
           </tbody>
           

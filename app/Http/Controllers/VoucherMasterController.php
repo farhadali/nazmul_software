@@ -202,8 +202,9 @@ class VoucherMasterController extends Controller
                     $VoucherMasterDetail->_status = 1;
                     $VoucherMasterDetail->_created_by = $users->id."-".$users->name;
                     $VoucherMasterDetail->save();
-
                     $master_detail_id = $VoucherMasterDetail->id;
+
+
 
                     //Reporting Account Table Data Insert
 
@@ -225,6 +226,8 @@ class VoucherMasterController extends Controller
                     $Accounts->_cost_center = $_cost_center[$i] ?? 0;
                     $Accounts->_name =$users->name;
                     $Accounts->save();
+
+                    ledger_balance_update($_ledger_id[$i]);
 
                     
                 }
@@ -402,7 +405,7 @@ class VoucherMasterController extends Controller
             //End  Remove from database which ledger not available
 
             if(sizeof($_ledger_id) > 0){
-                for ($i = 0; $i <sizeof($_ledger_id) ; $i++) {
+                for ($i = 0; $i <sizeof($_ledger_id) ; $i++){
                     $_account_type_id =  ledger_to_group_type($_ledger_id[$i])->_account_head_id;
                     $_account_group_id =  ledger_to_group_type($_ledger_id[$i])->_account_group_id;
 
@@ -478,7 +481,7 @@ class VoucherMasterController extends Controller
                                               ] );
                        //return $Accounts ; 
                     }
-                    
+                 ledger_balance_update($_ledger_id[$i]);   
                     
                     
 
@@ -504,6 +507,6 @@ class VoucherMasterController extends Controller
      */
     public function destroy(VoucherMaster $voucherMaster)
     {
-        //
+        return redirect()->back()->with('error','You Can not delete this Information !');;
     }
 }

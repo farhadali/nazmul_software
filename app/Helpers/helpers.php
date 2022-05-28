@@ -54,10 +54,24 @@ if (! function_exists('inventory_stock_update')) {
 }
 
 
+
+if (! function_exists('_l_balance_update')) {
+    function _l_balance_update($ledger)
+    {
+
+       
+        $balance=\DB::select("SELECT SUM(IFNULL(_dr_amount,0)-IFNULL(_cr_amount,0)) as _balance FROM `accounts` WHERE _account_ledger=$ledger  AND _status=1 ");
+
+      
+      return $balance[0]->_balance;
+    }
+}
+
+
 if (! function_exists('ledger_balance_update')) {
     function ledger_balance_update($ledger)
     {
-        $balance=\DB::select("SELECT SUM(IFNULL(_dr_amount,0)-IFNULL(_cr_amount,0)) as _balance FROM `accounts` WHERE _account_ledger=$ledger ");
+        $balance=\DB::select("SELECT SUM(IFNULL(_dr_amount,0)-IFNULL(_cr_amount,0)) as _balance FROM `accounts` WHERE _account_ledger=$ledger AND _status=1 ");
         \DB::table('account_ledgers')->where('id',$ledger)->update(['_balance'=>$balance[0]->_balance]);
     }
 }
@@ -208,6 +222,15 @@ if (! function_exists('_item_name')) {
     function _item_name($id)
     {
         $data= Inventory::where('id',$id)->select('_item as _name')->first();
+        return $data->_name;
+    }
+}
+
+
+if (! function_exists('_ledger_name')) {
+    function _ledger_name($id)
+    {
+        $data= AccountLedger::where('id',$id)->select('_name')->first();
         return $data->_name;
     }
 }

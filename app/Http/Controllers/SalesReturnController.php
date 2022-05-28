@@ -316,6 +316,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $data->_show_cost_rate = $request->_show_cost_rate ?? 1;
         $data->_show_manufacture_date = $request->_show_manufacture_date ?? 1;
         $data->_show_expire_date = $request->_show_expire_date ?? 1;
+        $data->_show_p_balance = $request->_show_p_balance ?? 1;
         $data->save();
 
 
@@ -479,9 +480,9 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
     //###########################
     // Purchase Master information Save Start
     //###########################
-      // DB::beginTransaction();
-      //  try {
-
+       DB::beginTransaction();
+        try {
+$_p_balance = _l_balance_update($request->_main_ledger_id);
         $_sales_detils_unique_ids = array();
         $_sales_detail_ref_ids =  $request->_sales_detail_ref_id;
         $_p_s__qtys =  $request->_qty;
@@ -796,7 +797,13 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 }
             }
 
-         //   DB::commit();
+           
+$_l_balance = _l_balance_update($request->_main_ledger_id);
+             \DB::table('sales')
+             ->where('id',$_master_id)
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+
+            DB::commit();
             return redirect()->back()
                 ->with('success','Information save successfully')
                 ->with('_master_id',$_master_id)
@@ -805,10 +812,10 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 ->with('sales_man_name_leder',$sales_man_name_leder)
                 ->with('_delivery_man_id',$_delivery_man_id)
                 ->with('delivery_man_name_leder',$delivery_man_name_leder);
-       // } catch (\Exception $e) {
-       //     DB::rollback();
-       //     return redirect()->back()->with('danger','There is Something Wrong !');
-       //  }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('danger','There is Something Wrong !');
+         }
 
        
     }
@@ -930,6 +937,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
          Accounts::where('_ref_master_id',$_sales_id)
                         ->where('_table_name','sales_return_accounts')
                          ->update(['_status'=>0]); 
+         $_p_balance = _l_balance_update($request->_main_ledger_id);
           
 
         $previous_sales_details = SalesReturnDetail::where('_no',$_sales_id)->get();
@@ -1240,7 +1248,12 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 }
             }
 
-         //   DB::commit();
+         
+$_l_balance = _l_balance_update($request->_main_ledger_id);
+             \DB::table('sales')
+             ->where('id',$_master_id)
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+
             return redirect()->back()
                 ->with('success','Information save successfully')
                 ->with('_master_id',$_master_id)

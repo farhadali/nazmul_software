@@ -36,7 +36,7 @@
       <!-- /.col -->
       <div class="col-sm-4 invoice-col">
         <h3 class="text-center"><b>Ledger Report</b></h3>
-        <h5 class="text-center"><b>{!! $ledger_info->_name ?? '' !!}</b></h5>
+        <h5 class="text-center"><b>{!! _ledger_name($ledger_id_rows) !!}</b></h5>
         <h5 class="text-center"><small>Date: {{ _view_date_formate($request->_datex ?? '') }} To {{ _view_date_formate($request->_datey ?? '') }}</small></h5>
       </div>
       <!-- /.col -->
@@ -63,10 +63,10 @@
         <table class="table ">
           <thead>
           <tr>
-            <th style="width: 10%;">Date</th>
+            <th style="width: 15%;">Date</th>
             <th style="width: 10%;">ID</th>
-            <th style="width: 25%;">Narration</th>
             <th style="width: 20%;">Short Narration</th>
+            <th style="width: 25%;">Narration</th>
             <th style="width: 10%;" class="text-right" >Dr. Amount</th>
             <th style="width: 10%;" class="text-right" >Cr. Amount</th>
             <th style="width: 10%;" class="text-right" >Balance</th>
@@ -76,110 +76,135 @@
           </thead>
           <tbody>
             @php
-            $runing_total =0;
-            $dr_total = 0;
-            $cr_total = 0;
+            $_dr_grand_total = 0;
+            $_cr_grand_total = 0;
+            $_total_balance = 0;
             @endphp
+            @forelse($group_array_values as $key=>$value)
             <tr>
-            <th  class="text-left"></th>
-            <th  class="text-left"></th>
-            <th colspan="2" class="text-left"><b>Opening Balance</b></th>
-            <th class="text-right" > {{ _report_amount(  0) }} </th>
-            <th class="text-right" > {{ _report_amount(  0) }}</th>
-            <th  class="text-right"> {{ _report_amount(  $balance->_opening_dr_amount ?? 0 - $balance->_opening_cr_amount ?? 0 ) }}</th>
+              
+                
+            </tr>
+                @forelse($value as $l_key=>$l_val)
 
-
-            @php
-            $balance =($balance->_opening_dr_amount ?? 0 - $balance->_opening_cr_amount ?? 0);
-            @endphp
-          </tr>
-            @forelse($ledger_details as $detail_key=>$detail)
-          <tr>
-            <td>{!! $detail->_date !!}</td>
-           
+               
+                  @php
+                    $running_sub_dr_total=0;
+                    $running_sub_cr_total=0;
+                    $runing_balance_total = 0;
+                  @endphp
+                  @forelse($l_val as $_dkey=>$detail)
+                  @php
+                    $_dr_grand_total +=$detail->_dr_amount ?? 0;
+                    $_cr_grand_total +=$detail->_cr_amount ?? 0;
+                    $running_sub_dr_total +=$detail->_dr_amount ?? 0;
+                    $running_sub_cr_total +=$detail->_cr_amount ?? 0;
+                    $runing_balance_total += (($detail->_balance+$detail->_dr_amount)-$detail->_cr_amount);
+                    $_total_balance += (($detail->_balance+$detail->_dr_amount)-$detail->_cr_amount);
+                  @endphp
+                  
+                    <tr>
+                    <td style="text-align: left;">
+                      
+                      {{ _view_date_formate($detail->_date ?? $_datex) }} </td>
+                     
                     <td class="text-left">
                     @if($detail->_table_name=="voucher_masters")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('voucher.show',$detail->_ref_master_id) }}">
-                  A-{!! $detail->_ref_master_id ?? '' !!}</a>
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('voucher.show',$detail->_id) }}">
+                  A-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="purchases")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$detail->_ref_master_id) }}">
-                  P-{!! $detail->_ref_master_id ?? '' !!}</a>
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$detail->_id) }}">
+                  P-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="purchase_accounts")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$detail->_ref_master_id) }}">
-                  PA-{!! $detail->_ref_master_id ?? '' !!}</a>
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$detail->_id) }}">
+                  PA-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="purchases_return")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase-return.edit',$detail->_ref_master_id) }}">
-                  PR-{!! $detail->_ref_master_id ?? '' !!}</a>
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase-return.edit',$detail->_id) }}">
+                  PR-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="purchase_return_accounts")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase-return.edit',$detail->_ref_master_id) }}">
-                  PRA-{!! $detail->_ref_master_id ?? '' !!}</a>
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase-return.edit',$detail->_id) }}">
+                  PRA-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="sales")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales.edit',$detail->_ref_master_id) }}">
-                  S-{!! $detail->_ref_master_id ?? '' !!}</a>
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales.edit',$detail->_id) }}">
+                  S-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="sales_accounts")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales.edit',$detail->_ref_master_id) }}">
-                  SA-{!! $detail->_ref_master_id ?? '' !!}</a>
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales.edit',$detail->_id) }}">
+                  SA-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="sales_return")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales-return.edit',$detail->_ref_master_id) }}">
-                  SR-{!! $detail->_ref_master_id ?? '' !!}</a>
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales-return.edit',$detail->_id) }}">
+                  SR-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="sales_return_accounts")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales-return.edit',$detail->_ref_master_id) }}">
-                  SRA-{!! $detail->_ref_master_id ?? '' !!}</a>
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales-return.edit',$detail->_id) }}">
+                  SRA-{!! $detail->_id ?? '' !!}</a>
                     @endif
              </td>
-            <td>{!! $detail->_narration ?? '' !!}</td>
-            <td>{!! $detail->_short_narration ?? '' !!}</td>
-            <td class="text-right">{!! _report_amount($detail->_dr_amount ?? 0)  !!}</td>
-            <td class="text-right" >{!! _report_amount( $detail->_cr_amount ?? 0) !!}</td>
-            @php
-            $dr_total +=(float)  $detail->_dr_amount ?? 0;
-            $cr_total +=(float)  $detail->_cr_amount ?? 0;
+                    <td style="text-align: left;">{{ $detail->_short_narration ?? '' }} </td>
+                    <td style="text-align: left;">{{ $detail->_narration ?? '' }} </td>
+                    <td style="text-align: right;">{{ _report_amount($detail->_dr_amount ?? 0) }} </td>
+                    <td style="text-align: right;">{{ _report_amount($detail->_cr_amount ?? 0) }} </td>
+                    <td style="text-align: right;">{{ _show_amount_dr_cr(_report_amount(  $runing_balance_total )) }} </td>
 
-             $balance +=$detail->_dr_amount - $detail->_cr_amount;
-            @endphp
-            <td class="text-right" >{!! _show_amount_dr_cr(_report_amount( $balance)) !!}</td>
-             
-          </tr>
-          @empty
-          @endforelse
+                  </tr>
+
+                  @empty
+                  @endforelse
+
+                 
+                
+
+                @empty
+                @endforelse
+
+
+
+              
+            <tr>
+                  <td colspan="7"></td>
+            </tr>
+
+            @empty
+            @endforelse
+            <tr>
+              
+                <td colspan="4" style="text-align: left;background: #f5f9f9;"><b>Grand Total </b> </td>
+                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_dr_grand_total) }}</b> </td>
+                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_cr_grand_total) }}</b> </td>
+                <td style="text-align: right;background: #f5f9f9;"> <b>{{_show_amount_dr_cr(_report_amount($_total_balance)) }}</b> </td>
+            </tr>
           
           </tbody>
-          
+          <tfoot>
+            <tr>
+              <td colspan="7">
+                <div class="col-12 mt-5">
+                  <div class="row">
+                    <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>
+                    <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Prepared By</span></div>
+                    <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Checked By</span></div>
+                    <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;"> Approved By</span></div>
+                  </div>
+
+                    
+                 
+                </div>
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
       <!-- /.col -->
     </div>
     <!-- /.row -->
 
-    <div class="row">
-      <!-- accepted payments column -->
-      <div class="col-12">
-        
-        <p> In Words: {{ nv_number_to_text($balance ?? 0) }} </p>
-        
-      </div>
-      <!-- /.col -->
-      <div class="col-12 mt-5">
-        <div class="row">
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Prepared By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Checked By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;"> Approved By</span></div>
-        </div>
-
-          
-       
-      </div>
-      <!-- /.col -->
-    </div>
+  
     <!-- /.row -->
   </section>
 

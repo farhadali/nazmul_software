@@ -187,6 +187,7 @@ class PurchaseController extends Controller
         $data->_default_vat_account = $request->_default_vat_account;
         $data->_show_manufacture_date = $request->_show_manufacture_date;
         $data->_show_expire_date = $request->_show_expire_date;
+        $data->_show_p_balance = $request->_show_p_balance;
         $data->save();
 
         return redirect('purchase/create');
@@ -215,7 +216,7 @@ class PurchaseController extends Controller
     //###########################
       DB::beginTransaction();
        try {
-        
+        $_p_balance = _l_balance_update($request->_main_ledger_id);
          $__sub_total = (float) $request->_sub_total;
          $__total = (float) $request->_total;
          $__discount_input = (float) $request->_discount_input;
@@ -483,6 +484,12 @@ class PurchaseController extends Controller
                 }
             }
 
+             
+$_l_balance = _l_balance_update($request->_main_ledger_id);
+             \DB::table('sales')
+             ->where('id',$_master_id)
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+
             DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
        } catch (\Exception $e) {
@@ -587,7 +594,7 @@ class PurchaseController extends Controller
      DB::beginTransaction();
        try {
 
-   
+    
     PurchaseDetail::where('_no', $purchase_id)
             ->update(['_status'=>0]);
     ProductPriceList::where('_master_id',$purchase_id)
@@ -602,7 +609,8 @@ class PurchaseController extends Controller
                      ->update(['_status'=>0]); 
     Accounts::where('_ref_master_id',$purchase_id)
                     ->where('_table_name','purchase_accounts')
-                     ->update(['_status'=>0]);              
+                     ->update(['_status'=>0]); 
+    $_p_balance = _l_balance_update($request->_main_ledger_id);             
 
     //###########################
     // Purchase Master information Save Start
@@ -901,6 +909,12 @@ if($__sub_total > 0){
                     }
                 }
             }
+
+             
+$_l_balance = _l_balance_update($request->_main_ledger_id);
+             \DB::table('sales')
+             ->where('id',$_master_id)
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
 
                 DB::commit();
         return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);

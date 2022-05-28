@@ -220,6 +220,7 @@ class PurchaseReturnController extends Controller
         $data->_show_store = $request->_show_store;
         $data->_show_self = $request->_show_self;
         $data->_default_vat_account = $request->_default_vat_account;
+        $data->_show_p_balance = $request->_show_p_balance;
         $data->save();
 
         return redirect('purchase-return/create');
@@ -276,7 +277,7 @@ class PurchaseReturnController extends Controller
         DB::beginTransaction();
        try {
        
-
+ $_p_balance = _l_balance_update($request->_main_ledger_id);
     //###########################
     // Purchase Master information Save Start
     //###########################
@@ -499,6 +500,11 @@ class PurchaseReturnController extends Controller
                     }
                 }
             }
+       
+$_l_balance = _l_balance_update($request->_main_ledger_id);
+             \DB::table('sales')
+             ->where('id',$_master_id)
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
      DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
        } catch (\Exception $e) {
@@ -653,7 +659,10 @@ class PurchaseReturnController extends Controller
                      ->update(['_status'=>0]); 
     Accounts::where('_ref_master_id',$purchase_id)
                     ->where('_table_name','purchase_return_accounts')
-                     ->update(['_status'=>0]);   
+                     ->update(['_status'=>0]);  
+    $_p_balance = _l_balance_update($request->_main_ledger_id); 
+
+     $_p_balance = _l_balance_update($request->_main_ledger_id);
 
       //  return 6;           
 
@@ -905,6 +914,12 @@ class PurchaseReturnController extends Controller
                     }
                 }
             }
+
+
+$_l_balance = _l_balance_update($request->_main_ledger_id);
+             \DB::table('sales')
+             ->where('id',$_master_id)
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
 
        return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
     }

@@ -314,6 +314,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $data->_show_cost_rate = $request->_show_cost_rate ?? 1;
         $data->_show_manufacture_date = $request->_show_manufacture_date ?? 1;
         $data->_show_expire_date = $request->_show_expire_date ?? 1;
+        $data->_show_p_balance = $request->_show_p_balance ?? 1;
         $data->save();
 
 
@@ -341,8 +342,10 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
     //###########################
     // Purchase Master information Save Start
     //###########################
-      // DB::beginTransaction();
-      //  try {
+       DB::beginTransaction();
+        try {
+
+            $_p_balance = _l_balance_update($request->_main_ledger_id);
 
          $_sales_man_id = $request->_sales_man_id;
          $sales_man_name_leder = $request->sales_man_name_leder;
@@ -363,7 +366,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $Sales->_order_number = $request->_order_number ?? '';
         $Sales->_referance = $request->_referance;
         $Sales->_ledger_id = $request->_main_ledger_id;
-        $Sales->_user_id = $request->_main_ledger_id;
+        $Sales->_user_id = $users->id;
         $Sales->_created_by = $users->id."-".$users->name;
         $Sales->_user_id = $users->id;
         $Sales->_user_name = $users->name;
@@ -382,6 +385,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $Sales->_status = 1;
         $Sales->save();
         $_master_id = $Sales->id;
+
+       
 
                                            
 
@@ -616,7 +621,12 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 }
             }
 
-         //   DB::commit();
+$_l_balance = _l_balance_update($request->_main_ledger_id);
+             \DB::table('sales')
+             ->where('id',$_master_id)
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+
+           DB::commit();
             return redirect()->back()
                 ->with('success','Information save successfully')
                 ->with('_master_id',$_master_id)
@@ -625,10 +635,10 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 ->with('sales_man_name_leder',$sales_man_name_leder)
                 ->with('_delivery_man_id',$_delivery_man_id)
                 ->with('delivery_man_name_leder',$delivery_man_name_leder);
-       // } catch (\Exception $e) {
-       //     DB::rollback();
-       //     return redirect()->back()->with('danger','There is Something Wrong !');
-       //  }
+       } catch (\Exception $e) {
+           DB::rollback();
+           return redirect()->back()->with('danger','There is Something Wrong !');
+        }
 
        
     }
@@ -714,9 +724,11 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
     //###########################
     // Purchase Master information Save Start
     //###########################
-      // DB::beginTransaction();
-      //  try {
+        DB::beginTransaction();
+        try {
         $_sales_id = $request->_sales_id;
+
+       
 
         //====
         // Product Price list table update with previous sales details item
@@ -748,6 +760,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
     Accounts::where('_ref_master_id',$_sales_id)
                     ->where('_table_name','sales_accounts')
                      ->update(['_status'=>0]);  
+     $_p_balance = _l_balance_update($request->_main_ledger_id);
         
          $__sub_total = (float) $request->_sub_total;
          $__total = (float) $request->_total;
@@ -1040,12 +1053,19 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 }
             }
 
-         //   DB::commit();
+ 
+             $_l_balance = _l_balance_update($request->_main_ledger_id);
+            
+             \DB::table('sales')
+             ->where('id',$_master_id)
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+
+           DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$_master_id)->with('_print_value',$_print_value);
-       // } catch (\Exception $e) {
-       //     DB::rollback();
-       //     return redirect()->back()->with('danger','There is Something Wrong !');
-       //  }
+       } catch (\Exception $e) {
+           DB::rollback();
+           return redirect()->back()->with('danger','There is Something Wrong !');
+        }
 
        
        

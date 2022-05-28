@@ -33,6 +33,8 @@ class CreateSalesTable extends Migration
             $table->double('_total_discount',15,4)->default(0);
             $table->double('_total_vat',15,4)->default(0);
             $table->double('_total',15,4)->default(0);
+            $table->double('_p_balance',15,4)->default(0);
+            $table->double('_l_balance',15,4)->default(0);
             $table->unsignedBigInteger('_branch_id');
             $table->foreign('_branch_id')->references('id')->on('branches');
             $table->integer('_store_id')->nullable();
