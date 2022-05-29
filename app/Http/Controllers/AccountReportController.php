@@ -549,9 +549,15 @@ $ledger_details =[];
         $balance_sheet_filter[$value->_main_head][$value->_head_name][$value->_group_name][]=$value;
       }
 
-     
+     if($request->_level =='Level 1'){
+      
+       return view('backend.account-report.balance_sheet_level_1',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','balance_sheet_filter'));
 
-        return view('backend.account-report.balance-sheet-report',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','balance_sheet_filter'));
+     }else{
+       return view('backend.account-report.balance-sheet-report',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','balance_sheet_filter'));
+     }
+
+       
     }
 
 

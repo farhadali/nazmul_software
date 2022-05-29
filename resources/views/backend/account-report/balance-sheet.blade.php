@@ -80,6 +80,22 @@
                             @endforelse
                           </select>
                       </div>
+                      @php
+                      $levels = array('Level 1','Level 2');
+                      @endphp
+                      <div class="col-md-12">
+                          <label>Report Level:</label>
+                         <select class="form-control width_150_px _level "  name="_level"   >
+                          <option value="Level 1"  @if(isset($previous_filter["_level"]))
+                              @if($previous_filter["_level"] =="Level 1") selected @endif
+                                 @endif>Level 1</option>
+                          <option value="Level 2"  @if(isset($previous_filter["_level"]))
+                              @if($previous_filter["_level"] =="Level 2") selected @endif
+                                 @endif>Level 2</option>
+                                            
+                            
+                          </select>
+                      </div>
 
                     
                     </div>

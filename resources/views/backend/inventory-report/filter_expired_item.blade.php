@@ -117,7 +117,7 @@
                     <div class="row">
                       <label>Items:</label><br></div>
                      <div class="row">
-                         <select id="_item_id" class="form-control _item_id multiple_select" multiple name="_item_id[]"  size='6' >
+                         <select id="_item_id" class="form-control select2 _item_id multiple_select" multiple name="_item_id[]"  size='6' >
                           @if(isset($request->_item_id))
 
                            
@@ -203,7 +203,7 @@ $(document).find('._item_category').on('change',function(){
 
     function _category_base_items(_category_id){
       var request = $.ajax({
-          url: "{{url('stock-ledger-cat-item')}}",
+          url: "{{url('expired-item-cat-item')}}",
           method: "GET",
           data: { _category_id : _category_id },
           dataType: "HTML"

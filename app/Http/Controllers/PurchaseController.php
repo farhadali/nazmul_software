@@ -403,7 +403,7 @@ class PurchaseController extends Controller
             //Default Supplier
             account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_discount),$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$__total_discount,0,$_branch_id,$_cost_center,$_name,5);
              //Default Discount
-            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_discount,$__total_discount,0,$_branch_id,$_cost_center,$_name,6);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_discount,0,$__total_discount,$_branch_id,$_cost_center,$_name,6);
         
         }
          $__total_vat = (float) $request->_total_vat ?? 0;
@@ -486,8 +486,8 @@ class PurchaseController extends Controller
 
              
 $_l_balance = _l_balance_update($request->_main_ledger_id);
-             \DB::table('sales')
-             ->where('id',$_master_id)
+             \DB::table('purchases')
+             ->where('id',$purchase_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
 
             DB::commit();
@@ -822,7 +822,7 @@ if($__sub_total > 0){
             //Default Supplier
             account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_discount),$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$__total_discount,0,$_branch_id,$_cost_center,$_name,5);
              //Default Discount
-            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_discount,$__total_discount,0,$_branch_id,$_cost_center,$_name,6);
+            account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($request->_main_ledger_id),$_narration,$_reference,$_transaction,$_date,$_table_name,$_default_discount,0,$__total_discount,$_branch_id,$_cost_center,$_name,6);
         
         }
          $__total_vat = (float) $request->_total_vat ?? 0;
@@ -912,8 +912,8 @@ if($__sub_total > 0){
 
              
 $_l_balance = _l_balance_update($request->_main_ledger_id);
-             \DB::table('sales')
-             ->where('id',$_master_id)
+             \DB::table('purchases')
+             ->where('id',$purchase_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
 
                 DB::commit();

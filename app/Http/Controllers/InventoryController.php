@@ -70,6 +70,14 @@ class InventoryController extends Controller
         if($request->has('_category_id') && $request->_category_id !=''){
             $datas = $datas->where('_category_id','=',$request->_category_id);
         }
+        if($request->has('_reorder') && $request->_reorder !=''){
+            $datas = $datas->where('_reorder','=',$request->_reorder);
+        }
+        if($request->has('_order_qty') && $request->_order_qty !=''){
+            $datas = $datas->where('_order_qty','=',$request->_order_qty);
+        }
+
+
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
         $page_name = $this->page_name;
 
@@ -220,10 +228,13 @@ class InventoryController extends Controller
         $data->_sale_rate = $request->_sale_rate ?? 0;
         $data->_manufacture_company = $request->_manufacture_company;
         $data->_status = $request->_status ?? 0;
+        $data->_reorder = $request->_reorder ?? 0;
+        $data->_order_qty = $request->_order_qty ?? 0;
         $data->_created_by = \Auth::user()->id."-".\Auth::user()->name;
         $data->save();
         return redirect()->back()->with('success','Information save successfully');
-                                        
+        
+                                
     }
     /**
      * Store a newly created resource in storage.
@@ -311,11 +322,16 @@ class InventoryController extends Controller
         $data->_sale_rate = $request->_sale_rate ?? 0;
         $data->_manufacture_company = $request->_manufacture_company;
         $data->_status = $request->_status ?? 0;
+        $data->_reorder = $request->_reorder ?? 0;
+        $data->_order_qty = $request->_order_qty ?? 0;
         $data->_updated_by = \Auth::user()->id."-".\Auth::user()->name;
         $data->save();
         return redirect('item-information')->with('success','Information save successfully');
        
     }
+
+
+    
 
     /**
      * Remove the specified resource from storage.

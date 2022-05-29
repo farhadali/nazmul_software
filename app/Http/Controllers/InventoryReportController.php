@@ -1291,5 +1291,126 @@ public function resetExpiredItem(){
   return redirect()->back();
 }
 
+public function filterShortageItem(Request $request){
+      $previous_filter= Session::get('filter_shortage_item');
+      $page_name = "Shortage Item";
+      $users = Auth::user();
+      $permited_branch = permited_branch(explode(',',$users->branch_ids));
+      $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+      $datas=[];
+      $_datex =  change_date_format($request->_datex);
+      $_datey=  change_date_format($request->_datey);
+      $stores = StoreHouse::get();
+      $_item_categories = ItemCategory::get();
+      
+        return view('backend.inventory-report.filter_shortage_item',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
+}
+
+public function reportShortageItem(Request $request){
+      $this->validate($request, [
+            '_item_category' => 'required'
+        ]);
+
+        session()->put('filter_shortage_item', $request->all());
+        $previous_filter= Session::get('filter_shortage_item');
+        $page_name = "Shortage Item";
+        
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+
+        $category_ids = array();
+        $_item_categorys = $request->_item_category ?? [];
+        if(sizeof($_item_categorys) > 0){
+            foreach ($_item_categorys as $value) {
+                array_push($category_ids, (int) $value);
+            }
+        }
+
+        $_items_ids = array();
+        $_items = (array) $request->_item_id;
+        if(sizeof($_items) > 0){
+            foreach ($_items as $value) {
+                array_push($_items_ids, (int) $value);
+            }
+
+        }else{
+            $basic_information = Inventory::select('id')->whereIn('_category_id',$_item_categorys)->get();
+            foreach ($basic_information as $value) {
+                array_push($_items_ids, (int) $value->id);
+            }
+        }
+
+     
+
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+      $_stores = $request->_store ?? [];
+      if(sizeof($_stores) ==0){
+        $stores_all = StoreHouse::get();
+        foreach ($stores_all as $value) {
+          array_push($_stores, (int) $value->id);
+        }
+      }
+
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $_items_ids_rows = implode(',', $_items_ids);
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+      $_stores_id_rows = implode(',', $_stores);
+      $category_ids_rows = implode(',', $category_ids);
+      
+     if($_items_ids){
+
+      
+      $datas = DB::select("  
+SELECT t1._branch_id,t1._store_id,t1._cost_center_id,t2._category_id,t1._item_id,t1._item_name,SUM(t1._qty) as _qty,t3._name AS _unit_name,t2._reorder,t2._order_qty ,t2._manufacture_company
+FROM item_inventories as t1 
+INNER JOIN inventories AS t2 ON t1._item_id=t2.id
+INNER JOIN units AS t3 ON t2._unit_id=t3.id
+WHERE t1._status=1  AND  t1._branch_id IN(".$_branch_ids_rows.") 
+        AND t1._store_id IN(".$_stores_id_rows.") AND t2._category_id IN(".$category_ids_rows.")
+        AND t1._item_id IN(".$_items_ids_rows.")  AND t1._cost_center_id IN(".$_cost_center_id_rows.") GROUP BY t1._item_id HAVING (SUM(t1._qty) < t2._reorder)
+       
+        ORDER BY t2.`_item` ASC
+
+
+      ");
+    $group_array_values =array();
+      foreach ($datas as $value) {
+        $group_array_values[$value->_branch_id."__".$value->_cost_center_id."__".$value->_store_id."__".$value->_category_id][]=$value;
+      }
+
+      // foreach ($datas as $value) {
+      //   $group_array_values[$value->_branch_id][$value->_cost_center_id][$value->_store_id][$value->_category_id][]=$value;
+      // }
+
+       
+       
+
+}else{
+   $group_array_values = array();
+}
+       //return $group_array_values;
+        return view('backend.inventory-report.report_shortage_item',compact('request','page_name','group_array_values','_datex','_datey','previous_filter','permited_branch','permited_costcenters','_branch_ids','_cost_center_ids','_stores','category_ids'));
+    }
+
+public function shortageItemCatItem(Request $request){
+  $category_id = $request->_category_id;
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  return view('backend.item-category.shortage_item_cat_base_item',compact('data'));
+}
+
+public function resetShortageItem(){
+  Session::flash('filter_shortage_item');
+  return redirect()->back();
+}
+
 
 }

@@ -502,8 +502,8 @@ class PurchaseReturnController extends Controller
             }
        
 $_l_balance = _l_balance_update($request->_main_ledger_id);
-             \DB::table('sales')
-             ->where('id',$_master_id)
+             \DB::table('purchase_returns')
+             ->where('id',$purchase_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
      DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
@@ -917,8 +917,8 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
 
 
 $_l_balance = _l_balance_update($request->_main_ledger_id);
-             \DB::table('sales')
-             ->where('id',$_master_id)
+             \DB::table('purchase_returns')
+             ->where('id',$purchase_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
 
        return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);

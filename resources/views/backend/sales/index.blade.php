@@ -160,6 +160,15 @@
                                             <th class="text-middle" >Qty</th>
                                             <th class="text-middle" >Rate</th>
                                             <th class="text-middle" >Sales Rate</th>
+
+                                            @if(isset($form_settings->_inline_discount)) @if($form_settings->_inline_discount==1)
+                                            <th class="text-middle" >Dis%</th>
+                                            <th class="text-middle" >Dis. Amount</th>
+                                             @else
+                                            <th class="text-middle display_none" >Dis.%</th>
+                                            <th class="text-middle display_none" >Dis. Amount</th>
+                                            @endif
+                                            @endif
                                             @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
                                             <th class="text-middle" >VAT%</th>
                                             <th class="text-middle" >VAT</th>
@@ -197,6 +206,7 @@
                                   @php
                                     $_value_total = 0;
                                     $_vat_total = 0;
+                                    $_discount_total = 0;
                                     $_qty_total = 0;
                                   @endphp
                                   @forelse($data->_master_details AS $item_key=>$_item )
@@ -205,6 +215,7 @@
                                      @php
                                       $_value_total +=$_item->_value ?? 0;
                                       $_vat_total += $_item->_vat_amount ?? 0;
+                                      $_discount_total += $_item->_discount_amount ?? 0;
                                       $_qty_total += $_item->_qty ?? 0;
                                      @endphp
                                             <td class="" >{!! $_item->_items->_name ?? '' !!}</td>
@@ -217,6 +228,14 @@
                                             <td class="text-right" >{!! $_item->_qty ?? 0 !!}</td>
                                             <td class="text-right" >{!! _report_amount($_item->_rate ?? 0) !!}</td>
                                             <td class="text-right" >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
+                                             @if(isset($form_settings->_inline_discount)) @if($form_settings->_inline_discount==1)
+                                            <td class="text-right" >{!! $_item->_discount ?? 0 !!}</td>
+                                            <td class="text-right" >{!! _report_amount($_item->_discount_amount ?? 0) !!}</td>
+                                             @else
+                                            <td class="text-right display_none" >{!! $_item->_discount ?? 0 !!}</td>
+                                            <td class="text-right display_none" >{!! _report_amount($_item->_discount_amount ?? 0) !!}</td>
+                                            @endif
+                                            @endif
                                             @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
                                             <td class="text-right" >{!! $_item->_vat ?? 0 !!}</td>
                                             <td class="text-right" >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
@@ -274,6 +293,18 @@
                                               </td>
                                               <td></td>
                                               <td></td>
+                                              @if(isset($form_settings->_inline_discount)) @if($form_settings->_inline_discount==1)
+                                              <td></td>
+                                              <td class="text-right">
+                                                <b>{{_report_amount($_discount_total ?? 0)}}</b>
+                                              </td>
+                                              @else
+                                              <td class="display_none"></td>
+                                              <td class="text-right display_none">
+                                                 <b>{{ _report_amount($_discount_total ?? 0) }}</b>
+                                              </td>
+                                              @endif
+                                              @endif
                                               @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
                                               <td></td>
                                               <td class="text-right">

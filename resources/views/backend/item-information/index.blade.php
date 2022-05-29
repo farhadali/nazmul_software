@@ -93,6 +93,8 @@ if($currentURL === $current){
                          <th>Purchase Rate</th>
                          <th>Sales Rate</th>
                          <th>Stock</th>
+                         <th>Reorder Level</th>
+                         <th>Order Qty</th>
                          <th>Manufacture Company</th>
                          <th>Status</th>            
                       </tr>
@@ -127,6 +129,8 @@ if($currentURL === $current){
                             <td>{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>
                             <td>{{ _report_amount($data->_sale_rate ?? 0 ) }}</td>
                             <td>{{ $data->_balance ?? 0 }}</td>
+                            <td>{{ $data->_reorder ?? 0 }}</td>
+                            <td>{{ $data->_order_qty ?? 0 }}</td>
                             <td>{{ $data->_manufacture_company ?? '' }}</td>
                            <td>{{ selected_status($data->_status) }}</td>
                            

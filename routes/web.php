@@ -91,6 +91,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('item-purchase-search', 'App\Http\Controllers\InventoryController@itemPurchaseSearch');
     Route::get('lot-item-information', 'App\Http\Controllers\InventoryController@lotItemInformation');
     Route::get('lot-item-information-reset', 'App\Http\Controllers\InventoryController@lotReset');
+
     
     Route::resource('store-house', StoreHouseController::class);
     Route::post('store-house/update', 'App\Http\Controllers\StoreHouseController@update');
@@ -254,6 +255,13 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('expired-item','App\Http\Controllers\InventoryReportController@filterExpiredItem');
     Route::get('reset-expired-item','App\Http\Controllers\InventoryReportController@resetExpiredItem');
     Route::get('expired-item-cat-item','App\Http\Controllers\InventoryReportController@expiredItemCatItem');
+
+    Route::get('shortage-item','App\Http\Controllers\InventoryReportController@filterShortageItem');
+    Route::post('report-shortage-item','App\Http\Controllers\InventoryReportController@reportShortageItem');
+    Route::get('reset-shortage-item','App\Http\Controllers\InventoryReportController@resetShortageItem');
+    Route::get('shortage-item-cat-item','App\Http\Controllers\InventoryReportController@shortageItemCatItem');
+
+    
 
     //################################
     //  Inventory Report Section End

@@ -102,7 +102,7 @@
                      <div class="row">
                       <label>Ledger:</label><br></div>
                      <div class="row">
-                         <select id="_account_ledger_id" class="form-control _account_ledger_id multiple_select" name="_account_ledger_id" required >
+                         <select id="_account_ledger_id" class="form-control select2 _account_ledger_id multiple_select" name="_account_ledger_id" required >
                           @if(isset($request->_account_ledger_id)  )
                            @forelse($account_groups as $group)
                            <option value="{{$group->id}}">{{$group->_name}}</option>

@@ -117,6 +117,18 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
+                                <label for="_reorder">Reorder Level:</label>
+                                <input type="text" id="_reorder" name="_reorder" class="form-control" value="{{old('_reorder')}}" placeholder="Reorder Level" >
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="_order_qty">Order Qty:</label>
+                                <input type="text" id="_order_qty" name="_order_qty" class="form-control" value="{{old('_order_qty')}}" placeholder="Order Qty" >
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
                                 <label for="_manufacture_company">Manufacture Company:</label>
                                 <input type="text" id="_manufacture_company" name="_manufacture_company" class="form-control" value="{{old('_manufacture_company')}}" placeholder="Manufacture Company" >
                             </div>

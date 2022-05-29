@@ -26,6 +26,8 @@ class CreateInventoriesTable extends Migration
             $table->double('_vat',15,4)->default(0);
             $table->double('_pur_rate',15,4)->default(0);
             $table->double('_sale_rate',15,4)->default(0);
+            $table->double('_reorder',15,2)->default(0);
+            $table->double('_order_qty',15,2)->default(0);
             $table->string('_manufacture_company')->nullable();
             $table->tinyInteger('_status')->default(0);
             $table->string('_created_by',60)->nullable();

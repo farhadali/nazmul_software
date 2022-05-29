@@ -2,7 +2,7 @@
     <!-- Brand Logo -->
     <a href="{{url('home')}}" class="brand-link">
       <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">{{$settings->name ?? '' }}</span>
+      <span class="brand-text font-weight-light">{{$settings->title ?? '' }}</span>
     </a>
 
     <!-- Sidebar -->
