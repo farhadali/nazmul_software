@@ -156,6 +156,12 @@
                  <a style="text-decoration: none;" target="__blank" href="{{ route('sales-return.edit',$g_value->_transection_ref) }}">
                   SR-{!! $g_value->_transection_ref ?? '' !!}</a>
                     @endif
+                    @if($g_value->_transection=="Damage")
+                 <a style="text-decoration: none;" target="__blank" href="{{ route('damage.edit',$g_value->_transection_ref) }}">
+                  D-{!! $g_value->_transection_ref ?? '' !!}</a>
+                    @endif
+
+
 
               </td>
             <td style="width: 10%;">{!! _view_date_formate($g_value->_date ?? '') !!}</td>

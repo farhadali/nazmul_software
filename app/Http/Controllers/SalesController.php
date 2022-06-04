@@ -65,7 +65,7 @@ class SalesController extends Controller
         $_asc_desc = $request->_asc_desc ?? 'DESC';
         $asc_cloumn =  $request->asc_cloumn ?? 'id';
 
-        $datas = Sales::with(['_master_branch','_master_details','s_account','_ledger']);
+       $datas = Sales::with(['_master_branch','_master_details','s_account','_ledger'])->where('_status',1);
         $datas = $datas->whereIn('_branch_id',explode(',',\Auth::user()->branch_ids));
         if($request->has('_branch_id') && $request->_branch_id !=""){
             $datas = $datas->where('_user_id',$request->_branch_id);  
@@ -251,11 +251,6 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $p_accounts = [];
         $dis_accounts = [];
         $vat_accounts =[];
-
-        // $inv_accounts = AccountLedger::where('_account_head_id',2)->get();
-        // $p_accounts = AccountLedger::where('_account_head_id',10)->get();
-        // $dis_accounts = AccountLedger::where('_account_head_id',11)->get();
-        // $vat_accounts = AccountLedger::where('_account_group_id',47)->get();
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
 

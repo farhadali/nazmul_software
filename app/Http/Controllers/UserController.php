@@ -143,6 +143,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         
+       // return $request->user_type;
         $this->validate($request, [
             'name' => 'required',
             'branch_ids' => 'required|array',

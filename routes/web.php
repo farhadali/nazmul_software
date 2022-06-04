@@ -26,6 +26,7 @@ use App\Http\Controllers\SalesController;
 use App\Http\Controllers\SalesReturnController;
 use App\Http\Controllers\InventoryReportController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\DamageAdjustmentController;
 
 
 
@@ -123,6 +124,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('item-sales-search', 'App\Http\Controllers\SalesController@itemSalesSearch');
     Route::get('check-available-qty', 'App\Http\Controllers\SalesController@checkAvailableQty');
     Route::get('check-available-qty-update', 'App\Http\Controllers\SalesController@checkAvailableQtyUpdate');
+
+    Route::resource('damage', DamageAdjustmentController::class);
+    Route::post('damage/update', 'App\Http\Controllers\DamageAdjustmentController@update');
+    Route::get('damage-reset', 'App\Http\Controllers\DamageAdjustmentController@reset');
+    Route::get('damage/print/{id}', 'App\Http\Controllers\DamageAdjustmentController@Print');
+    Route::post('damage-settings', 'App\Http\Controllers\DamageAdjustmentController@Settings');
+    Route::get('damage-setting-modal', 'App\Http\Controllers\DamageAdjustmentController@formSettingAjax');
+    
     
     
 
@@ -155,6 +164,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('voucher-main-print', 'App\Http\Controllers\VoucherMasterController@voucherMainPrint');
     Route::get('voucher-detail-print', 'App\Http\Controllers\VoucherMasterController@voucherDetailPrint');
     Route::get('voucher-reset', 'App\Http\Controllers\VoucherMasterController@reset');
+
+    Route::post('master-base-detils','App\Http\Controllers\VoucherMasterController@masterBseDetails');
 
 
     //Account Report Section 

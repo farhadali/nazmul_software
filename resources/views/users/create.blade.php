@@ -91,7 +91,19 @@
                                 {!! Form::password('confirm-password', array('placeholder' => 'Confirm Password','class' => 'form-control')) !!}
                             </div>
                         </div>
+
+@if(\Auth::user()->user_type=='admin')
                         <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <strong>User Type:</strong>
+                               <select name="user_type" class="form-control">
+                                 <option value="visitor">User</option>
+                                 <option value="admin">Admin</option>
+                               </select>
+                            </div>
+                        </div>
+@endif
+                        <div class="col-xs-12 col-sm-12 col-md-12 mb-5">
                             <div class="form-group">
                                 <strong>Role:</strong>
                                 {!! Form::select('roles[]', $roles,[], array('class' => 'form-control','multiple')) !!}

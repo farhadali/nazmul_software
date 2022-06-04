@@ -672,6 +672,29 @@ function after_request_date__today(_date){
             
           }
 
+
+   $(document).on("click","._action_button_detail",function(){
+      var _id = $(this).attr('attr_id');
+       var _show_detils= $(document).find('._action_button__'+_id).hasClass('_show_detils');
+       var _type=$(this).attr('attr_type');
+      if(_show_detils ==false){
+        $(document).find('._action_button__'+_id).addClass('_show_detils');
+            $.ajaxSetup({  headers: {  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')  } });
+
+            $.ajax({
+               type:'POST',
+               url:"{{ url('master-base-detils') }}",
+               data:{_id, _type},
+               dataType:'HTML',
+               success:function(data){
+                  $(document).find("._details_show__"+_id).html(data);
+
+               }
+
+            });
+      }
+    })
+
 </script>
 
 <script type="text/javascript">
