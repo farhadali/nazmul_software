@@ -140,6 +140,39 @@ class PurchaseOrderController extends Controller
        return  \Redirect::to('purchase-order?limit='.default_pagination());
     }
 
+
+   
+
+    public function purchaseOrderDetails(Request $request){
+        $this->validate($request, [
+            '_purchase_main_id' => 'required',
+        ]);
+        $_purchase_main_id = $request->_purchase_main_id;
+
+       $datas = PurchaseOrderDetail::with(['_detail_branch','_detail_cost_center','_store','_items'])
+                                ->where('_no',$_purchase_main_id)
+                                ->get();
+      
+        
+        return json_encode( $datas);
+    }
+
+    public function orderSearch(Request $request){
+      
+        $limit = $request->limit ?? default_pagination();
+        $_asc_desc = $request->_asc_desc ?? 'ASC';
+        $asc_cloumn =  $request->asc_cloumn ?? '_date';
+        $text_val = $request->_text_val;
+        $_branch_id = $request->_branch_id;
+        $datas = PurchaseOrder::with(['_ledger'])->where('_status',1)->where('_branch_id',$_branch_id);
+         if($request->has('_text_val') && $request->_text_val !=''){
+            $datas = $datas->where('_date','like',"%$request->_text_val%")
+            ->orWhere('id','like',"%$request->_text_val%");
+        }
+        $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
+        return json_encode( $datas);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

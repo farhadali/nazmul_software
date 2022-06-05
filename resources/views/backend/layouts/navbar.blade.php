@@ -102,7 +102,7 @@
           
         <div style="display: flex;">
            <a href="{{url('damage')}}" class="dropdown-item">
-            <i class="fa fa-shopping-cart mr-2" aria-hidden="true"></i> Damage Adjustment
+            <i class="fa fa-recycle mr-2" aria-hidden="true"></i> Damage Adjustment
           </a>
            <a  href="{{route('damage.create')}}" class="dropdown-item text-right">
             <i class="nav-icon fas fa-plus"></i>

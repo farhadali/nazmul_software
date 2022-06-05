@@ -116,7 +116,7 @@
                                 
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-3 ">
+                        <div class="col-xs-12 col-sm-12 col-md-3 display_none">
                             <div class="form-group">
                               <label class="mr-2" for="_order_ref_id">Purchase Order:</label>
                               <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id',$data->_order_ref_id)}}" placeholder="Purchase Order" >

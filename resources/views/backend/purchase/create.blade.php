@@ -69,6 +69,13 @@
                     @endif
                     
               </div>
+                @php
+    $_show_barcode = $form_settings->_show_barcode ?? 0;
+    $_show_cost_rate =  $form_settings->_show_cost_rate ?? 0;
+    $_show_vat =  $form_settings->_show_vat ?? 0;
+   $_inline_discount = $form_settings->_inline_discount ?? 0;
+    $_show_self = $form_settings->_show_self ?? 0;
+    @endphp
               <div class="card-body">
                <form action="{{route('purchase.store')}}" method="POST" class="purchase_form" >
                 @csrf
@@ -107,10 +114,14 @@
                                 
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-3 ">
+                        
+
+                          <div class="col-xs-12 col-sm-12 col-md-3 ">
                             <div class="form-group">
                               <label class="mr-2" for="_order_ref_id">Purchase Order:</label>
-                              <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id')}}" placeholder="Purchase Order" >
+                              <input type="text" id="_search_order_ref_id" name="_search_order_ref_id" class="form-control _search_order_ref_id" value="{{old('_order_ref_id')}}" placeholder="Purchase Order" >
+                              <input type="hidden" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id')}}" placeholder="Purchase Order" >
+                              <div class="search_box_purchase_order"></div>
                                 
                             </div>
                         </div>
@@ -794,12 +805,17 @@ $(document).on('click','.search_row_item',function(){
 $(document).on('click',function(){
     var searach_show= $('.search_box_item').hasClass('search_box_show');
     var search_box_main_ledger= $('.search_box_main_ledger').hasClass('search_box_show');
+    var search_box_purchase_order= $('.search_box_purchase_order').hasClass('search_box_show');
     if(searach_show ==true){
       $('.search_box_item').removeClass('search_box_show').hide();
     }
 
     if(search_box_main_ledger ==true){
       $('.search_box_main_ledger').removeClass('search_box_show').hide();
+    }
+
+    if(search_box_purchase_order ==true){
+      $('.search_box_purchase_order').removeClass('search_box_show').hide();
     }
 })
 
@@ -851,6 +867,255 @@ $(document).on("change","#_discount_input",function(){
    $("#_total_discount").val(on_invoice_discount);
     _purchase_total_calculation()
 })
+
+$(document).on('keyup','._search_order_ref_id',delay(function(e){
+    $(document).find('._search_order_ref_id').removeClass('required_border');
+    var _gloabal_this = $(this);
+    var _text_val = $(this).val().trim();
+    var _branch_id = $(document).find('._master_branch_id').val();
+
+  var request = $.ajax({
+      url: "{{url('purchase-pre-order-search')}}",
+      method: "GET",
+      data: { _text_val,_branch_id },
+      dataType: "JSON"
+    });
+    request.done(function( result ) {
+
+      var search_html =``;
+      var data = result.data; 
+       console.log(data)
+      if(data.length > 0 ){
+            search_html +=`<div class="card"><table table-bordered style="width: 100%;">
+                            <thead>
+                              <th style="border:1px solid #ccc;text-align:center;">ID</th>
+                              <th style="border:1px solid #ccc;text-align:center;">Supplier</th>
+                              <th style="border:1px solid #ccc;text-align:center;">Date</th>
+                            </thead>
+                            <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                         search_html += `<tr class="search_row_purchase_order" >
+                                        <td style="border:1px solid #ccc;">${data[i].id}
+                                        <input type="hidden" name="_id_main_ledger" class="_id_main_ledger" value="${data[i]._ledger_id}">
+                                        <input type="hidden" name="_purchase_main_id" class="_purchase_main_id" value="${data[i].id}">
+                                        <input type="hidden" name="_purchase_main_date" class="_purchase_main_date" value="${after_request_date__today(data[i]._date)}">
+                                        </td><td style="border:1px solid #ccc;">${data[i]._ledger._name}
+                                        <input type="hidden" name="_name_main_ledger" class="_name_main_ledger" value="${data[i]._ledger._name}">
+                                        <input type="hidden" name="_address_main_ledger" class="_address_main_ledger" value="${data[i]._address}">
+                                        <input type="hidden" name="_phone_main_ledger" class="_phone_main_ledger" value="${data[i]._phone}">
+                                        
+                                        <input type="hidden" name="_date_main_ledger" class="_date_main_ledger" value="${after_request_date__today(data[i]._date)}">
+                                   </td>
+                                   <td style="border:1px solid #ccc;">${after_request_date__today(data[i]._date)}
+                                   </td></tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
+      }else{
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+      }     
+      _gloabal_this.parent('div').find('.search_box_purchase_order').html(search_html);
+      _gloabal_this.parent('div').find('.search_box_purchase_order').addClass('search_box_show').show();
+      
+    });
+     
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+}, 500));
+
+$(document).on("click",'.search_row_purchase_order',function(){
+    var _id = $(this).children('td').find('._id_main_ledger').val();
+    var _name = $(this).find('._name_main_ledger').val();
+    var _purchase_main_id = $(this).find('._purchase_main_id').val();
+    var _purchase_main_date = $(this).find('._purchase_main_date').val();
+    var _main_branch_id = $(this).find('._main_branch_id').val();
+    var _date_main_ledger = $(this).find('._date_main_ledger').val();
+    var _address_main_ledger = $(this).find('._address_main_ledger').val();
+
+
+    var _phone_main_ledger = $(this).find('._phone_main_ledger').val();
+   
+    if(_address_main_ledger =='null' ){ _address_main_ledger =""; } 
+    if(_phone_main_ledger =='null' ){ _phone_main_ledger =""; } 
+
+    $("._main_ledger_id").val(_id);
+    $("._search_main_ledger_id").val(_name);
+    $("._order_ref_id").val(_purchase_main_id);
+    $("._phone").val(_phone_main_ledger);
+    $("._address").val(_address_main_ledger);
+
+
+
+    $("._search_order_ref_id").val(_purchase_main_id+","+_date_main_ledger);
+
+    $.ajaxSetup({ headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+
+    var request = $.ajax({
+      url: "{{url('purchase-pre-order-details')}}",
+      method: "POST",
+      data: { _purchase_main_id,_main_branch_id },
+      dataType: "JSON"
+    });
+    request.done(function( result ) {
+      console.log(result)
+      var data = result;
+      var _purchase_row_single = ``;
+      $(document).find("#area__purchase_details").empty();
+     
+if(data.length > 0 ){
+  for (var i = 0; i < data.length; i++) {
+    var _item_name = (data[i]._items._name) ? data[i]._items._name : '' ;
+    var _item_id = (data[i]._item_id) ? data[i]._item_id : '' ;
+    var _qty   = (data[i]._qty  ) ? data[i]._qty   : 0 ;
+    var _rate    = (data[i]._rate) ? data[i]._rate    : 0 ;
+    var _sales_rate =  0 ;
+    var _value = ( (data[i]._qty*data[i]._rate) ) ? (data[i]._qty*data[i]._rate) : 0 ;
+   
+
+       _purchase_row_single +=`<tr class="_purchase_row">
+                                              <td>
+                                                <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
+                                              </td>
+                                              <td>
+                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item" value="${_item_name}">
+                                                <input type="hidden" name="_item_id[]" class="form-control _item_id width_200_px" value="${_item_id}">
+                                                <div class="search_box_item">
+                                                  
+                                                </div>
+                                              </td>
+                                              @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
+                                              <td>
+                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                              </td>
+                                              @else
+                                              <td class="display_none">
+                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                              </td>
+                                              @endif
+                                              @endif
+                                              <td>
+                                                <input type="number" name="_qty[]" class="form-control _qty _common_keyup" value="${_qty}">
+                                              </td>
+                                              <td>
+                                                <input type="number" name="_rate[]" class="form-control _rate _common_keyup" value="${_rate}">
+                                              </td>
+                                              <td>
+                                                <input type="number" name="_sales_rate[]" class="form-control _sales_rate " value="${_sales_rate}">
+                                              </td>
+                                               @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
+                                              <td>
+                                                <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" >
+                                              </td>
+                                              <td>
+                                                <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" >
+                                              </td>
+                                              @else
+                                                <td class="display_none">
+                                                <input type="text" name="_vat[]" class="form-control  _vat _common_keyup" >
+                                              </td>
+                                              <td class="display_none">
+                                                <input type="text" name="_vat_amount[]" class="form-control  _vat_amount" >
+                                              </td>
+                                              @endif
+                                              @endif
+                                              <td>
+                                                <input type="number" name="_value[]" class="form-control _value " readonly value="${_value}">
+                                              </td>
+                                              @if(sizeof($permited_branch)>1)
+                                              <td>
+                                                <select class="form-control  _main_branch_id_detail" name="_main_branch_id_detail[]"  required>
+                                                  @forelse($permited_branch as $branch )
+                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
+                                                  @empty
+                                                  @endforelse
+                                                </select>
+                                              </td>
+                                              @else
+                                              <td class="display_none">
+                                                <select class="form-control  _main_branch_id_detail" name="_main_branch_id_detail[]"  required>
+                                                  @forelse($permited_branch as $branch )
+                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
+                                                  @empty
+                                                  @endforelse
+                                                </select>
+                                              </td>
+                                              @endif
+                                              @if(sizeof($permited_costcenters)>1)
+                                                <td>
+                                                 <select class="form-control  _main_cost_center" name="_main_cost_center[]" required >
+                                            
+                                                  @forelse($permited_costcenters as $costcenter )
+                                                  <option value="{{$costcenter->id}}" @if(isset($request->_main_cost_center)) @if($request->_main_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  @empty
+                                                  @endforelse
+                                                </select>
+                                              </td>
+                                              @else
+                                               <td class="display_none">
+                                                 <select class="form-control  _main_cost_center" name="_main_cost_center[]" required >
+                                            
+                                                  @forelse($permited_costcenters as $costcenter )
+                                                  <option value="{{$costcenter->id}}" @if(isset($request->_main_cost_center)) @if($request->_main_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  @empty
+                                                  @endforelse
+                                                </select>
+                                              </td>
+                                              @endif
+                                              @if(sizeof($store_houses) > 1)
+                                              <td>
+                                                <select class="form-control  _main_store_id" name="_main_store_id[]">
+                                                  @forelse($store_houses as $store)
+                                                  <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
+                                                  @empty
+                                                  @endforelse
+                                                </select>
+                                                
+                                              </td>
+                                              @else
+                                              <td class="display_none">
+                                                <select class="form-control  _main_store_id" name="_main_store_id[]">
+                                                  @forelse($store_houses as $store)
+                                                  <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
+                                                  @empty
+                                                  @endforelse
+                                                </select>
+                                                
+                                              </td>
+                                              @endif
+                                              @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
+                                              <td>
+                                                <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
+                                              </td>
+                                              @else
+                                              <td class="display_none">
+                                                <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
+                                              </td>
+                                              @endif
+
+                                              @endif
+                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " >
+                                              </td>
+                                              
+                                            </tr>`;
+                                          }
+                                        }else{
+                                          _purchase_row_single += `Returnable Item Not Found !`;
+                                        }
+
+            $(document).find("#area__purchase_details").html(_purchase_row_single);
+              _purchase_total_calculation();
+    })
+
+
+
+  })
+
+
 
 
 

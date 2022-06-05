@@ -19,7 +19,7 @@ class PurchaseOrderDetail extends Model
     }
 
     public function _detail_cost_center(){
-    	return $this->hasOne(CostCenter::class,'id','_cost_center')->select('id','_name');
+    	return $this->hasOne(CostCenter::class,'id','_cost_center_id')->select('id','_name');
     }
 
     public function _store(){

@@ -113,6 +113,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('purchase-order-reset', 'App\Http\Controllers\PurchaseOrderController@reset');
     Route::get('purchase-order/print/{id}', 'App\Http\Controllers\PurchaseOrderController@purchaseOrderPrint');
     Route::post('purchase-order-settings', 'App\Http\Controllers\PurchaseOrderController@purchaseOrderSettings');
+    Route::get('purchase-pre-order-search', 'App\Http\Controllers\PurchaseOrderController@orderSearch');
+    Route::post('purchase-pre-order-details', 'App\Http\Controllers\PurchaseOrderController@purchaseOrderDetails');
     
 
     Route::resource('sales', SalesController::class);
@@ -144,6 +146,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('sales-order-search', 'App\Http\Controllers\SalesReturnController@orderSearch');
     Route::get('check-sales-return-available-qty', 'App\Http\Controllers\SalesReturnController@checkAvailableSalesQty');
     Route::post('sales-order-details', 'App\Http\Controllers\SalesReturnController@salesOrderDetails');
+    
     
 
     Route::resource('purchase-return', PurchaseReturnController::class);

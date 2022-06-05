@@ -86,7 +86,7 @@
                          <th class="_nv_th_date"><b>Date</b></th>
                          <th class="_nv_th_date"><b>Branch</b></th>
                          <th class="_nv_th_code"><b>Order Number</b></th>
-                         <th class="_nv_th_type"><b>Order Ref</b></th>
+                        
                          <th class="_nv_th_amount"><b>Referance</b></th>
                          <th class="_nv_th_ref"><b>Ledger</b></th>
                          <th class="_nv_th_branch"><b>Sub Total</b></th>
@@ -124,7 +124,7 @@
                             <td>{{ $data->_master_branch->_name ?? '' }}</td>
 
                             <td>{{ $data->_order_number ?? '' }}</td>
-                            <td>{{ $data->_order_ref_id ?? '' }}</td>
+                            
                             <td>{{ $data->_referance ?? '' }}</td>
                             <td>{{ $data->_ledger->_name ?? '' }}</td>
                             <td>{{ _report_amount( $data->_sub_total ?? 0) }} </td>
@@ -241,7 +241,7 @@
                         
                         @endforeach
                         <tr>
-                          <td colspan="8" class="text-center"><b>Total</b></td>
+                          <td colspan="7" class="text-center"><b>Total</b></td>
                           <td><b>{{ _report_amount($sum_of_sub_total) }} </b></td>
                           <td></td>
                           <td><b>{{ _report_amount($sum_of_amount) }} </b></td>
