@@ -28,7 +28,7 @@
 
      <div class="row">
       <div class="col-3 ">
-       <b>Customer:</b>
+       <b>Supplier:</b>
        <address>
         <strong>{{$data->_ledger->_name ?? '' }}</strong><br>
         Address: {{$data->_address ?? '' }}<br>
@@ -45,7 +45,7 @@
         Phone: {{$settings->_phone ?? '' }}<br>
         Email: {{$settings->_email ?? '' }}</div>
        </div>
-       <h3 class="text-center"> Invoice/Bill</h3>
+       <h3 class="text-center"> {{$page_name}}</h3>
         
       </div>
       <div class="col-3 ">
@@ -120,10 +120,11 @@
                                   @empty
                                   @endforelse
                             <tr>
-                              <td colspan="3" class="text-right "><b>Total</b></td>
-                              <td class="text-right "> <b>{{ $_qty_total ?? 0}}</b> </td>
-                              <td class="text-right "> <b>{{ $_total_discount_amount ?? 0}}</b> </td>
-                              <td class="text-right "> <b>{{ $_vat_total ?? 0}}</b> </td>
+                              <td colspan="2" class="text-right "><b>Total</b></td>
+                              <td class="text-right "> <b>{{ _report_amount($_qty_total ?? 0)}}</b> </td>
+                              <td></td>
+                              <td class="text-right "> <b>{{ _report_amount($_total_discount_amount ?? 0)}}</b> </td>
+                              <td class="text-right "> <b>{{_report_amount( $_vat_total ?? 0)}}</b> </td>
                               <td class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
                               </td>
                             </tr>

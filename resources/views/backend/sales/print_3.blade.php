@@ -118,9 +118,9 @@
                                   @endforelse
                             <tr>
                               <td colspan="3" class="text-right "><b>Total</b></td>
-                              <td class="text-right "> <b>{{ $_qty_total ?? 0}}</b> </td>
-                              <td class="text-right "> <b>{{ $_total_discount_amount ?? 0}}</b> </td>
-                              <td class="text-right "> <b>{{ $_vat_total ?? 0}}</b> </td>
+                              <td class="text-right "> <b>{{ _report_amount($_qty_total ?? 0)}}</b> </td>
+                              <td class="text-right "> <b>{{ _report_amount($_total_discount_amount ?? 0)}}</b> </td>
+                              <td class="text-right "> <b>{{ _report_amount($_vat_total ?? 0)}}</b> </td>
                               <td class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
                               </td>
                             </tr>

@@ -48,7 +48,7 @@
 
      <div class="row invoice-info">
       <div class="col-sm-4 invoice-col">
-       From
+       
        <address>
         <strong>{{$settings->name ?? '' }}</strong><br>
        Address:  {{$settings->_address ?? '' }}<br>
@@ -58,7 +58,7 @@
       </div>
 
       <div class="col-sm-4 invoice-col">
-       Customer:
+       Supplier:
        <address>
         <strong>{{$data->_ledger->_name ?? '' }}</strong><br>
         {{$data->_address ?? '' }}<br>
@@ -128,8 +128,9 @@
                                   @empty
                                   @endforelse
                             <tr>
-                              <td colspan="3" class="text-right "><b>Total</b></td>
+                              <td colspan="2" class="text-right "><b>Total</b></td>
                               <td class="text-right "> <b>{{_report_amount( $_qty_total ?? 0)}}</b> </td>
+                              <td></td>
                               <td class="text-right "> <b>{{_report_amount( $_total_discount_amount ?? 0) }}</b> </td>
                               <td class="text-right "> <b>{{ _report_amount($_vat_total ?? 0) }}</b> </td>
                               <td class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
