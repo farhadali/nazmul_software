@@ -138,7 +138,7 @@
             <td>{!! _unit_name($g_value->_unit_id ?? 1) !!} </td>
             
             <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_qty) !!}</td>
-            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_cost_rate) !!}</td>
+            <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_cost_value /$g_value->_qty) !!}</td>
             <td style="width: 10%;" class="text-right">{!! _report_amount($g_value->_cost_value) !!}</td>
           </tr>
           @empty

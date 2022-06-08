@@ -89,6 +89,35 @@
                                <input type="text" name="_address" required class="form-control" value="{{old('_address',$settings->_address ?? '' )}}">
                             </div>
                         </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <strong>Sales Note:</strong>
+                                <textarea class="form-control" name="_sales_note" >{{old('_sales_note',$settings->_sales_note ?? '' )}}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <strong>Sales Return Note:</strong>
+                                <textarea class="form-control" name="_sales_return__note" >{{old('_sales_return__note',$settings->_sales_return__note ?? '' )}}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <strong>Purchase Note:</strong>
+                                <textarea class="form-control" name="_purchse_note" >{{old('_purchse_note',$settings->_purchse_note ?? '' )}}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <strong>Purchase Return Note:</strong>
+                                <textarea class="form-control" name="_purchase_return_note" >{{old('_purchase_return_note',$settings->_purchase_return_note ?? '' )}}</textarea>
+                            </div>
+                        </div>
+
+
+
+
+
                         <div class="col-xs-6 col-sm-6 col-md-6 mb-5">
                             <div class="form-group">
                                 <strong>LOGO:</strong>

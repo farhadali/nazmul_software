@@ -16,6 +16,8 @@ class GeneralSettingsController extends Controller
     {
         $image_name = date('mdYHis') . uniqid();
         $ext = strtolower($query->getClientOriginalExtension()); // You can use also getClientOriginalName()
+         $ext='jpg';
+         $image_name='logo';
         $image_full_name = $image_name.'.'.$ext;
         $upload_path = 'images/';    //Creating Sub directory in Public folder to put image
         $image_url = $upload_path.$image_full_name;
@@ -43,9 +45,10 @@ class GeneralSettingsController extends Controller
         $settings->_email = $request->_email ?? '';
         $settings->_phone = $request->_phone ?? '';
         $settings->_address = $request->_address ?? '';
-
-        
-
+        $settings->_sales_note = $request->_sales_note ?? '';
+        $settings->_sales_return__note = $request->_sales_return__note ?? '';
+        $settings->_purchse_note = $request->_purchse_note ?? '';
+        $settings->_purchase_return_note = $request->_purchase_return_note ?? '';
 
     	if($request->hasFile('logo')){ 
                 $logo = $this->UserImageUpload($request->logo); 

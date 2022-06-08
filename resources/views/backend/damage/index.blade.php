@@ -126,7 +126,7 @@
                                     </a>
                             </td>
                             <td>{{ $data->id }}</td>
-                            <td>{{ _view_date_formate($data->_date ?? '') }}</td>
+                            <td>{{ _view_date_formate($data->_date ?? '') }} {{ $data->_time }}</td>
                             <td>{{ $data->_master_branch->_name ?? '' }}</td>
                             <td>{{ $data->_referance ?? '' }}</td>
                             <td>{{ $data->_ledger->_name ?? '' }}</td>

@@ -55,6 +55,17 @@ if (! function_exists('inventory_stock_update')) {
 
 
 
+if (! function_exists('_inventory_last_price')) {
+    function _inventory_last_price($item_id,$_pur_rate,$_sale_rate)
+    {
+        
+        \DB::table('inventories')->where('id',$item_id)
+                                ->update(['_pur_rate'=>$_pur_rate,'_sale_rate'=>$_sale_rate]);
+    }
+}
+
+
+
 if (! function_exists('_l_balance_update')) {
     function _l_balance_update($ledger)
     {

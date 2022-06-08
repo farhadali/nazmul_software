@@ -353,6 +353,7 @@ class PurchaseController extends Controller
                 $ItemInventory->_status = 1;
                 $ItemInventory->_created_by = $users->id."-".$users->name;
                 $ItemInventory->save(); 
+                _inventory_last_price($_item_ids[$i],$_rates[$i],$_sales_rates[$i]);
 
                 inventory_stock_update($_item_ids[$i]);
             }
@@ -768,6 +769,7 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
                 $ItemInventory->_updated_by = $users->id."-".$users->name;
                 $ItemInventory->save(); 
 
+                _inventory_last_price($_item_ids[$i],$_rates[$i],$_sales_rates[$i]);
                 inventory_stock_update($_item_ids[$i]);
             }
         }

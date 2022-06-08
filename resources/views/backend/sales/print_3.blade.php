@@ -279,15 +279,21 @@
           <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Checked By</span></div>
           <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;"> Approved By</span></div>
         </div>
+
+          
+       
       </div>
       <!-- /.col -->
     </div>
     <!-- /.row -->
   </section>
 
-
+</div>
+<!-- ./wrapper -->
 <!-- Page specific script -->
-
+<script>
+  window.addEventListener("load", printDiv('printablediv'));
+</script>
 @endsection
 
 @section('script')

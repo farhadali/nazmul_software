@@ -22,6 +22,10 @@ class CreateGeneralSettingsTable extends Migration
             $table->string('url')->nullable();
             $table->string('logo')->nullable();
             $table->string('bg_image')->nullable();
+            $table->text('_sales_note')->nullable();
+            $table->text('_sales_return__note')->nullable();
+            $table->text('_purchse_note')->nullable();
+            $table->text('_purchase_return_note')->nullable();
             $table->longText('footerContent')->nullable();
             $table->longText('description')->nullable();
             $table->string('created_by')->nullable();

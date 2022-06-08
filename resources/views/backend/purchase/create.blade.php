@@ -744,6 +744,7 @@
             search_html +=`<div class="card"><table style="width: 300px;">
                             <tbody>`;
                         for (var i = 0; i < data.length; i++) {
+                          var   _manufacture_company = data[i]. _manufacture_company;
                          search_html += `<tr class="search_row_item" >
                                         <td>${data[i].id}
                                         <input type="hidden" name="_id_item" class="_id_item" value="${data[i].id}">
@@ -753,12 +754,14 @@
                                   <input type="hidden" name="_item_rate" class="_item_rate" value="${data[i]._pur_rate}">
                                   <input type="hidden" name="_item_sales_rate" class="_item_sales_rate" value="${data[i]._sale_rate}">
                                   <input type="hidden" name="_item_vat" class="_item_vat" value="${data[i]._vat}">
-                                   </td></tr>`;
+                                   </td>
+                                   <td>${_manufacture_company}</td>
+                                   </tr>`;
                         }                         
             search_html += ` </tbody> </table></div>`;
       }else{
         search_html +=`<div class="card"><table style="width: 300px;"> 
-        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+        <thead><th colspan="4">No Data Found</th></thead><tbody></tbody></table></div>`;
       }     
       _gloabal_this.parent('td').find('.search_box_item').html(search_html);
       _gloabal_this.parent('td').find('.search_box_item').addClass('search_box_show').show();

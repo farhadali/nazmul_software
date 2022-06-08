@@ -1017,7 +1017,7 @@ public function reportStockValue(Request $request){
         FROM item_inventories as t1 
         WHERE  t1._status=1 AND  t1._date <= '".$_datex."' AND  t1._branch_id IN(".$_branch_ids_rows.") 
         AND t1._store_id IN(".$_stores_id_rows.") AND t1._category_id IN(".$category_ids_rows.")
-        AND t1._item_id IN(".$_items_ids_rows.")
+        AND t1._item_id IN(".$_items_ids_rows.") AND t1._qty > 0
         GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id
 
       ");

@@ -81,6 +81,7 @@ if($currentURL === $current){
                       <tr>
                          
                          <th class="_action">Action</th>
+                         <th>SL</th>
                          <th>ID</th>
                          <th>Item</th>
                          <th>Unit</th>
@@ -118,6 +119,7 @@ if($currentURL === $current){
                                     {!! Form::close() !!}
                                 @endcan
                             </td>
+                            <td>{{ ($key+1) }}</td>
                             <td>{{ $data->id ?? '' }}</td>
                             <td>{{ $data->_item ?? '' }}</td>
                             <td>{{ $data->_units->_name ?? '' }}</td>

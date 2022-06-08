@@ -126,7 +126,7 @@
                             </td>
                             <td>{{ $data->id }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
-                            <td>{{ $data->_date ?? '' }} {{ $data->_time ?? '' }}</td>
+                            <td>{{ _view_date_formate($data->_date ?? '') }} {{ $data->_time ?? '' }}</td>
                             <td>{{ $data->_voucher_type ?? '' }}</td>
                             <td>{{ _report_amount( $data->_amount ?? 0) }} </td>
                             <td>{{ $data->_transection_ref ?? '' }}</td>

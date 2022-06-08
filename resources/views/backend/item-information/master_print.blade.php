@@ -74,7 +74,7 @@
                             <td>{{ $data->_barcode ?? '' }}</td>
                             <td>{{ $data->_category->_name ?? '' }}</td>
                             <td>{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>
-                            <td>{{ _report_amount($data->_sale_rate ?? 0 ) }}</td>
+                            <td>{{ _report_amount($data->_sales_rate ?? 0 ) }}</td>
                             <td>{{ $data->_balance ?? 0 }}</td>
                             <td>{{ $data->_manufacture_company ?? '' }}</td>
                             <td>{{ _report_amount( $data->_discount ?? 0 ) }}</td>

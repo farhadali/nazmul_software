@@ -653,7 +653,7 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
            $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
          $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
-       return view('backend.sales.print',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
+       return view('backend.sales.print_2',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
     }
 
     /**
@@ -719,8 +719,8 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
     //###########################
     // Purchase Master information Save Start
     //###########################
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
         $_sales_id = $request->_sales_id;
 
        
@@ -936,6 +936,8 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
         $_branch_id = $request->_branch_id;
         $_cost_center =  1;
         $_name =$users->name;
+
+      
         
          if($__sub_total > 0){
 
@@ -1055,12 +1057,12 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
              ->where('id',$_master_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
 
-           DB::commit();
+          // DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$_master_id)->with('_print_value',$_print_value);
-       } catch (\Exception $e) {
-           DB::rollback();
-           return redirect()->back()->with('danger','There is Something Wrong !');
-        }
+       // } catch (\Exception $e) {
+       //     DB::rollback();
+       //     return redirect()->back()->with('danger','There is Something Wrong !');
+       //  }
 
        
        

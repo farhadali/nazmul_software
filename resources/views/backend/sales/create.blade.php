@@ -408,7 +408,7 @@
                                                 <a  href="#none" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger">
+                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger"  >
                                                 <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
                                                 <div class="search_box">
                                                   
@@ -549,7 +549,7 @@
                             </tr>
                            
                             <tr>
-                              <td style="border:0px;width: 20%;"><label for="_total">NET Total </label></td>
+                              <td style="border:0px;width: 20%;"><label for="_total">Net Total </label></td>
                               <td style="border:0px;width: 80%;">
                           <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="0">
                               </td>
@@ -915,7 +915,7 @@ $(document).on("change","#_discount_input",function(){
 
  var single_row =  `<tr class="_voucher_row">
                       <td><a  href="" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a></td>
-                      <td><input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger">
+                      <td><input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger"   >
                       <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
                       <div class="search_box">
                       </div>

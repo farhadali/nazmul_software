@@ -315,10 +315,14 @@ $(document).on('keyup','._search_ledger_id',delay(function(e){
     $(document).find('._search_ledger_id').removeClass('required_border');
   var _gloabal_this = $(this);
   var _text_val = $(this).val().trim();
+  var _head_no = $(this).attr('attr_account_head_no');
+  if(isNaN(_head_no)){ _head_no=0 }
+    console.log("_text_val "+_text_val)
+    console.log("_head_no "+_head_no)
   var request = $.ajax({
       url: "{{url('ledger-search')}}",
       method: "GET",
-      data: { _text_val : _text_val },
+      data: { _text_val,_head_no },
       dataType: "JSON"
     });
      

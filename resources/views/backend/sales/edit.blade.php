@@ -53,7 +53,15 @@
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
-   
+    @php
+    $_show_delivery_man = $form_settings->_show_delivery_man ?? 0;
+    $_show_sales_man = $form_settings->_show_sales_man ?? 0;
+    $_show_barcode = $form_settings->_show_barcode ?? 0;
+    $_show_cost_rate =  $form_settings->_show_cost_rate ?? 0;
+    $_show_vat =  $form_settings->_show_vat ?? 0;
+   $_inline_discount = $form_settings->_inline_discount ?? 0;
+    $_show_self = $form_settings->_show_self ?? 0;
+    @endphp
     <div class="content">
       <div class="container-fluid">
         <div class="row">
@@ -132,7 +140,7 @@
                                 
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-2 ">
+                        <div class="col-xs-12 col-sm-12 col-md-2 @if($_show_delivery_man==0 ) display_none @endif">
                             <div class="form-group">
                               <label class="mr-2" for="_delivery_man">Delivery Man:</label>
                               <input type="text" id="_search_main_delivery_man" name="_search_main_delivery_man" class="form-control _search_main_delivery_man" 
@@ -143,7 +151,7 @@
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-2 ">
+                        <div class="col-xs-12 col-sm-12 col-md-2 @if($_show_sales_man==0 ) display_none @endif ">
                             <div class="form-group">
                               <label class="mr-2" for="_sales_man">Sales Man:</label>
                               <input type="text" id="_search_main_sales_man" name="_search_main_sales_man" class="form-control _search_main_sales_man" value="{{$data->_sales_man->_name ?? ''}}" placeholder="Sales Man" >
@@ -438,7 +446,7 @@
                                                 <input type="hidden" name="purchase_account_id[]" class="form-control purchase_account_id" value="{{$account->id}}">
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger" value="{{ $account->_ledger->_name ?? '' }}">
+                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger" value="{{ $account->_ledger->_name ?? '' }}" >
                                                 <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" value="{{$account->_ledger_id}}" >
                                                 <div class="search_box">
                                                   
@@ -554,7 +562,7 @@
                             </tr>
                             
                             <tr>
-                              <td style="width: 10%;border:0px;"><label for="_total">NET Total </label></td>
+                              <td style="width: 10%;border:0px;"><label for="_total">Net Total </label></td>
                               <td style="width: 70%;border:0px;">
                           <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{_php_round($data->_total ?? 0)}}">
                               </td>
@@ -562,6 +570,7 @@
                           </table>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
+                          <a style="cursor:not-allowed;"  class="btn btn-default">Net Total Tk. <b class="_net_amount">{{_php_round($data->_total ?? 0)}}</b> </a>
                          
                             <button type="submit" class="btn btn-success submit-button ml-5"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
                             <button type="submit" class="btn btn-warning submit-button _save_and_print"><i class="fa fa-print mr-2" aria-hidden="true"></i> Save & Print</button>
@@ -909,6 +918,9 @@ $(document).on("change","#_discount_input",function(){
       $("#_total_discount").val(parseFloat(_discount_input)+parseFloat(_total_discount_amount));
       var _total = _math_round((parseFloat(_total__value)+parseFloat(_total__vat))-parseFloat(_total_discount));
       $("#_total").val(_total);
+
+      $("._net_amount").text(_total)
+
   }
 
 
@@ -917,7 +929,7 @@ $(document).on("change","#_discount_input",function(){
                       <td>
                       <input type="hidden" name="purchase_account_id[]" class="form-control purchase_account_id" value="0"  />
                       </td>
-                      <td><input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger">
+                      <td><input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger" >
                       <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
                       <div class="search_box">
                       </div>

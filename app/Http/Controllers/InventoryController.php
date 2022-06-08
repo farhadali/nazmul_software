@@ -176,7 +176,7 @@ class InventoryController extends Controller
         $_asc_desc = $request->_asc_desc ?? 'ASC';
         $asc_cloumn =  $request->asc_cloumn ?? '_item';
         $text_val = $request->_text_val;
-        $datas = Inventory::select('id','_item as _name','_code','_unit_id','_barcode','_discount','_vat','_pur_rate','_sale_rate')
+        $datas = Inventory::select('id','_item as _name','_code','_unit_id','_barcode','_discount','_vat','_pur_rate','_sale_rate','_manufacture_company')
             ->where('_status',1);
          if($request->has('_text_val') && $request->_text_val !=''){
             $datas = $datas->where('_item','like',"%$request->_text_val%")

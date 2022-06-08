@@ -94,7 +94,7 @@
                   <div class="form-group row">
                     <label for="_manufacture_company   " class="col-sm-2 col-form-label">Manufacture Company  :</label>
                     <div class="col-sm-10">
-                       <input type="text" id="_manufacture_company  " name="_manufacture_company  " class="form-control" placeholder="Search By Purchase Rate" value="@if(isset($request->_manufacture_company  )) {{$request->_manufacture_company   ?? ''}}  @endif">
+                       <input type="text" id="_manufacture_company" name="_manufacture_company" class="form-control" placeholder="Search By Purchase Rate" value="@if(isset($request->_manufacture_company)) {{$request->_manufacture_company ?? ''}}  @endif">
                     </div>
                   </div>
 
