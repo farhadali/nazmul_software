@@ -188,9 +188,10 @@ class PurchaseController extends Controller
         $data->_show_manufacture_date = $request->_show_manufacture_date;
         $data->_show_expire_date = $request->_show_expire_date;
         $data->_show_p_balance = $request->_show_p_balance;
+         $data->_invoice_template = $request->_invoice_template ?? 1;
         $data->save();
 
-        return redirect('purchase/create');
+        return redirect()->back()->with('success','Information Save successfully');
                        
 
     }
@@ -516,7 +517,21 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
            $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
          $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
-       return view('backend.purchase.print',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
+
+
+         if($form_settings->_invoice_template==1){
+            return view('backend.purchase.print',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
+         }elseif($form_settings->_invoice_template==2){
+            return view('backend.purchase.print_1',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
+         }elseif($form_settings->_invoice_template==3){
+            return view('backend.purchase.print_2',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
+         }elseif($form_settings->_invoice_template==4){
+           return view('backend.purchase.print_3',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
+         }else{
+            return view('backend.purchase.print',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
+         }
+
+       
     }
 
     /**

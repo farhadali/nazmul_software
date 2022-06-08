@@ -46,7 +46,7 @@
                        <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label>Category: <span class="_required">*</span></label>
-                               <select  class="form-control _category_id" name="_category_id" required>
+                               <select  class="form-control _category_id select2" name="_category_id" required>
                                   <option value="">--Select Category--</option>
                                   @forelse($categories as $category )
                                   <option value="{{$category->id}}" @if(isset($data->_category_id)) @if($data->_category_id == $category->id) selected @endif   @endif>{{ $category->_name ?? '' }}</option>
@@ -75,7 +75,7 @@
                             <div class="form-group">
                                 <label for="_unit">Unit:<span class="_required">*</span></label>
 
-                                <select class="form-control _unit_id" id="_unit_id" name="_unit_id" required>
+                                <select class="form-control _unit_id select2" id="_unit_id" name="_unit_id" required>
                                   <option value="" >--Units--</option>
                                   @foreach($units as $unit)
                                    <option value="{{$unit->id}}" @if(isset($data->_unit_id)) @if($data->_unit_id==$unit->id) selected @endif @endif >{{$unit->_name ?? ''}}</option>

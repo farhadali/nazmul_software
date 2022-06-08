@@ -28,6 +28,7 @@ class CreateSalesFormSettingsTable extends Migration
             $table->integer('_show_delivery_man');
             $table->integer('_show_sales_man');
             $table->integer('_show_cost_rate');
+            $table->integer('_invoice_template');
             $table->timestamps();
         });
     }

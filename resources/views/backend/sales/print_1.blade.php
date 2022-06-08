@@ -41,7 +41,7 @@
        From
        <address>
         <strong>{{$settings->name ?? '' }}</strong><br>
-        {{$settings->_address ?? '' }}<br>
+        Address: {{$settings->_address ?? '' }}<br>
         Phone: {{$settings->_phone ?? '' }}<br>
         Email: {{$settings->_email ?? '' }}
        </address>
@@ -61,7 +61,8 @@
        <b>Invoice/Bill No: {{ $data->_order_number ?? '' }}</b><br>
        <b>Referance:</b> {!! $data->_referance ?? '' !!}<br>
        <b>Account Balance:</b> {!! _report_amount($data->_l_balance ?? 0) !!}<br>
-       <b>Created By:</b> {!! $data->_user_name ?? '' !!}
+       <b>Created By:</b> {!! $data->_user_name ?? '' !!}<br>
+       <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}
       </div>
 
      </div>
@@ -75,6 +76,7 @@
           <th class="text-left">SL</th>
           <th class="text-left">Item</th>
           <th class="text-right">Qty</th>
+          <th class="text-right">Rate</th>
           <th class="text-right">Amount</th>
          </tr>
         </thead>
@@ -97,7 +99,8 @@
                                      @endphp
                                             <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
                                             
-                                            <td class="text-right  " >{!! $_item->_qty ?? 0 !!}</td>
+                                             <td class="text-right  " >{!! _report_amount($_item->_qty ?? 0) !!}</td>
+                                            <td class="text-right  " >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
                                             
                                             <td class="text-right  " >{!! _report_amount($_item->_value ?? 0) !!}</td>
                                             
@@ -108,13 +111,13 @@
                                   @empty
                                   @endforelse
                             <tr>
-                              <td colspan="2" class="text-right "><b>Total</b></td>
-                              <td class="text-right "> <b>{{ $_qty_total ?? 0}}</b> </td>
+                              <td colspan="3" class="text-right "><b>Total</b></td>
+                              <td class="text-right "> <b>{{ _report_amount($_qty_total ?? 0) }}</b> </td>
                               <td class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
                               </td>
                             </tr>
                             <tr>
-                              <td colspan="2" class="text-left " style="width: 50%;">
+                              <td colspan="3" class="text-left " style="width: 50%;">
                               <table style="width: 100%">
                                 <tr>
                                   <td>
@@ -205,7 +208,7 @@
         <tfoot>
 
                <tr>
-                 <td colspan="4">
+                 <td colspan="5">
                    <div class="col-12 mt-5">
                       <div class="row">
                         <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>
@@ -228,40 +231,5 @@
 
 @section('script')
 
-<script type="text/javascript">
-  window.load(function(){
 
- function printDiv(divID) {
-
-
-
-   //Get the HTML of div
-            var divElements = document.getElementById(divID).innerHTML;
-            //Get the HTML of whole page
-            var oldPage = document.body.innerHTML;
-
-            //Reset the page's HTML with div's HTML only
-            document.body.innerHTML =
-                "<html>" +
-        "<style type='text/css'>body {-webkit-print-color-adjust: exact; font-family: Arial; } img{display:visible}</style>" +
-        "</head>" +"<body>" +
-                divElements + "</body>";
-
-            //Print Page
-            
-            window.print();
-          
-
-            //Restore orignal HTML
-            document.body.innerHTML = oldPage;
-
-
-        }
-  
-})
-  
-           
-         
-
-</script>
 @endsection

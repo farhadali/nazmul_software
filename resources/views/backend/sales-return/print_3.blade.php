@@ -13,9 +13,9 @@
 }
   </style>
 <div style="padding-left: 20px;display: flex;">
- <a class="nav-link"  href="{{url('sales')}}" role="button"><i class="fa fa-arrow-left"></i></a>
- @can('sales-edit')
-    <a class="nav-link"  title="Edit" href="{{ route('sales.edit',$data->id) }}">
+ <a class="nav-link"  href="{{url('sales-return')}}" role="button"><i class="fa fa-arrow-left"></i></a>
+ @can('sales-return-edit')
+    <a class="nav-link"  title="Edit" href="{{ route('sales-return.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
      </a>
   @endcan
@@ -45,7 +45,7 @@
         Phone: {{$settings->_phone ?? '' }}<br>
         Email: {{$settings->_email ?? '' }}</div>
        </div>
-       <h3 class="text-center"> Invoice/Bill</h3>
+       <h3 class="text-center">Sales Return Invoice/Bill</h3>
         
       </div>
       <div class="col-3 ">
@@ -101,7 +101,7 @@
                                       $_qty_total += $_item->_qty ?? 0;
                                       $_total_discount_amount += $_item->_discount_amount ?? 0;
                                      @endphp
-                                           <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
+                                            <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
                                             
                                              <td class="text-right  " >{!! _report_amount($_item->_qty ?? 0) !!}</td>
                                             <td class="text-right  " >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
@@ -117,20 +117,21 @@
                                   @empty
                                   @endforelse
                             <tr>
-                              <td colspan="3" class="text-right "><b>Total</b></td>
-                              <td class="text-right "> <b>{{ $_qty_total ?? 0}}</b> </td>
-                              <td class="text-right "> <b>{{ $_total_discount_amount ?? 0}}</b> </td>
-                              <td class="text-right "> <b>{{ $_vat_total ?? 0}}</b> </td>
+                              <td colspan="2" class="text-right "><b>Total</b></td>
+                              <td class="text-right "> <b>{{ _report_amount($_qty_total ?? 0) }}</b> </td>
+                              <td></td>
+                              <td class="text-right "> <b>{{ _report_amount($_total_discount_amount ?? 0 ) }}</b> </td>
+                              <td class="text-right "> <b>{{ _report_amount($_vat_total ?? 0 ) }}</b> </td>
                               <td class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
                               </td>
                             </tr>
                             <tr>
-                              <td colspan="3" class="text-left " style="width: 50%;">
+                              <td colspan="4" class="text-left " style="width: 50%;">
                               <table style="width: 100%">
                                 <tr>
                                   <td>
 
-                                    {{$settings->_sales_note ?? '' }}
+                                    {{$settings->_sales_return__note ?? '' }}
                                   </td>
                                 </tr>
                                 <tr>
@@ -139,7 +140,7 @@
                               </table>
                               </td>
                               
-                              <td colspan="4" class=" text-right"  style="width: 50%;">
+                              <td colspan="3" class=" text-right"  style="width: 50%;">
                                   <table style="width: 100%">
                                      <tr>
                                       <th class="text-right" ><b>Sub Total</b></th>
@@ -170,20 +171,20 @@
                                     @if($ac_val->_ledger->id !=$data->_ledger_id)
                                      @if($ac_val->_cr_amount > 0)
                                      @php
-                                      $_due_amount +=$ac_val->_cr_amount ?? 0;
+                                      $_due_amount -=$ac_val->_cr_amount ?? 0;
                                      @endphp
                                     <tr>
-                                      <th class="text-right" ><b> Add:{!! $ac_val->_ledger->_name ?? '' !!}
+                                      <th class="text-right" ><b> Less:{!! $ac_val->_ledger->_name ?? '' !!}
                                         </b></th>
                                       <th class="text-right">{!! _report_amount( $ac_val->_cr_amount ?? 0 ) !!}</th>
                                     </tr>
                                     @endif
                                     @if($ac_val->_dr_amount > 0)
                                      @php
-                                      $_due_amount -=$ac_val->_dr_amount ?? 0;
+                                      $_due_amount +=$ac_val->_dr_amount ?? 0;
                                      @endphp
                                     <tr>
-                                      <th class="text-right" ><b> Less:{!! $ac_val->_ledger->_name ?? '' !!}
+                                      <th class="text-right" ><b> Add:{!! $ac_val->_ledger->_name ?? '' !!}
                                         </b></th>
                                       <th class="text-right">{!! _report_amount( $ac_val->_dr_amount ?? 0 ) !!}</th>
                                     </tr>

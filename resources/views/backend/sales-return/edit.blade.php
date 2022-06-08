@@ -756,6 +756,8 @@ if(data.length > 0 ){
     var _rate    = (data[i]._rate) ? data[i]._rate    : 0 ;
     var _sales_rate = (data[i]._sales_rate ) ? data[i]._sales_rate : 0 ;
     var _vat = (  data[i]._vat ) ? data[i]._vat : 0 ;
+    var _manufacture_date = (data[i]._manufacture_date) ? data[i]._manufacture_date : '' ;
+    var _expire_date = (data[i]._expire_date) ? data[i]._expire_date : '' ;
 
     var _vat_amount = ( ((data[i]._qty*data[i]._sales_rate)*data[i]._vat)/100 ) ? ( ((data[i]._qty*data[i]._sales_rate)*data[i]._vat)/100 ) : 0 ;
     var _discount = (data[i]._discount ) ? data[i]._discount : 0 ;
@@ -804,6 +806,12 @@ if(data.length > 0 ){
                                              
                                               <td>
                                                 <input type="number" name="_value[]" class="form-control _value " readonly value="${_value}" >
+                                              </td>
+                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " value="${_manufacture_date}" >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " value="${_expire_date }" >
                                               </td>
                                               
                                               <td class="@if(sizeof($permited_branch)==1) display_none @endif">
@@ -1025,6 +1033,25 @@ $(document).on('keyup','._vat_amount',function(){
    if(isNaN(_sales_rate)){ _sales_rate =0 }
    var _vat = parseFloat((_vat_amount/(_sales_rate*_qty))*100).toFixed(2);
     $(this).closest('tr').find('._vat').val(_vat);
+
+    $(this).closest('tr').find('._value').val((_qty*_sales_rate));
+ 
+    _purchase_total_calculation();
+})
+
+$(document).on('keyup','._discount_amount',function(){
+ var _item_vat =0;
+  var _qty = $(this).closest('tr').find('._qty').val();
+  var _rate = $(this).closest('tr').find('._rate').val();
+  var _sales_rate = $(this).closest('tr').find('._sales_rate').val();
+  var _discount_amount =  $(this).closest('tr').find('._discount_amount').val();
+  
+   if(isNaN(_discount_amount)){ _discount_amount = 0 }
+   if(isNaN(_qty)){ _qty   = 0 }
+   if(isNaN(_rate)){ _rate =0 }
+   if(isNaN(_sales_rate)){ _sales_rate =0 }
+   var _discount = parseFloat((_discount_amount/(_sales_rate*_qty))*100).toFixed(2);
+    $(this).closest('tr').find('._discount').val(_discount);
 
     $(this).closest('tr').find('._value').val((_qty*_sales_rate));
  

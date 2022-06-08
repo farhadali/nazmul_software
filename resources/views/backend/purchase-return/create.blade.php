@@ -666,6 +666,15 @@
           <option value="1" @if(isset($form_settings->_show_p_balance))@if($form_settings->_show_p_balance==1) selected @endif @endif>YES</option>
         </select>
       </div>
+       <div class="form-group row">
+        <label for="_invoice_template" class="col-sm-5 col-form-label">Invoice Template</label>
+        <select class="form-control col-sm-7" name="_invoice_template">
+          <option value="1" @if(isset($form_settings->_invoice_template))@if($form_settings->_invoice_template==1) selected @endif @endif>Template A</option>
+          <option value="2" @if(isset($form_settings->_invoice_template))@if($form_settings->_invoice_template==2) selected @endif @endif>Template B</option>
+          <option value="3" @if(isset($form_settings->_invoice_template))@if($form_settings->_invoice_template==3) selected @endif @endif>Template C</option>
+          <option value="4" @if(isset($form_settings->_invoice_template))@if($form_settings->_invoice_template==4) selected @endif @endif>Template D</option>
+        </select>
+      </div>
          
       
       </div>

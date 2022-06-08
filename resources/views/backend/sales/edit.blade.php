@@ -1020,11 +1020,17 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                 <input type="number" min="0"  name="_sales_rate[]" class="form-control _sales_rate " >
                                               </td>
                                              
-                                                <td class="@if($form_settings->_show_vat==0) display_none @endif">
+                                                  <td class="@if($_show_vat==0) display_none @endif">
                                                 <input type="number" name="_vat[]" class="form-control  _vat _common_keyup" >
                                               </td>
-                                              <td class="@if($form_settings->_show_vat==0) display_none @endif">
+                                              <td class="@if($_show_vat==0) display_none @endif">
                                                 <input type="number" name="_vat_amount[]" class="form-control  _vat_amount" >
+                                              </td>
+                                                <td class="@if($_inline_discount==0) display_none @endif">
+                                                <input type="number" name="_discount[]" class="form-control  _discount _common_keyup" >
+                                              </td>
+                                              <td class="@if($_inline_discount==0) display_none @endif">
+                                                <input type="number" name="_discount_amount[]" class="form-control  _discount_amount" >
                                               </td>
                                               
                                               <td>

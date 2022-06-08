@@ -731,6 +731,7 @@ function after_request_date__today(_date){
 </script>
 
 
+
 @yield('script')
 </body>
 </html>

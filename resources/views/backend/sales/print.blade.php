@@ -14,7 +14,12 @@
 }
   </style>
 <div style="padding-left: 20px;display: flex;">
-    
+    <a class="nav-link"  href="{{url('sales')}}" role="button"><i class="fa fa-arrow-left"></i></a>
+ @can('sales-edit')
+    <a class="nav-link"  title="Edit" href="{{ route('sales.edit',$data->id) }}">
+                                      <i class="nav-icon fas fa-edit"></i>
+     </a>
+  @endcan
     <a style="cursor: pointer;" class="nav-link"  title="Print" onclick="javascript:printDiv('printablediv')"><i class="fas fa-print"></i></a>
       <a style="cursor: pointer;" onclick="fnExcelReport();" class="nav-link"  title="Excel Download" ><i class="fa fa-file-excel" aria-hidden="true"></i></a>
   </div>
@@ -292,28 +297,4 @@
 
 @section('script')
 
-<script type="text/javascript">
-
- function printDiv(divID) {
-            //Get the HTML of div
-            var divElements = document.getElementById(divID).innerHTML;
-            //Get the HTML of whole page
-            var oldPage = document.body.innerHTML;
-
-            //Reset the page's HTML with div's HTML only
-            document.body.innerHTML =
-                "<html><head><title></title></head><body>" +
-                divElements + "</body>";
-
-            //Print Page
-            window.print();
-
-            //Restore orignal HTML
-            document.body.innerHTML = oldPage;
-
-
-        }
-         
-
-</script>
 @endsection

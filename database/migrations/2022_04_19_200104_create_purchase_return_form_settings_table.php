@@ -23,6 +23,7 @@ class CreatePurchaseReturnFormSettingsTable extends Migration
             $table->integer('_show_vat');
             $table->integer('_show_store');
             $table->integer('_show_self');
+            $table->integer('_invoice_template');
             $table->timestamps();
         });
     }

@@ -13,9 +13,9 @@
 }
   </style>
 <div style="padding-left: 20px;display: flex;">
- <a class="nav-link"  href="{{url('sales')}}" role="button"><i class="fa fa-arrow-left"></i></a>
- @can('sales-edit')
-    <a class="nav-link"  title="Edit" href="{{ route('sales.edit',$data->id) }}">
+ <a class="nav-link"  href="{{url('purchase')}}" role="button"><i class="fa fa-arrow-left"></i></a>
+ @can('purchase-edit')
+    <a class="nav-link"  title="Edit" href="{{ route('purchase.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
      </a>
   @endcan
@@ -45,11 +45,11 @@
         Phone: {{$settings->_phone ?? '' }}<br>
         Email: {{$settings->_email ?? '' }}</div>
        </div>
-       <h3 class="text-center"> Invoice/Bill</h3>
+       <h3 class="text-center"> {{$page_name}}</h3>
         
       </div>
       <div class="col-3 ">
-       <b>Invoice/Bill No: {{ $data->_order_number ?? '' }}</b><br>
+       <b>{{$page_name}} No: {{ $data->id ?? '' }}</b><br>
        <b>Date: {!! _view_date_formate($data->_date ?? '') !!}</b><br>
        <b>Referance:</b> {!! $data->_referance ?? '' !!}<br>
        <b>Account Balance:</b> {!! _report_amount($data->_l_balance ?? 0) !!}<br>
@@ -85,7 +85,10 @@
          </tr>
         </thead>
         <tbody>
-           @if(sizeof($data->_master_details) > 0)
+           @php
+          $_master_details = $data->_master_details ?? [];
+          @endphp
+           @if(sizeof( $_master_details) > 0)
          @php
                                     $_value_total = 0;
                                     $_vat_total = 0;
@@ -130,7 +133,7 @@
                                 <tr>
                                   <td>
 
-                                    {{$settings->_sales_note ?? '' }}
+                                    {{$settings->_purchse_note ?? '' }}
                                   </td>
                                 </tr>
                                 <tr>
@@ -170,20 +173,20 @@
                                     @if($ac_val->_ledger->id !=$data->_ledger_id)
                                      @if($ac_val->_cr_amount > 0)
                                      @php
-                                      $_due_amount +=$ac_val->_cr_amount ?? 0;
+                                      $_due_amount -=$ac_val->_cr_amount ?? 0;
                                      @endphp
                                     <tr>
-                                      <th class="text-right" ><b> Add:{!! $ac_val->_ledger->_name ?? '' !!}
+                                      <th class="text-right" ><b> Less:{!! $ac_val->_ledger->_name ?? '' !!}
                                         </b></th>
                                       <th class="text-right">{!! _report_amount( $ac_val->_cr_amount ?? 0 ) !!}</th>
                                     </tr>
                                     @endif
                                     @if($ac_val->_dr_amount > 0)
                                      @php
-                                      $_due_amount -=$ac_val->_dr_amount ?? 0;
+                                      $_due_amount +=$ac_val->_dr_amount ?? 0;
                                      @endphp
                                     <tr>
-                                      <th class="text-right" ><b> Less:{!! $ac_val->_ledger->_name ?? '' !!}
+                                      <th class="text-right" ><b> Add:{!! $ac_val->_ledger->_name ?? '' !!}
                                         </b></th>
                                       <th class="text-right">{!! _report_amount( $ac_val->_dr_amount ?? 0 ) !!}</th>
                                     </tr>

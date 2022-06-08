@@ -13,9 +13,9 @@
 }
   </style>
 <div style="padding-left: 20px;display: flex;">
- <a class="nav-link"  href="{{url('sales')}}" role="button"><i class="fa fa-arrow-left"></i></a>
- @can('sales-edit')
-    <a class="nav-link"  title="Edit" href="{{ route('sales.edit',$data->id) }}">
+  <a class="nav-link"  href="{{url('purchase-return')}}" role="button"><i class="fa fa-arrow-left"></i></a>
+ @can('purchase-return-edit')
+    <a class="nav-link"  title="Edit" href="{{ route('purchase-return.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
      </a>
   @endcan
@@ -27,45 +27,43 @@
 <section class="invoice" id="printablediv">
 
      <div class="row">
-      <div class="col-3 ">
-       <b>Customer:</b>
+      <div class="col-12">
+       <h3 class="page-header">
+        <img src="{{url('/')}}/{{$settings->logo}}" alt="{{$settings->name ?? '' }}" style="height: 60px;width: 60px"  > {{$settings->title ?? '' }}
+        <small class="float-right">Date: {!! _view_date_formate($data->_date ?? '') !!}</small>
+       </h3>
+      </div>
+
+     </div>
+
+     <div class="row invoice-info">
+      <div class="col-sm-4 invoice-col">
+       From
+       <address>
+        <strong>{{$settings->name ?? '' }}</strong><br>
+        Address: {{$settings->_address ?? '' }}<br>
+        Phone: {{$settings->_phone ?? '' }}<br>
+        Email: {{$settings->_email ?? '' }}
+       </address>
+      </div>
+
+      <div class="col-sm-4 invoice-col">
+       To
        <address>
         <strong>{{$data->_ledger->_name ?? '' }}</strong><br>
-        Address: {{$data->_address ?? '' }}<br>
+        {{$data->_address ?? '' }}<br>
         Phone: {{$data->_phone ?? '' }}<br>
         Email: {{$data->_email ?? '' }}
        </address>
       </div>
-      <div class="col-6">
-       <div style="text-align: center;">
-         <h3><img src="{{url('/')}}/{{$settings->logo}}" alt="{{$settings->name ?? '' }}" style="height: 50px;width: 50px"  > {{$settings->name ?? '' }}
-       
-       </h3>
-       <div>{{$settings->_address ?? '' }}<br>
-        Phone: {{$settings->_phone ?? '' }}<br>
-        Email: {{$settings->_email ?? '' }}</div>
-       </div>
-       <h3 class="text-center"> Invoice/Bill</h3>
-        
-      </div>
-      <div class="col-3 ">
-       <b>Invoice/Bill No: {{ $data->_order_number ?? '' }}</b><br>
-       <b>Date: {!! _view_date_formate($data->_date ?? '') !!}</b><br>
+
+      <div class="col-sm-4 invoice-col">
+       <b>{{$page_name}} No: {{ $data->id ?? '' }}</b><br>
        <b>Referance:</b> {!! $data->_referance ?? '' !!}<br>
        <b>Account Balance:</b> {!! _report_amount($data->_l_balance ?? 0) !!}<br>
        <b>Created By:</b> {!! $data->_user_name ?? '' !!}<br>
        <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}
       </div>
-     
-
-     </div>
-
-     <div class="row invoice-info">
-      
-
-      
-
-      
 
      </div>
 
@@ -79,13 +77,14 @@
           <th class="text-left">Item</th>
           <th class="text-right">Qty</th>
           <th class="text-right">Rate</th>
-          <th class="text-right">Discount</th>
-          <th class="text-right">VAT</th>
           <th class="text-right">Amount</th>
          </tr>
         </thead>
         <tbody>
-           @if(sizeof($data->_master_details) > 0)
+           @php
+          $_master_details = $data->_master_details ?? [];
+          @endphp
+           @if(sizeof( $_master_details) > 0)
          @php
                                     $_value_total = 0;
                                     $_vat_total = 0;
@@ -101,12 +100,10 @@
                                       $_qty_total += $_item->_qty ?? 0;
                                       $_total_discount_amount += $_item->_discount_amount ?? 0;
                                      @endphp
-                                           <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
+                                            <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
                                             
                                              <td class="text-right  " >{!! _report_amount($_item->_qty ?? 0) !!}</td>
                                             <td class="text-right  " >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
-                                            <td class="text-right  " >{!! _report_amount($_item->_discount_amount ?? 0) !!}</td>
-                                            <td class="text-right  " >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
                                             
                                             <td class="text-right  " >{!! _report_amount($_item->_value ?? 0) !!}</td>
                                             
@@ -118,9 +115,7 @@
                                   @endforelse
                             <tr>
                               <td colspan="3" class="text-right "><b>Total</b></td>
-                              <td class="text-right "> <b>{{ $_qty_total ?? 0}}</b> </td>
-                              <td class="text-right "> <b>{{ $_total_discount_amount ?? 0}}</b> </td>
-                              <td class="text-right "> <b>{{ $_vat_total ?? 0}}</b> </td>
+                              <td class="text-right "> <b>{{ _report_amount($_qty_total ?? 0) }}</b> </td>
                               <td class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
                               </td>
                             </tr>
@@ -130,7 +125,7 @@
                                 <tr>
                                   <td>
 
-                                    {{$settings->_sales_note ?? '' }}
+                                    {{$settings->_purchase_return_note ?? '' }}
                                   </td>
                                 </tr>
                                 <tr>
@@ -139,7 +134,7 @@
                               </table>
                               </td>
                               
-                              <td colspan="4" class=" text-right"  style="width: 50%;">
+                              <td colspan="2" class=" text-right"  style="width: 50%;">
                                   <table style="width: 100%">
                                      <tr>
                                       <th class="text-right" ><b>Sub Total</b></th>
@@ -216,7 +211,7 @@
         <tfoot>
 
                <tr>
-                 <td colspan="7">
+                 <td colspan="5">
                    <div class="col-12 mt-5">
                       <div class="row">
                         <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>
@@ -238,5 +233,6 @@
    @endsection
 
 @section('script')
+
 
 @endsection
