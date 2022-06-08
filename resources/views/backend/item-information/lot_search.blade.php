@@ -34,7 +34,7 @@
                   <div class="form-group row">
                     <label for="_unit_id" class="col-sm-2 col-form-label">Unit:</label>
                     <div class="col-sm-10">
-                      <select class="form-control _unit_id" id="_unit_id" name="_unit_id" >
+                      <select class="form-control _unit_id select2" id="_unit_id" name="_unit_id" >
                                   <option value="" >--Units--</option>
                                   @foreach($units as $unit)
                                    <option value="{{$unit->id}}" @if(isset($request->_unit_id)) @if($request->_unit_id==$unit->id) selected @endif @endif >{{$unit->_name ?? ''}}</option>
@@ -83,7 +83,7 @@
                   <div class="form-group row">
                     <label for="_manufacture_company   " class="col-sm-2 col-form-label">Manufacture Company  :</label>
                     <div class="col-sm-10">
-                       <input type="text" id="_manufacture_company  " name="_manufacture_company  " class="form-control" placeholder="Search By Purchase Rate" value="@if(isset($request->_manufacture_company  )) {{$request->_manufacture_company   ?? ''}}  @endif">
+                       <input type="text" id="_manufacture_company  " name="_manufacture_company  " class="form-control" placeholder="Manufacture Company" value="@if(isset($request->_manufacture_company  )) {{$request->_manufacture_company   ?? ''}}  @endif">
                     </div>
                   </div>
 

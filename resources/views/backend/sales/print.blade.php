@@ -46,7 +46,7 @@
                 <tr> <td class="text-center" style="border:none;font-size: 24px;"><b>{{$settings->name ?? '' }}</b></td> </tr>
                 <tr> <td class="text-center" style="border:none;"><b>{{$settings->_address ?? '' }}</b></td></tr>
                 <tr> <td class="text-center" style="border:none;"><b>{{$settings->_phone ?? '' }}</b>,<b>{{$settings->_email ?? '' }}</b></td></tr>
-                 <tr> <td class="text-center" style="border:none;"><h3>{{$page_name}} Invoice</h3></td> </tr>
+                 <tr> <td class="text-center" style="border:none;"><h3>{{$page_name}} </h3></td> </tr>
               </table>
             </td>
             <td style="border:none;width: 33%;text-align: right;">
@@ -184,13 +184,13 @@
           </tr>
          
           <tr>
-            <th class="text-right" ><b>Discount</b></th>
+            <th class="text-right" ><b> Discount[-]</b></th>
             <th class="text-right">{!! _report_amount($data->_total_discount ?? 0) !!}</th>
           </tr>
          
           @if($form_settings->_show_vat==1)
           <tr>
-            <th class="text-right" ><b>VAT</b></th>
+            <th class="text-right" ><b>VAT[+] </b></th>
             <th class="text-right">{!! _report_amount($data->_total_vat ?? 0) !!}</th>
           </tr>
           @endif
@@ -201,11 +201,11 @@
           @if($form_settings->_show_p_balance==1)
           <tr>
             <th class="text-right" ><b>Previous Balance</b></th>
-            <th class="text-right">{!! _report_amount($data->_p_balance ?? 0) !!}</th>
+            <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_p_balance ?? 0)) !!}</th>
           </tr>
           <tr>
             <th class="text-right" ><b>Current Balance</b></th>
-            <th class="text-right">{!! _report_amount($data->_l_balance ?? 0) !!}</th>
+            <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}</th>
           </tr>
           @endif
           

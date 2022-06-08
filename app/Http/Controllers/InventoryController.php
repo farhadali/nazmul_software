@@ -20,6 +20,7 @@ class InventoryController extends Controller
          $this->middleware('permission:item-information-create', ['only' => ['create','store']]);
          $this->middleware('permission:item-information-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:item-information-delete', ['only' => ['destroy']]);
+         $this->middleware('permission:item-sales-price-update', ['only' => ['salesPriceUpdate']]);
          $this->page_name = "Item Information";
     }
     /**
@@ -163,7 +164,7 @@ class InventoryController extends Controller
         $categories = ItemCategory::orderBy('_name','asc')->get();
         if($request->has('print')){
             if($request->print =="single"){
-                return view('backend.item-information.master_print',compact('datas','page_name','request','limit'));
+                return view('backend.item-information.lot_print',compact('datas','page_name','request','limit'));
             }
          }
           $units = Units::orderBy('_name','asc')->get();
@@ -187,6 +188,41 @@ class InventoryController extends Controller
         
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
         return json_encode( $datas);
+    }
+
+
+    public function salesPriceEdit($id){
+        $data = ProductPriceList::find($id);
+
+         $page_name = " Lot Wise Price Update -".$data->_item ?? '';
+         
+        $categories = ItemCategory::orderBy('_name','asc')->get();
+         $units = Units::orderBy('_name','asc')->get();
+       return view('backend.item-information.lot_edit',compact('page_name','categories','data','units'));
+    }
+
+    public function salesPriceUpdate(Request $request){
+
+        
+
+        $this->validate($request, [
+            'id' => 'required',
+            '_item' => 'required',
+            '_unit_id' => 'required',
+            '_sales_rate' => 'required',
+            '_status' => 'required'
+        ]);
+        $data = ProductPriceList::find($request->id);
+        $data->_item = $request->_item;
+        $data->_unit_id = $request->_unit_id;
+        $data->_barcode = $request->_barcode ?? '';
+        $data->_p_discount_input = $request->_p_discount_input ?? 0;
+        $data->_p_vat = $request->_p_vat ?? 0;
+        $data->_sales_rate = $request->_sales_rate ?? 0;
+        $data->_status = $request->_status ?? 0;
+        $data->save();
+        return redirect()->back()->with('success','Information save successfully');
+        
     }
 
     /**

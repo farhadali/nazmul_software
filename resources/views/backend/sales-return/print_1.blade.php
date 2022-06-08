@@ -60,7 +60,7 @@
       <div class="col-sm-4 invoice-col">
        <b>Sales Return Invoice/Bill No: {{ $data->_order_number ?? '' }}</b><br>
        <b>Referance:</b> {!! $data->_referance ?? '' !!}<br>
-       <b>Account Balance:</b> {!! _report_amount($data->_l_balance ?? 0) !!}<br>
+       <b>Account Balance:</b> {!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}<br>
        <b>Created By:</b> {!! $data->_user_name ?? '' !!}<br>
        <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}
       </div>
@@ -111,8 +111,10 @@
                                   @empty
                                   @endforelse
                             <tr>
-                              <td colspan="3" class="text-right "><b>Total</b></td>
-                              <td class="text-right "> <b>{{ $_qty_total ?? 0}}</b> </td>
+                              
+                              <td colspan="2" class="text-right "><b>Total</b></td>
+                              <td class="text-right "> <b>{{ _report_amount($_qty_total ?? 0) }}</b> </td>
+                              <td></td>
                               <td class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
                               </td>
                             </tr>
@@ -139,13 +141,13 @@
                                     </tr>
                                    
                                     <tr>
-                                      <th class="text-right" ><b>Discount</b></th>
+                                      <th class="text-right" ><b>Discount[-]</b></th>
                                       <th class="text-right">{!! _report_amount($data->_total_discount ?? 0) !!}</th>
                                     </tr>
                                    
                                     @if($form_settings->_show_vat==1)
                                     <tr>
-                                      <th class="text-right" ><b>VAT</b></th>
+                                      <th class="text-right" ><b>VAT[+]</b></th>
                                       <th class="text-right">{!! _report_amount($data->_total_vat ?? 0) !!}</th>
                                     </tr>
                                     @endif
@@ -162,10 +164,10 @@
                                     @if($ac_val->_ledger->id !=$data->_ledger_id)
                                      @if($ac_val->_cr_amount > 0)
                                      @php
-                                      $_due_amount +=$ac_val->_cr_amount ?? 0;
+                                      $_due_amount -=$ac_val->_cr_amount ?? 0;
                                      @endphp
                                     <tr>
-                                      <th class="text-right" ><b> Add:{!! $ac_val->_ledger->_name ?? '' !!}
+                                      <th class="text-right" ><b>{!! $ac_val->_ledger->_name ?? '' !!}[-]
                                         </b></th>
                                       <th class="text-right">{!! _report_amount( $ac_val->_cr_amount ?? 0 ) !!}</th>
                                     </tr>
@@ -175,7 +177,7 @@
                                       $_due_amount -=$ac_val->_dr_amount ?? 0;
                                      @endphp
                                     <tr>
-                                      <th class="text-right" ><b> Less:{!! $ac_val->_ledger->_name ?? '' !!}
+                                      <th class="text-right" ><b>{!! $ac_val->_ledger->_name ?? '' !!}[+]
                                         </b></th>
                                       <th class="text-right">{!! _report_amount( $ac_val->_dr_amount ?? 0 ) !!}</th>
                                     </tr>
@@ -192,11 +194,11 @@
                                     @if($form_settings->_show_p_balance==1)
                                     <tr>
                                       <th class="text-right" ><b>Previous Balance</b></th>
-                                      <th class="text-right">{!! _report_amount($data->_p_balance ?? 0) !!}</th>
+                                      <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_p_balance ?? 0)) !!}</th>
                                     </tr>
                                     <tr>
                                       <th class="text-right" ><b>Current Balance</b></th>
-                                      <th class="text-right">{!! _report_amount($data->_l_balance ?? 0) !!}</th>
+                                      <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}</th>
                                     </tr>
                                     @endif
                                   </table>

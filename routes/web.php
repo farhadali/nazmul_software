@@ -92,6 +92,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('item-purchase-search', 'App\Http\Controllers\InventoryController@itemPurchaseSearch');
     Route::get('lot-item-information', 'App\Http\Controllers\InventoryController@lotItemInformation');
     Route::get('lot-item-information-reset', 'App\Http\Controllers\InventoryController@lotReset');
+    Route::get('item-sales-price-edit/{id}', 'App\Http\Controllers\InventoryController@salesPriceEdit');
+    Route::post('item-sales-price-update', 'App\Http\Controllers\InventoryController@salesPriceUpdate');
 
     
     Route::resource('store-house', StoreHouseController::class);

@@ -812,7 +812,7 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
 
            
 $_l_balance = _l_balance_update($request->_main_ledger_id);
-             \DB::table('sales')
+             \DB::table('sales_returns')
              ->where('id',$_master_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
 
@@ -1263,7 +1263,7 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
 
          
 $_l_balance = _l_balance_update($request->_main_ledger_id);
-             \DB::table('sales')
+             \DB::table('sales_returns')
              ->where('id',$_master_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
 

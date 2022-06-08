@@ -1,50 +1,43 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{$page_name}}</title>
+@extends('backend.layouts.app')
+@section('title',$page_name)
 
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome -->
-  
-  <!-- Theme style -->
-  <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
-  <style type="text/css">
-    .report_print_table td, .report_print_table th {
-        padding: .15rem !important;
-        vertical-align: top;
-        border-top: 1px solid #CCCCCC;
-    }
+@section('content')
+<style type="text/css">
+ 
+  @media print {
+   .table th {
+    vertical-align: top;
+    color: #000;
+    background-color: #fff; 
+}
+}
   </style>
-</head>
-<body>
-<div class="wrapper">
+<div style="padding-left: 20px;display: flex;">
+ 
+    <a class="nav-link"  href="{{url('lot-item-information')}}" role="button"><i class="fa fa-arrow-left"></i></a>
+    <a style="cursor: pointer;" class="nav-link"  title="Print" onclick="javascript:printDiv('printablediv')"><i class="fas fa-print"></i></a>
+      <a style="cursor: pointer;" onclick="fnExcelReport();" class="nav-link"  title="Excel Download" ><i class="fa fa-file-excel" aria-hidden="true"></i></a>
+  </div>
 
-<section class="invoice">
+<section class="invoice" id="printablediv">
    
     <!-- info row -->
-    <div class="row invoice-info">
-      <div class="col-sm-4 invoice-col">
-        <h2 class="page-header">
-           <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
-        </h2>
+    <div class="col-12">
+       <div style="text-align: center;">
+         <h3><img src="{{url('/')}}/{{$settings->logo}}" alt="{{$settings->name ?? '' }}" style="height: 50px;width: 50px"  > {{$settings->name ?? '' }}
+       
+       </h3>
+       <div>{{$settings->_address ?? '' }}<br>
+        Phone: {{$settings->_phone ?? '' }}<br>
+        Email: {{$settings->_email ?? '' }}</div>
+       </div>
+       <h3 class="text-center">  {{$page_name}}</h3>
+        
       </div>
-      <!-- /.col -->
-      <div class="col-sm-4 invoice-col">
-        <h3 class="text-center"><b>{{$page_name}} </b></h3>
-      </div>
-      <!-- /.col -->
-      <div class="col-sm-4 invoice-col text-right">
-      <p class="float-right">Date: {{ change_date_format(date('Y-m-d') ?? '') }} Time:{{ date('H:i:s') }}</p>
-      </div>
-      <!-- /.col -->
-    </div>
   
 <div class="table-responsive">
-   <table class="table table-bordered report_print_table">
+   <table  style="width: 100%" style="border:1px solid silver;">
                 <thead>
                     <tr>
                          <th>ID</th>
@@ -53,9 +46,9 @@
                          <th>Code</th>
                          <th>Model</th>
                          <th>Category</th>
+                         <th>Stock</th>
                          <th>Purchase Rate</th>
                          <th>Sales Rate</th>
-                         <th>Stock</th>
                          <th>Manufacture Company</th>
                          <th>Discount</th>
                          <th>Vat</th>
@@ -73,9 +66,9 @@
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_barcode ?? '' }}</td>
                             <td>{{ $data->_category->_name ?? '' }}</td>
+                            <td>{{ _report_amount($data->_balance ?? 0) }}</td>
                             <td>{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>
                             <td>{{ _report_amount($data->_sales_rate ?? 0 ) }}</td>
-                            <td>{{ $data->_balance ?? 0 }}</td>
                             <td>{{ $data->_manufacture_company ?? '' }}</td>
                             <td>{{ _report_amount( $data->_discount ?? 0 ) }}</td>
                             <td>{{ _report_amount( $data->_vat ?? 0 ) }}</td>
@@ -107,11 +100,4 @@
     
   </section>
 
-</div>
-<!-- ./wrapper -->
-<!-- Page specific script -->
-<script>
-  window.addEventListener("load", window.print());
-</script>
-</body>
-</html>
+@endsection

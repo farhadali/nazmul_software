@@ -36,7 +36,7 @@
               <table class="table" style="border:none;">
                   <tr> <td style="border:none;" > <b>{{$page_name}} No: {{ $data->id ?? '' }}</b></td></tr>
                   <tr> <td style="border:none;" > <b>Date: </b>{{ _view_date_formate($data->_date ?? '') }}</td></tr>
-                <tr> <td style="border:none;" > <b> Customer:</b>  {{$data->_ledger->_name ?? '' }}</td></tr>
+                <tr> <td style="border:none;" > <b> Supplier:</b>  {{$data->_ledger->_name ?? '' }}</td></tr>
                 <tr> <td style="border:none;" > <b> Phone:</b>  {{$data->_phone ?? '' }} </td></tr>
                 <tr> <td style="border:none;" > <b> Address:</b> {{$data->_address ?? '' }} </td></tr>
               </table>
@@ -46,7 +46,7 @@
                 <tr> <td class="text-center" style="border:none;font-size: 24px;"><b>{{$settings->name ?? '' }}</b></td> </tr>
                 <tr> <td class="text-center" style="border:none;"><b>{{$settings->_address ?? '' }}</b></td></tr>
                 <tr> <td class="text-center" style="border:none;"><b>{{$settings->_phone ?? '' }}</b>,<b>{{$settings->_email ?? '' }}</b></td></tr>
-                 <tr> <td class="text-center" style="border:none;"><h3>{{$page_name}} Invoice</h3></td> </tr>
+                 <tr> <td class="text-center" style="border:none;"><h3>{{$page_name}} </h3></td> </tr>
               </table>
             </td>
             <td style="border:none;width: 33%;text-align: right;">
@@ -73,15 +73,13 @@
                         
                               <table class="table">
                                 <thead >
-                                            <th class="text-middle " style="color:#000;" >SL</th>
-                                            <th class="text-middle " style="color:#000;" >Item</th>
+                                            <th class="text-left " style="color:#000;" >SL</th>
+                                            <th class="text-left " style="color:#000;" >Item</th>
                                             <th class="text-middle  @if($form_settings->_show_barcode==0) display_none @endif"  style="color:#000;">Barcode</th>
                                             <th class="text-right "  style="color:#000;">Qty</th>
                                             <th class="text-right " style="color:#000;" >Rate</th>
                                             <th class="text-right @if($form_settings->_show_vat==0) display_none @endif" style="color:#000;" >VAT%</th>
                                             <th class="text-right @if($form_settings->_show_vat==0) display_none @endif" style="color:#000;" >VAT Amount</th>
-                                            <th class="text-right  @if($form_settings->_inline_discount==0) display_none @endif" style="color:#000;" >Dis%</th>
-                                            <th class="text-right  @if($form_settings->_inline_discount==0) display_none @endif" style="color:#000;" >Discount</th>
                                             <th class="text-right " style="color:#000;" >Value</th>
                                             <th class="text-middle   @if(sizeof($permited_branch) ==1) display_none @endif " style="color:#000;" >Branch</th>
                                              <th class="text-middle   @if(sizeof($permited_costcenters) ==1) display_none @endif " style="color:#000;" >Cost Center</th>
@@ -108,12 +106,11 @@
                                      @endphp
                                             <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
                                             <td class="   @if($form_settings->_show_barcode==0) display_none @endif" >{!! $_item->_barcode ?? '' !!}</td>
-                                            <td class="text-right  " >{!! $_item->_qty ?? 0 !!}</td>
+                                            <td class="text-right  " >{!! _report_amount($_item->_qty ?? 0) !!}</td>
                                             <td class="text-right  " >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
-                                            <td class="text-right   @if($form_settings->_show_vat==0) display_none @endif" >{!! $_item->_vat ?? 0 !!}</td>
+                                            <td class="text-right   @if($form_settings->_show_vat==0) display_none @endif" >{!! _report_amount($_item->_vat ?? 0) !!}</td>
                                             <td class="text-right   @if($form_settings->_show_vat==0) display_none @endif" >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
-                                            <td class="text-right   @if($form_settings->_inline_discount==0) display_none @endif" >{!! $_item->_discount ?? 0 !!}</td>
-                                            <td class="text-right   @if($form_settings->_inline_discount==0) display_none @endif" >{!! $_item->_discount_amount ?? 0 !!}</td>
+                                            
                                             <td class="text-right  " >{!! _report_amount($_item->_value ?? 0) !!}</td>
                                             <td class=" @if(sizeof($permited_branch) == 1)  display_none @endif" >{!! $_item->_detail_branch->_name ?? '' !!}</td>
                                              <td class="@if(sizeof($permited_costcenters) == 1)  display_none @endif" >{!! $_item->_detail_cost_center->_name ?? '' !!}</td>
@@ -139,7 +136,7 @@
                                              @endif
                                             @endif
                                               <td class="text-right ">
-                                                <b>{{ $_qty_total ?? 0}}</b>
+                                                <b>{{ _report_amount($_qty_total ?? 0) }}</b>
                                                 
 
 
@@ -152,8 +149,6 @@
                                                  <b>{{ _report_amount($_vat_total ?? 0) }}</b>
                                               </td>
                                               
-                                            <td class=" text-right @if($form_settings->_inline_discount==0) display_none @endif " ></td>
-                                            <td class=" text-right @if($form_settings->_inline_discount==0) display_none @endif " ><b>{!! $_total_discount_amount ?? 0 !!}</b></td>
                                             
                                               <td class=" text-right">
                                                <b> {{ _report_amount($_value_total ?? 0) }}</b>
@@ -204,11 +199,11 @@
           @if($form_settings->_show_p_balance==1)
           <tr>
             <th class="text-right" ><b>Previous Balance</b></th>
-            <th class="text-right">{!! _report_amount($data->_p_balance ?? 0) !!}</th>
+            <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_p_balance ?? 0)) !!}</th>
           </tr>
           <tr>
             <th class="text-right" ><b>Current Balance</b></th>
-            <th class="text-right">{!! _report_amount($data->_l_balance ?? 0) !!}</th>
+            <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}</th>
           </tr>
           @endif
           
@@ -220,10 +215,10 @@
     </div>
      <!-- Table row -->
      @php
-          $s_account = $data->s_account ?? [];
+          $purchase_account = $data->purchase_account ?? [];
           @endphp
           
-    @if(sizeof($s_account) > 0)
+    @if(sizeof($purchase_account) > 0)
 
     <div class="row">
       <div class="col-12 table-responsive">
@@ -243,7 +238,7 @@
             $_total_dr_amount =0;
             $_total_cr_amount =0;
             @endphp
-            @forelse($data->s_account as $detail_key=>$detail)
+            @forelse($data->purchase_account as $detail_key=>$detail)
             
           <tr>
             <td>{!! $detail->id ?? '' !!}</td>

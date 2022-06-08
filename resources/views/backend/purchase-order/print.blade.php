@@ -1,35 +1,30 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{$page_name}}</title>
+@extends('backend.layouts.app')
+@section('title',$page_name)
 
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <link rel="icon" type="image/x-icon" href="{{asset('/')}}{{$settings->logo ?? ''}}">
-  <!-- Font Awesome -->
-  
-  <!-- Theme style -->
-  <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
-  <style type="text/css">
-    .display_none{
-    display: none;
+@section('content')
+<style type="text/css">
+ 
+  @media print {
+   .table th {
+    vertical-align: top;
+    color: #000;
+    background-color: #fff; 
+}
 }
   </style>
-  <style type="text/css">
-    .table td, .table th {
-        padding: .15rem !important;
-        vertical-align: top;
-        border: 1px solid #CCCCCC;
-    }
-  </style>
-</head>
-<body>
-<div class="wrapper">
+<div style="padding-left: 20px;display: flex;">
+    <a class="nav-link"  href="{{url('purchase-order')}}" role="button"><i class="fa fa-arrow-left"></i></a>
+ @can('purchase-order-edit')
+    <a class="nav-link"  title="Edit" href="{{ route('purchase-order.edit',$data->id) }}">
+                                      <i class="nav-icon fas fa-edit"></i>
+     </a>
+  @endcan
+    <a style="cursor: pointer;" class="nav-link"  title="Print" onclick="javascript:printDiv('printablediv')"><i class="fas fa-print"></i></a>
+      <a style="cursor: pointer;" onclick="fnExcelReport();" class="nav-link"  title="Excel Download" ><i class="fa fa-file-excel" aria-hidden="true"></i></a>
+  </div>
 
-<section class="invoice">
+<section class="invoice" id="printablediv">
     <!-- title row -->
 
     <div class="row">
@@ -50,7 +45,7 @@
                 <tr> <td class="text-center" style="border:none;font-size: 24px;"><b>{{$settings->name ?? '' }}</b></td> </tr>
                 <tr> <td class="text-center" style="border:none;"><b>{{$settings->_address ?? '' }}</b></td></tr>
                 <tr> <td class="text-center" style="border:none;"><b>{{$settings->_phone ?? '' }}</b>,<b>{{$settings->_email ?? '' }}</b></td></tr>
-                 <tr> <td class="text-center" style="border:none;"><b>{{$page_name}} Invoice</b></td> </tr>
+                 <tr> <td class="text-center" style="border:none;"><h3>{{$page_name}} Invoice</h3></td> </tr>
               </table>
             </td>
             <td style="border:none;width: 33%;text-align: right;">
@@ -74,7 +69,7 @@
                               <table class="table">
                                 <thead >
                                             <th class="text-middle" >SL</th>
-                                            <th class="text-middle" >Item</th>
+                                            <th class="text-left" >Item</th>
                                             <th class="text-right" >Qty</th>
                                             <th class="text-right" >Rate</th>
                                             <th class="text-right" >Value</th>
@@ -106,7 +101,7 @@
                                      @endphp
                                             <td class="" >{!! $_item->_items->_name ?? '' !!}</td>
                                           
-                                            <td class="text-right" >{!! $_item->_qty ?? 0 !!}</td>
+                                            <td class="text-right" >{!! _report_amount($_item->_qty ?? 0) !!}</td>
                                             <td class="text-right" >{!! _report_amount($_item->_rate ?? 0) !!}</td>
                                             <td class="text-right" >{!! _report_amount($_item->_value ?? 0) !!}</td>
                                              @if(sizeof($permited_branch) > 1)
@@ -130,7 +125,7 @@
                                   <tr>
                                               <td colspan="2" class="text-right"> <b>Total</b></td>
                                               <td class="text-right">
-                                                <b>{{ $_qty_total ?? 0}}</b> </td>
+                                                <b>{{ _report_amount($_qty_total ?? 0) }}</b> </td>
                                               <td></td>
                                               
                                               <td class="text-right">
@@ -180,11 +175,4 @@
     <!-- /.row -->
   </section>
 
-</div>
-<!-- ./wrapper -->
-<!-- Page specific script -->
-<script>
-  window.addEventListener("load", window.print());
-</script>
-</body>
-</html>
+@endsection

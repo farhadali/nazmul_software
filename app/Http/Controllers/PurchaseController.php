@@ -36,7 +36,7 @@ class PurchaseController extends Controller
          $this->middleware('permission:purchase-create', ['only' => ['create','store']]);
          $this->middleware('permission:purchase-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:purchase-delete', ['only' => ['destroy']]);
-         $this->page_name = "Purchase";
+         $this->page_name = "Purchase Invoice";
     }
     /**
      * Display a listing of the resource.

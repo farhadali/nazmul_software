@@ -13,9 +13,9 @@
 }
   </style>
 <div style="padding-left: 20px;display: flex;">
- <a class="nav-link"  href="{{url('purchase-return')}}" role="button"><i class="fa fa-arrow-left"></i></a>
- @can('purchase-return-edit')
-    <a class="nav-link"  title="Edit" href="{{ route('purchase-return.edit',$data->id) }}">
+ <a class="nav-link"  href="{{url('purchase')}}" role="button"><i class="fa fa-arrow-left"></i></a>
+ @can('purchase-edit')
+    <a class="nav-link"  title="Edit" href="{{ route('purchase.edit',$data->id) }}">
                                       <i class="nav-icon fas fa-edit"></i>
      </a>
   @endcan
@@ -35,7 +35,7 @@
       </div>
       <div class="col-4">
        <h3 class="page-header text-center">
-        {{$page_name}} Invoice
+        {{$page_name}}
        </h3>
       </div>
       <div class="col-4">
@@ -48,7 +48,7 @@
 
      <div class="row invoice-info">
       <div class="col-sm-4 invoice-col">
-       From
+       
        <address>
         <strong>{{$settings->name ?? '' }}</strong><br>
        Address:  {{$settings->_address ?? '' }}<br>
@@ -58,19 +58,19 @@
       </div>
 
       <div class="col-sm-4 invoice-col">
-       Customer:
+       Supplier:
        <address>
         <strong>{{$data->_ledger->_name ?? '' }}</strong><br>
-        {{$data->_address ?? '' }}<br>
+        Address:{{$data->_address ?? '' }}<br>
         Phone: {{$data->_phone ?? '' }}<br>
         Email: {{$data->_email ?? '' }}
        </address>
       </div>
 
       <div class="col-sm-4 invoice-col">
-       <b>{{$page_name}} Invoice/Bill No: {{ $data->id ?? '' }}</b><br>
+       <b>Invoice/Bill No: {{ $data->id ?? '' }}</b><br>
        <b>Referance:</b> {!! $data->_referance ?? '' !!}<br>
-       <b>Account Balance:</b> {!! _report_amount($data->_l_balance ?? 0) !!}<br>
+       <b>Account Balance:</b>  {!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}<br>
        <b>Created By:</b> {!! $data->_user_name ?? '' !!}<br>
        <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}
       </div>
@@ -93,7 +93,7 @@
          </tr>
         </thead>
         <tbody>
-          @php
+         @php
           $_master_details = $data->_master_details ?? [];
           @endphp
            @if(sizeof( $_master_details) > 0)
@@ -127,12 +127,12 @@
                                   </tr>
                                   @empty
                                   @endforelse
-                              <tr>
+                            <tr>
                               <td colspan="2" class="text-right "><b>Total</b></td>
-                              <td class="text-right "> <b>{{ _report_amount($_qty_total ?? 0)}}</b> </td>
+                              <td class="text-right "> <b>{{_report_amount( $_qty_total ?? 0)}}</b> </td>
                               <td></td>
-                              <td class="text-right "> <b>{{ _report_amount($_total_discount_amount ?? 0)}}</b> </td>
-                              <td class="text-right "> <b>{{_report_amount( $_vat_total ?? 0)}}</b> </td>
+                              <td class="text-right "> <b>{{_report_amount( $_total_discount_amount ?? 0) }}</b> </td>
+                              <td class="text-right "> <b>{{ _report_amount($_vat_total ?? 0) }}</b> </td>
                               <td class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
                               </td>
                             </tr>
@@ -142,7 +142,7 @@
                                 <tr>
                                   <td>
 
-                                    {{$settings->_purchase_return_note ?? '' }}
+                                    {{$settings->_purchse_note ?? '' }}
                                   </td>
                                 </tr>
                                 <tr>
@@ -173,8 +173,8 @@
                                       <th class="text-right" ><b>Net Total</b></th>
                                       <th class="text-right">{!! _report_amount($data->_total ?? 0) !!}</th>
                                     </tr>
-                                    @php
-                                    $accounts = $data->s_account ?? [];
+                                     @php
+                                    $accounts = $data->purchase_account ?? [];
                                     $_due_amount =$data->_total ?? 0;
                                     @endphp
                                     @if(sizeof($accounts) > 0)
@@ -212,11 +212,11 @@
                                     @if($form_settings->_show_p_balance==1)
                                     <tr>
                                       <th class="text-right" ><b>Previous Balance</b></th>
-                                      <th class="text-right">{!! _report_amount($data->_p_balance ?? 0) !!}</th>
+                                      <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_p_balance ?? 0)) !!}</th>
                                     </tr>
                                     <tr>
                                       <th class="text-right" ><b>Current Balance</b></th>
-                                      <th class="text-right">{!! _report_amount($data->_l_balance ?? 0) !!}</th>
+                                      <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}</th>
                                     </tr>
                                     @endif
                                   </table>

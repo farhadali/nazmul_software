@@ -52,7 +52,7 @@
        <b>{{$page_name}} No: {{ $data->id ?? '' }}</b><br>
        <b>Date: {!! _view_date_formate($data->_date ?? '') !!}</b><br>
        <b>Referance:</b> {!! $data->_referance ?? '' !!}<br>
-       <b>Account Balance:</b> {!! _report_amount($data->_l_balance ?? 0) !!}<br>
+       <b>Account Balance:</b>{!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}<br>
        <b>Created By:</b> {!! $data->_user_name ?? '' !!}<br>
        <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}
       </div>
@@ -165,8 +165,8 @@
                                       <th class="text-right" ><b>Net Total</b></th>
                                       <th class="text-right">{!! _report_amount($data->_total ?? 0) !!}</th>
                                     </tr>
-                                    @php
-                                    $accounts = $data->s_account ?? [];
+                                     @php
+                                    $accounts = $data->purchase_account ?? [];
                                     $_due_amount =$data->_total ?? 0;
                                     @endphp
                                     @if(sizeof($accounts) > 0)
@@ -204,11 +204,11 @@
                                     @if($form_settings->_show_p_balance==1)
                                     <tr>
                                       <th class="text-right" ><b>Previous Balance</b></th>
-                                      <th class="text-right">{!! _report_amount($data->_p_balance ?? 0) !!}</th>
+                                      <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_p_balance ?? 0))  !!}</th>
                                     </tr>
                                     <tr>
                                       <th class="text-right" ><b>Current Balance</b></th>
-                                      <th class="text-right">{!! _report_amount($data->_l_balance ?? 0) !!}</th>
+                                      <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0) ) !!}</th>
                                     </tr>
                                     @endif
                                   </table>

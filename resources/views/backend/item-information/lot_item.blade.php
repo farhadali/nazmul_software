@@ -79,6 +79,8 @@ if($currentURL === $current){
                 <div class="table-responsive">
                   <table class="table table-bordered">
                       <tr>
+                        <th>##</th>
+                         <th>SL</th>
                          <th>ID</th>
                          <th>Ref</th>
                          <th>Item</th>
@@ -107,7 +109,12 @@ if($currentURL === $current){
                       @endphp
                         <tr>
                            
-                           
+                           <td>
+                             @can('item-sales-price-update')
+                            <a class="nav-link"  href="{{url('item-sales-price-edit')}}/{{$data->id}}" role="button"><i class="nav-icon fas fa-edit"></i></a>
+                            @endcan
+                          </td>
+                            <td>{{ ($key+1) }}</td>
                             <td>{{ $data->id ?? '' }}</td>
                             <td><a class="" href="{{ route('purchase.edit',$data->_master_id) }}">
                                       P-{{$data->_master_id}}
@@ -116,20 +123,20 @@ if($currentURL === $current){
                             <td>{{ $data->_units->_name ?? '' }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_barcode ?? '' }}</td>
-                            <td class="text-right">{{ $data->_qty ?? 0 }}</td>
+                            <td class="text-right">{{ _report_amount($data->_qty ?? 0) }}</td>
                             <td class="text-right">{{ _report_amount( $data->_discount ?? 0 ) }}</td>
                             <td class="text-right">{{ _report_amount( $data->_vat ?? 0 ) }}</td>
                             <td class="text-right">{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>
                             <td class="text-right">{{ _report_amount($data->_sales_rate ?? 0 ) }}</td>
                             <td class="text-right">{{ _report_amount(($data->_qty*$data->_pur_rate) ) }}</td>
-                            <td>{{ $data->_manufacture_date ?? '' }}</td>
-                            <td>{{ $data->_expire_date ?? '' }}</td>
+                            <td>{{ _view_date_formate($data->_manufacture_date ?? '') }}</td>
+                            <td>{{ _view_date_formate($data->_expire_date ?? '') }}</td>
                            <td>{{ selected_status($data->_status) }}</td>
                            
                         </tr>
                         @endforeach
                         <tr>
-                          <th colspan="6" class="text-left">Total</th>
+                          <th colspan="8" class="text-right">Total</th>
                           <th class="text-right">{{_report_amount($total_qty)}}</th>
                           <th colspan="4"></th>
                           <th class="text-right">{{_report_amount($total_value)}}</th>
