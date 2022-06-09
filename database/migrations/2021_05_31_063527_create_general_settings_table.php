@@ -30,6 +30,7 @@ class CreateGeneralSettingsTable extends Migration
             $table->longText('description')->nullable();
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
+            $table->integer('_ac_type')->default(0);
             $table->timestamps();
         });
     }

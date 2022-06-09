@@ -57,26 +57,7 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header">
-                 @if (count($errors) > 0)
-                           <div class="alert ">
-                                <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                                <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                                </ul>
-                            </div>
-                        @endif
-                  @if ($message = Session::get('success'))
-                    <div class="alert ">
-                      <p>{{ $message }}</p>
-                    </div>
-                    @endif
-                  @if ($message = Session::get('danger'))
-                    <div class="alert _required _over_qty">
-                      <p>{{ $message }}</p>
-                    </div>
-                    @endif
+                @include('backend.message.message')
                     <div class="alert _required ">
                       <span class="_over_qty"></span> 
                     </div>
@@ -99,8 +80,26 @@
                                   </div>
                               </div>
                         </div>
+                         <div class="col-xs-12 col-sm-12 col-md-3 ">
+                            <div class="form-group">
+                              <label class="mr-2" for="_main_ledger_id">Customer:<span class="_required">*</span></label>
+                            <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="{{old('_search_main_ledger_id')}}" placeholder="Customer" required>
 
-                        <div class="col-xs-12 col-sm-12 col-md-2">
+                            <input type="hidden" id="_main_ledger_id" name="_main_ledger_id" class="form-control _main_ledger_id" value="{{old('_main_ledger_id')}}" placeholder="Customer" required>
+                            <div class="search_box_main_ledger"> </div>
+
+                                
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3 ">
+                            <div class="form-group">
+                              <label class="mr-2" for="_order_number">Invoice Number:</label>
+                              <input type="text" id="_order_number" name="_order_number" class="form-control _order_number" value="{{old('_order_number')}}" placeholder="Invoice Number" readonly >
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-2 @if(sizeof($permited_branch) == 1) display_none @endif" >
                             <div class="form-group ">
                                 <label>Branch:<span class="_required">*</span></label>
                                <select class="form-control" name="_branch_id" required >
@@ -113,27 +112,15 @@
                             </div>
                         </div>
                         
-                        <div class="col-xs-12 col-sm-12 col-md-2 ">
+                        <div class="col-xs-12 col-sm-12 col-md-2 display_none">
                             <div class="form-group">
                               <label class="mr-2" for="_order_ref_id">Sales Order:</label>
                               <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id')}}" placeholder="Sales Order" >
                                 
                             </div>
                         </div>
-                        @if($_show_delivery_man ==1)
-                        <div class="col-xs-12 col-sm-12 col-md-2 ">
-                            <div class="form-group">
-                              <label class="mr-2" for="_delivery_man">Delivery Man:</label>
-                              <input type="text" id="_search_main_delivery_man" name="_search_main_delivery_man" class="form-control _search_main_delivery_man" 
-                              value="@if ($delivery_man_name_leder = Session::get('delivery_man_name_leder')) {{ $delivery_man_name_leder}} @endif" placeholder="Delivery Man" >
-
-                            <input type="hidden" id="_delivery_man" name="_delivery_man_id" class="form-control _delivery_man" value="@if ($_delivery_man_id = Session::get('_delivery_man_id')) {{ $_delivery_man_id}} @endif" placeholder="Delivery Man" >
-                            <div class="search_box_delivery_man"> </div>
-                            </div>
-                        </div>
-                        @endif
                          @if($_show_sales_man ==1)
-                        <div class="col-xs-12 col-sm-12 col-md-2 ">
+                        <div class="col-xs-12 col-sm-12 col-md-3 ">
                             <div class="form-group">
                               <label class="mr-2" for="_sales_man">Sales Man:</label>
                               <input type="text" id="_search_main_sales_man" name="_search_main_sales_man" class="form-control _search_main_sales_man" value="@if ($sales_man_name_leder = Session::get('sales_man_name_leder')) {{ $sales_man_name_leder}} @endif" placeholder="Sales Man" >
@@ -143,24 +130,10 @@
                             </div>
                         </div>
                         @endif
-                        <div class="col-xs-12 col-sm-12 col-md-2 ">
-                            <div class="form-group">
-                              <label class="mr-2" for="_order_number">Order Number:</label>
-                              <input type="text" id="_order_number" name="_order_number" class="form-control _order_number" value="{{old('_order_number')}}" placeholder="Order Number" readonly >
-                                
-                            </div>
-                        </div>
-                         <div class="col-xs-12 col-sm-12 col-md-3 ">
-                            <div class="form-group">
-                              <label class="mr-2" for="_main_ledger_id">Customer:<span class="_required">*</span></label>
-                            <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="{{old('_search_main_ledger_id')}}" placeholder="Customer" required>
-
-                            <input type="hidden" id="_main_ledger_id" name="_main_ledger_id" class="form-control _main_ledger_id" value="{{old('_main_ledger_id')}}" placeholder="Customer" required>
-                            <div class="search_box_main_ledger"> </div>
-
-                                
-                            </div>
-                        </div>
+                       
+                        
+                        
+                        
                         <div class="col-xs-12 col-sm-12 col-md-3 ">
                             <div class="form-group">
                               <label class="mr-2" for="_phone">Phone:</label>
@@ -182,7 +155,18 @@
                               <input type="text" id="_referance" name="_referance" class="form-control _referance" value="{{old('_referance')}}" placeholder="Referance" >
                             </div>
                         </div>
-                         
+                          @if($_show_delivery_man ==1)
+                        <div class="col-xs-12 col-sm-12 col-md-3 ">
+                            <div class="form-group">
+                              <label class="mr-2" for="_delivery_man">Delivery Man:</label>
+                              <input type="text" id="_search_main_delivery_man" name="_search_main_delivery_man" class="form-control _search_main_delivery_man" 
+                              value="@if ($delivery_man_name_leder = Session::get('delivery_man_name_leder')) {{ $delivery_man_name_leder}} @endif" placeholder="Delivery Man" >
+
+                            <input type="hidden" id="_delivery_man" name="_delivery_man_id" class="form-control _delivery_man" value="@if ($_delivery_man_id = Session::get('_delivery_man_id')) {{ $_delivery_man_id}} @endif" placeholder="Delivery Man" >
+                            <div class="search_box_delivery_man"> </div>
+                            </div>
+                        </div>
+                        @endif
                         
                         <div class="col-md-12  ">
                              <div class="card">
@@ -209,7 +193,7 @@
                                            
                                              
                                             <th class="text-left @if($_inline_discount  ==0) display_none @endif" >Dis%</th>
-                                            <th class="text-left @if($_inline_discount  ==0) display_none @endif" >Dis</th>
+                                            <th class="text-left @if($_inline_discount  ==0) display_none @endif" >Discount</th>
                                             <th class="text-left" >Value</th>
 
                                             <th class="text-middle @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
@@ -374,132 +358,12 @@
                           </div>
                         </div>
                         
-                       
-                          <div class="col-md-12  ">
-                             <div class="card">
-                              <div class="card-header">
-                                <strong>Account Details</strong>
-                              </div>
-                              <div class="card-body">
-                                <div class="table-responsive">
-                                      <table class="table table-bordered" >
-                                          <thead>
-                                            <th>&nbsp;</th>
-                                            <th>Ledger</th>
-                                            
-                                          
-                                            @if(sizeof($permited_costcenters)>1)
-                                               <th>Branch</th>
-                                              @else
-                                               <th class="display_none">Branch</th>
-                                              @endif
-                                              @if(sizeof($permited_costcenters)>1)
-                                                <th>Cost Center</th>
-                                              @else
-                                                <th class="display_none">Cost Center</th>
-                                              @endif
-                                            <th>Short Narr.</th>
-                                            <th>Dr. Amount</th>
-                                            <th>Cr. Amount</th>
-                                          </thead>
-                                          <tbody class="area__voucher_details form_body" id="area__voucher_details">
-                                            <tr class="_voucher_row">
-                                              <td>
-                                                <a  href="#none" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a>
-                                              </td>
-                                              <td>
-                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger"  >
-                                                <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
-                                                <div class="search_box">
-                                                  
-                                                </div>
-                                              </td>
-                                               @if(sizeof($permited_costcenters)>1)
-                                              <td>
-                                                <select class="form-control width_150_px _branch_id_detail" name="_branch_id_detail[]"  required>
-                                                  @forelse($permited_branch as $branch )
-                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                              </td>
-                                              @else
-                                              <td class="display_none">
-                                                <select class="form-control width_150_px _branch_id_detail" name="_branch_id_detail[]"  required>
-                                                  @forelse($permited_branch as $branch )
-                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                              </td>
-                                              @endif
-
-                                              @if(sizeof($permited_costcenters)>1)
-                                                <td>
-                                                 <select class="form-control width_150_px _cost_center" name="_cost_center[]" required >
-                                            
-                                                  @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_cost_center)) @if($request->_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                              </td>
-                                              @else
-                                              <td class="display_none">
-                                                 <select class="form-control width_150_px _cost_center" name="_cost_center[]" required >
-                                            
-                                                  @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_cost_center)) @if($request->_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
-                                                  @empty
-                                                  @endforelse
-                                                </select>
-                                              </td>
-                                              @endif
-                                              
-                                              <td>
-                                                <input type="text" name="_short_narr[]" class="form-control width_250_px _short_narr" placeholder="Short Narr">
-                                              </td>
-                                              <td>
-                                                <input type="number" name="_dr_amount[]" class="form-control  _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',0)}}">
-                                              </td>
-                                              <td>
-                                                <input type="number" name="_cr_amount[]" class="form-control  _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',0)}}">
-                                              </td>
-                                            </tr>
-                                          </tbody>
-                                          <tfoot>
-                                            <tr>
-                                              <td>
-                                                <a href="#none"  class="btn btn-default btn-sm" onclick="voucher_row_add(event)"><i class="fa fa-plus"></i></a>
-                                              </td>
-                                              <td></td>
-                                              @if(sizeof($permited_costcenters)>1)
-                                               <td></td>
-                                              @else
-                                               <td class="display_none"></td>
-                                              @endif
-                                              @if(sizeof($permited_costcenters)>1)
-                                              <td></td>
-                                              @else
-                                              <td class="display_none"></td>
-                                              @endif
-                                             
-                                              
-                                              <td  class="text-right"><b>Total</b></td>
-                                              <td>
-                                                <input type="number" step="any" min="0" name="_total_dr_amount" class="form-control _total_dr_amount" value="0" readonly required>
-                                              </td>
-                                              <td>
-                                                <input type="number" step="any" min="0" name="_total_cr_amount" class="form-control _total_cr_amount" value="0" readonly required>
-                                              </td>
-                                            </tr>
-                                            
-                                          </tfoot>
-                                      </table>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
+                      @if($settings->_ac_type==1)
+                      @include('backend.sales.create_acc_cb')
+                         
+                      @else
+                       @include('backend.sales.create_acc_detail')
+                      @endif
 
 
                         <div class="col-xs-12 col-sm-12 col-md-12 mb-10">
@@ -915,7 +779,7 @@ $(document).on("change","#_discount_input",function(){
 
  var single_row =  `<tr class="_voucher_row">
                       <td><a  href="" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a></td>
-                      <td><input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger"   >
+                      <td><input type="text" name="_search_ledger_id[]" @if($settings->_ac_type==1) attr_account_head_no="1" @endif  class="form-control _search_ledger_id width_280_px" placeholder="Ledger"   >
                       <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
                       <div class="search_box">
                       </div>
@@ -963,7 +827,7 @@ $(document).on("change","#_discount_input",function(){
                             <td>
                               <input type="number" name="_dr_amount[]" class="form-control  _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',0)}}">
                             </td>
-                            <td>
+                            <td class=" @if($settings->_ac_type==1) display_none @endif ">
                               <input type="number" name="_cr_amount[]" class="form-control  _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',0)}}">
                               </td>
                             </tr>`;
@@ -1169,13 +1033,16 @@ function purchase_row_add(event){
 
 
 
-
+@if($settings->_ac_type==0)
     if( parseFloat(_total_dr_amount) !=parseFloat(_total_cr_amount)){
       $(document).find("._total_dr_amount").addClass('required_border').focus();
       $(document).find("._total_cr_amount").addClass('required_border').focus();
+       alert("Account Details Dr. And Cr. Amount Not Equal");
       return false;
 
-    }else if(_voucher_type ==""){
+    }
+@endif
+    if(_voucher_type ==""){
        $(document).find('._voucher_type').addClass('required_border').focus();
        alert('Please Select Voucher Type.');
       return false;

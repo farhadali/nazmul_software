@@ -726,7 +726,20 @@ function after_request_date__today(_date){
         sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));  
 
       return (sa);
-    }     
+    }  
+
+
+    function _lock_action(_id,_action,_table_name){
+       $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} });
+        $.ajax({
+           type:'POST',
+           url:"{{ url('_lock_action') }}",
+           data:{_id,_action,_table_name},
+           success:function(data){
+              console.log(data);
+           }
+        });
+    }   
 
 </script>
 

@@ -283,7 +283,10 @@ class VoucherMasterController extends Controller
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
         $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
-        $data = VoucherMaster::with(['_master_branch','_master_details'])->find($id);
+        $data = VoucherMaster::with(['_master_branch','_master_details'])->where('_lock',0)->find($id);
+         if(!$data){
+            return redirect()->back()->with('danger','You have no permission to edit or update !');
+         }
 
        return view('backend.voucher.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','data'));
     }
@@ -340,6 +343,11 @@ class VoucherMasterController extends Controller
             '_note' => 'required',
             '_date' => 'required'
         ]);
+
+        $data = VoucherMaster::where('_lock',0)->find($request->_master_id);
+         if(!$data){
+            return redirect()->back()->with('danger','You have no permission to edit or update !');
+         }
 
 //return $request->all();
       //return $request->all();  

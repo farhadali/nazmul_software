@@ -868,10 +868,12 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
         $vat_accounts =[];
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
-          $data = SalesReturn::with(['_master_branch','_master_details','s_account','_ledger'])->find($id);
-    if(  sizeof($data->_master_details)==0){
-        return redirect()->back()->with('danger','No Data Found');
-    }
+          $data = SalesReturn::with(['_master_branch','_master_details','s_account','_ledger'])->where('_lock',0)->find($id);
+
+         if(!$data){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
+        if(  sizeof($data->_master_details)==0){
+                return redirect()->back()->with('danger','No Data Found');
+        }
         
        return view('backend.sales-return.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data'));
     }
@@ -896,7 +898,8 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
         ]);
  $_sales_id = $request->_sales_return_id;
      
-       
+  $_lock_check =  SalesReturn::where('_lock',0)->find($_sales_id);
+ if(!$_lock_check){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }     
        
         $_sales_detils_unique_ids = array();
         $_sales_detail_ref_ids =  $request->_sales_detail_ref_id;

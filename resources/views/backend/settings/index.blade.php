@@ -1,5 +1,5 @@
 @extends('backend.layouts.app')
-
+@section('title','General Settings')
 
 @section('content')
 
@@ -18,16 +18,7 @@
       </div><!-- /.container-fluid -->
     </div>
     <div class="message-area">
-    @if (count($errors) > 0)
-           <div class="alert alert-danger">
-                <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-                </ul>
-            </div>
-        @endif
+    @include('backend.message.message')
     </div>
     <div class="content">
       <div class="container-fluid">
@@ -39,7 +30,13 @@
                 <form method="POST" action="{{route('admin-settings-store')}}" enctype="multipart/form-data">
                @csrf
                     <div class="row">
-                      
+                      <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <strong>LOGO:</strong>
+                               <input type="file" accept="image/*" onchange="loadFile(event,1 )"  name="logo" class="form-control">
+                               <img id="output_1" class="banner_image_create" src="{{asset('/')}}{{$settings->logo ?? ''}}"  style="max-height:100px;max-width: 100px; " />
+                            </div>
+                        </div>
                         <div class="col-xs-6 col-sm-6 col-md-6">
                             <div class="form-group">
                                 <strong>Title:</strong>
@@ -119,19 +116,17 @@
                                 <textarea class="form-control" name="_purchase_return_note" >{{old('_purchase_return_note',$settings->_purchase_return_note ?? '' )}}</textarea>
                             </div>
                         </div>
-
-
-
-
-
-                        <div class="col-xs-6 col-sm-6 col-md-6 mb-5">
+                        <div class="col-xs-6 col-sm-6 col-md-6">
                             <div class="form-group">
-                                <strong>LOGO:</strong>
-                               <input type="file" accept="image/*" onchange="loadFile(event,1 )"  name="logo" class="form-control">
-                               <img id="output_1" class="banner_image_create" src="{{asset('/')}}{{$settings->logo ?? ''}}"  style="max-height:200px;max-width: 200px; " />
+                                <strong>Account Details Type: [If use multiple branch and multiple cost center must use All Ledger Option]</strong>
+                                <select class="form-control " name="_ac_type">
+                                      <option value="0" @if($settings->_ac_type==0) selected @endif >All Ledger</option>
+                                      <option value="1" @if($settings->_ac_type==1) selected @endif >Only Cash & Bank Ledger</option>
+                                    </select>
                             </div>
                         </div>
-                        
+
+                        <div  style="margin-bottom: 100px;width: 100%; "><hr></div>
                         
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
                             <button type="submit" class="btn btn-success submit-button ml-5"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>

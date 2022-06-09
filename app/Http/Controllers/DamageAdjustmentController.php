@@ -492,7 +492,10 @@ class DamageAdjustmentController extends Controller
         $vat_accounts =[];
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
-         $data =  DamageAdjustment::with(['_master_branch','_master_details','_ledger'])->find($id);
+         $data =  DamageAdjustment::with(['_master_branch','_master_details','_ledger'])->where('_lock',0)->find($id);
+         if(!$data){
+            return redirect()->back()->with('danger','You have no permission to edit or update !');
+         }
         
        return view('backend.damage.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data'));
     }
@@ -506,6 +509,8 @@ class DamageAdjustmentController extends Controller
      */
    public function update(Request $request)
     {
+
+
          
         //return $request->all();
          $this->validate($request, [
@@ -515,6 +520,11 @@ class DamageAdjustmentController extends Controller
             '_form_name' => 'required',
             '_sales_id' => 'required'
         ]);
+
+         $data =  DamageAdjustment::where('_lock',0)->find($request->_sales_id);
+         if(!$data){
+            return redirect()->back()->with('danger','You have no permission to edit or update !');
+         }
     //###########################
     // Purchase Master information Save Start
     //###########################

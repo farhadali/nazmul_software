@@ -18,11 +18,7 @@
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
-    @if ($message = Session::get('success'))
-    <div class="alert alert-success">
-      <p>{{ $message }}</p>
-    </div>
-    @endif
+     @include('backend.message.message')
     <div class="content">
       <div class="container-fluid">
         <div class="row">

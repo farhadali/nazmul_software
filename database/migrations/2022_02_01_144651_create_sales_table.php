@@ -44,6 +44,7 @@ class CreateSalesTable extends Migration
             $table->integer('_sales_man_id')->nullable();
             $table->string('_sales_type',60)->nullable();
             $table->tinyInteger('_status')->default(0);
+            $table->tinyInteger('_lock')->default(0);
             $table->string('_created_by',60)->nullable();
             $table->string('_updated_by',60)->nullable();
             $table->timestamps();

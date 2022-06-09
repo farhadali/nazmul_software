@@ -585,7 +585,9 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
         $vat_accounts = AccountLedger::where('_account_group_id',47)->get();
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
-         $data =  PurchaseReturn::with(['_master_branch','_master_details','purchase_account','_ledger'])->find($id);
+         $data =  PurchaseReturn::with(['_master_branch','_master_details','purchase_account','_ledger'])->where('_lock',0)->find($id);
+        
+     if(!$data){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
           $sales_number = SalesDetail::where('_purchase_invoice_no',$id)->count();
        return view('backend.purchase-return.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data','sales_number'));
     }
@@ -625,6 +627,10 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
          $_purchase_detal_refs = $request->_purchase_detal_ref;
         $checkqty = array();
         $over_qtys = array();
+
+        $_lock_check =  PurchaseReturn::where('_lock',0)->find($purchase_id); 
+     if(!$_lock_check){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
+
     //Prevoius Return information
      $previous_infos = PurchaseReturnDetail::where('_no',$purchase_id)->get();
     foreach ($previous_infos as $value) {

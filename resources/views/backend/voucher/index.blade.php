@@ -14,11 +14,7 @@
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
-    @if ($message = Session::get('success'))
-    <div class="alert alert-success">
-      <p>{{ $message }}</p>
-    </div>
-    @endif
+     @include('backend.message.message')
     <div class="content">
       <div class="container-fluid">
         <div class="row">
@@ -87,6 +83,7 @@
                          <th class="_nv_th_note"><b>Note</b></th>
                          <th class="_nv_th_branch"><b>Branch</b></th>
                          <th class="_nv_th_user"><b>User</b></th>
+                         <th>Lock</th>
                       </tr>
                       @php
                       $sum_of_amount=0;
@@ -146,6 +143,11 @@
                             <td>{{ $data->_note ?? '' }}</td>
                             <td>{{ $data->_master_branch->_name ?? '' }}</td>
                             <td>{{ $data->_user_name ?? ''  }}</td>
+                            <td>
+                              @can('lock-permission')
+                              <input class="form-control _invoice_lock" type="checkbox" name="_lock" _attr_invoice_id="{{$data->id}}" value="{{$data->_lock}}" @if($data->_lock==1) checked @endif>
+                              @endcan
+                            </td>
                             
                            
                         </tr>
@@ -203,6 +205,7 @@
                           <td colspan="5" class="text-center"><b>Total</b></td>
                           <td class="text-right"><b>{{ _report_amount($sum_of_amount) }} </b></td>
                           <td colspan="4"></td>
+                          <td></td>
                         </tr>
                     </table>
                 </div>
@@ -287,7 +290,20 @@ function after_request_date__today(_date){
 
 });
 
-
+  $(document).on("click","._invoice_lock",function(){
+    var _id = $(this).attr('_attr_invoice_id');
+    var _table_name ="voucher_masters";
+   if($(this).is(':checked')){
+            $(this).prop("selected", "selected");
+          var _action = 1;
+        } else {
+            $(this).removeAttr("selected");
+          var _action = 0;
+           
+        }
+      _lock_action(_id,_action,_table_name)
+       
+  })
 
 </script>
 @endsection

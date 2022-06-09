@@ -28,6 +28,7 @@ use App\Models\SalesReturn;
 use App\Models\SalesReturnDetail;
 use App\Models\SalesReturnAccount;
 use App\Models\SalesReturnFormSetting;
+use App\Models\GeneralSettings;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -570,6 +571,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $_cost_center = (array) $request->_cost_center;
        
         if(sizeof($_ledger_id) > 0){
+
                 foreach($_ledger_id as $i=>$ledger) {
                     if($ledger !=""){
                        
@@ -614,6 +616,46 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                         account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(9+$i));
                           
                     }
+
+
+                }
+            $settings = GeneralSettings::select('_ac_type')->first();
+                //Only Cash and Bank receive in account detail. This entry set automatically by program.
+                if($_total_dr_amount > 0 && $settings->_ac_type==1){
+                         $_account_type_id =  ledger_to_group_type($request->_main_ledger_id)->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($request->_main_ledger_id)->_account_group_id;
+                        $SalesAccount = new SalesAccount();
+                        $SalesAccount->_no = $_master_id;
+                        $SalesAccount->_account_type_id = $_account_type_id;
+                        $SalesAccount->_account_group_id = $_account_group_id;
+                        $SalesAccount->_ledger_id = $request->_main_ledger_id;
+                        $SalesAccount->_cost_center = 1;
+                        $SalesAccount->_branch_id = 1;
+                        $SalesAccount->_short_narr = 'N/A';
+                        $SalesAccount->_dr_amount = 0;
+                        $SalesAccount->_cr_amount = $_total_dr_amount;
+                        $SalesAccount->_status = 1;
+                        $SalesAccount->_created_by = $users->id."-".$users->name;
+                        $SalesAccount->save();
+
+                        $_sales_account_id = $SalesAccount->id;
+
+                        //Reporting Account Table Data Insert
+                        $_ref_master_id=$_master_id;
+                        $_ref_detail_id=$_sales_account_id;
+                        $_short_narration='N/A';
+                        $_narration = $request->_note;
+                        $_reference= $request->_referance;
+                        $_transaction= 'Sales';
+                        $_date = change_date_format($request->_date);
+                        $_table_name ='sales_accounts';
+                        $_account_ledger = $request->_main_ledger_id;
+                        $_dr_amount_a = 0;
+                        $_cr_amount_a = $_total_dr_amount ?? 0;
+                        $_branch_id_a = 1;
+                        $_cost_center_a = 1;
+                        $_name =$users->name;
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(20));
                 }
             }
 
@@ -707,7 +749,8 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
         $vat_accounts =[];
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
-         $data =  Sales::with(['_master_branch','_master_details','s_account','_ledger'])->find($id);
+         $data =  Sales::with(['_master_branch','_master_details','s_account','_ledger'])->where('_lock',0)->find($id);
+         if(!$data){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
           $sales_number = SalesDetail::where('_no',$id)->count();
        return view('backend.sales.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data','sales_number'));
     }
@@ -736,7 +779,8 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
         // DB::beginTransaction();
         // try {
         $_sales_id = $request->_sales_id;
-
+        $_lock_check =  Sales::where('_lock',0)->find($_sales_id); 
+        if(!$_lock_check){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
        
 
         //====
@@ -1061,6 +1105,45 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
                         account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(9+$i));
                           
                     }
+                }
+
+                 $settings = GeneralSettings::select('_ac_type')->first();
+                //Only Cash and Bank receive in account detail. This entry set automatically by program.
+                if($_total_dr_amount > 0 && $settings->_ac_type==1){
+                         $_account_type_id =  ledger_to_group_type($request->_main_ledger_id)->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($request->_main_ledger_id)->_account_group_id;
+                        $SalesAccount = new SalesAccount();
+                        $SalesAccount->_no = $_master_id;
+                        $SalesAccount->_account_type_id = $_account_type_id;
+                        $SalesAccount->_account_group_id = $_account_group_id;
+                        $SalesAccount->_ledger_id = $request->_main_ledger_id;
+                        $SalesAccount->_cost_center = 1;
+                        $SalesAccount->_branch_id = 1;
+                        $SalesAccount->_short_narr = 'N/A';
+                        $SalesAccount->_dr_amount = 0;
+                        $SalesAccount->_cr_amount = $_total_dr_amount;
+                        $SalesAccount->_status = 1;
+                        $SalesAccount->_created_by = $users->id."-".$users->name;
+                        $SalesAccount->save();
+
+                        $_sales_account_id = $SalesAccount->id;
+
+                        //Reporting Account Table Data Insert
+                        $_ref_master_id=$_master_id;
+                        $_ref_detail_id=$_sales_account_id;
+                        $_short_narration='N/A';
+                        $_narration = $request->_note;
+                        $_reference= $request->_referance;
+                        $_transaction= 'Sales';
+                        $_date = change_date_format($request->_date);
+                        $_table_name ='sales_accounts';
+                        $_account_ledger = $request->_main_ledger_id;
+                        $_dr_amount_a = 0;
+                        $_cr_amount_a = $_total_dr_amount ?? 0;
+                        $_branch_id_a = 1;
+                        $_cost_center_a = 1;
+                        $_name =$users->name;
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(20));
                 }
             }
 

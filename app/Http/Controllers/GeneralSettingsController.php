@@ -12,12 +12,18 @@ class GeneralSettingsController extends Controller
     *
     *
     */
+    function __construct()
+    {
+         $this->middleware('permission:admin-settings|admin-settings-store', ['only' => ['settings','settingsSave']]);
+         $this->middleware('permission:lock-permission', ['only' => ['lockAction']]);
+         
+    }
+
     public function UserImageUpload($query) // Taking input image as parameter
     {
         $image_name = date('mdYHis') . uniqid();
         $ext = strtolower($query->getClientOriginalExtension()); // You can use also getClientOriginalName()
-         $ext='jpg';
-         $image_name='logo';
+        
         $image_full_name = $image_name.'.'.$ext;
         $upload_path = 'images/';    //Creating Sub directory in Public folder to put image
         $image_url = $upload_path.$image_full_name;
@@ -31,7 +37,18 @@ class GeneralSettingsController extends Controller
     	return view('backend.settings.index',compact('settings'));
     }
 
+
+    public function lockAction(Request $request){
+        $_action = $request->_action;
+        $_id = $request->_id;
+        $_table_name = $request->_table_name;
+        \DB::table($_table_name)->where('id',$_id)->update(['_lock'=>$_action]);
+        return "ok";
+
+    }
+
     public function settingsSave(Request $request){
+       
     	if($request->id ==''){
     		$settings = new GeneralSettings();
     	}else{
@@ -50,6 +67,7 @@ class GeneralSettingsController extends Controller
         $settings->_purchse_note = $request->_purchse_note ?? '';
         $settings->_purchase_return_note = $request->_purchase_return_note ?? '';
         $settings->_top_title = $request->_top_title ?? '';
+        $settings->_ac_type = $request->_ac_type ?? 0;
 
     	if($request->hasFile('logo')){ 
                 $logo = $this->UserImageUpload($request->logo); 

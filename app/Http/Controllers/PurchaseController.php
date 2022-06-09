@@ -555,6 +555,7 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
 
      public function edit($id)
     {
+
         $users = Auth::user();
         $page_name = $this->page_name;
         $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
@@ -571,7 +572,11 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
         
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
-         $data =  Purchase::with(['_master_branch','_master_details','purchase_account','_ledger'])->find($id);
+         $data =  Purchase::with(['_master_branch','_master_details','purchase_account','_ledger'])->where('_lock',0)->find($id);
+         
+         if(!$data){
+            return redirect()->back()->with('danger','You have no permission to edit or update !');
+         }
           $sales_number = SalesDetail::where('_purchase_invoice_no',$id)->count();
        return view('backend.purchase.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','categories','units','data','sales_number'));
     }
@@ -595,10 +600,16 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
             '_main_ledger_id' => 'required',
         ]);
 
+
+
        //######################
        // Previous information need to make zero for every thing.
        //#####################
      $purchase_id = $request->_purchase_id;
+     $data =  Purchase::where('_lock',0)->find($purchase_id); 
+     if(!$data){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
+
+
      $sales_number = SalesDetail::where('_purchase_invoice_no',$purchase_id)->count();
      if($sales_number > 0 ){
          return redirect()->back()->with('danger','You Can not update This invoice Item.Please Use Purchase Return !');

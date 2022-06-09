@@ -290,5 +290,6 @@ Route::group(['middleware' => ['auth']], function() {
     //Admin section Route Controller
     Route::get('admin-settings','App\Http\Controllers\GeneralSettingsController@settings')->name('admin-settings');
     Route::post('admin-settings-store','App\Http\Controllers\GeneralSettingsController@settingsSave')->name('admin-settings-store');
+    Route::post('_lock_action','App\Http\Controllers\GeneralSettingsController@lockAction');
 });
 

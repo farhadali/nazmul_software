@@ -46,26 +46,7 @@
     </div>
   <div class="card-header">
                  
-                    @if (count($errors) > 0)
-                           <div class="alert ">
-                                <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                                <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                                </ul>
-                            </div>
-                        @endif
-                  @if ($message = Session::get('success'))
-                    <div class="alert ">
-                      <p>{{ $message }}</p>
-                    </div>
-                    @endif
-                  @if ($message = Session::get('danger'))
-                    <div class="alert _required">
-                      <p>{{ $message }}</p>
-                    </div>
-                    @endif
+                    @include('backend.message.message')
                     
               </div>
     <div class="content">
