@@ -25,10 +25,8 @@
       <div class="col-12">
         <table class="table" style="border:none;">
           <tr>
-            <td style="border:none;width: 33%;text-align: left;">
-              
-            </td>
-            <td style="border:none;width: 33%;text-align: center;">
+            
+            <td style="border:none;width: 100%;text-align: center;">
               <table class="table" style="border:none;">
                 <tr class="_report_header_tr" > <td class="text-center" style="border:none;font-size: 24px;"><b>{{$settings->name ?? '' }}</b></td> </tr>
                 <tr class="_report_header_tr" > <td class="text-center" style="border:none;">{{$settings->_address ?? '' }}</td></tr>
@@ -44,18 +42,14 @@
                       @endforeach </b></td> </tr>
               </table>
             </td>
-            <td style="border:none;width: 33%;text-align: right;">
-              <p class="text-right">Print: {{date('d-m-Y H:s:a')}}</p>
-            </td>
+            
           </tr>
         </table>
         </div>
       </div>
 
     <!-- Table row -->
-    <div class="row">
-      <div class="col-12 table-responsive">
-        <table class="table ">
+     <table class="cewReportTable">
           <thead>
           <tr>
             <th style="width: 15%;">Group</th>
@@ -207,10 +201,7 @@
             </tr>
           </tfoot>
         </table>
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- /.row -->
+     
 
 
     <!-- /.row -->

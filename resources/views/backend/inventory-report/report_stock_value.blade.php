@@ -21,9 +21,8 @@
 <section class="invoice" id="printablediv">
     
     
-    <div class="row">
-      <div class="col-12">
-        <table class="table" style="border:none;">
+    
+        <table class="table" style="border:none;width: 100%;">
           <tr>
             <td style="border:none;width: 33%;text-align: left;">
               
@@ -49,13 +48,10 @@
             </td>
           </tr>
         </table>
-        </div>
-      </div>
+        
 
     <!-- Table row -->
-    <div class="row">
-      <div class="col-12 table-responsive">
-        <table class="table ">
+<table class="cewReportTable">
           <thead>
           <tr>
              
@@ -184,12 +180,6 @@
             </tr>
           </tfoot>
         </table>
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- /.row -->
-
-    
     <!-- /.row -->
   </section>
 

@@ -21,14 +21,14 @@
           <div class="col-lg-12">
             <div class="card">
              <div class="card-header">
-                <div class="card_header_section">
-                  <div class="_page_name_area">
-                     <h4 class="m-0">{!! $page_name ?? '' !!} </h4>
+                <div class="row">
+                  <div class="col-md-6">
+                     <h4>{!! $page_name ?? '' !!} </h4>
                   </div>
-                  <div class="_new_button_area">
-                    <div class="d-flex right_float">
+                  <div class="col-md-6">
+                   <div class="d-flex right" style="float: right;">
                        @can('voucher-create')
-                        <a title="Add New" class="btn  btn-success  mr-3" href="{{ route('voucher.create') }}"> <i class=" fa fa-plus"></i> </a>
+                        <a title="Add New" class="btn  btn-sm btn-success  mr-3" href="{{ route('voucher.create') }}"> <i class="nav-icon fa fa-plus"></i> </a>
                       @endcan
                       @can('voucher-edit')
                                     <a title="Edit" class="btn  btn-default  mr-3" href="{{ route('voucher.edit',$data->id) }}">
@@ -36,10 +36,11 @@
                                     </a>
                       @endcan
                       @can('voucher-print')
-                        <a target="__blank" title="Print" class="btn btn-default mr-3" href="{{ url('voucher/print') }}/{{$data->id }}"> <i class="fa fa-print _required" aria-hidden="true"></i></a>
+                         <a style="cursor: pointer;" class="btn btn-sm btn-danger mr-3"  title="Print" onclick="javascript:printDiv('printablediv')"><i class="nav-icon fas fa-print"></i></a>
+     
                       @endcan
                       @can('voucher-list')
-                       <a class="btn btn-primary" title="List" href="{{ route('voucher.index') }}"> <i class="fa fa-th-list" aria-hidden="true"></i></a>
+                       <a class="btn btn-sm btn-primary" title="List" href="{{ route('voucher.index') }}"> <i class="nav-icon fa fa-th-list" aria-hidden="true"></i></a>
                        @endcan
                     </div>
                    
@@ -49,7 +50,7 @@
               <div class="card-body">
                 <div class="wrapper">
   <!-- Main content -->
-  <section class="invoice">
+<section class="invoice" id="printablediv">
     <!-- title row -->
     <div class="row">
       <div class="col-12">
@@ -93,8 +94,12 @@
           <tr>
             <th>ID</th>
             <th>Ledger</th>
+            @if(sizeof($permited_branch) > 1)
             <th>Branch</th>
+            @endif
+            @if(sizeof($permited_costcenters) > 1)
             <th>Cost Center</th>
+            @endif
             <th>Short Narr.</th>
             <th class="text-right" >Dr. Amount</th>
             <th class="text-right" >Cr. Amount</th>
@@ -105,8 +110,12 @@
           <tr>
             <td>{!! $detail->id ?? '' !!}</td>
             <td>{!! $detail->_voucher_ledger->_name ?? '' !!}</td>
+           @if(sizeof($permited_branch) > 1)
             <td>{!! $detail->_detail_branch->_name ?? '' !!}</td>
+            @endif
+             @if(sizeof($permited_costcenters) > 1)
             <td>{!! $detail->_detail_cost_center->_name ?? '' !!}</td>
+            @endif
             <td>{!! $detail->_short_narr ?? '' !!}</td>
             <td class="text-right" >{!! _report_amount( $detail->_dr_amount ) !!}</td>
             <td class="text-right" >{!! _report_amount( $detail->_cr_amount ) !!}</td>
@@ -118,7 +127,13 @@
           </tbody>
           <tfoot>
             <tr>
-              <th colspan="5" class="text-right">Total:</th>
+              <th colspan="3" class="text-right">Total:</th>
+              @if(sizeof($permited_branch) > 1)
+            <td></td>
+            @endif
+             @if(sizeof($permited_costcenters) > 1)
+            <td></td>
+            @endif
               <th class="text-right" >{!! _report_amount( $data->_amount ?? 0 )!!}</th>
               <th class="text-right" >{!! _report_amount( $data->_amount ?? 0 )!!}</th>
             </tr>

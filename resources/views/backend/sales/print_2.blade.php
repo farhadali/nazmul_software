@@ -35,6 +35,7 @@
       </div>
       <div class="col-4">
        <h3 class="page-header text-center">
+        {{ $settings->_top_title ?? '' }}<br>
         Invoice/Bill
        </h3>
       </div>

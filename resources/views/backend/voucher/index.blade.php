@@ -5,19 +5,12 @@
 <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0">{!! $page_name ?? '' !!} </h1>
+          <div class="col-sm-12">
+            <h1 class="m-0">{!! $page_name ?? '' !!}  @can('voucher-create')
+                        <a title="Add New" class="btn  btn-sm btn-success" href="{{ route('voucher.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                @endcan </h1>
           </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
-              <li class="breadcrumb-item active">
-                @can('voucher-create')
-                        <a title="Add New" class="btn btn-success" href="{{ route('voucher.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
-                @endcan
-               </li>
-            </ol>
-          </div><!-- /.col -->
+          
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
@@ -89,7 +82,7 @@
                          <th class="_nv_th_code"><b>Code</b></th>
                          <th class="_nv_th_date"><b>Date</b></th>
                          <th class="_nv_th_type"><b>Type</b></th>
-                         <th class="_nv_th_amount"><b>Amount</b></th>
+                         <th class="_nv_th_amount text-right"><b>Amount</b></th>
                          <th class="_nv_th_ref"><b>Refarance</b></th>
                          <th class="_nv_th_note"><b>Note</b></th>
                          <th class="_nv_th_branch"><b>Branch</b></th>
@@ -104,15 +97,35 @@
                         @endphp
                         <tr>
                             
-                             <td>
-                                <a class="btn btn-sm btn-info _action_button" href="{{ route('voucher.show',$data->id) }}">
-                                  <i class="nav-icon fas fa-eye"></i>
-                                </a>
-                                @can('voucher-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('voucher.edit',$data->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
+                             <td style="display: flex;">
+                              <div class="dropdown mr-1">
+                                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    Action
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                     <a class="dropdown-item " href="{{ route('voucher.show',$data->id) }}">
+                                        View
+                                      </a>
+                                     @can('voucher-edit')
+                                        <a class="dropdown-item " href="{{ route('voucher.edit',$data->id) }}">
+                                         Edit
+                                        </a>
+                                    @endcan
+                                    @php
+                                      $_types =['CR','BR'];
+                                    @endphp
+                                     @can('money-receipt-print')
+                                     @if(in_array($data->_voucher_type,$_types))
+                                        <a class="dropdown-item " href="{{ url('money-receipt-print') }}/{{$data->id}}">
+                                         Money Receipt
+                                        </a>
+                                      @endif
+                                    @endcan
+                                   
+                                  </div>
+                                </div>
+                               
+                               
                                 @can('voucher-delete')
                                     {!! Form::open(['method' => 'DELETE','route' => ['voucher.destroy', $data->id],'style'=>'display:inline']) !!}
                                         <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
@@ -128,7 +141,7 @@
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ _view_date_formate($data->_date ?? '') }} {{ $data->_time ?? '' }}</td>
                             <td>{{ $data->_voucher_type ?? '' }}</td>
-                            <td>{{ _report_amount( $data->_amount ?? 0) }} </td>
+                            <td class="text-right">{{ _report_amount( $data->_amount ?? 0) }} </td>
                             <td>{{ $data->_transection_ref ?? '' }}</td>
                             <td>{{ $data->_note ?? '' }}</td>
                             <td>{{ $data->_master_branch->_name ?? '' }}</td>
@@ -188,7 +201,7 @@
                         @endforeach
                         <tr>
                           <td colspan="5" class="text-center"><b>Total</b></td>
-                          <td><b>{{ _report_amount($sum_of_amount) }} </b></td>
+                          <td class="text-right"><b>{{ _report_amount($sum_of_amount) }} </b></td>
                           <td colspan="4"></td>
                         </tr>
                     </table>

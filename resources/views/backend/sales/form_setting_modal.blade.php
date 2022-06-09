@@ -127,5 +127,6 @@
           <option value="2" @if(isset($form_settings->_invoice_template))@if($form_settings->_invoice_template==2) selected @endif @endif>Template B</option>
           <option value="3" @if(isset($form_settings->_invoice_template))@if($form_settings->_invoice_template==3) selected @endif @endif>Template C</option>
           <option value="4" @if(isset($form_settings->_invoice_template))@if($form_settings->_invoice_template==4) selected @endif @endif>Template D</option>
+          <option value="5" @if(isset($form_settings->_invoice_template))@if($form_settings->_invoice_template==5) selected @endif @endif>Pos Template</option>
         </select>
       </div>

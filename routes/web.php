@@ -169,6 +169,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('voucher-main-print', 'App\Http\Controllers\VoucherMasterController@voucherMainPrint');
     Route::get('voucher-detail-print', 'App\Http\Controllers\VoucherMasterController@voucherDetailPrint');
     Route::get('voucher-reset', 'App\Http\Controllers\VoucherMasterController@reset');
+    Route::get('money-receipt-print/{id}', 'App\Http\Controllers\VoucherMasterController@moneyReceiptPrint');
 
     Route::post('master-base-detils','App\Http\Controllers\VoucherMasterController@masterBseDetails');
 

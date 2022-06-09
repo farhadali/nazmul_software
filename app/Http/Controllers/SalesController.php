@@ -43,7 +43,7 @@ class SalesController extends Controller
          $this->middleware('permission:sales-create', ['only' => ['create','store']]);
          $this->middleware('permission:sales-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:sales-delete', ['only' => ['destroy']]);
-         $this->page_name = "Sales ";
+         $this->page_name = "Sales Invoice";
     }
     /**
      * Display a listing of the resource.
@@ -662,6 +662,8 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
             return view('backend.sales.print_2',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
          }elseif($form_settings->_invoice_template==4){
             return view('backend.sales.print_3',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
+         }elseif($form_settings->_invoice_template==5){
+            return view('backend.sales.pos_template',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
          }else{
             return view('backend.sales.print',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
          }

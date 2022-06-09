@@ -27,10 +27,11 @@
 <section class="invoice" id="printablediv">
 
      <div class="row">
-      <div class="col-12">
+      <div class="col-12 text-center">
+          {{ $settings->_top_title ?? '' }}
        <h3 class="page-header">
         <img src="{{url('/')}}/{{$settings->logo}}" alt="{{$settings->name ?? '' }}" style="height: 60px;width: 60px"  > {{$settings->title ?? '' }}
-        <small class="float-right">Date: {!! _view_date_formate($data->_date ?? '') !!}</small>
+        
        </h3>
       </div>
 

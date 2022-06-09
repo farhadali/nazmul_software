@@ -27,14 +27,17 @@
 <section class="invoice" id="printablediv">
 
      <div class="row">
-      <div class="col-4">
+      <div class="col-4 ">
+         
        <h3 class="page-header">
         <img src="{{url('/')}}/{{$settings->logo}}" alt="{{$settings->name ?? '' }}" style="height: 60px;width: 60px"  > {{$settings->title ?? '' }}
        
        </h3>
       </div>
-      <div class="col-4">
+      <div class="col-4 text-center">
+         {{ $settings->_top_title ?? '' }}
        <h3 class="page-header text-center">
+        
         {{$page_name}}
        </h3>
       </div>

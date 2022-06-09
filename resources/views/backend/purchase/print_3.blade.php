@@ -36,7 +36,8 @@
         Email: {{$data->_email ?? '' }}
        </address>
       </div>
-      <div class="col-6">
+      <div class="col-6 text-center">
+         {{ $settings->_top_title ?? '' }}
        <div style="text-align: center;">
          <h3><img src="{{url('/')}}/{{$settings->logo}}" alt="{{$settings->name ?? '' }}" style="height: 50px;width: 50px"  > {{$settings->name ?? '' }}
        

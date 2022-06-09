@@ -111,8 +111,9 @@
                                   @empty
                                   @endforelse
                             <tr>
-                              <td colspan="3" class="text-right "><b>Total</b></td>
+                              <td colspan="2" class="text-right "><b>Total</b></td>
                               <td class="text-right "> <b>{{ _report_amount($_qty_total ?? 0) }}</b> </td>
+                              <td></td>
                               <td class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
                               </td>
                             </tr>

@@ -33,7 +33,8 @@
        
        </h3>
       </div>
-      <div class="col-4">
+      <div class="col-4 text-center">
+         {{ $settings->_top_title ?? '' }}<br>
        <h3 class="page-header text-center">
         {{$page_name}}
        </h3>

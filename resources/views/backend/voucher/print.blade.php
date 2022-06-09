@@ -1,35 +1,37 @@
+@extends('backend.layouts.app')
+@section('title',$page_name)
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{$page_name}}</title>
-
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome -->
-  
-  <!-- Theme style -->
-  <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
-  <style type="text/css">
-    .table td, .table th {
-        padding: .15rem !important;
-        vertical-align: top;
-        border-top: 1px solid #CCCCCC;
-    }
+@section('content')
+<style type="text/css">
+ 
+  @media print {
+   .table th {
+    vertical-align: top;
+    color: #000;
+    background-color: #fff; 
+}
+}
   </style>
-</head>
-<body>
-<div class="wrapper">
+<div style="padding-left: 20px;display: flex;">
+ <a class="nav-link"  href="{{url('voucher')}}" role="button"><i class="fa fa-arrow-left"></i></a>
+ @can('voucher-edit')
+    <a class="nav-link"  title="Edit" href="{{ route('voucher.edit',$data->id) }}">
+                                      <i class="nav-icon fas fa-edit"></i>
+     </a>
+  @endcan
+    
+    <a style="cursor: pointer;" class="nav-link"  title="Print" onclick="javascript:printDiv('printablediv')"><i class="fas fa-print"></i></a>
+      <a style="cursor: pointer;" onclick="fnExcelReport();" class="nav-link"  title="Excel Download" ><i class="fa fa-file-excel" aria-hidden="true"></i></a>
+  </div>
 
-<section class="invoice">
+<section class="invoice" id="printablediv">
     <!-- title row -->
     <div class="row">
-      <div class="col-12">
-        <h2 class="page-header">
+      <div class="col-md-12" style="text-align: center;">
+        {{ $settings->_top_title ?? '' }}
+        <h2 class="page-header text-center">
            <img src="{{asset('/')}}{{$settings->logo ?? ''}}" alt="{{$settings->name ?? '' }}"  style="width: 60px;height: 60px;"> {{$settings->name ?? '' }}
-          <small class="float-right">Date: {{ _view_date_formate($data->_date ?? '') }}</small>
+          
         </h2>
       </div>
       <!-- /.col -->
@@ -67,8 +69,12 @@
           <tr>
             <th>ID</th>
             <th>Ledger</th>
+            @if(sizeof($permited_branch) > 1)
             <th>Branch</th>
+            @endif
+            @if(sizeof($permited_costcenters) > 1)
             <th>Cost Center</th>
+            @endif
             <th>Short Narr.</th>
             <th class="text-right" >Dr. Amount</th>
             <th class="text-right" >Cr. Amount</th>
@@ -79,8 +85,12 @@
           <tr>
             <td>{!! $detail->id ?? '' !!}</td>
             <td>{!! $detail->_voucher_ledger->_name ?? '' !!}</td>
+             @if(sizeof($permited_branch) > 1)
             <td>{!! $detail->_detail_branch->_name ?? '' !!}</td>
+            @endif
+             @if(sizeof($permited_costcenters) > 1)
             <td>{!! $detail->_detail_cost_center->_name ?? '' !!}</td>
+            @endif
             <td>{!! $detail->_short_narr ?? '' !!}</td>
             <td class="text-right" >{!! _report_amount( $detail->_dr_amount ?? 0 ) !!}</td>
             <td class="text-right" >{!! _report_amount($detail->_cr_amount ?? 0 )!!}</td>
@@ -92,7 +102,13 @@
           </tbody>
           <tfoot>
             <tr>
-              <th style="background-color: rgba(0,0,0,.05);" colspan="5" class="text-center">Total:</th>
+              <th style="background-color: rgba(0,0,0,.05);" colspan="3" class="text-center">Total:</th>
+              @if(sizeof($permited_branch) > 1)
+            <td></td>
+            @endif
+             @if(sizeof($permited_costcenters) > 1)
+            <td></td>
+            @endif
               <th style="background-color: rgba(0,0,0,.05);" class="text-right" >{!! _report_amount($data->_amount ?? 0) !!}</th>
               <th style="background-color: rgba(0,0,0,.05);" class="text-right" >{!! _report_amount($data->_amount ?? 0) !!}</th>
             </tr>
@@ -106,11 +122,8 @@
     <div class="row">
       <!-- accepted payments column -->
       <div class="col-12">
-        @php
-$digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
-
-        @endphp
-        <p class="lead"> <b>In Words: {{ prefix_taka() }}. {{ $digit->format($data->_amount ?? 0) }}. </b></p>
+       
+        <p class="lead"> <b>In Words: {{ nv_number_to_text( $data->_amount ?? 0) }} </b></p>
         
       </div>
       <!-- /.col -->
@@ -130,11 +143,4 @@ $digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
     <!-- /.row -->
   </section>
 
-</div>
-<!-- ./wrapper -->
-<!-- Page specific script -->
-<script>
-  window.addEventListener("load", window.print());
-</script>
-</body>
-</html>
+@endsection

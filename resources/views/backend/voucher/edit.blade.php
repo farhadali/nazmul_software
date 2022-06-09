@@ -39,23 +39,23 @@
                   <div class="col-md-6 ">
                     <div class="d-flex right" style="float: right;">
                         @can('voucher-create')
-                        <a title="Add New" class="btn btn-success mr-3" href="{{ route('voucher.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
+                        <a title="Add New" class="btn btn-sm btn-success mr-3" href="{{ route('voucher.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
                         @endcan
                         @can('voucher-print')
                         
-                           <a class="btn btn-default mr-3" href="{{ route('voucher.show',$data->id) }}">
+                           <a class="btn btn-sm btn-default mr-3" href="{{ route('voucher.show',$data->id) }}">
                                  <i class="nav-icon fas fa-eye"></i>
                             </a>
                          
                          @endcan
                         @can('voucher-print')
                        
-                           <a target="__blank" title="Print" class="btn btn-default mr-3" href="{{ url('voucher/print') }}/{{$data->id }}"> <i class="fa fa-print _required" aria-hidden="true"></i></a>
+                           <a target="__blank" title="Print" class="btn btn-sm btn-default mr-3" href="{{ url('voucher/print') }}/{{$data->id }}"> <i class="fa fa-print _required" aria-hidden="true"></i></a>
                         
                          @endcan
                          @can('voucher-list')
                        
-                           <a class="btn btn-primary" title="List" href="{{ route('voucher.index') }}"> 
+                           <a class="btn  btn-sm btn-primary" title="List" href="{{ route('voucher.index') }}"> 
                               <i class="fa fa-th-list" aria-hidden="true"></i>
                             </a>
                         

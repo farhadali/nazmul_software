@@ -29,6 +29,7 @@ class VoucherMasterController extends Controller
          $this->middleware('permission:voucher-create', ['only' => ['create','store']]);
          $this->middleware('permission:voucher-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:voucher-delete', ['only' => ['destroy']]);
+         $this->middleware('permission:money-receipt-print', ['only' => ['moneyReceiptPrint']]);
          $this->page_name = "Voucher";
     }
      public function index(Request $request)
@@ -300,6 +301,19 @@ class VoucherMasterController extends Controller
         $data = VoucherMaster::with(['_master_branch','_master_details'])->find($id);
 
        return view('backend.voucher.print',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','data'));
+    }
+    public function moneyReceiptPrint($id){
+        $users = Auth::user();
+        $page_name = $this->page_name;
+        $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
+        $data = VoucherMaster::with(['_master_branch','_master_details'])->find($id);
+
+       return view('backend.voucher.monty_receipt',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','data'));
     }
 
     /**

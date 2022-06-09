@@ -43,6 +43,7 @@
             </td>
             <td style="border:none;width: 33%;text-align: center;">
               <table class="table" style="border:none;">
+                <tr> <td class="text-center" style="border:none;font-size: 24px;">{{ $settings->_top_title ?? '' }}<br></td> </tr>
                 <tr> <td class="text-center" style="border:none;font-size: 24px;"><b>{{$settings->name ?? '' }}</b></td> </tr>
                 <tr> <td class="text-center" style="border:none;"><b>{{$settings->_address ?? '' }}</b></td></tr>
                 <tr> <td class="text-center" style="border:none;"><b>{{$settings->_phone ?? '' }}</b>,<b>{{$settings->_email ?? '' }}</b></td></tr>
@@ -118,7 +119,7 @@
                                              <td class="@if($form_settings->_show_self==0) display_none @endif" >{!! $_item->_store_salves_id ?? '' !!}</td>
                                             
                                            
-                                          </thead>
+                                          
                                   </tr>
                                   @empty
                                   @endforelse

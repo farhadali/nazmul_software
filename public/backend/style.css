@@ -93,17 +93,17 @@ input[type="number"] {
     border: 1px solid #CCCCCC;
 }
 thead{
-    background: #0576a0;
-    color: #fff;
-    font-family: math;
+    background: #d8eff3;
+    
+    font-family: math !important;
 }
 tfoot{
     background: #fff;
-     font-family: math;
+     font-family: math !important;
 }
 .form_body {
     background: #FFF;
-    font-family: math;
+    font-family: math !important;
 }
 label{
     margin-bottom: 1px;
@@ -260,7 +260,7 @@ label{
 }
 
 ._nv_th_action{
-    width: 13%;
+    width: 10%;
 }
 ._nv_th_id{
     width: 5%;
@@ -434,3 +434,90 @@ body:not(.layout-fixed) .main-sidebar {
     overflow: hidden;
     border-top: 1px solid #0b0b0c;
 }
+
+
+
+@media screen {
+    body {
+        background-color: inherit; /* background color */
+        
+       
+    }
+    
+    /* table for report */
+    .cewReportTable {
+        width: 100%;
+        border: 1px solid silver;
+    }
+
+    .cewReportTable tr {
+        border: 1px solid silver;
+    }
+    .cewReportTable td {
+        border: 1px solid silver;
+    }
+    
+    .cewReportTable thead {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0px;
+    }
+    .cewSubHeader tr{
+        font-weight: bold;
+    }
+    .cewSubHeader td{
+        font-weight: bold;
+    }
+    .cewReportTable th {
+        border: 1px solid silver;
+    }
+    
+   
+}
+
+@media only screen and (max-width: 767px) {
+    .cewReportTable thead {
+        top: 0;
+        border: 1px;
+    }
+}
+
+@media print {
+    
+    
+   .cewReportTable {
+        width: 100%;
+        border: 1px solid silver;
+    }
+
+    .cewReportTable tr {
+        border: 1px solid silver;
+    }
+    .cewReportTable td {
+        border: 1px solid silver;
+    }
+    .cewReportTable th {
+        border: 1px solid silver;
+    }
+    
+    .cewReportTable thead {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0px;
+    }
+    .cewSubHeader tr{
+        font-weight: bold;
+    }
+    .cewSubHeader td{
+        font-weight: bold;
+    }
+    thead {
+    background: #fff;
+    font-family: math !important;
+    border:1px solid silver;
+}
+    
+    
+}
+
+

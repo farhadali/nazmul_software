@@ -270,7 +270,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $p_accounts = AccountLedger::where('_account_head_id',8)->get();
         $dis_accounts = AccountLedger::where('_account_head_id',10)->get();
         $cost_of_solds = AccountLedger::where('_account_head_id',9)->get();
-        return view('backend.sales.form_setting_modal',compact('form_settings','inv_accounts','p_accounts','dis_accounts','cost_of_solds'));
+        return view('backend.sales-return.form_setting_modal',compact('form_settings','inv_accounts','p_accounts','dis_accounts','cost_of_solds'));
     }
 
 

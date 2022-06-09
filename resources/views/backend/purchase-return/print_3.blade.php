@@ -38,6 +38,7 @@
       </div>
       <div class="col-6">
        <div style="text-align: center;">
+         {{ $settings->_top_title ?? '' }}
          <h3><img src="{{url('/')}}/{{$settings->logo}}" alt="{{$settings->name ?? '' }}" style="height: 50px;width: 50px"  > {{$settings->name ?? '' }}
        
        </h3>

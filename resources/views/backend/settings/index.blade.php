@@ -91,6 +91,12 @@
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6">
                             <div class="form-group">
+                                <strong>Invoice Top Text:</strong>
+                                <textarea class="form-control" name="_top_title" >{{old('_top_title',$settings->_top_title ?? '' )}}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
                                 <strong>Sales Note:</strong>
                                 <textarea class="form-control" name="_sales_note" >{{old('_sales_note',$settings->_sales_note ?? '' )}}</textarea>
                             </div>

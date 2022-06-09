@@ -49,6 +49,7 @@ class GeneralSettingsController extends Controller
         $settings->_sales_return__note = $request->_sales_return__note ?? '';
         $settings->_purchse_note = $request->_purchse_note ?? '';
         $settings->_purchase_return_note = $request->_purchase_return_note ?? '';
+        $settings->_top_title = $request->_top_title ?? '';
 
     	if($request->hasFile('logo')){ 
                 $logo = $this->UserImageUpload($request->logo); 
