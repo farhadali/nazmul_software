@@ -1,5 +1,5 @@
 @extends('backend.layouts.app')
-
+@section('title',$settings->title)
 
 @section('content')
 <div class="content-header">
@@ -20,16 +20,7 @@
       </div><!-- /.container-fluid -->
     </div>
     <div class="message-area">
-    @if (count($errors) > 0)
-           <div class="alert alert-danger">
-                <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-                </ul>
-            </div>
-        @endif
+     @include('backend.message.message')
     </div>
     <div class="content">
       <div class="container-fluid">
@@ -42,7 +33,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <strong>Branch:</strong>
+                                <strong>Branch:<span class="_required">*</span></strong>
                                 @php
                                 $selected_branchs=[];
                                 if($user->branch_ids !=0){
@@ -60,14 +51,14 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <strong>Cost Center:</strong>
+                                <strong>Cost Center:<span class="_required">*</span></strong>
                                 @php
                                 $selected_costcenter=[];
                                 if($user->cost_center_ids !=0){
                                  $selected_costcenter =  explode(",",$user->cost_center_ids);
                                 }
                                 @endphp
-                                <select class="form-control" name="cost_center_ids[]" multiple >
+                                <select class="form-control" name="cost_center_ids[]" multiple required >
                                   @forelse($cost_centers as $cost_center)
                                   <option value="{{$cost_center->id}}" @if(in_array($cost_center->id,$selected_costcenter)) selected @endif  >{{ $cost_center->_name ?? '' }}</option>
                                   @empty
@@ -111,6 +102,24 @@
                             </div>
                         </div>
                         @endif
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <strong>Account Details Type: [If use multiple branch and multiple cost center must use All Ledger Option]</strong>
+                                <select class="form-control " name="_ac_type">
+                                      <option value="0" @if($user->_ac_type==0) selected @endif >All Ledger</option>
+                                      <option value="1" @if($user->_ac_type==1) selected @endif >Only Cash & Bank Ledger</option>
+                                    </select>
+                            </div>
+                        </div>
+                         <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <strong>Status</strong>
+                                <select class="form-control " name="status">
+                                      <option value="1"  @if($user->status==1) selected @endif >Active</option>
+                                      <option value="0"  @if($user->status==0) selected @endif >In Active</option>
+                                    </select>
+                            </div>
+                        </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 mb-5">
                             <div class="form-group">
                                 <strong>Role:</strong>

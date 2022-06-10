@@ -166,6 +166,20 @@
                       <input type="text" id="_user_name" name="_user_name" class="form-control" placeholder="Search By User" value="@if(isset($request->_user_name)){{$request->_user_name ?? ''}}@endif">
                     </div>
                   </div>
+                  <div class="form-group row">
+                    <label for="_lock" class="col-sm-2 col-form-label">Lock:</label>
+                    <div class="col-sm-10">
+                      @php
+                    $_locks = [ '0'=>'Open', '1'=>'Locked'];
+                      @endphp
+                       <select id="_lock" class="form-control" name="_lock" >
+                        <option value="">Select</option>
+                            @foreach($_locks AS $key=>$val)
+                            <option value="{{$key}}" @if(isset($request->_lock)) @if($key==$request->_lock) selected @endif @endif >{{$val}}</option>
+                        @endforeach
+                        </select>
+                    </div>
+                  </div>
                   
 
                 

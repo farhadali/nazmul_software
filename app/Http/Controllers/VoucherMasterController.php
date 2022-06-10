@@ -69,6 +69,9 @@ class VoucherMasterController extends Controller
         if($request->has('_code') && $request->_code !=''){
             $datas = $datas->where('_code','like',"%trim($request->_code)%");
         }
+        if($request->has('_lock') && $request->_lock !=''){
+            $datas = $datas->where('_lock','=',$request->_lock);
+        }
 
         if($request->has('_transection_ref') && $request->_transection_ref !=''){
             $datas = $datas->where('_transection_ref','like',"%trim($request->_transection_ref)%");

@@ -52,9 +52,9 @@ class PurchaseReturnController extends Controller
         $auth_user = Auth::user();
        if($request->has('limit')){
             $limit = $request->limit ??  default_pagination();
-            session()->put('_pur_limit', $request->limit);
+            session()->put('_pur_return_limit', $request->limit);
         }else{
-             $limit= \Session::get('_pur_limit') ??  default_pagination();
+             $limit= \Session::get('_pur_return_limit') ??  default_pagination();
             
         }
         
@@ -97,6 +97,9 @@ class PurchaseReturnController extends Controller
         }
         if($request->has('_user_name') && $request->_user_name !=''){
             $datas = $datas->where('_user_name','like',"%trim($request->_user_name)%");
+        }
+        if($request->has('_lock') && $request->_lock !=''){
+            $datas = $datas->where('_lock','=',$request->_lock);
         }
         
         if($request->has('_sub_total') && $request->_sub_total !=''){
@@ -143,7 +146,7 @@ class PurchaseReturnController extends Controller
     }
 
      public function reset(){
-        Session::flash('_pur_limit');
+        Session::flash('_pur_return_limit');
        return  \Redirect::to('purchase-return?limit='.default_pagination());
     }
 
@@ -499,6 +502,45 @@ class PurchaseReturnController extends Controller
                         account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(9+$i));
                           
                     }
+                }
+
+                //Only Cash and Bank receive in account detail. This entry set automatically by program.
+                if($_total_dr_amount > 0 && $users->_ac_type==1){
+                         $_account_type_id =  ledger_to_group_type($request->_main_ledger_id)->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($request->_main_ledger_id)->_account_group_id;
+                        $PurchaseReturnAccount = new PurchaseReturnAccount();
+                        $PurchaseReturnAccount->_no = $purchase_id;
+                        $PurchaseReturnAccount->_account_type_id = $_account_type_id;
+                        $PurchaseReturnAccount->_account_group_id = $_account_group_id;
+                        $PurchaseReturnAccount->_ledger_id = $request->_main_ledger_id;
+                        $PurchaseReturnAccount->_cost_center = $users->cost_center_ids;
+                        $PurchaseReturnAccount->_branch_id = $users->branch_ids;
+                        $PurchaseReturnAccount->_short_narr = 'N/A';
+                        $PurchaseReturnAccount->_dr_amount = 0;
+                        $PurchaseReturnAccount->_cr_amount = $_total_dr_amount;
+                        $PurchaseReturnAccount->_status = 1;
+                        $PurchaseReturnAccount->_created_by = $users->id."-".$users->name;
+                        $PurchaseReturnAccount->save();
+
+ 
+                        $_sales_account_id = $PurchaseReturnAccount->id;
+
+                        //Reporting Account Table Data Insert
+                        $_ref_master_id=$purchase_id;
+                        $_ref_detail_id=$_sales_account_id;
+                        $_short_narration='N/A';
+                        $_narration = $request->_note;
+                        $_reference= $request->_referance;
+                         $_transaction= 'Purchase Return';
+                        $_date = change_date_format($request->_date);
+                        $_table_name ='purchase_return_accounts';
+                        $_account_ledger = $request->_main_ledger_id;
+                        $_dr_amount_a = 0;
+                        $_cr_amount_a =  $_total_dr_amount;
+                        $_branch_id_a = $users->branch_ids;
+                        $_cost_center_a = $users->cost_center_ids;
+                        $_name =$users->name;
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(20));
                 }
             }
        
@@ -933,6 +975,45 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
                         account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(9+$i));
                           
                     }
+                }
+
+                //Only Cash and Bank receive in account detail. This entry set automatically by program.
+                if($_total_dr_amount > 0 && $users->_ac_type==1){
+                         $_account_type_id =  ledger_to_group_type($request->_main_ledger_id)->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($request->_main_ledger_id)->_account_group_id;
+                        $PurchaseReturnAccount = new PurchaseReturnAccount();
+                        $PurchaseReturnAccount->_no = $purchase_id;
+                        $PurchaseReturnAccount->_account_type_id = $_account_type_id;
+                        $PurchaseReturnAccount->_account_group_id = $_account_group_id;
+                        $PurchaseReturnAccount->_ledger_id = $request->_main_ledger_id;
+                        $PurchaseReturnAccount->_cost_center = $users->cost_center_ids;
+                        $PurchaseReturnAccount->_branch_id = $users->branch_ids;
+                        $PurchaseReturnAccount->_short_narr = 'N/A';
+                        $PurchaseReturnAccount->_dr_amount = 0;
+                        $PurchaseReturnAccount->_cr_amount = $_total_dr_amount;
+                        $PurchaseReturnAccount->_status = 1;
+                        $PurchaseReturnAccount->_created_by = $users->id."-".$users->name;
+                        $PurchaseReturnAccount->save();
+
+ 
+                        $_sales_account_id = $PurchaseReturnAccount->id;
+
+                        //Reporting Account Table Data Insert
+                        $_ref_master_id=$purchase_id;
+                        $_ref_detail_id=$_sales_account_id;
+                        $_short_narration='N/A';
+                        $_narration = $request->_note;
+                        $_reference= $request->_referance;
+                         $_transaction= 'Purchase Return';
+                        $_date = change_date_format($request->_date);
+                        $_table_name ='purchase_return_accounts';
+                        $_account_ledger = $request->_main_ledger_id;
+                        $_dr_amount_a = 0;
+                        $_cr_amount_a =  $_total_dr_amount;
+                        $_branch_id_a = $users->branch_ids;
+                        $_cost_center_a = $users->cost_center_ids;
+                        $_name =$users->name;
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(20));
                 }
             }
 

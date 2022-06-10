@@ -159,7 +159,7 @@ class InventoryController extends Controller
             $datas = $datas->where('_store_id','=',$request->_store_id);
         }
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
-        $page_name = $this->page_name;
+        $page_name ='Lot Wise Item Information';
 
         $categories = ItemCategory::orderBy('_name','asc')->get();
         if($request->has('print')){

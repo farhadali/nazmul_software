@@ -77,7 +77,7 @@ if($currentURL === $current){
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table class="table table-bordered">
+                  <table class="table table-bordered _list_table">
                       <tr>
                         <th>##</th>
                          <th>SL</th>

@@ -2,7 +2,7 @@
 @section('title',$page_name)
 
 @section('content')
-<div class="wrapper print_content">
+
   <style type="text/css">
   .table td, .table th {
     padding: 0.10rem;
@@ -10,7 +10,7 @@
     border-top: 1px solid #dee2e6;
 }
   </style>
-  <div style="padding-left: 20px;display: flex;">
+  <div class="_report_button_header">
     <a class="nav-link"  href="{{url('expired-item')}}" role="button">
           <i class="fas fa-search"></i>
         </a>
@@ -188,7 +188,7 @@
     <!-- /.row -->
   </section>
 
-</div>
+
 @endsection
 
 @section('script')

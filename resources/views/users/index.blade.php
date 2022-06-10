@@ -1,5 +1,5 @@
 @extends('backend.layouts.app')
-
+@section('title',$settings->title)
 
 @section('content')
 <!-- Content Header (Page header) -->
@@ -19,11 +19,7 @@
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
-    @if ($message = Session::get('success'))
-    <div class="alert alert-success">
-      <p>{{ $message }}</p>
-    </div>
-    @endif
+     @include('backend.message.message')
     <!-- /.content-header -->
 <div class="content">
       <div class="container-fluid">
@@ -35,7 +31,7 @@
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table class="table table-bordered">
+                  <table class="table table-bordered _list_table">
                      <tr>
                        <th>No</th>
                        <th class="_action">Action</th>

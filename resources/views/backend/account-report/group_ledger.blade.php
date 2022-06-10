@@ -9,7 +9,7 @@
           <div class="col-md-12">
           <div class="card">
             <div class="card-header">
-                <h4>{{ $page_name ?? '' }}</h4>
+                 <h4 class="text-center">{{ $page_name ?? '' }}</h4>
                 @if (count($errors) > 0)
            <div class="alert alert-danger">
                 <strong>Whoops!</strong> There were some problems with your input.<br><br>

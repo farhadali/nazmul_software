@@ -36,7 +36,7 @@
               </div>
               <div class="card-body">
                 <div class="d-flex">
-                  <table class="table table-bordered">
+                  <table class="table table-bordered _list_table">
                       <tr>
                          <th class="_no">No</th>
                          <th class="_action">Action</th>

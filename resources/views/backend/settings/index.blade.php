@@ -116,15 +116,7 @@
                                 <textarea class="form-control" name="_purchase_return_note" >{{old('_purchase_return_note',$settings->_purchase_return_note ?? '' )}}</textarea>
                             </div>
                         </div>
-                        <div class="col-xs-6 col-sm-6 col-md-6">
-                            <div class="form-group">
-                                <strong>Account Details Type: [If use multiple branch and multiple cost center must use All Ledger Option]</strong>
-                                <select class="form-control " name="_ac_type">
-                                      <option value="0" @if($settings->_ac_type==0) selected @endif >All Ledger</option>
-                                      <option value="1" @if($settings->_ac_type==1) selected @endif >Only Cash & Bank Ledger</option>
-                                    </select>
-                            </div>
-                        </div>
+                        
 
                         <div  style="margin-bottom: 100px;width: 100%; "><hr></div>
                         

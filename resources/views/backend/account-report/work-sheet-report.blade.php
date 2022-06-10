@@ -11,7 +11,7 @@
 }
 
   </style>
-  <div style="padding-left: 20px;display: flex;">
+  <div class="_report_button_header">
     <a class="nav-link"  href="{{url('work-sheet')}}" role="button">
           <i class="fas fa-search"></i>
         </a>

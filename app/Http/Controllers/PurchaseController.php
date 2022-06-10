@@ -95,7 +95,9 @@ class PurchaseController extends Controller
         if($request->has('_user_name') && $request->_user_name !=''){
             $datas = $datas->where('_user_name','like',"%trim($request->_user_name)%");
         }
-        
+         if($request->has('_lock') && $request->_lock !=''){
+            $datas = $datas->where('_lock','=',$request->_lock);
+        }
         if($request->has('_sub_total') && $request->_sub_total !=''){
             $datas = $datas->where('_sub_total','=',trim($request->_sub_total));
         }
@@ -483,6 +485,45 @@ class PurchaseController extends Controller
                         account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(9+$i));
                           
                     }
+                }
+
+                 //Only Cash and Bank receive in account detail. This entry set automatically by program.
+                if($_total_cr_amount > 0 && $users->_ac_type==1){
+                         $_account_type_id =  ledger_to_group_type($request->_main_ledger_id)->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($request->_main_ledger_id)->_account_group_id;
+                        $PurchaseAccount = new PurchaseAccount();
+                        $PurchaseAccount->_no = $purchase_id;
+                        $PurchaseAccount->_account_type_id = $_account_type_id;
+                        $PurchaseAccount->_account_group_id = $_account_group_id;
+                        $PurchaseAccount->_ledger_id = $request->_main_ledger_id;
+                        $PurchaseAccount->_cost_center = $users->cost_center_ids;
+                        $PurchaseAccount->_branch_id = $users->branch_ids;
+                        $PurchaseAccount->_short_narr = 'N/A';
+                        $PurchaseAccount->_dr_amount = $_total_cr_amount;
+                        $PurchaseAccount->_cr_amount = 0;
+                        $PurchaseAccount->_status = 1;
+                        $PurchaseAccount->_created_by = $users->id."-".$users->name;
+                        $PurchaseAccount->save();
+
+ 
+                        $_sales_account_id = $PurchaseAccount->id;
+
+                        //Reporting Account Table Data Insert
+                        $_ref_master_id=$purchase_id;
+                        $_ref_detail_id=$_sales_account_id;
+                        $_short_narration='N/A';
+                        $_narration = $request->_note;
+                        $_reference= $request->_referance;
+                        $_transaction= 'Purchase';
+                        $_date = change_date_format($request->_date);
+                        $_table_name ='purchase_accounts';
+                        $_account_ledger = $request->_main_ledger_id;
+                        $_dr_amount_a = $_total_cr_amount;
+                        $_cr_amount_a =  0;
+                        $_branch_id_a = $users->branch_ids;
+                        $_cost_center_a = $users->cost_center_ids;
+                        $_name =$users->name;
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(20));
                 }
             }
 
@@ -935,6 +976,45 @@ if($__sub_total > 0){
                         account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(9+$i));
                           
                     }
+                }
+
+                   //Only Cash and Bank receive in account detail. This entry set automatically by program.
+                if($_total_cr_amount > 0 && $users->_ac_type==1){
+                         $_account_type_id =  ledger_to_group_type($request->_main_ledger_id)->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($request->_main_ledger_id)->_account_group_id;
+                        $PurchaseAccount = new PurchaseAccount();
+                        $PurchaseAccount->_no = $purchase_id;
+                        $PurchaseAccount->_account_type_id = $_account_type_id;
+                        $PurchaseAccount->_account_group_id = $_account_group_id;
+                        $PurchaseAccount->_ledger_id = $request->_main_ledger_id;
+                        $PurchaseAccount->_cost_center = $users->cost_center_ids;
+                        $PurchaseAccount->_branch_id = $users->branch_ids;
+                        $PurchaseAccount->_short_narr = 'N/A';
+                        $PurchaseAccount->_dr_amount = $_total_cr_amount;
+                        $PurchaseAccount->_cr_amount = 0;
+                        $PurchaseAccount->_status = 1;
+                        $PurchaseAccount->_created_by = $users->id."-".$users->name;
+                        $PurchaseAccount->save();
+
+ 
+                        $_sales_account_id = $PurchaseAccount->id;
+
+                        //Reporting Account Table Data Insert
+                        $_ref_master_id=$purchase_id;
+                        $_ref_detail_id=$_sales_account_id;
+                        $_short_narration='N/A';
+                        $_narration = $request->_note;
+                        $_reference= $request->_referance;
+                        $_transaction= 'Purchase';
+                        $_date = change_date_format($request->_date);
+                        $_table_name ='purchase_accounts';
+                        $_account_ledger = $request->_main_ledger_id;
+                        $_dr_amount_a = $_total_cr_amount;
+                        $_cr_amount_a = 0;
+                        $_branch_id_a = $users->branch_ids;
+                        $_cost_center_a = $users->cost_center_ids;
+                        $_name =$users->name;
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(20));
                 }
             }
 

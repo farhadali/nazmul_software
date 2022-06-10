@@ -13,7 +13,7 @@
   line-height: 16px !important;
 }
   </style>
-    <div style="padding-left: 20px;display: flex;">
+    <div class="_report_button_header">
       <a class="nav-link"  href="{{url('balance-sheet')}}" role="button"><i class="fas fa-search"></i></a>
       <a style="cursor: pointer;" class="nav-link"  title="Print" onclick="javascript:printDiv('printablediv')"><i class="fas fa-print"></i></a>
       <a style="cursor: pointer;" onclick="fnExcelReport();" class="nav-link"  title="Excel Download" ><i class="fa fa-file-excel" aria-hidden="true"></i></a>

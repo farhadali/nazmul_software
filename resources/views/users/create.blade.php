@@ -1,5 +1,5 @@
 @extends('backend.layouts.app')
-
+@section('title',$settings->title)
 
 @section('content')
 
@@ -21,16 +21,7 @@
       </div><!-- /.container-fluid -->
     </div>
     <div class="message-area">
-    @if (count($errors) > 0)
-           <div class="alert alert-danger">
-                <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-                </ul>
-            </div>
-        @endif
+     @include('backend.message.message')
     </div>
     <div class="content">
       <div class="container-fluid">
@@ -43,7 +34,7 @@
                     <div class="row">
                        <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <strong>Branch:</strong>
+                                <strong>Branch:<span class="_required">*</span></strong>
                                 
                                 <select class="form-control" name="branch_ids[]" multiple="" required>
                                   @forelse($branchs as $branch)
@@ -56,9 +47,9 @@
                         </div>
                          <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <strong>Cost Center:</strong>
+                                <strong>Cost Center:<span class="_required">*</span></strong>
                                 
-                                <select class="form-control" name="cost_center_ids[]" multiple="" >
+                                <select class="form-control" name="cost_center_ids[]" multiple="" required >
                                   @forelse($cost_centers as $cost_center)
                                   <option value="{{$cost_center->id}}"  >{{ $cost_center->_name ?? '' }}</option>
                                   @empty
@@ -103,12 +94,31 @@
                             </div>
                         </div>
 @endif
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <strong>Account Details Type: [If use multiple branch and multiple cost center must use All Ledger Option]</strong>
+                                <select class="form-control " name="_ac_type">
+                                      <option value="0"  >All Ledger</option>
+                                      <option value="1"  >Only Cash & Bank Ledger</option>
+                                    </select>
+                            </div>
+                        </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 mb-5">
                             <div class="form-group">
                                 <strong>Role:</strong>
                                 {!! Form::select('roles[]', $roles,[], array('class' => 'form-control','multiple')) !!}
                             </div>
                         </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <strong>Status</strong>
+                                <select class="form-control " name="status">
+                                      <option value="1"  >Active</option>
+                                      <option value="0"  >In Active</option>
+                                    </select>
+                            </div>
+                        </div>
+
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
                             <button type="submit" class="btn btn-success submit-button ml-5"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
                            

@@ -80,7 +80,7 @@ span.psw {
         <img src="{{ $settings->logo ?? '' }}" alt="Avatar" class="avatar">
     </a>
   </div>
-
+ @include('backend.message.message')
   <div class="container">
     <label for="email"><b> {!!  __('E-Mail Address')  !!}</b></label>
     <input type="email" placeholder="Enter email" name="email" required value="{!! old('email') !!}">

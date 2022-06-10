@@ -46,7 +46,7 @@
                                                 <input type="hidden" name="purchase_account_id[]" class="form-control purchase_account_id" value="{{$account->id}}">
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger" value="{{ $account->_ledger->_name ?? '' }}" @if($settings->_ac_type==1) attr_account_head_no="1" @endif>
+                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger" value="{{ $account->_ledger->_name ?? '' }}" @if($__user->_ac_type==1) attr_account_head_no="1" @endif>
                                                 <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" value="{{$account->_ledger_id}}" >
                                                 <div class="search_box">
                                                   

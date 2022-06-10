@@ -59,9 +59,9 @@ class SalesReturnController extends Controller
         $auth_user = Auth::user();
        if($request->has('limit')){
             $limit = $request->limit ??  default_pagination();
-            session()->put('_pur_limit', $request->limit);
+            session()->put('_sales_return_limit', $request->limit);
         }else{
-             $limit= \Session::get('_pur_limit') ??  default_pagination();
+             $limit= \Session::get('_sales_return_limit') ??  default_pagination();
             
         }
         
@@ -90,6 +90,9 @@ class SalesReturnController extends Controller
         if($request->has('id') && $request->id !=""){
             $ids =  array_map('intval', explode(',', $request->id ));
             $datas = $datas->whereIn('id', $ids); 
+        }
+         if($request->has('_lock') && $request->_lock !=''){
+            $datas = $datas->where('_lock','=',$request->_lock);
         }
         
         if($request->has('_order_ref_id') && $request->_order_ref_id !=''){
@@ -167,7 +170,7 @@ class SalesReturnController extends Controller
     }
 
      public function reset(){
-        Session::flash('_pur_limit');
+        Session::flash('_sales_return_limit');
        return  \Redirect::to('sales?limit='.default_pagination());
     }
 
@@ -808,6 +811,46 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
                           
                     }
                 }
+
+
+                //Only Cash and Bank receive in account detail. This entry set automatically by program.
+                if($_total_cr_amount > 0 && $users->_ac_type==1){
+                         $_account_type_id =  ledger_to_group_type($request->_main_ledger_id)->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($request->_main_ledger_id)->_account_group_id;
+                        $SalesReturnAccount = new SalesReturnAccount();
+                        $SalesReturnAccount->_no = $_master_id;
+                        $SalesReturnAccount->_account_type_id = $_account_type_id;
+                        $SalesReturnAccount->_account_group_id = $_account_group_id;
+                        $SalesReturnAccount->_ledger_id = $request->_main_ledger_id;
+                        $SalesReturnAccount->_cost_center = $users->cost_center_ids;
+                        $SalesReturnAccount->_branch_id = $users->branch_ids;
+                        $SalesReturnAccount->_short_narr = 'N/A';
+                        $SalesReturnAccount->_dr_amount = $_total_cr_amount;
+                        $SalesReturnAccount->_cr_amount = 0;
+                        $SalesReturnAccount->_status = 1;
+                        $SalesReturnAccount->_created_by = $users->id."-".$users->name;
+                        $SalesReturnAccount->save();
+
+ 
+                        $_sales_account_id = $SalesReturnAccount->id;
+
+                        //Reporting Account Table Data Insert
+                        $_ref_master_id=$_master_id;
+                        $_ref_detail_id=$_sales_account_id;
+                        $_short_narration='N/A';
+                        $_narration = $request->_note;
+                        $_reference= $request->_referance;
+                         $_transaction= 'Sales Return';
+                        $_date = change_date_format($request->_date);
+                        $_table_name ='sales_return_accounts';
+                        $_account_ledger = $request->_main_ledger_id;
+                        $_dr_amount_a =$_total_cr_amount ??  0;
+                        $_cr_amount_a = 0;
+                        $_branch_id_a = $users->branch_ids;
+                        $_cost_center_a = $users->cost_center_ids;
+                        $_name =$users->name;
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(20));
+                }
             }
 
            
@@ -1261,6 +1304,46 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
                         account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(9+$i));
                           
                     }
+                }
+
+
+                //Only Cash and Bank receive in account detail. This entry set automatically by program.
+                if($_total_cr_amount > 0 && $users->_ac_type==1){
+                         $_account_type_id =  ledger_to_group_type($request->_main_ledger_id)->_account_head_id;
+                        $_account_group_id =  ledger_to_group_type($request->_main_ledger_id)->_account_group_id;
+                        $SalesReturnAccount = new SalesReturnAccount();
+                        $SalesReturnAccount->_no = $_master_id;
+                        $SalesReturnAccount->_account_type_id = $_account_type_id;
+                        $SalesReturnAccount->_account_group_id = $_account_group_id;
+                        $SalesReturnAccount->_ledger_id = $request->_main_ledger_id;
+                        $SalesReturnAccount->_cost_center = $users->cost_center_ids;
+                        $SalesReturnAccount->_branch_id = $users->branch_ids;
+                        $SalesReturnAccount->_short_narr = 'N/A';
+                        $SalesReturnAccount->_dr_amount = $_total_cr_amount;
+                        $SalesReturnAccount->_cr_amount = 0;
+                        $SalesReturnAccount->_status = 1;
+                        $SalesReturnAccount->_created_by = $users->id."-".$users->name;
+                        $SalesReturnAccount->save();
+
+ 
+                        $_sales_account_id = $SalesReturnAccount->id;
+
+                        //Reporting Account Table Data Insert
+                        $_ref_master_id=$_master_id;
+                        $_ref_detail_id=$_sales_account_id;
+                        $_short_narration='N/A';
+                        $_narration = $request->_note;
+                        $_reference= $request->_referance;
+                         $_transaction= 'Sales Return';
+                        $_date = change_date_format($request->_date);
+                        $_table_name ='sales_return_accounts';
+                        $_account_ledger = $request->_main_ledger_id;
+                        $_dr_amount_a =$_total_cr_amount ??  0;
+                        $_cr_amount_a = 0;
+                        $_branch_id_a = $users->branch_ids;
+                        $_cost_center_a = $users->cost_center_ids;
+                        $_name =$users->name;
+                        account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(20));
                 }
             }
 

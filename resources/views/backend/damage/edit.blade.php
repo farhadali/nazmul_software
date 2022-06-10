@@ -86,7 +86,7 @@
                               <input type="hidden" name="_sales_id" value="{{$data->id}}" class="_sales_id" >
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-2">
+                        <div class="col-xs-12 col-sm-12 col-md-2 @if(sizeof($permited_branch)==1) display_none @endif ">
                             <div class="form-group ">
                                 <label>Branch:<span class="_required">*</span></label>
                                <select class="form-control" name="_branch_id" required >

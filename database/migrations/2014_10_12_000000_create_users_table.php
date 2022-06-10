@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->string('cost_center_ids')->default(0);
             $table->integer('ref_id')->default(0);
             $table->integer('status')->default(1);
+            $table->integer('_ac_type')->default(0);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

@@ -31,7 +31,7 @@
                                                 <a  href="#none" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger" @if($settings->_ac_type==1) attr_account_head_no="1" @endif  >
+                                                <input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger" @if($__user->_ac_type==1) attr_account_head_no="1" @endif  >
                                                 <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
                                                 <div class="search_box">
                                                   

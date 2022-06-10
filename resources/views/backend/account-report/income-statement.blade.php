@@ -21,10 +21,10 @@
               @endif
             <div class="card-header">
               <div class="row">
-                <div class="col-sm-8 text-left">
+                <div class="col-sm-7 text-right">
                   <h4>{{ $page_name ?? '' }}</h4>
                 </div>
-                <div class="col-sm-4 text-right" >
+                <div class="col-sm-5 text-right" >
                   @can('income-statement-settings')
                   <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default">
                   <i class="fa fa-cog" aria-hidden="true"></i> 

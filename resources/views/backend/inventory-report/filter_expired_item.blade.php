@@ -9,17 +9,8 @@
           <div class="col-md-12">
           <div class="card">
             <div class="card-header">
-                <h4>{{ $page_name ?? '' }}</h4>
-                @if (count($errors) > 0)
-           <div class="alert alert-danger">
-                
-                <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-                </ul>
-            </div>
-        @endif
+             <h4 class="text-center">{{ $page_name ?? '' }}</h4>
+                 @include('backend.message.message')
             </div>
           
          

@@ -32,7 +32,7 @@ class UserController extends Controller
     {
         
         $limit = $request->limit ?? 10;
-        $data = User::where('status','!=','');
+        $data = User::where('name','!=','');
         if($request->has('name') && $request->name !=''){
             $data = $data->where('name','like',"%$request->name%");
         }
@@ -76,7 +76,9 @@ class UserController extends Controller
             'branch_ids' => 'required|array',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
-            'roles' => 'required'
+            'roles' => 'required',
+            '_ac_type' => 'required',
+            'cost_center_ids' => 'required',
         ]);
     
         $input = $request->all();
@@ -84,7 +86,7 @@ class UserController extends Controller
             $branch_ids = implode(",",$request->branch_ids);
             $input['branch_ids'] = $branch_ids;
         }else{
-            $input['branch_ids'] = 0;
+            $input['branch_ids'] = 1;
         }
         
         
@@ -92,7 +94,16 @@ class UserController extends Controller
             $cost_center_ids = implode(",",$request->cost_center_ids);
             $input['cost_center_ids'] = $cost_center_ids;
         }else{
-            $input['cost_center_ids'] = 0;
+            $input['cost_center_ids'] = 1;
+        }
+        $input['_ac_type'] = $request->_ac_type;
+        if($request->_ac_type==1){
+            if(sizeof($request->branch_ids) > 1){
+                $input['_ac_type'] = 0;
+            }
+            if(sizeof($request->cost_center_ids) > 1){
+                $input['_ac_type'] = 0;
+            }
         }
 
         $input['password'] = Hash::make($input['password']);
@@ -149,7 +160,9 @@ class UserController extends Controller
             'branch_ids' => 'required|array',
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
-            'roles' => 'required'
+            'roles' => 'required',
+            '_ac_type' => 'required',
+            'cost_center_ids' => 'required',
         ]);
         
     
@@ -158,7 +171,7 @@ class UserController extends Controller
             $branch_ids = implode(",",$request->branch_ids);
             $input['branch_ids'] = $branch_ids;
         }else{
-            $input['branch_ids'] = 0;
+            $input['branch_ids'] = 1;
         }
         
         
@@ -166,7 +179,7 @@ class UserController extends Controller
             $cost_center_ids = implode(",",$request->cost_center_ids);
             $input['cost_center_ids'] = $cost_center_ids;
         }else{
-            $input['cost_center_ids'] = 0;
+            $input['cost_center_ids'] =1;
         }
         
 
@@ -174,6 +187,15 @@ class UserController extends Controller
             $input['password'] = Hash::make($input['password']);
         }else{
             $input = Arr::except($input,array('password'));    
+        }
+        $input['_ac_type'] = $request->_ac_type;
+        if($request->_ac_type==1){
+            if(sizeof($request->branch_ids) > 1){
+                $input['_ac_type'] = 0;
+            }
+            if(sizeof($request->cost_center_ids) > 1){
+                $input['_ac_type'] = 0;
+            }
         }
     
         $user = User::find($id);

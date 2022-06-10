@@ -43,6 +43,8 @@
 
 
 
+
+
   @yield('css')
   <style type="text/css">
     .submit-button{

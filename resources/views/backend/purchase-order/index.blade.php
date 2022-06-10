@@ -75,20 +75,20 @@
               <div class="card-body">
                 <div class="table-responsive">
                   
-                  <table class="table table-bordered">
+                  <table class="table table-bordered _list_table">
                       <tr>
                          <th class=" _nv_th_action _action_big"><b>Action</b></th>
-                         <th class="_nv_th_id _no"><b>ID</b></th>
-                         <th class="_nv_th_date"><b>Date</b></th>
-                         <th class="_nv_th_date"><b>Branch</b></th>
-                         <th class="_nv_th_code"><b>Order Number</b></th>
+                         <th class=" _no"><b>ID</b></th>
+                         <th class=""><b>Date</b></th>
+                         <th class=""><b>Branch</b></th>
+                         <th class=""><b>Order Number</b></th>
                         
-                         <th class="_nv_th_amount"><b>Referance</b></th>
-                         <th class="_nv_th_ref"><b>Ledger</b></th>
-                         <th class="_nv_th_branch"><b>Sub Total</b></th>
-                         <th class="_nv_th_user"><b>VAT</b></th>
-                         <th class="_nv_th_user"><b>Total</b></th>
-                         <th class="_nv_th_note"><b>User</b></th>
+                         <th class=""><b>Referance</b></th>
+                         <th class=""><b>Ledger</b></th>
+                         <th class=""><b>Sub Total</b></th>
+                         <th class=""><b>VAT</b></th>
+                         <th class=""><b>Total</b></th>
+                         <th class=""><b>User</b></th>
                       </tr>
                       @php
                       $sum_of_amount=0;

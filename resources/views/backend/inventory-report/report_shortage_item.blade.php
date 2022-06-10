@@ -10,7 +10,7 @@
     border-top: 1px solid #dee2e6;
 }
   </style>
-  <div style="padding-left: 20px;display: flex;">
+ <div class="_report_button_header">
     <a class="nav-link"  href="{{url('shortage-item')}}" role="button">
           <i class="fas fa-search"></i>
         </a>
@@ -44,8 +44,7 @@
             
           </tr>
         </table>
-        </div>
-      </div>
+        
 
     <!-- Table row -->
    <table class="cewReportTable">

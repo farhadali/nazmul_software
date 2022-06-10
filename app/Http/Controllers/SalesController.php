@@ -57,9 +57,9 @@ class SalesController extends Controller
         $auth_user = Auth::user();
        if($request->has('limit')){
             $limit = $request->limit ??  default_pagination();
-            session()->put('_pur_limit', $request->limit);
+            session()->put('_sales_limit', $request->limit);
         }else{
-             $limit= \Session::get('_pur_limit') ??  default_pagination();
+             $limit= \Session::get('_sales_limit') ??  default_pagination();
             
         }
         
@@ -90,6 +90,9 @@ class SalesController extends Controller
             $datas = $datas->whereIn('id', $ids); 
         }
         
+         if($request->has('_lock') && $request->_lock !=''){
+            $datas = $datas->where('_lock','=',$request->_lock);
+        }
         if($request->has('_order_ref_id') && $request->_order_ref_id !=''){
             $datas = $datas->where('_order_ref_id','like',"%trim($request->_order_ref_id)%");
         }
@@ -165,7 +168,7 @@ class SalesController extends Controller
     }
 
      public function reset(){
-        Session::flash('_pur_limit');
+        Session::flash('_sales_limit');
        return  \Redirect::to('sales?limit='.default_pagination());
     }
 
@@ -619,9 +622,9 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
 
 
                 }
-            $settings = GeneralSettings::select('_ac_type')->first();
+            
                 //Only Cash and Bank receive in account detail. This entry set automatically by program.
-                if($_total_dr_amount > 0 && $settings->_ac_type==1){
+                if($_total_dr_amount > 0 && $users->_ac_type==1){
                          $_account_type_id =  ledger_to_group_type($request->_main_ledger_id)->_account_head_id;
                         $_account_group_id =  ledger_to_group_type($request->_main_ledger_id)->_account_group_id;
                         $SalesAccount = new SalesAccount();
@@ -629,8 +632,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                         $SalesAccount->_account_type_id = $_account_type_id;
                         $SalesAccount->_account_group_id = $_account_group_id;
                         $SalesAccount->_ledger_id = $request->_main_ledger_id;
-                        $SalesAccount->_cost_center = 1;
-                        $SalesAccount->_branch_id = 1;
+                        $SalesAccount->_cost_center = $users->cost_center_ids;
+                        $SalesAccount->_branch_id = $users->branch_ids;
                         $SalesAccount->_short_narr = 'N/A';
                         $SalesAccount->_dr_amount = 0;
                         $SalesAccount->_cr_amount = $_total_dr_amount;
@@ -638,6 +641,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                         $SalesAccount->_created_by = $users->id."-".$users->name;
                         $SalesAccount->save();
 
+ 
                         $_sales_account_id = $SalesAccount->id;
 
                         //Reporting Account Table Data Insert
@@ -652,8 +656,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                         $_account_ledger = $request->_main_ledger_id;
                         $_dr_amount_a = 0;
                         $_cr_amount_a = $_total_dr_amount ?? 0;
-                        $_branch_id_a = 1;
-                        $_cost_center_a = 1;
+                        $_branch_id_a = $users->branch_ids;
+                        $_cost_center_a = $users->cost_center_ids;
                         $_name =$users->name;
                         account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(20));
                 }
@@ -1107,9 +1111,9 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
                     }
                 }
 
-                 $settings = GeneralSettings::select('_ac_type')->first();
+                 
                 //Only Cash and Bank receive in account detail. This entry set automatically by program.
-                if($_total_dr_amount > 0 && $settings->_ac_type==1){
+                if($_total_dr_amount > 0 && $users->_ac_type==1){
                          $_account_type_id =  ledger_to_group_type($request->_main_ledger_id)->_account_head_id;
                         $_account_group_id =  ledger_to_group_type($request->_main_ledger_id)->_account_group_id;
                         $SalesAccount = new SalesAccount();
@@ -1117,8 +1121,8 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
                         $SalesAccount->_account_type_id = $_account_type_id;
                         $SalesAccount->_account_group_id = $_account_group_id;
                         $SalesAccount->_ledger_id = $request->_main_ledger_id;
-                        $SalesAccount->_cost_center = 1;
-                        $SalesAccount->_branch_id = 1;
+                        $SalesAccount->_cost_center = $users->cost_center_ids;
+                        $SalesAccount->_branch_id = $users->branch_ids;
                         $SalesAccount->_short_narr = 'N/A';
                         $SalesAccount->_dr_amount = 0;
                         $SalesAccount->_cr_amount = $_total_dr_amount;
@@ -1140,8 +1144,8 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
                         $_account_ledger = $request->_main_ledger_id;
                         $_dr_amount_a = 0;
                         $_cr_amount_a = $_total_dr_amount ?? 0;
-                        $_branch_id_a = 1;
-                        $_cost_center_a = 1;
+                        $_branch_id_a = $users->branch_ids;
+                        $_cost_center_a = $users->cost_center_ids;
                         $_name =$users->name;
                         account_data_save($_ref_master_id,$_ref_detail_id,$_short_narration,$_narration,$_reference,$_transaction,$_date,$_table_name,$_account_ledger,$_dr_amount_a,$_cr_amount_a,$_branch_id_a,$_cost_center_a,$_name,(20));
                 }

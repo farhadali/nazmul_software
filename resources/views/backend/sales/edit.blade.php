@@ -2,6 +2,9 @@
 @section('title',$page_name)
 
 @section('content')
+@php
+$__user= Auth::user();
+@endphp
 <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
@@ -381,11 +384,11 @@
                             </div>
                           </div>
                         </div>
-                       @if($settings->_ac_type==1)
+                       @if($__user->_ac_type==1)
                       @include('backend.sales.edit_ac_cb')
                          
                       @else
-                       @include('backend.sales.create_ac_detail')
+                       @include('backend.sales.edit_ac_detail')
                       @endif 
                        
                          
@@ -804,7 +807,7 @@ $(document).on("change","#_discount_input",function(){
                       <td>
                       <input type="hidden" name="purchase_account_id[]" class="form-control purchase_account_id" value="0"  />
                       </td>
-                      <td><input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger" @if($settings->_ac_type==1) attr_account_head_no="1" @endif >
+                      <td><input type="text" name="_search_ledger_id[]" class="form-control _search_ledger_id width_280_px" placeholder="Ledger" @if($__user->_ac_type==1) attr_account_head_no="1" @endif >
                       <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
                       <div class="search_box">
                       </div>
@@ -852,7 +855,7 @@ $(document).on("change","#_discount_input",function(){
                             <td>
                               <input type="number" min="0"  name="_dr_amount[]" class="form-control  _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',0)}}">
                             </td>
-                           <td class=" @if($settings->_ac_type==1) display_none @endif ">
+                           <td class=" @if($__user->_ac_type==1) display_none @endif ">
                               <input type="number" min="0"  name="_cr_amount[]" class="form-control  _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',0)}}">
                               </td>
                             </tr>`;
@@ -1066,7 +1069,7 @@ function purchase_row_add(event){
 
 
 
-@if($settings->_ac_type==0)
+@if($__user->_ac_type==0)
     if( parseFloat(_total_dr_amount) !=parseFloat(_total_cr_amount)){
       $(document).find("._total_dr_amount").addClass('required_border').focus();
       $(document).find("._total_cr_amount").addClass('required_border').focus();

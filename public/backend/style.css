@@ -19,6 +19,9 @@ body{
     height: 50px;
     margin:   20px 20px 10px 20px;
 }
+._green{
+     color: #28a745;
+}
 
 .action_button{
 	height: 36px;
@@ -93,8 +96,10 @@ input[type="number"] {
     border: 1px solid #CCCCCC;
 }
 thead{
-    background: #d8eff3;
-    
+    background: #036d95;
+    background-image: linear-gradient(to bottom, #0682b1 0%, #025f82 100%);
+    border-color: #72a9bd;
+    color: #f5f5f5;
     font-family: math !important;
 }
 tfoot{
@@ -255,7 +260,6 @@ label{
 .message-area{
     width: 95%;
     margin: 0px auto;
-    max-height: 63px;
     min-height: 1px;
 }
 
@@ -386,14 +390,7 @@ body:not(.layout-fixed) .main-sidebar {
     margin-bottom: 1px;
 }
 
-.bottom_save_section{
-    position: fixed;
-    bottom: 0px;
-    background: #d8eff3;
-    width: 100%;
-    padding: 10px;
-    padding-bottom: 20px;
-}
+
 .mb-10{
     margin-bottom: 100px;
 }
@@ -520,4 +517,56 @@ body:not(.layout-fixed) .main-sidebar {
     
 }
 
+.wrapper{
+    background: rgb(19,173,180);
+background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
 
+}
+.card {
+    background: rgb(19,173,180);
+background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
+}
+.navbar-white {
+   background: rgb(19,173,180);
+background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
+}
+.content-wrapper {
+   background: rgb(19,173,180);
+background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
+margin-bottom: 50px;
+}
+.content-header {
+   background: rgb(19,173,180);
+background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
+}
+.bottom_save_section{
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    padding: 10px;
+   background: rgb(19,173,180);
+}
+
+._report_button_header{
+    padding-left: 20px;
+    display: flex;
+    background: #fff;
+}
+._list_table{
+    background: #fff;
+}
+.bg-aqua{
+    background: #00c0ef;
+}
+.bg-yellow{
+ background: #ffad46;
+}
+.bg-red{
+ background: #f5365c;
+}
+.text-white{
+    color: #fff;
+}
+.bg-white{
+    background: #fff;
+}

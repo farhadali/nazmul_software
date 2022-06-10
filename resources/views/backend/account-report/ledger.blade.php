@@ -9,7 +9,7 @@
           <div class="col-md-12">
           <div class="card">
             <div class="card-header">
-                <h4>{{ $page_name ?? '' }}</h4>
+                 <h4 class="text-center">{{ $page_name ?? '' }}</h4>
             </div>
           
          

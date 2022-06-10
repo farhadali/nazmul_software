@@ -20,15 +20,7 @@
                   </div>
               @endif
             <div class="card-header">
-              <div class="row">
-                <div class="col-sm-8 text-left">
-                  <h4>{{ $page_name ?? '' }}</h4>
-                </div>
-                <div class="col-sm-4 text-right" >
-                 
-                 
-                </div>
-              </div>
+               <h4 class="text-center">{{ $page_name ?? '' }}</h4>
                 
              
             </div>

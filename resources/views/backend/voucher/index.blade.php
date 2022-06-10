@@ -2,6 +2,9 @@
 @section('title',$page_name)
 
 @section('content')
+@php
+$__user= Auth::user();
+@endphp
 <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
@@ -71,18 +74,18 @@
               <div class="card-body">
                 <div class="table-responsive">
                   
-                  <table class="table table-bordered">
+                  <table class="table table-bordered _list_table">
                       <tr>
                          <th class=" _nv_th_action _action_big"><b>Action</b></th>
-                         <th class="_nv_th_id _no"><b>ID</b></th>
-                         <th class="_nv_th_code"><b>Code</b></th>
-                         <th class="_nv_th_date"><b>Date</b></th>
-                         <th class="_nv_th_type"><b>Type</b></th>
-                         <th class="_nv_th_amount text-right"><b>Amount</b></th>
-                         <th class="_nv_th_ref"><b>Refarance</b></th>
-                         <th class="_nv_th_note"><b>Note</b></th>
-                         <th class="_nv_th_branch"><b>Branch</b></th>
-                         <th class="_nv_th_user"><b>User</b></th>
+                         <th class=" _no"><b>ID</b></th>
+                         <th class=""><b>Code</b></th>
+                         <th class=""><b>Date</b></th>
+                         <th class=""><b>Type</b></th>
+                         <th class=" text-right"><b>Amount</b></th>
+                         <th class=""><b>Refarance</b></th>
+                         <th class=""><b>Note</b></th>
+                         <th class=""><b>Branch</b></th>
+                         <th class=""><b>User</b></th>
                          <th>Lock</th>
                       </tr>
                       @php
@@ -143,10 +146,19 @@
                             <td>{{ $data->_note ?? '' }}</td>
                             <td>{{ $data->_master_branch->_name ?? '' }}</td>
                             <td>{{ $data->_user_name ?? ''  }}</td>
-                            <td>
+                           <td style="display: flex;">
                               @can('lock-permission')
                               <input class="form-control _invoice_lock" type="checkbox" name="_lock" _attr_invoice_id="{{$data->id}}" value="{{$data->_lock}}" @if($data->_lock==1) checked @endif>
                               @endcan
+
+                              @if($__user->user_type !='admin')
+                              @if($data->_lock==1)
+                              <i class="fa fa-lock _green ml-1 _icon_change__{{$data->id}}" aria-hidden="true"></i>
+                              @else
+                              <i class="fa fa-lock _required ml-1 _icon_change__{{$data->id}}" aria-hidden="true"></i>
+                              @endif
+                              @endif
+
                             </td>
                             
                            
@@ -293,12 +305,16 @@ function after_request_date__today(_date){
   $(document).on("click","._invoice_lock",function(){
     var _id = $(this).attr('_attr_invoice_id');
     var _table_name ="voucher_masters";
-   if($(this).is(':checked')){
+    if($(this).is(':checked')){
             $(this).prop("selected", "selected");
           var _action = 1;
+          $('._icon_change__'+_id).addClass('_green').removeClass('_required');
+         
+         
         } else {
-            $(this).removeAttr("selected");
+          $(this).removeAttr("selected");
           var _action = 0;
+            $('._icon_change__'+_id).addClass('_required').removeClass('_green');
            
         }
       _lock_action(_id,_action,_table_name)

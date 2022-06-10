@@ -2,6 +2,9 @@
 @section('title',$page_name)
 
 @section('content')
+@php
+$__user= Auth::user();
+@endphp
 <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
@@ -80,18 +83,8 @@
                                   </div>
                               </div>
                         </div>
-                         <div class="col-xs-12 col-sm-12 col-md-3 ">
-                            <div class="form-group">
-                              <label class="mr-2" for="_main_ledger_id">Customer:<span class="_required">*</span></label>
-                            <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="{{old('_search_main_ledger_id')}}" placeholder="Customer" required>
-
-                            <input type="hidden" id="_main_ledger_id" name="_main_ledger_id" class="form-control _main_ledger_id" value="{{old('_main_ledger_id')}}" placeholder="Customer" required>
-                            <div class="search_box_main_ledger"> </div>
-
-                                
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-3 ">
+                        
+                        <div class="col-xs-12 col-sm-12 col-md-2 ">
                             <div class="form-group">
                               <label class="mr-2" for="_order_number">Invoice Number:</label>
                               <input type="text" id="_order_number" name="_order_number" class="form-control _order_number" value="{{old('_order_number')}}" placeholder="Invoice Number" readonly >
@@ -112,7 +105,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-xs-12 col-sm-12 col-md-2 display_none">
+                        <div class="col-xs-12 col-sm-12 col-md-2 ">
                             <div class="form-group">
                               <label class="mr-2" for="_order_ref_id">Sales Order:</label>
                               <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id')}}" placeholder="Sales Order" >
@@ -130,9 +123,31 @@
                             </div>
                         </div>
                         @endif
+                          @if($_show_delivery_man ==1)
+                        <div class="col-xs-12 col-sm-12 col-md-3 ">
+                            <div class="form-group">
+                              <label class="mr-2" for="_delivery_man">Delivery Man:</label>
+                              <input type="text" id="_search_main_delivery_man" name="_search_main_delivery_man" class="form-control _search_main_delivery_man" 
+                              value="@if ($delivery_man_name_leder = Session::get('delivery_man_name_leder')) {{ $delivery_man_name_leder}} @endif" placeholder="Delivery Man" >
+
+                            <input type="hidden" id="_delivery_man" name="_delivery_man_id" class="form-control _delivery_man" value="@if ($_delivery_man_id = Session::get('_delivery_man_id')) {{ $_delivery_man_id}} @endif" placeholder="Delivery Man" >
+                            <div class="search_box_delivery_man"> </div>
+                            </div>
+                        </div>
+                        @endif
                        
                         
-                        
+                       <div class="col-xs-12 col-sm-12 col-md-3 ">
+                            <div class="form-group">
+                              <label class="mr-2" for="_main_ledger_id">Customer:<span class="_required">*</span></label>
+                            <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="{{old('_search_main_ledger_id')}}" placeholder="Customer" required>
+
+                            <input type="hidden" id="_main_ledger_id" name="_main_ledger_id" class="form-control _main_ledger_id" value="{{old('_main_ledger_id')}}" placeholder="Customer" required>
+                            <div class="search_box_main_ledger"> </div>
+
+                                
+                            </div>
+                        </div>  
                         
                         <div class="col-xs-12 col-sm-12 col-md-3 ">
                             <div class="form-group">
@@ -155,18 +170,7 @@
                               <input type="text" id="_referance" name="_referance" class="form-control _referance" value="{{old('_referance')}}" placeholder="Referance" >
                             </div>
                         </div>
-                          @if($_show_delivery_man ==1)
-                        <div class="col-xs-12 col-sm-12 col-md-3 ">
-                            <div class="form-group">
-                              <label class="mr-2" for="_delivery_man">Delivery Man:</label>
-                              <input type="text" id="_search_main_delivery_man" name="_search_main_delivery_man" class="form-control _search_main_delivery_man" 
-                              value="@if ($delivery_man_name_leder = Session::get('delivery_man_name_leder')) {{ $delivery_man_name_leder}} @endif" placeholder="Delivery Man" >
-
-                            <input type="hidden" id="_delivery_man" name="_delivery_man_id" class="form-control _delivery_man" value="@if ($_delivery_man_id = Session::get('_delivery_man_id')) {{ $_delivery_man_id}} @endif" placeholder="Delivery Man" >
-                            <div class="search_box_delivery_man"> </div>
-                            </div>
-                        </div>
-                        @endif
+                        
                         
                         <div class="col-md-12  ">
                              <div class="card">
@@ -358,7 +362,7 @@
                           </div>
                         </div>
                         
-                      @if($settings->_ac_type==1)
+                      @if($__user->_ac_type==1)
                       @include('backend.sales.create_acc_cb')
                          
                       @else
@@ -779,7 +783,7 @@ $(document).on("change","#_discount_input",function(){
 
  var single_row =  `<tr class="_voucher_row">
                       <td><a  href="" class="btn btn-default _voucher_row_remove" ><i class="fa fa-trash"></i></a></td>
-                      <td><input type="text" name="_search_ledger_id[]" @if($settings->_ac_type==1) attr_account_head_no="1" @endif  class="form-control _search_ledger_id width_280_px" placeholder="Ledger"   >
+                      <td><input type="text" name="_search_ledger_id[]" @if($__user->_ac_type==1) attr_account_head_no="1" @endif  class="form-control _search_ledger_id width_280_px" placeholder="Ledger"   >
                       <input type="hidden" name="_ledger_id[]" class="form-control _ledger_id" >
                       <div class="search_box">
                       </div>
@@ -827,7 +831,7 @@ $(document).on("change","#_discount_input",function(){
                             <td>
                               <input type="number" name="_dr_amount[]" class="form-control  _dr_amount" placeholder="Dr. Amount" value="{{old('_dr_amount',0)}}">
                             </td>
-                            <td class=" @if($settings->_ac_type==1) display_none @endif ">
+                            <td class=" @if($__user->_ac_type==1) display_none @endif ">
                               <input type="number" name="_cr_amount[]" class="form-control  _cr_amount" placeholder="Cr. Amount" value="{{old('_cr_amount',0)}}">
                               </td>
                             </tr>`;
@@ -1033,7 +1037,7 @@ function purchase_row_add(event){
 
 
 
-@if($settings->_ac_type==0)
+@if($__user->_ac_type==0)
     if( parseFloat(_total_dr_amount) !=parseFloat(_total_cr_amount)){
       $(document).find("._total_dr_amount").addClass('required_border').focus();
       $(document).find("._total_cr_amount").addClass('required_border').focus();
