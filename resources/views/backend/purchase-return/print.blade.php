@@ -13,7 +13,7 @@
 }
 }
   </style>
-<div style="padding-left: 20px;display: flex;">
+<div class="_report_button_header">
     <a class="nav-link"  href="{{url('purchase-return')}}" role="button"><i class="fa fa-arrow-left"></i></a>
  @can('purchase-return-edit')
     <a class="nav-link"  title="Edit" href="{{ route('purchase-return.edit',$data->id) }}">

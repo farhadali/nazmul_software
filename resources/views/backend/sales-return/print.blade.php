@@ -12,7 +12,7 @@
 }
 }
   </style>
-<div style="padding-left: 20px;display: flex;">
+<div class="_report_button_header">
  <a class="nav-link"  href="{{url('sales-return')}}" role="button"><i class="fa fa-arrow-left"></i></a>
  @can('sales-return-edit')
     <a class="nav-link"  title="Edit" href="{{ route('sales-return.edit',$data->id) }}">
