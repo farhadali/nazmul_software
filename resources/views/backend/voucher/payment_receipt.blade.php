@@ -43,7 +43,7 @@
           {{$settings->_phone ?? '' }}<br>
           {{$settings->_email ?? '' }}<br>
         </address>
-        <h4 class="text-center"><b>Money Receipt @if($data->_voucher_type=='CR') (Cash) @endif @if($data->_voucher_type=='BR') (Bank) @endif</b></h4>
+        <h4 class="text-center"><b> Payment Receipt @if($data->_voucher_type=='CP') (Cash Payment) @endif @if($data->_voucher_type=='BP') (Bank Payment) @endif</b></h4>
       </div>
       <!-- /.col -->
       
@@ -60,11 +60,11 @@
          
           <tbody>
             @forelse($data->_master_details as $detail_key=>$detail)
-            @if($detail->_cr_amount > 0)
+            @if($detail->_dr_amount > 0)
             <tr style="border: 1px solid silver;">
               <td colspan="2" style="border: 1px solid silver;">
                 <table style="width: 100%">
-                  <tr><td><b>Received From:</b>{{$detail->_voucher_ledger->_name ?? '' }}</td> </tr>
+                  <tr><td><b>Payment To:</b>{{$detail->_voucher_ledger->_name ?? '' }}</td> </tr>
                   <tr><td><b>Address:</b>{{$detail->_voucher_ledger->_address ?? '' }}</td> </tr>
                   <tr><td><b>Phone:</b>{{$detail->_voucher_ledger->_phone ?? '' }}</td> </tr>
                 </table>
@@ -90,13 +90,13 @@
           </tr>
            @forelse($data->_master_details as $detail_key=>$detail)
           
-            @if($detail->_dr_amount > 0)
+            @if($detail->_cr_amount > 0)
           <tr style="border: 1px solid silver;">
             
             <td style="border: 1px solid silver;">{!! $detail->_voucher_ledger->_name ?? '' !!}</td>
             
             <td style="border: 1px solid silver;">{!! $detail->_short_narr ?? '' !!}</td>
-            <td style="border: 1px solid silver;" class="text-right" >{!! _report_amount( $detail->_dr_amount ?? 0 ) !!}</td>
+            <td style="border: 1px solid silver;" class="text-right" >{!! _report_amount( $detail->_cr_amount ?? 0 ) !!}</td>
              
           </tr>
           @endif

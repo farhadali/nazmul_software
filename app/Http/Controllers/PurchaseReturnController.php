@@ -150,6 +150,18 @@ class PurchaseReturnController extends Controller
        return  \Redirect::to('purchase-return?limit='.default_pagination());
     }
 
+    public function moneyReceipt($id){
+        $users = Auth::user();
+        $page_name = 'Money Receipt';
+        
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $data = PurchaseReturn::with(['_master_branch','purchase_account','_ledger'])->find($id);
+
+       return view('backend.purchase-return.money_receipt',compact('page_name','branchs','permited_branch','permited_costcenters','data'));
+    }
+
     public function purchaseOrderSearch(Request $request){
         $limit = $request->limit ?? default_pagination();
         $_asc_desc = $request->_asc_desc ?? 'ASC';

@@ -174,6 +174,20 @@ class SalesReturnController extends Controller
        return  \Redirect::to('sales?limit='.default_pagination());
     }
 
+
+
+    public function moneyReceipt($id){
+        $users = Auth::user();
+        $page_name = 'Money Receipt';
+        
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $data = SalesReturn::with(['_master_branch','s_account','_ledger'])->find($id);
+
+       return view('backend.sales-return.money_receipt',compact('page_name','branchs','permited_branch','permited_costcenters','data'));
+    }
+
      public function checkAvailableQty(Request $request){
         $unique_p_q = [];
         foreach($request->_p_p_l_ids_qtys as $index=> $val){

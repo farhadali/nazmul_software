@@ -104,24 +104,40 @@ $__user= Auth::user();
                            $sum_of_amount += $data->_total ?? 0;
                            $sum_of_sub_total += $data->_sub_total ?? 0;
                         @endphp
+
+                           @php
+                        $__s_account = $data->s_account ?? [];
+                        $___master_details = $data->_master_details ?? [];
+                        @endphp
                         <tr>
                             
-                             <td>
-                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('sales-return/print')}}/{{$data->id}}" >
-                                  <i class="nav-icon fas fa-print"></i>
-                                </a>
-                                @can('sales-return-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('sales-return.edit',$data->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
-                                @can('sales-return-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['sales-return.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
-                                            <i class="nav-icon fas fa-trash"></i>
-                                        </button>
-                                    {!! Form::close() !!}
-                                @endcan
+                              <td style="display: flex;">
+                              <div class="dropdown mr-1">
+                                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    Action
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                     <a class="dropdown-item "  href="{{url('sales-return/print')}}/{{$data->id}}" >
+                                         View & Print
+                                      </a>
+                                     @can('sales-return-edit')
+                                        <a class="dropdown-item "   href="{{ route('sales-return.edit',$data->id) }}" >
+                                          Edit & Update
+                                        </a>
+                                    @endcan
+                                     @can('money-receipt-print')
+                                     @if(sizeof($__s_account) > 0)
+                                        <a class="dropdown-item " href="{{ url('sales-return-money-receipt') }}/{{$data->id}}">
+                                         Payment Receipt
+                                        </a>
+                                     @endif
+                                    @endcan
+
+                                   
+                                  </div>
+                                </div>
+                               
+                               
                                 <a class="btn btn-sm btn-default _action_button" data-toggle="collapse" href="#collapseExample__{{$key}}" role="button" aria-expanded="false" aria-controls="collapseExample">
                                       <i class=" fas fa-angle-down"></i>
                                     </a>
@@ -155,7 +171,9 @@ $__user= Auth::user();
                             
                            
                         </tr>
-                        @if(sizeof($data->_master_details) > 0)
+
+
+                        @if(sizeof($___master_details) > 0)
                         <tr>
                           <td colspan="12" >
                            <div class="collapse" id="collapseExample__{{$key}}">
@@ -362,7 +380,7 @@ $__user= Auth::user();
                         </td>
                         </tr>
                         @endif
-                        @if(sizeof($data->s_account) > 0)
+                        @if(sizeof($__s_account) > 0)
                         <tr>
                           <td colspan="12" >
                            <div class="collapse" id="collapseExample__{{$key}}">

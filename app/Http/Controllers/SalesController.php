@@ -172,6 +172,18 @@ class SalesController extends Controller
        return  \Redirect::to('sales?limit='.default_pagination());
     }
 
+      public function moneyReceipt($id){
+        $users = Auth::user();
+        $page_name = 'Money Receipt';
+        
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $data = Sales::with(['_master_branch','s_account','_ledger'])->find($id);
+
+       return view('backend.sales.money_receipt',compact('page_name','branchs','permited_branch','permited_costcenters','data'));
+    }
+
 
     public function checkAvailableQty(Request $request){
         $unique_p_q = [];

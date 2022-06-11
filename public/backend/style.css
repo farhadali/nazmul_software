@@ -523,8 +523,7 @@ background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063
 
 }
 .card {
-    background: rgb(19,173,180);
-background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
+    background: #f4f4f4;
 }
 .navbar-white {
    background: rgb(19,173,180);

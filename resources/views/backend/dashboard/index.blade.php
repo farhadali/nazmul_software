@@ -220,43 +220,179 @@ WHERE t1._status=1 AND t1.`_branch_id` IN(".$users->branch_ids.") AND t1.`_cost_
             </div>
           </div>
 
-
-  <div class="col-lg-12 mt-2">
+@can('daily-sales-chart')
+<!-- Sales Related Chart Start -->
+  <div class="col-lg-6 mt-2">
    <div class="card bg-white">
               <div class="card-header border-0">
                 <div class="d-flex justify-content-between">
-                  <h3 class="card-title">Daily Sales Report</h3>
+                  <h3 class="card-title">Last 30 Days Sales Report</h3>
                   
                 </div>
               </div>
               <div class="card-body">
-                
-
                 <div class="position-relative mb-4">
-                  <canvas id="visitors-chart" height="200"></canvas>
+                  <canvas id="dailySalesReport" height="200"></canvas>
                 </div>
               </div>
             </div>
   </div>
-  <div class="col-md-12 mt-2">
+@endcan
+  @can('monthly-sales-chart')
+  <div class="col-md-6 mt-2">
     <div class="card bg-white">
               <div class="card-header border-0">
                 <div class="d-flex justify-content-between">
-                  <h3 class="card-title">Monthly Sales/Sales Return/Purchase/Purchase Return Report</h3>
-                 
+                  <h3 class="card-title">Last 12 Month Sales  Report</h3>
                 </div>
               </div>
               <div class="card-body">
-                
-
                 <div class="position-relative mb-4">
-                  <canvas id="sales-chart" height="200"></canvas>
+                  <canvas id="monthWiseSalesBarChart" height="200"></canvas>
                 </div>
-
-                
+              </div>
+            </div>
+  </div><!-- Sales realted Chart End -->
+@endcan
+@can('daily-purchase-chart')
+  <!-- Purchase Related Chart Start -->
+  <div class="col-lg-6 mt-2">
+   <div class="card bg-white">
+              <div class="card-header border-0">
+                <div class="d-flex justify-content-between">
+                  <h3 class="card-title">Last 30 Days Purchase Report</h3>
+                  
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="position-relative mb-4">
+                  <canvas id="dailyPurchaseReport" height="200"></canvas>
+                </div>
               </div>
             </div>
   </div>
+  @endcan
+  @can('monthly-purchase-chart')
+  <div class="col-md-6 mt-2">
+    <div class="card bg-white">
+              <div class="card-header border-0">
+                <div class="d-flex justify-content-between">
+                  <h3 class="card-title">Last 12 Month Purchase  Report</h3>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="position-relative mb-4">
+                  <canvas id="monthWisePurchaseBarChart" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+  </div><!-- Purchase realted Chart End -->
+@endcan
+@can('monthly-sales-return-chart')
+  <!-- SalesReturn Related Chart Start -->
+  <div class="col-lg-6 mt-2">
+   <div class="card bg-white">
+              <div class="card-header border-0">
+                <div class="d-flex justify-content-between">
+                  <h3 class="card-title">Last 30 Days Sales Return Report</h3>
+                  
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="position-relative mb-4">
+                  <canvas id="dailySalesReturnReport" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+  </div>
+  @endcan
+  @can('daily-sales-return-chart')
+  <div class="col-md-6 mt-2">
+    <div class="card bg-white">
+              <div class="card-header border-0">
+                <div class="d-flex justify-content-between">
+                  <h3 class="card-title">Last 12 Month Sales Return  Report</h3>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="position-relative mb-4">
+                  <canvas id="monthWiseSalesReturnBarChart" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+  </div><!-- Purchase realted Chart End -->
+@endcan
+
+@can('daily-purchase-return-chart')
+  <!-- PurchaseReturn Related Chart Start -->
+  <div class="col-lg-6 mt-2">
+   <div class="card bg-white">
+              <div class="card-header border-0">
+                <div class="d-flex justify-content-between">
+                  <h3 class="card-title">Last 30 Days Purchase Return Report</h3>
+                  
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="position-relative mb-4">
+                  <canvas id="dailyPurchaseReturnReport" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+  </div>
+  @endcan
+  @can('monthly-purchase-return-chart')
+  <div class="col-md-6 mt-2">
+    <div class="card bg-white">
+              <div class="card-header border-0">
+                <div class="d-flex justify-content-between">
+                  <h3 class="card-title">Last 12 Month Purchase Return  Report</h3>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="position-relative mb-4">
+                  <canvas id="monthWisePurchaseReturnBarChart" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+  </div><!-- Purchase realted Chart End -->
+  @endcan
+  @can('daily-damage-chart')
+  <!-- Damage Related Chart Start -->
+  <div class="col-lg-6 mt-2">
+   <div class="card bg-white">
+              <div class="card-header border-0">
+                <div class="d-flex justify-content-between">
+                  <h3 class="card-title">Last 30 Days Damage Report</h3>
+                  
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="position-relative mb-4">
+                  <canvas id="dailyDamageReport" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+  </div>
+  @endcan
+  @can('monthly-damage-chart')
+  <div class="col-md-6 mt-2">
+    <div class="card bg-white">
+              <div class="card-header border-0">
+                <div class="d-flex justify-content-between">
+                  <h3 class="card-title">Last 12 Month Damage  Report</h3>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="position-relative mb-4">
+                  <canvas id="monthWiseDamageBarChart" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+  </div><!-- Damage realted Chart End -->
+  @endcan
+  
+  
   
 
   
@@ -367,121 +503,205 @@ LIMIT 5 " );
   $filtered_purchase_return = [];
   $filtered_sales = [];
   $filtered_sales_return = [];
+  $filtered_damage = [];
+
   
   $qur = " select DATE_FORMAT(_date, '%m-%Y') as _month from accounts GROUP BY YEAR(_date),MONTH(_date) ASC ";
   $months = \DB::select($qur);
-  
-  $purchases = " select round(sum(_dr_amount)) as _amount,DATE_FORMAT(_date, '%m-%Y') as _month from accounts where _transaction='Purchase' GROUP BY YEAR(_date),MONTH(_date) ASC ";
-  $purchases_amount = \DB::select($purchases);
-  
-  $purchase_return = " select round(sum(_cr_amount)) as _amount,DATE_FORMAT(_date, '%m-%Y') as _month from accounts where (_transaction collate utf8mb4_unicode_ci = 'Purchase Return') GROUP BY YEAR(_date),MONTH(_date) ASC ";
-  $purchase_return_amounts = \DB::select($purchase_return);
-  
-  $sales = " select round(sum(_cr_amount)) as _amount,DATE_FORMAT(_date, '%m-%Y') as _month from accounts where (_transaction collate utf8mb4_unicode_ci = 'Sales') GROUP BY YEAR(_date),MONTH(_date) ASC ";
+  ?>
+
+ @can('monthly-sales-chart')
+<?php
+
+  $sales = " select round(sum(t1._cr_amount)) as _amount,DATE_FORMAT(t1._date, '%m-%y') as _month 
+from accounts as t1
+INNER JOIN sales_form_settings AS t2 ON t1._account_ledger=t2._default_sales
+where (t1._transaction collate utf8mb4_unicode_ci = 'Sales') AND (t1._date > now() - INTERVAL 12 month ) AND t1._status=1 AND t1._branch_id IN(".$users->branch_ids.")  
+AND `_cost_center` IN(".$users->cost_center_ids.")  GROUP BY YEAR(t1._date),MONTH(t1._date) ASC ";
   $sales_amounts = \DB::select($sales);
-  
-  $sales_return = " select round(sum(_dr_amount)) as _amount,DATE_FORMAT(_date, '%m-%Y') as _month from accounts where (_transaction collate utf8mb4_unicode_ci = 'Sales Return') GROUP BY YEAR(_date),MONTH(_date) ASC ";
-  $sales_return_amounts = \DB::select($sales_return);
-  
-  $purchase_return_amount = 0;
-  $sales_amount = 0;
-  $purchase_amount = 0;
-  $sales_return_amount = 0;
-  
-  $array_count = sizeof($months);
-  $avoid_value = ($array_count - 12);
-  if(sizeof($months) > 12){
-    $filtered_purchase = array_fill(0,12,0);
-    $filtered_purchase_return = array_fill(0,12,0);
-    $filtered_sales = array_fill(0,12,0);
-    $filtered_sales_return = array_fill(0,12,0);
-    
-    
-    
-    foreach($months as $key=> $month){
-      if( $key >= $avoid_value ){
-        array_push($filtered_month,$month->_month);
-      }
-    }
-    foreach( $filtered_month as $key=>$month_p){
-        //For Purchase array data 
-        foreach($purchases_amount as  $purchases_am){
-          if($month_p == $purchases_am->_month ){
-            if(strlen($purchases_am->_amount) !==0){
-              $filtered_purchase[$key] = floatval($purchases_am->_amount);
-            }
-          }
-        }
-        //For Sales array data 
-        foreach($sales_amounts as $sales_am){
-          if($month_p == $sales_am->_month ){
-            if(strlen($sales_am->_amount) !==0){
-              $filtered_sales[$key] = floatval($sales_am->_amount);
-            }
-          }
-        }
-        //For Sales Return array data 
-        foreach($sales_return_amounts as $sales_return_am){
-          if($month_p == $sales_return_am->_month ){
-            if(strlen($sales_return_am->_amount) !==0){
-              $filtered_sales_return[$key] = floatval($sales_return_am->_amount);
-            }
-          }
-        }
-        //For Purchase Return array data 
-        foreach($purchase_return_amounts as $purchase_return_am){
-          if($month_p == $purchase_return_am->_month ){
-            if(strlen($purchase_return_am->_amount) !==0){
-              $filtered_purchase_return[$key] = floatval($purchase_return_am->_amount);
-            }
-          }
-        }
-      }
-  }else{
-    
-    $filtered_purchase = array_fill(0,$array_count,0);
-    $filtered_purchase_return = array_fill(0,$array_count,0);
-    $filtered_sales = array_fill(0,$array_count,0);
-    $filtered_sales_return = array_fill(0,$array_count,0);
-    
-    foreach($months as $key=> $month){
-        array_push($filtered_month,$month->_month);
-      //For Purchase array data 
-        foreach($purchases_amount as $purchases_am){
-          if($month->_month == $purchases_am->_month ){
-            if(strlen($purchases_am->_amount) !==0){
-              $filtered_purchase[$key] = floatval($purchases_am->_amount);
-            }
-          }
-        }
-        //For Sales array data 
-        foreach($sales_amounts as $sales_am){
-          if($month->_month == $sales_am->_month ){
-            if(strlen($sales_am->_amount) !==0){
-              $filtered_sales[$key] = floatval($sales_am->_amount);
-            }
-          }
-        }
-        //For Sales Return array data 
-        foreach($sales_return_amounts as $sales_return_am){
-          if($month->_month == $sales_return_am->_month ){
-            if(strlen($sales_return_am->_amount) !==0){
-              $filtered_sales_return[$key] = floatval($sales_return_am->_amount);
-            }
-          }
-        }
-        //For Purchase Return array data 
-        foreach($purchase_return_amounts as $purchase_return_am){
-          if($month->_month == $purchase_return_am->_month ){
-            if(strlen($purchase_return_am->_amount) !==0){
-              $filtered_purchase_return[$key] = floatval($purchase_return_am->_amount);
-            }
-          }
-        }
-      
-    }
+$_sales_months=array();
+$_sales_month_amounts = array();
+foreach ($sales_amounts as $value) {
+    array_push($_sales_months, $value->_month);
+    array_push($_sales_month_amounts, floatval($value->_amount));
   }
-  //print_r($filtered_month);
+  ?>
+  @endcan
+    @can('daily-sales-chart')
+  <?php
+
+//Last 30 days sales line chart
+  $_daily_sales = " select round(sum(t1._cr_amount)) as _amount,DATE_FORMAT(t1._date, '%d-%m') as _month 
+from accounts as t1
+INNER JOIN sales_form_settings AS t2 ON t1._account_ledger=t2._default_sales
+where (t1._transaction collate utf8mb4_unicode_ci = 'Sales') AND (t1._date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() ) AND t1._status=1 AND t1._branch_id IN(".$users->branch_ids.")  
+AND `_cost_center` IN(".$users->cost_center_ids.")  GROUP BY YEAR(t1._date),MONTH(t1._date),DAY(t1._date) ASC ";
+  $daily_sales_report = \DB::select($_daily_sales);
+
+  //Last 30 days sales line chart
+  $sales_days=array();
+  $last_30_days_sales = array();
+  foreach ($daily_sales_report as $value) {
+    array_push($sales_days, $value->_month);
+    array_push($last_30_days_sales, floatval($value->_amount));
+  }
+
+?>
+@endcan
+@can('monthly-sales-return-chart')
+
+<?php
+
+  $sales_return = " select round(sum(t1._dr_amount)) as _amount,DATE_FORMAT(t1._date, '%m-%y') as _month 
+from accounts as t1
+INNER JOIN sales_return_form_settings AS t2 ON t1._account_ledger=t2._default_sales
+where (t1._transaction collate utf8mb4_unicode_ci = 'Sales Return') AND (t1._date > now() - INTERVAL 12 month ) AND t1._status=1 AND t1._branch_id IN(".$users->branch_ids.")  
+AND `_cost_center` IN(".$users->cost_center_ids.")  GROUP BY YEAR(t1._date),MONTH(t1._date) ASC ";
+   $sales_return_amounts = \DB::select($sales_return);
+
+$_sales_retun_months=array();
+$_sales_return_month_amounts = array();
+foreach ($sales_return_amounts as $value) {
+    array_push($_sales_retun_months, $value->_month);
+    array_push($_sales_return_month_amounts, floatval($value->_amount));
+  }
+
+?>
+@endcan
+ @can('daily-sales-return-chart')
+<?php
+  //Last 30 days sales_return line chart
+  $_daily_sales_return = "  select round(sum(t1._dr_amount)) as _amount,DATE_FORMAT(t1._date, '%d-%m-%y') as _month 
+from accounts as t1
+INNER JOIN sales_return_form_settings AS t2 ON t1._account_ledger=t2._default_sales
+where (t1._transaction collate utf8mb4_unicode_ci = 'Sales Return') AND (t1._date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() ) AND t1._status=1 AND t1._branch_id IN(".$users->branch_ids.")  
+AND `_cost_center` IN(".$users->cost_center_ids.")  GROUP BY YEAR(t1._date),MONTH(t1._date),DATE(t1._date) ASC ";
+  $_daily_sales_return_report = \DB::select($_daily_sales_return);
+
+    //Last 30 days sales_return line chart
+  $sales_return_days=array();
+  $last_30_days_sales_return = array();
+  foreach ($_daily_sales_return_report as $value) {
+    array_push($sales_return_days, $value->_month);
+    array_push($last_30_days_sales_return, floatval($value->_amount));
+  }
+
+?>
+@endcan
+@can('monthly-purchase-chart')
+
+<?php
+    $purchases = " select round(sum(t1._dr_amount)) as _amount,DATE_FORMAT(t1._date, '%m-%y') as _month 
+from accounts as t1
+INNER JOIN purchase_form_settings AS t2 ON t1._account_ledger=t2._default_purchase
+where (t1._transaction collate utf8mb4_unicode_ci = 'Purchase') AND (t1._date > now() - INTERVAL 12 month ) AND t1._status=1 AND t1._branch_id IN(".$users->branch_ids.")  
+AND `_cost_center` IN(".$users->cost_center_ids.")  GROUP BY YEAR(t1._date),MONTH(t1._date) ASC ";
+  $purchases_amount  = \DB::select($purchases);
+
+$_purchase_months=array();
+$_purchase_month_amounts = array();
+foreach ($purchases_amount  as $value) {
+    array_push($_purchase_months, $value->_month);
+    array_push($_purchase_month_amounts, floatval($value->_amount));
+  }
+?>
+@endcan
+@can('daily-purchase-chart')
+<?php
+
+//Last 30 days Purchase line chart
+  $_daily_purchase = " select round(sum(t1._dr_amount)) as _amount,DATE_FORMAT(t1._date, '%d-%m') as _month 
+from accounts as t1
+INNER JOIN purchase_form_settings AS t2 ON t1._account_ledger=t2._default_purchase
+where (t1._transaction collate utf8mb4_unicode_ci = 'Purchase') AND (t1._date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() ) AND t1._status=1 AND t1._branch_id IN(".$users->branch_ids.")  
+AND `_cost_center` IN(".$users->cost_center_ids.")  GROUP BY YEAR(t1._date),MONTH(t1._date),DATE(t1._date) ASC ";
+  $_daily_purchase_report = \DB::select($_daily_purchase);
+
+    //Last 30 days Purchase line chart
+  $purchase_days=array();
+  $last_30_days_purchase = array();
+  foreach ($_daily_purchase_report as $value) {
+    array_push($purchase_days, $value->_month);
+    array_push($last_30_days_purchase, floatval($value->_amount));
+  }
+
+?>
+@endcan
+@can('monthly-purchase-return-chart')
+
+<?php
+  
+  $purchase_return = " select round(sum(t1._cr_amount)) as _amount,DATE_FORMAT(t1._date, '%m-%y') as _month 
+from accounts as t1
+INNER JOIN purchase_return_form_settings AS t2 ON t1._account_ledger=t2._default_purchase
+where (t1._transaction collate utf8mb4_unicode_ci = 'Purchase Return') AND (t1._date > now() - INTERVAL 12 month ) AND t1._status=1 AND t1._branch_id IN(".$users->branch_ids.")  
+AND `_cost_center` IN(".$users->cost_center_ids.")  GROUP BY YEAR(t1._date),MONTH(t1._date) ASC";
+  $purchase_return_amounts = \DB::select($purchase_return);
+
+$_purchase_return_months=array();
+$_purchase_return_month_amounts = array();
+foreach ($purchase_return_amounts  as $value) {
+    array_push($_purchase_return_months, $value->_month);
+    array_push($_purchase_return_month_amounts, floatval($value->_amount));
+  }
+
+?>
+@endcan
+@can('daily-purchase-return-chart')
+<?php
+//Last 30 days purchase_return line chart
+  $_daily_purchase_return = " select round(sum(t1._cr_amount)) as _amount,DATE_FORMAT(t1._date, '%d-%m') as _month 
+from accounts as t1
+INNER JOIN purchase_return_form_settings AS t2 ON t1._account_ledger=t2._default_purchase
+where (t1._transaction collate utf8mb4_unicode_ci = 'Purchase Return') AND (t1._date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() ) AND t1._status=1 AND t1._branch_id IN(".$users->branch_ids.")  
+AND `_cost_center` IN(".$users->cost_center_ids.")  GROUP BY YEAR(t1._date),MONTH(t1._date),DATE(t1._date) ASC ";
+  $_daily_purchase_return_report = \DB::select($_daily_purchase_return);
+
+    //Last 30 days purchase_return line chart
+  $purchase_return_days=array();
+  $last_30_days_purchase_return = array();
+  foreach ($_daily_purchase_return_report as $value) {
+    array_push($purchase_return_days, $value->_month);
+    array_push($last_30_days_purchase_return, floatval($value->_amount));
+  }
+?>
+ @endcan
+ @can('monthly-damage-chart')
+ <?php
+
+  $_damage = " select round(sum(_dr_amount)) as _amount,DATE_FORMAT(_date, '%m-%Y') as _month from accounts where (_transaction collate utf8mb4_unicode_ci = 'Damage') AND (_date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() ) AND _status=1 AND `_branch_id` IN(".$users->branch_ids.") 
+AND `_cost_center` IN(".$users->cost_center_ids.") GROUP BY YEAR(_date),MONTH(_date) ASC ";
+  $_damage_amounts = \DB::select($_damage);
+
+  $damage_months=array();
+$damage_month_amounts = array();
+foreach ($_damage_amounts  as $value) {
+    array_push($damage_months, $value->_month);
+    array_push($damage_month_amounts, floatval($value->_amount));
+  }
+?>
+@endcan
+
+@can('daily-damage-chart')
+<?php
+//Last 30 days damage line chart
+  $_daily_damage = " select round(sum(_dr_amount)) as _amount,DATE_FORMAT(_date, '%d-%m') as _month from accounts where (_transaction collate utf8mb4_unicode_ci = 'Damage') AND (_date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() ) AND _status=1 AND `_branch_id` IN(".$users->branch_ids.") 
+AND `_cost_center` IN(".$users->cost_center_ids.") GROUP BY YEAR(_date),MONTH(_date),DATE(_date) ASC ";
+  $_daily_damage_report = \DB::select($_daily_damage);
+
+    //Last 30 days damage line chart
+  $damage_days=array();
+  $last_30_days_damage = array();
+  foreach ($_daily_damage_report as $value) {
+    array_push($damage_days, $value->_month);
+    array_push($last_30_days_damage, floatval($value->_amount));
+  }
+?>
+ @endcan
+
+  
+  
+ 
   ?>
 
 
@@ -496,16 +716,80 @@ LIMIT 5 " );
 
 
 
-    
-  
+/* Damage  Information Start */
+ @can('monthly-damage-chart')
+  var damage_months =  <?php echo json_encode($damage_months) ?>;
+  var damage_month_amounts=  <?php echo json_encode($damage_month_amounts) ?>;
+  @endcan
 
-  
-    var arrayJavascript = <?php echo json_encode($filtered_month) ?>;
-  var filterd_purchase_amounts = <?php echo json_encode($filtered_purchase) ?>;
-  var filtered_sales_amounts =  <?php echo json_encode($filtered_sales) ?>;
-  var filtered_sales_return_amounts =  <?php echo json_encode($filtered_sales_return) ?>;
-  var filtered_purchase_return_amounts =  <?php echo json_encode($filtered_sales_return) ?>;
-  console.log(filtered_purchase_return_amounts)
+  @can('daily-damage-chart')
+  var damage_days =  <?php echo json_encode($damage_days) ?>;
+  var last_30_days_damage =  <?php echo json_encode($last_30_days_damage) ?>;
+  @endcan
+
+/* Damage  Information End  */
+
+
+
+/* Purchase  Information Start */
+@can('monthly-purchase-chart')
+
+  var _purchase_months =  <?php echo json_encode($_purchase_months) ?>;
+  var _purchase_month_amounts=  <?php echo json_encode($_purchase_month_amounts) ?>;
+@endcan
+@can('daily-purchase-chart')
+  var purchase_days =  <?php echo json_encode($purchase_days) ?>;
+  var last_30_days_purchase =  <?php echo json_encode($last_30_days_purchase) ?>;
+@endcan  
+
+/* Purchase  Information End  */
+
+
+
+
+
+/* Purchase Return  Information Start */
+@can('monthly-purchase-return-chart')
+  var _purchase_return_months =  <?php echo json_encode($_purchase_return_months) ?>;
+  var _purchase_return_month_amounts=  <?php echo json_encode($_purchase_return_month_amounts) ?>;
+@endcan
+
+@can('daily-purchase-return-chart')
+  var purchase_return_days =  <?php echo json_encode($purchase_return_days) ?>;
+  var last_30_days_purchase_return =  <?php echo json_encode($last_30_days_purchase_return) ?>;
+ @endcan 
+
+/* Purchase Return  Information End  */
+
+
+/* Sales  Information Start */
+@can('monthly-sales-chart')
+
+  var _sales_months =  <?php echo json_encode($_sales_months) ?>;
+  var _sales_month_amounts=  <?php echo json_encode($_sales_month_amounts) ?>;
+@endcan
+@can('daily-sales-chart')
+  var sales_days =  <?php echo json_encode($sales_days) ?>;
+  var last_30_days_sales =  <?php echo json_encode($last_30_days_sales) ?>;
+@endcan
+
+/* Sales  Information End  */
+
+/* Sales Return Information Start */
+ @can('daily-sales-return-chart')
+  var sales_return_days =  <?php echo json_encode($sales_return_days) ?>;
+  var last_30_days_sales_return=  <?php echo json_encode($last_30_days_sales_return) ?>;
+@endcan
+@can('monthly-sales-return-chart')
+  var _sales_retun_months =  <?php echo json_encode($_sales_retun_months) ?>;
+  var _sales_return_month_amounts =  <?php echo json_encode($_sales_return_month_amounts) ?>;
+@endcan
+
+/* Sales Return Information End  */
+
+
+
+
 
   $(function () {
   'use strict'
@@ -518,36 +802,25 @@ LIMIT 5 " );
   var mode = 'index'
   var intersect = true
 
-  var $salesChart = $('#sales-chart')
+  
+
+
+
+
+@can('monthly-sales-chart')
+
+  var $salesChart = $('#monthWiseSalesBarChart')
   // eslint-disable-next-line no-unused-vars
   var salesChart = new Chart($salesChart, {
     type: 'bar',
     data: {
-      labels: arrayJavascript,
+      labels: _sales_months,
       datasets: [
         {
-          backgroundColor: '#007bff',
+          backgroundColor: '#28a745',
           borderColor: '#007bff',
           label: 'Sales',
-          data: filtered_sales_amounts
-        },
-        {
-          backgroundColor: '#ced4da',
-          borderColor: '#ced4da',
-          label: 'Sales Return',
-          data: filtered_sales_return_amounts
-        },
-        {
-          backgroundColor: '#ced4da',
-          borderColor: '#ced4da',
-          label: 'Purchase',
-          data: filterd_purchase_amounts
-        },
-        {
-          backgroundColor: '#ced4da',
-          borderColor: '#ced4da',
-          label: 'Purchase Return',
-          data: filtered_purchase_return_amounts
+          data: _sales_month_amounts
         }
       ]
     },
@@ -597,15 +870,143 @@ LIMIT 5 " );
       }
     }
   })
+@endcan
 
-  var $visitorsChart = $('#visitors-chart')
+@can('daily-sales-chart')
+  var $visitorsChart = $('#dailySalesReport')
   // eslint-disable-next-line no-unused-vars
   var visitorsChart = new Chart($visitorsChart, {
     data: {
-      labels: ['18th', '20th', '22nd', '24th', '26th', '28th', '30th'],
+      labels:sales_days,
       datasets: [{
         type: 'line',
-        data: [100, 120, 170, 167, 180, 177, 160],
+        data: last_30_days_sales,
+        backgroundColor: 'transparent',
+        borderColor: '#28a745',
+        pointBorderColor: '#28a745',
+        pointBackgroundColor: '#28a745',
+        fill: false
+        // pointHoverBackgroundColor: '#007bff',
+        // pointHoverBorderColor    : '#007bff'
+      }]
+    },
+
+
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        mode: mode,
+        intersect: intersect
+      },
+      hover: {
+        mode: mode,
+        intersect: intersect
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          // display: false,
+          gridLines: {
+            display: true,
+            lineWidth: '4px',
+            color: 'rgba(0, 0, 0, .2)',
+            zeroLineColor: 'transparent'
+          },
+          ticks: $.extend({
+            beginAtZero: true,
+            suggestedMax: 200
+          }, ticksStyle)
+        }],
+        xAxes: [{
+          display: true,
+          gridLines: {
+            display: false
+          },
+          ticks: ticksStyle
+        }]
+      }
+    }
+  })
+
+@endcan
+
+
+
+@can('monthly-purchase-chart')
+  var $salesChart = $('#monthWisePurchaseBarChart')
+  // eslint-disable-next-line no-unused-vars
+  var salesChart = new Chart($salesChart, {
+    type: 'bar',
+    data: {
+      labels: _purchase_months,
+      datasets: [
+        {
+          backgroundColor: '#007bff',
+          borderColor: '#007bff',
+          label: 'Purchase',
+          data: _purchase_month_amounts
+        }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        mode: mode,
+        intersect: intersect
+      },
+      hover: {
+        mode: mode,
+        intersect: intersect
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          // display: false,
+          gridLines: {
+            display: true,
+            lineWidth: '4px',
+            color: 'rgba(0, 0, 0, .2)',
+            zeroLineColor: 'transparent'
+          },
+          ticks: $.extend({
+            beginAtZero: true,
+
+            // Include a dollar sign in the ticks
+            callback: function (value) {
+              if (value >= 1000) {
+                value /= 1000
+                value += 'k'
+              }
+
+              return 'Tk.' + value
+            }
+          }, ticksStyle)
+        }],
+        xAxes: [{
+          display: true,
+          gridLines: {
+            display: false
+          },
+          ticks: ticksStyle
+        }]
+      }
+    }
+  })
+@endcan
+
+@can('daily-purchase-chart')
+  var $visitorsChart = $('#dailyPurchaseReport')
+  // eslint-disable-next-line no-unused-vars
+  var visitorsChart = new Chart($visitorsChart, {
+    data: {
+      labels:purchase_days,
+      datasets: [{
+        type: 'line',
+        data: last_30_days_purchase,
         backgroundColor: 'transparent',
         borderColor: '#007bff',
         pointBorderColor: '#007bff',
@@ -613,17 +1014,6 @@ LIMIT 5 " );
         fill: false
         // pointHoverBackgroundColor: '#007bff',
         // pointHoverBorderColor    : '#007bff'
-      },
-      {
-        type: 'line',
-        data: [60, 80, 70, 67, 80, 77, 100],
-        backgroundColor: 'tansparent',
-        borderColor: '#ced4da',
-        pointBorderColor: '#ced4da',
-        pointBackgroundColor: '#ced4da',
-        fill: false
-        // pointHoverBackgroundColor: '#ced4da',
-        // pointHoverBorderColor    : '#ced4da'
       }]
     },
     options: {
@@ -663,6 +1053,386 @@ LIMIT 5 " );
       }
     }
   })
+@endcan
+
+
+
+@can('monthly-sales-return-chart')
+  var $salesChart = $('#monthWiseSalesReturnBarChart')
+  // eslint-disable-next-line no-unused-vars
+  var salesChart = new Chart($salesChart, {
+    type: 'bar',
+    data: {
+      labels: _sales_retun_months,
+      datasets: [
+        {
+          backgroundColor: '#e83e8c',
+          borderColor: '#007bff',
+          label: 'Sales Return',
+          data: _sales_return_month_amounts
+        }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        mode: mode,
+        intersect: intersect
+      },
+      hover: {
+        mode: mode,
+        intersect: intersect
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          // display: false,
+          gridLines: {
+            display: true,
+            lineWidth: '4px',
+            color: 'rgba(0, 0, 0, .2)',
+            zeroLineColor: 'transparent'
+          },
+          ticks: $.extend({
+            beginAtZero: true,
+
+            // Include a dollar sign in the ticks
+            callback: function (value) {
+              if (value >= 1000) {
+                value /= 1000
+                value += 'k'
+              }
+
+              return 'Tk.' + value
+            }
+          }, ticksStyle)
+        }],
+        xAxes: [{
+          display: true,
+          gridLines: {
+            display: false
+          },
+          ticks: ticksStyle
+        }]
+      }
+    }
+  })
+@endcan
+@can('daily-sales-return-chart')
+  var $visitorsChart = $('#dailySalesReturnReport')
+  // eslint-disable-next-line no-unused-vars
+  var visitorsChart = new Chart($visitorsChart, {
+    data: {
+      labels:sales_return_days,
+      datasets: [{
+        type: 'line',
+        data: last_30_days_sales_return,
+        backgroundColor: 'transparent',
+        borderColor: '#e83e8c',
+        pointBorderColor: '#e83e8c',
+        pointBackgroundColor: '#e83e8c',
+        fill: false
+        // pointHoverBackgroundColor: '#007bff',
+        // pointHoverBorderColor    : '#007bff'
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        mode: mode,
+        intersect: intersect
+      },
+      hover: {
+        mode: mode,
+        intersect: intersect
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          // display: false,
+          gridLines: {
+            display: true,
+            lineWidth: '4px',
+            color: 'rgba(0, 0, 0, .2)',
+            zeroLineColor: 'transparent'
+          },
+          ticks: $.extend({
+            beginAtZero: true,
+            suggestedMax: 200
+          }, ticksStyle)
+        }],
+        xAxes: [{
+          display: true,
+          gridLines: {
+            display: false
+          },
+          ticks: ticksStyle
+        }]
+      }
+    }
+  })
+@endcan
+
+
+
+
+
+@can('monthly-purchase-return-chart')
+
+  var $salesChart = $('#monthWisePurchaseReturnBarChart')
+  // eslint-disable-next-line no-unused-vars
+  var salesChart = new Chart($salesChart, {
+    type: 'bar',
+    data: {
+      labels: _purchase_return_months,
+      datasets: [
+        {
+          backgroundColor: '#6610f2',
+          borderColor: '#007bff',
+          label: 'Purchase Return',
+          data: _purchase_return_month_amounts
+        }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        mode: mode,
+        intersect: intersect
+      },
+      hover: {
+        mode: mode,
+        intersect: intersect
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          // display: false,
+          gridLines: {
+            display: true,
+            lineWidth: '4px',
+            color: 'rgba(0, 0, 0, .2)',
+            zeroLineColor: 'transparent'
+          },
+          ticks: $.extend({
+            beginAtZero: true,
+
+            // Include a dollar sign in the ticks
+            callback: function (value) {
+              if (value >= 1000) {
+                value /= 1000
+                value += 'k'
+              }
+
+              return 'Tk.' + value
+            }
+          }, ticksStyle)
+        }],
+        xAxes: [{
+          display: true,
+          gridLines: {
+            display: false
+          },
+          ticks: ticksStyle
+        }]
+      }
+    }
+  })
+@endcan
+@can('daily-purchase-return-chart')
+  var $visitorsChart = $('#dailyPurchaseReturnReport')
+  // eslint-disable-next-line no-unused-vars
+  var visitorsChart = new Chart($visitorsChart, {
+    data: {
+      labels:purchase_return_days,
+      datasets: [{
+        type: 'line',
+        data: last_30_days_purchase_return,
+        backgroundColor: 'transparent',
+        borderColor: '#6610f2',
+        pointBorderColor: '#6610f2',
+        pointBackgroundColor: '#6610f2',
+        fill: false
+        // pointHoverBackgroundColor: '#007bff',
+        // pointHoverBorderColor    : '#007bff'
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        mode: mode,
+        intersect: intersect
+      },
+      hover: {
+        mode: mode,
+        intersect: intersect
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          // display: false,
+          gridLines: {
+            display: true,
+            lineWidth: '4px',
+            color: 'rgba(0, 0, 0, .2)',
+            zeroLineColor: 'transparent'
+          },
+          ticks: $.extend({
+            beginAtZero: true,
+            suggestedMax: 200
+          }, ticksStyle)
+        }],
+        xAxes: [{
+          display: true,
+          gridLines: {
+            display: false
+          },
+          ticks: ticksStyle
+        }]
+      }
+    }
+  })
+@endcan
+
+
+
+
+
+ @can('monthly-damage-chart')
+
+  var $salesChart = $('#monthWiseDamageBarChart')
+  // eslint-disable-next-line no-unused-vars
+  var salesChart = new Chart($salesChart, {
+    type: 'bar',
+    data: {
+      labels: damage_months,
+      datasets: [
+        {
+          backgroundColor: '#dc3545',
+          borderColor: '#007bff',
+          label: 'Damge Inventory',
+          data: damage_month_amounts
+        }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        mode: mode,
+        intersect: intersect
+      },
+      hover: {
+        mode: mode,
+        intersect: intersect
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          // display: false,
+          gridLines: {
+            display: true,
+            lineWidth: '4px',
+            color: 'rgba(0, 0, 0, .2)',
+            zeroLineColor: 'transparent'
+          },
+          ticks: $.extend({
+            beginAtZero: true,
+
+            // Include a dollar sign in the ticks
+            callback: function (value) {
+              if (value >= 1000) {
+                value /= 1000
+                value += 'k'
+              }
+
+              return 'Tk.' + value
+            }
+          }, ticksStyle)
+        }],
+        xAxes: [{
+          display: true,
+          gridLines: {
+            display: false
+          },
+          ticks: ticksStyle
+        }]
+      }
+    }
+  })
+@endcan
+ @can('daily-damage-chart')
+  var $visitorsChart = $('#dailyDamageReport')
+  // eslint-disable-next-line no-unused-vars
+  var visitorsChart = new Chart($visitorsChart, {
+    data: {
+      labels:damage_days,
+      datasets: [{
+        type: 'line',
+        data: last_30_days_damage,
+        backgroundColor: 'transparent',
+        borderColor: '#dc3545',
+        pointBorderColor: '#dc3545',
+        pointBackgroundColor: '#dc3545',
+        fill: false
+        // pointHoverBackgroundColor: '#007bff',
+        // pointHoverBorderColor    : '#007bff'
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        mode: mode,
+        intersect: intersect
+      },
+      hover: {
+        mode: mode,
+        intersect: intersect
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          // display: false,
+          gridLines: {
+            display: true,
+            lineWidth: '4px',
+            color: 'rgba(0, 0, 0, .2)',
+            zeroLineColor: 'transparent'
+          },
+          ticks: $.extend({
+            beginAtZero: true,
+            suggestedMax: 200
+          }, ticksStyle)
+        }],
+        xAxes: [{
+          display: true,
+          gridLines: {
+            display: false
+          },
+          ticks: ticksStyle
+        }]
+      }
+    }
+  })
+@endcan
+
+
+
+
+
+
+
 })
 </script>
 

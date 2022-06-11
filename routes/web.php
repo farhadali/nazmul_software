@@ -109,6 +109,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('purchase-reset', 'App\Http\Controllers\PurchaseController@reset');
     Route::get('purchase/print/{id}', 'App\Http\Controllers\PurchaseController@purchasePrint');
     Route::post('purchase-settings', 'App\Http\Controllers\PurchaseController@purchaseSettings');
+    Route::get('purchase-money-receipt/{id}', 'App\Http\Controllers\PurchaseController@moneyReceipt');
 
     Route::resource('purchase-order', PurchaseOrderController::class);
     Route::post('purchase-order/update', 'App\Http\Controllers\PurchaseOrderController@update');
@@ -128,6 +129,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('item-sales-search', 'App\Http\Controllers\SalesController@itemSalesSearch');
     Route::get('check-available-qty', 'App\Http\Controllers\SalesController@checkAvailableQty');
     Route::get('check-available-qty-update', 'App\Http\Controllers\SalesController@checkAvailableQtyUpdate');
+    Route::get('sales-money-receipt/{id}', 'App\Http\Controllers\SalesController@moneyReceipt');
 
     Route::resource('damage', DamageAdjustmentController::class);
     Route::post('damage/update', 'App\Http\Controllers\DamageAdjustmentController@update');
@@ -148,6 +150,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('sales-order-search', 'App\Http\Controllers\SalesReturnController@orderSearch');
     Route::get('check-sales-return-available-qty', 'App\Http\Controllers\SalesReturnController@checkAvailableSalesQty');
     Route::post('sales-order-details', 'App\Http\Controllers\SalesReturnController@salesOrderDetails');
+    Route::get('sales-return-money-receipt/{id}', 'App\Http\Controllers\SalesReturnController@moneyReceipt');
     
     
 
@@ -158,6 +161,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('purchase-return-settings', 'App\Http\Controllers\PurchaseReturnController@purchaseSettings');
     Route::get('purchase-order-search', 'App\Http\Controllers\PurchaseReturnController@purchaseOrderSearch');
     Route::post('purchase-order-details', 'App\Http\Controllers\PurchaseReturnController@purchaseOrderDetails');
+    Route::get('purchase-return-money-receipt/{id}', 'App\Http\Controllers\PurchaseReturnController@moneyReceipt');
 
     Route::resource('unit', UnitsController::class);
     Route::post('unit/update', 'App\Http\Controllers\UnitsController@update');
@@ -170,6 +174,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('voucher-detail-print', 'App\Http\Controllers\VoucherMasterController@voucherDetailPrint');
     Route::get('voucher-reset', 'App\Http\Controllers\VoucherMasterController@reset');
     Route::get('money-receipt-print/{id}', 'App\Http\Controllers\VoucherMasterController@moneyReceiptPrint');
+    Route::get('money-payment-receipt/{id}', 'App\Http\Controllers\VoucherMasterController@moneyPaymentReceiptPrint');
 
     Route::post('master-base-detils','App\Http\Controllers\VoucherMasterController@masterBseDetails');
 

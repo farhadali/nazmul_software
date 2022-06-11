@@ -121,6 +121,17 @@ $__user= Auth::user();
                                         </a>
                                       @endif
                                     @endcan
+
+                                    @php
+                                      $_p_types =['CP','BP'];
+                                    @endphp
+                                     @can('money-payment-receipt')
+                                     @if(in_array($data->_voucher_type,$_p_types))
+                                        <a class="dropdown-item " href="{{ url('money-payment-receipt') }}/{{$data->id}}">
+                                         Payment Receipt
+                                        </a>
+                                      @endif
+                                    @endcan
                                    
                                   </div>
                                 </div>
