@@ -84,7 +84,7 @@
           @empty
           @endforelse
           <tr style="border: 1px solid silver;">
-            <td style="border: 1px solid silver;font-weight: bold;">Receipt Type</td>
+            <td style="border: 1px solid silver;font-weight: bold;">Payment Type</td>
             <td style="border: 1px solid silver;font-weight: bold;">Narration</td>
             <td style="border: 1px solid silver;font-weight: bold;" class="text-right">Amount</td>
           </tr>

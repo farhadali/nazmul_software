@@ -74,7 +74,7 @@ if (! function_exists('_l_balance_update')) {
         $balance=\DB::select("SELECT SUM(IFNULL(_dr_amount,0)-IFNULL(_cr_amount,0)) as _balance FROM `accounts` WHERE _account_ledger=$ledger  AND _status=1 ");
 
       
-      return $balance[0]->_balance;
+      return $balance[0]->_balance ?? 0;
     }
 }
 
@@ -83,7 +83,7 @@ if (! function_exists('ledger_balance_update')) {
     function ledger_balance_update($ledger)
     {
         $balance=\DB::select("SELECT SUM(IFNULL(_dr_amount,0)-IFNULL(_cr_amount,0)) as _balance FROM `accounts` WHERE _account_ledger=$ledger AND _status=1 ");
-        \DB::table('account_ledgers')->where('id',$ledger)->update(['_balance'=>$balance[0]->_balance]);
+        \DB::table('account_ledgers')->where('id',$ledger)->update(['_balance'=>$balance[0]->_balance,'_is_used'=>1]);
     }
 }
 
@@ -193,7 +193,7 @@ if (! function_exists('_branch_name')) {
     function _branch_name($branch_ids)
     {
         $branch= Branch::where('id',$branch_ids)->select('_name')->first();
-        return $branch->_name;
+        return $branch->_name ?? '';
     }
 }
 
@@ -201,7 +201,7 @@ if (! function_exists('_unit_name')) {
     function _unit_name($id)
     {
         $data= Units::where('id',$id)->select('_name')->first();
-        return $data->_name;
+        return $data->_name ?? '';
     }
 }
 
@@ -209,7 +209,7 @@ if (! function_exists('_store_name')) {
     function _store_name($id)
     {
         $store= StoreHouse::where('id',$id)->select('_name')->first();
-        return $store->_name;
+        return $store->_name ?? '';
     }
 }
 
@@ -217,7 +217,7 @@ if (! function_exists('_cost_center_name')) {
     function _cost_center_name($id)
     {
         $data= CostCenter::where('id',$id)->select('_name')->first();
-        return $data->_name;
+        return $data->_name ?? '';
     }
 }
 
@@ -225,7 +225,7 @@ if (! function_exists('_category_name')) {
     function _category_name($id)
     {
         $data= ItemCategory::where('id',$id)->select('_name')->first();
-        return $data->_name;
+        return $data->_name ?? '';
     }
 }
 
@@ -233,7 +233,7 @@ if (! function_exists('_item_name')) {
     function _item_name($id)
     {
         $data= Inventory::where('id',$id)->select('_item as _name')->first();
-        return $data->_name;
+        return $data->_name ?? '';
     }
 }
 
@@ -242,7 +242,7 @@ if (! function_exists('_ledger_name')) {
     function _ledger_name($id)
     {
         $data= AccountLedger::where('id',$id)->select('_name')->first();
-        return $data->_name;
+        return $data->_name ?? '';
     }
 }
 

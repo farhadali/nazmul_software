@@ -21,16 +21,7 @@ $__user= Auth::user();
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
-    @if ($message = Session::get('success'))
-    <div class="alert alert-success">
-      <p>{{ $message }}</p>
-    </div>
-    @endif
-     @if ($message = Session::get('danger'))
-    <div class="alert alert-success">
-      <p class="_required">{{ $message }}</p>
-    </div>
-    @endif
+    @include('backend.message.message')
     <div class="content">
       <div class="container-fluid">
         <div class="row">

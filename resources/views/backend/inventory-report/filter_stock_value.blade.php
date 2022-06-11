@@ -18,7 +18,7 @@
                <form  action="{{url('report-stock-value')}}" method="POST">
                 @csrf
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-12">
                       <label>As on Date:</label>
                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                       <input type="text" name="_datex" class="form-control datetimepicker-input" data-target="#reservationdate" required @if(isset($previous_filter["_datex"])) value='{{$previous_filter["_datex"] }}' @endif  />
@@ -33,15 +33,7 @@
                         </div>
                       </div>
 
-                     <!--  <div class="col-md-6">
-                        <label>End Date:</label>
-                        <div class="input-group date" id="reservationdate_2" data-target-input="nearest">
-                                      <input type="text" name="_datey" class="form-control datetimepicker-input_2" data-target="#reservationdate_2" required @if(isset($previous_filter["_datey"])) value='{{$previous_filter["_datey"] }}' @endif  />
-                                      <div class="input-group-append" data-target="#reservationdate_2" data-toggle="datetimepicker">
-                                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                      </div>
-                                  </div>
-                      </div> -->
+                     
                     @if(sizeof($permited_branch) > 1)
                       <div class="col-md-12">
                         <label>Branch:</label>
@@ -194,7 +186,7 @@ $(document).find('._item_category').on('change',function(){
 
     function _category_base_items(_category_id){
       var request = $.ajax({
-          url: "{{url('stock-ledger-cat-item')}}",
+          url: "{{url('stock-value-cat-item')}}",
           method: "GET",
           data: { _category_id : _category_id },
           dataType: "HTML"

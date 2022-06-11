@@ -37,6 +37,7 @@ class CreateAccountLedgersTable extends Migration
             $table->integer('_short')->default(0);
             $table->integer('_show')->default(0);
             $table->tinyInteger('_status')->default(0);
+            $table->tinyInteger('_is_used')->default(0);
             $table->string('_created_by',60)->nullable();
             $table->string('_updated_by',60)->nullable();
             $table->timestamps();

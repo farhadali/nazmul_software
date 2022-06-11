@@ -113,7 +113,7 @@ class AccountLedgerController extends Controller
         $limit = $request->limit ?? default_pagination();
         $_asc_desc = $request->_asc_desc ?? 'ASC';
         $asc_cloumn =  $request->asc_cloumn ?? '_name';
-        $text_val = $request->_text_val;
+        $text_val = trim($request->_text_val);
         if($text_val =='%'){ $text_val=''; }
         $_head_no = $request->_head_no ?? 0;
         $datas = AccountLedger::select('id','_name','_code','_address','_balance','_phone')->where('_status',1);
@@ -310,7 +310,7 @@ class AccountLedgerController extends Controller
     {
         
       
-          $numOfAccount = Accounts::where('_account_ledger',$id)->count();
+        $numOfAccount = Accounts::where('_account_ledger',$id)->count();
         if($numOfAccount ==0){
             AccountLedger::find($id)->delete();
             return redirect('account-ledger')->with('success','Information deleted successfully');
@@ -323,29 +323,46 @@ class AccountLedgerController extends Controller
 
 
 public function type_base_group(Request $request){
-        $account_groups = AccountGroup::where('_account_head_id',$request->id)->orderBy('_name','asc')->get();
+        $account_groups = AccountGroup::where('_account_head_id',$request->id)
+                                        ->orderBy('_name','asc')
+                                        ->get();
         return view('backend.account-ledger.type_base_group',compact('account_groups'));
 }
 
 public function groupBaseLedger(Request $request){
         
-         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)->select('id','_name')->get();
-        
-
-       
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)
+                                 ->where('_is_used',1)
+                                ->select('id','_name')
+                                ->get();
         return view('backend.account-ledger.group_base_ledger',compact('data'));
 }
 
 public function groupBaseLedgerPurchaseStatement(Request $request){
         
-         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)->select('id','_name')->get();
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)
+                                ->where('_is_used',1)
+                                ->select('id','_name')
+                                ->get();
         return view('backend.account-ledger.group_base_ledger_pur_statement',compact('data'));
+}
+
+public function groupBaseBillParty(Request $request){
+        
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)
+                                ->where('_is_used',1)
+                                ->select('id','_name')
+                                ->get();
+        return view('backend.account-ledger.group-base-bill-party-ledger',compact('data'));
 }
 
 
 public function groupBaseLedgerPurchaseReturnStatement(Request $request){
         
-         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)->select('id','_name')->get();
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)
+                                ->where('_is_used',1)
+                                ->select('id','_name')
+                                ->get();
         return view('backend.account-ledger.group_base_ledger_pur_return',compact('data'));
 }
 
@@ -353,14 +370,20 @@ public function groupBaseLedgerPurchaseReturnStatement(Request $request){
 
 public function groupBaseLedgerSalesStatement(Request $request){
         
-         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)->select('id','_name')->get();
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)
+                                ->where('_is_used',1)
+                                ->select('id','_name')
+                                ->get();
         return view('backend.account-ledger.group_base_ledger_sales',compact('data'));
 }
 
 
 public function groupBaseLedgerSalesReturnStatement(Request $request){
         
-         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)->select('id','_name')->get();
+         $data = AccountLedger::whereIn('_account_group_id',$request->_account_group_id)
+                                        ->where('_is_used',1)
+                                        ->select('id','_name')
+                                        ->get();
         return view('backend.account-ledger.group_base_ledger_sales_return',compact('data'));
 }
 

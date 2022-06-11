@@ -151,6 +151,24 @@ label{
 .search_row{
 	cursor: pointer;
 }
+.search_row_delivery_man_ledger{
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid silver;
+}
+.search_row_delivery_man_ledger:hover{
+    background: #e9ecef;
+    cursor: pointer;
+}
+.search_row_sales_man_ledger{
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid silver;
+}
+.search_row_sales_man_ledger:hover{
+    background: #e9ecef;
+    cursor: pointer;
+}
 .search_box{
 	position: absolute;
     z-index: 9999;
@@ -457,7 +475,7 @@ body:not(.layout-fixed) .main-sidebar {
     .cewReportTable thead {
         position: -webkit-sticky;
         position: sticky;
-        top: 0px;
+        top: 56px;
     }
     .cewSubHeader tr{
         font-weight: bold;
@@ -523,12 +541,9 @@ background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063
 
 }
 .card {
-    background: #f4f4f4;
+    background: #fff;
 }
-.navbar-white {
-   background: rgb(19,173,180);
-background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
-}
+
 .content-wrapper {
    background: rgb(19,173,180);
 background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);

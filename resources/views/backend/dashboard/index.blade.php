@@ -140,7 +140,7 @@ WHERE t1._status=1 AND t1.`_branch_id` IN(".$users->branch_ids.") AND t1.`_cost_
 </span>
                         @forelse($_purchase as $val)
                       <div class="info-box-content">
-                        <span class="info-box-text"><h4>Total  {{ _ledger_name($val->_account_ledger) }}</h4></span>
+                        <span class="info-box-text"><h4>Total  {{ _ledger_name($val->_account_ledger) ?? 'Purchase' }}</h4></span>
                         <span class="info-box-number total_purchase"><h3> {{prefix_taka()}}. {{ _report_amount($val->_balance ?? 0) }}</h3></span>
                       </div>
                       @empty
@@ -702,7 +702,7 @@ AND `_cost_center` IN(".$users->cost_center_ids.") GROUP BY YEAR(_date),MONTH(_d
   
   
  
-  ?>
+
 
 
 </div>

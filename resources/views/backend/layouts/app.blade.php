@@ -71,7 +71,7 @@ $currentURL = URL::full();
   @include('backend.layouts.main_sidebar')
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <div class="content-wrapper" style="margin-top: 56px;">
     
 
     <!-- Main content -->
@@ -507,9 +507,24 @@ $(document).on('keyup','._search_main_ledger_id',delay(function(e){
   })
 
 $(document).on('click',function(){
-    var searach_show= $('.search_box').hasClass('search_box_show');
+   
+
+    var searach_show= $('.search_box_item').hasClass('search_box_show');
+    var search_box_main_ledger= $('.search_box_main_ledger').hasClass('search_box_show');
+    var search_box_delivery_man= $('.search_box_delivery_man').hasClass('search_box_show');
+    var search_box_sales_man= $('.search_box_sales_man').hasClass('search_box_show');
     if(searach_show ==true){
-      $('.search_box').removeClass('search_box_show').hide();
+      $('.search_box_item').removeClass('search_box_show').hide();
+    }
+
+    if(search_box_main_ledger ==true){
+      $('.search_box_main_ledger').removeClass('search_box_show').hide();
+    }
+    if(search_box_delivery_man ==true){
+      $('.search_box_delivery_man').removeClass('search_box_show').hide();
+    }
+    if(search_box_sales_man ==true){
+      $('.search_box_sales_man').removeClass('search_box_show').hide();
     }
 })
 

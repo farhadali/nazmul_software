@@ -551,9 +551,7 @@ function after_request_date__today(_date){
                                         <td>${data[i].id}
                                         <input type="hidden" name="_id_main_ledger" class="_id_main_ledger" value="${data[i].id}">
                                         </td><td>${data[i]._name}
-                                        <input type="hidden" name="_name_main_ledger" class="_name_main_ledger" value="${data[i]._name}">
-                                  
-                                   </td></tr>`;
+                                        <input type="hidden" name="_name_main_ledger" class="_name_main_ledger" value="${data[i]._name}"></td></tr>`;
                         }                         
             search_html += ` </tbody> </table></div>`;
       }else{
@@ -564,13 +562,9 @@ function after_request_date__today(_date){
       _gloabal_this.parent('div').find('.search_box_main_ledger').addClass('search_box_show').show();
       
     });
-     
     request.fail(function( jqXHR, textStatus ) {
       alert( "Request failed: " + textStatus );
     });
-
-  
-
 }, 500));
 
 
@@ -579,11 +573,115 @@ function after_request_date__today(_date){
     var _name = $(this).find('._name_main_ledger').val();
     $("._ledger_id").val(_id);
     $("._search_main_ledger_id").val(_name);
-
     $('.search_box_main_ledger').hide();
     $('.search_box_main_ledger').removeClass('search_box_show').hide();
   })
   
+
+ $(document).on('keyup','._search_main_delivery_man_id',delay(function(e){
+    $(document).find('._search_main_delivery_man_id').removeClass('required_border');
+    var _gloabal_this = $(this);
+    var _text_val = $(this).val().trim();
+    
+
+  var request = $.ajax({
+      url: "{{url('main-ledger-search')}}",
+      method: "GET",
+      data: { _text_val },
+      dataType: "JSON"
+    });
+     
+    request.done(function( result ) {
+
+      var search_html =``;
+      var data = result.data; 
+      if(data.length > 0 ){
+            search_html +=`<div class="card"><table style="width: 300px;">
+                            <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                         search_html += `<tr class="search_row_delivery_man_ledger" >
+                                        <td>${data[i].id}
+                                        <input type="hidden" name="_id_delivery_man_ledger" class="_id_delivery_man_ledger" value="${data[i].id}">
+                                        </td><td>${data[i]._name}
+                                        <input type="hidden" name="_name_delivery_man_ledger" class="_name_delivery_man_ledger" value="${data[i]._name}"></td></tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
+      }else{
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+      }     
+      _gloabal_this.parent('div').find('.search_box_delivery_man').html(search_html);
+      _gloabal_this.parent('div').find('.search_box_delivery_man').addClass('search_box_show').show();
+      
+    });
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+}, 500));
+
+
+  $(document).on("click",'.search_row_delivery_man_ledger',function(){
+    var _id = $(this).children('td').find('._id_delivery_man_ledger').val();
+    var _name = $(this).find('._name_delivery_man_ledger').val();
+    $("._delivery_man_id").val(_id);
+    $("._search_main_delivery_man_id").val(_name);
+    $('.search_box_delivery_man').hide();
+    $('.search_box_delivery_man').removeClass('search_box_show').hide();
+  })
+
+  
+
+ $(document).on('keyup','._search_main_sales_man_id',delay(function(e){
+    $(document).find('._search_main_sales_man_id').removeClass('required_border');
+    var _gloabal_this = $(this);
+    var _text_val = $(this).val().trim();
+    
+
+  var request = $.ajax({
+      url: "{{url('main-ledger-search')}}",
+      method: "GET",
+      data: { _text_val },
+      dataType: "JSON"
+    });
+     
+    request.done(function( result ) {
+
+      var search_html =``;
+      var data = result.data; 
+      if(data.length > 0 ){
+            search_html +=`<div class="card"><table style="width: 300px;">
+                            <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                         search_html += `<tr class="search_row_sales_man_ledger" >
+                                        <td>${data[i].id}
+                                        <input type="hidden" name="_id_sales_man_ledger" class="_id_sales_man_ledger" value="${data[i].id}">
+                                        </td><td>${data[i]._name}
+                                        <input type="hidden" name="_name_delivery_man_ledger" class="_name_sales_man_ledger" value="${data[i]._name}"></td></tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
+      }else{
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+      }     
+      _gloabal_this.parent('div').find('.search_box_sales_man').html(search_html);
+      _gloabal_this.parent('div').find('.search_box_sales_man').addClass('search_box_show').show();
+      
+    });
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+}, 500));
+
+
+  $(document).on("click",'.search_row_sales_man_ledger',function(){
+    var _id = $(this).children('td').find('._id_delivery_man_ledger').val();
+    var _name = $(this).find('._name_sales_man_ledger').val();
+    $("._sales_man_id").val(_id);
+    $("._search_main_sales_man_id").val(_name);
+    $('.search_box_sales_man').hide();
+    $('.search_box_sales_man').removeClass('search_box_show').hide();
+  })
+ 
   $(document).on("click",'.search_modal',function(){
     $('.search_box_main_ledger').hide();
     $('.search_box_main_ledger').removeClass('search_box_show').hide();

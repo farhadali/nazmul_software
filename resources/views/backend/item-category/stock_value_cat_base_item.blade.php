@@ -1,6 +1,6 @@
 @php
 
-$previous_filter= Session::get('filter_stock_ledger');
+$previous_filter= Session::get('filter_stock_value');
 
 @endphp
 

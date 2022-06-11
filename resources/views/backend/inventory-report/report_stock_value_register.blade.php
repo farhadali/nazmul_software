@@ -130,21 +130,21 @@
             <td>{!! $g_value->_transection ?? '' !!} </td>
             <td style="width: 10%;">
               @if($g_value->_transection=="Purchase")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$g_value->_transection_ref) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('purchase/print',$g_value->_transection_ref) }}">
                   P-{!! $g_value->_transection_ref ?? '' !!}</a>
                     @endif
                    
                     @if($g_value->_transection=="Purchase Return")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase-return.edit',$g_value->_transection_ref) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('purchase-return/print',$g_value->_transection_ref) }}">
                   PR-{!! $g_value->_transection_ref ?? '' !!}</a>
                     @endif
                     
                     @if($g_value->_transection=="Sales")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales.edit',$g_value->_transection_ref) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('sales/print',$g_value->_transection_ref) }}">
                   S-{!! $g_value->_transection_ref ?? '' !!}</a>
                     @endif
                     @if($g_value->_transection=="Sales Return")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales-return.edit',$g_value->_transection_ref) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('sales-return/print',$g_value->_transection_ref) }}">
                   SR-{!! $g_value->_transection_ref ?? '' !!}</a>
                     @endif
 

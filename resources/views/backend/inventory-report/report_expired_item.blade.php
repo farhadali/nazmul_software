@@ -125,7 +125,7 @@
             @endphp
             <tr>
              
-              <td style="width: 10%;"><a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$g_value->_master_id) }}">
+              <td style="width: 10%;"><a style="text-decoration: none;" target="__blank" href="{{ url('purchase/print',$g_value->_master_id) }}">
                   P- {!! $g_value->_master_id ?? '' !!}</a></td>
             <td class="text-left">{!! $g_value->_item ?? '' !!} </td>
             <td class="text-left" style="width: 10%;">{!! $g_value->_unit_name ?? '' !!}</td>

@@ -40,7 +40,7 @@ class InventoryReportController extends Controller
 
         $previous_filter= Session::get('bill_of_party_statement');
         $page_name = "Bill of Party Statement";
-        $account_groups = AccountGroup::select('id','_name')
+         $account_groups = AccountGroup::select('id','_name')
                                         ->where('_show_filter',1)
                                         ->orderBy('_name','ASC')
                                         ->get();
@@ -683,7 +683,7 @@ public function reportStockPossition(Request $request){
 
 public function stockPossitionCatItem(Request $request){
   $category_id = $request->_category_id;
-  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->where('_is_used',1)->get();
   return view('backend.item-category.stock_possition_cat_base_item',compact('data'));
 }
 
@@ -811,7 +811,7 @@ public function reportStockLedger(Request $request){
 
 public function stockLedgerCatItem(Request $request){
   $category_id = $request->_category_id;
-  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->where('_is_used',1)->get();
   return view('backend.item-category.stock_ledger_cat_base_item',compact('data'));
 }
 
@@ -925,7 +925,7 @@ public function reportStockValueRegister(Request $request){
 
 public function stockValueRegisterCatItem(Request $request){
   $category_id = $request->_category_id;
-  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->where('_is_used',1)->get();
   return view('backend.item-category.stock_value_register_cat_base_item',compact('data'));
 }
 
@@ -1038,7 +1038,7 @@ public function reportStockValue(Request $request){
 
 public function stockValueCatItem(Request $request){
   $category_id = $request->_category_id;
-  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->where('_is_used',1)->get();
   return view('backend.item-category.stock_value_cat_base_item',compact('data'));
 }
 
@@ -1157,7 +1157,7 @@ public function reportGrossProfit(Request $request){
 
 public function grossProfitCatItem(Request $request){
   $category_id = $request->_category_id;
-  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->where('_is_used',1)->get();
   return view('backend.item-category.gross_profit_cat_base_item',compact('data'));
 }
 
@@ -1282,7 +1282,7 @@ public function reportExpiredItem(Request $request){
 
 public function expiredItemCatItem(Request $request){
   $category_id = $request->_category_id;
-  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->where('_is_used',1)->get();
   return view('backend.item-category.expired_item_cat_base_item',compact('data'));
 }
 
@@ -1403,7 +1403,7 @@ WHERE t1._status=1  AND  t1._branch_id IN(".$_branch_ids_rows.")
 
 public function shortageItemCatItem(Request $request){
   $category_id = $request->_category_id;
-  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->get();
+  $data = Inventory::whereIn('_category_id',$category_id)->select('id','_item')->where('_is_used',1)->get();
   return view('backend.item-category.shortage_item_cat_base_item',compact('data'));
 }
 

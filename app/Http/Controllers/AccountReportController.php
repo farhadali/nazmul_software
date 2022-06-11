@@ -146,10 +146,8 @@ $ledger_details =[];
 
         $previous_filter= Session::get('groupBaseLedgerReportFilter');
         $page_name = "Group Ledger Statement";
-        $account_groups = AccountGroup::select('id','_name')
-                                        ->where('_show_filter',1)
-                                        ->orderBy('_name','ASC')
-                                        ->get();
+        $account_groups = \DB::select(" SELECT DISTINCT t2.id as id,t2._name as _name FROM accounts AS t1
+                                        INNER JOIN account_groups AS t2 ON t1._account_group=t2.id WHERE t2._show_filter=1 ORDER BY t2._name ASC ");
         $users = Auth::user();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
@@ -266,10 +264,8 @@ $ledger_details =[];
     public function trailBalance(Request $request){
         $previous_filter= Session::get('trailBalanceReportFilter');
         $page_name = "Trail Balance";
-        $account_groups = AccountGroup::select('id','_name')
-                                        ->where('_show_filter',1)
-                                        ->orderBy('_name','ASC')
-                                        ->get();
+       $account_groups = \DB::select(" SELECT DISTINCT t2.id as id,t2._name as _name FROM accounts AS t1
+                                        INNER JOIN account_groups AS t2 ON t1._account_group=t2.id WHERE t2._show_filter=1 ORDER BY t2._name ASC ");
         $users = Auth::user();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));

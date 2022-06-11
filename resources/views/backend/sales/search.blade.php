@@ -80,9 +80,13 @@
                   <div class="form-group row">
                     <label for="_cost_center_id" class="col-sm-2 col-form-label">Cost Center:</label>
                     <div class="col-sm-10">
-                      <input type="text" id="_search_main_cost_center_id" name="_search_main_cost_center_id" class="form-control _search_main_cost_center_id" value="@if(isset($request->_search_main_cost_center_id)) {{$request->_search_main_cost_center_id ?? ''}}  @endif" placeholder="Cost Center" >
-                            <input type="hidden" id="_cost_center_id" name="_cost_center_id" class="form-control _cost_center_id" value="@if(isset($request->_cost_center_id)){{$request->_cost_center_id ?? ''}}@endif" placeholder="Supplier" required>
-                            <div class="search_box_main_cost_center"> </div>
+                      <select class="form-control" name="_cost_center_id">
+                        <option value="">Select Cost Center</option>
+                      @forelse($permited_costcenters as $cost)
+                         <option value="{{$cost->id}}" @if(isset($request->_cost_center_id)) @if($cost["id"]==$request->_cost_center_id) selected @endif @endif>{{$cost->_name}}</option>
+                      @empty
+                      @endforelse
+                      </select>
                     </div>
                   </div>
                   <div class="form-group row">
@@ -94,7 +98,7 @@
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="_sales_man_id" class="col-sm-2 col-form-label">Delivery Man:</label>
+                    <label for="_sales_man_id" class="col-sm-2 col-form-label">Sales Man:</label>
                     <div class="col-sm-10">
                       <input type="text" id="_search_main_sales_man_id" name="_search_main_sales_man_id" class="form-control _search_main_sales_man_id" value="@if(isset($request->_search_main_sales_man_id)) {{$request->_search_main_sales_man_id ?? ''}}  @endif" placeholder="Sales Man" >
                             <input type="hidden" id="_sales_man_id" name="_sales_man_id" class="form-control _sales_man_id" value="@if(isset($request->_sales_man_id)){{$request->_sales_man_id ?? ''}}@endif" placeholder="Sales Man" required>

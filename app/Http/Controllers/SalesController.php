@@ -151,7 +151,7 @@ class SalesController extends Controller
           $users = Auth::user();
            $form_settings = SalesFormSetting::first();
            $permited_branch = permited_branch(explode(',',$users->branch_ids));
-        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
          $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
         //return $datas;
          if($request->has('print')){
@@ -288,13 +288,15 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $limit = $request->limit ?? default_pagination();
         $_asc_desc = $request->_asc_desc ?? 'ASC';
         $asc_cloumn =  $request->asc_cloumn ?? '_qty';
-        $text_val = $request->_text_val;
+       $text_val = trim($request->_text_val);
+        if($text_val =='%'){ $text_val=''; }
+        
         $datas = ProductPriceList::select('id','_item as _name','_item_id','_unit_id','_barcode','_manufacture_date','_expire_date','_qty','_sales_rate','_pur_rate','_sales_discount','_sales_vat','_purchase_detail_id','_master_id','_branch_id','_cost_center_id','_store_id','_store_salves_id')
             ->where('_qty','>',0)
             ->where('_status',1);
-         if($request->has('_text_val') && $request->_text_val !=''){
-            $datas = $datas->where('_item','like',"%$request->_text_val%")
-            ->orWhere('id','like',"%$request->_text_val%");
+         if($request->has('_text_val') && $text_val !=''){
+            $datas = $datas->where('_item','like',"%text_val%")
+            ->orWhere('id','like',"%text_val%");
         }
         $datas = $datas->whereIn('_branch_id',explode(',',$users->branch_ids));
         $datas = $datas->whereIn('_cost_center_id',explode(',',$users->cost_center_ids));

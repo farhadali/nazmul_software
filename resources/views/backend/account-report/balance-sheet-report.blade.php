@@ -56,9 +56,7 @@
     <!-- /.row -->
 
     <!-- Table row -->
-    <div class="row">
-      <div class="col-12 table-responsive">
-        <table class="table ">
+   <table class="cewReportTable">
           <thead>
           <tr>
             <th style="width: 80%;">Particulars</th>
@@ -163,10 +161,7 @@
             </tr>
           </tfoot>
         </table>
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- /.row -->
+    
 
 
     <!-- /.row -->

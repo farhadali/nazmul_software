@@ -90,7 +90,7 @@
             @forelse($master_val as $d_key=> $del_val)
               <tr>
                 <th colspan="9" class="text-left">
-                  <a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$del_val->id) }}">
+                  <a style="text-decoration: none;" target="__blank" href="{{ url('purchase/print',$del_val->id) }}">
                     ID: {!! $del_val->id ?? '' !!}</a> | Date : {!! _view_date_formate($del_val->_date) !!} | Reference : {!! $del_val->_order_ref_id ?? '' !!}
                   </th>
               </tr>

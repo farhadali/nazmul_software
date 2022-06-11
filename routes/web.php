@@ -212,6 +212,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::any('main-ledger-search','App\Http\Controllers\AccountLedgerController@mainLedgerSearch');
     Route::any('type_base_group','App\Http\Controllers\AccountLedgerController@type_base_group');
     Route::any('group-base-ledger','App\Http\Controllers\AccountLedgerController@groupBaseLedger');
+    Route::any('group-base-bill-party-ledger','App\Http\Controllers\AccountLedgerController@groupBaseBillParty');
+    
     Route::any('group-base-ledger-purchase-statement','App\Http\Controllers\AccountLedgerController@groupBaseLedgerPurchaseStatement');
     
     

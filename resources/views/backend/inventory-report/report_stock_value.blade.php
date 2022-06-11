@@ -33,7 +33,7 @@
                 <tr style="line-height: 16px;" > <td class="text-center" style="border:none;">{{$settings->_address ?? '' }}</td></tr>
                 <tr style="line-height: 16px;" > <td class="text-center" style="border:none;">{{$settings->_phone ?? '' }},{{$settings->_email ?? '' }}</td></tr>
                  <tr style="line-height: 16px;" > <td class="text-center" style="border:none;"><b>{{$page_name}} </b></td> </tr>
-                 <tr style="line-height: 16px;" > <td class="text-center" style="border:none;"><strong>Date:{{ $previous_filter["_datex"] ?? '' }} To {{ $previous_filter["_datey"] ?? '' }}</strong></td> </tr>
+                 <tr style="line-height: 16px;" > <td class="text-center" style="border:none;"><strong>As on Date:{{ $previous_filter["_datex"] ?? '' }} </strong></td> </tr>
                  <tr style="line-height: 16px;" > <td class="text-center" style="border:none;"><b>@foreach($permited_branch as $p_branch)
                       @if(isset($previous_filter["_branch_id"]))
                         @if(in_array($p_branch->id,$previous_filter["_branch_id"])) 

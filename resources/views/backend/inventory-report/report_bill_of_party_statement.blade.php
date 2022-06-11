@@ -110,36 +110,40 @@
                   A-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="purchases")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$detail->_id) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('purchase/print',$detail->_id) }}">
                   P-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="purchase_accounts")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase.edit',$detail->_id) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('purchase/print',$detail->_id) }}">
                   PA-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="purchases_return")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase-return.edit',$detail->_id) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('purchase-return/print',$detail->_id) }}">
                   PR-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="purchase_return_accounts")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('purchase-return.edit',$detail->_id) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('purchase-return/print',$detail->_id) }}">
                   PRA-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="sales")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales.edit',$detail->_id) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('sales/print',$detail->_id) }}">
                   S-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="sales_accounts")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales.edit',$detail->_id) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('sales/print',$detail->_id) }}">
                   SA-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="sales_return")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales-return.edit',$detail->_id) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('sales-return/print',$detail->_id) }}">
                   SR-{!! $detail->_id ?? '' !!}</a>
                     @endif
                     @if($detail->_table_name=="sales_return_accounts")
-                 <a style="text-decoration: none;" target="__blank" href="{{ route('sales-return.edit',$detail->_id) }}">
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('sales-return/print',$detail->_id) }}">
                   SRA-{!! $detail->_id ?? '' !!}</a>
+                    @endif
+                    @if($detail->_table_name=="damage")
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('damage/print',$detail->_id) }}">
+                  DM-{!! $detail->_id ?? '' !!}</a>
                     @endif
              </td>
                     <td style="text-align: left;">{{ $detail->_short_narration ?? '' }} </td>

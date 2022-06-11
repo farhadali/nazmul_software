@@ -93,10 +93,10 @@
                      <div class="row">
                       <label>Ledger:</label><br></div>
                      <div class="row">
-                         <select id="_account_ledger_id" class="form-control select2 _account_ledger_id multiple_select" name="_account_ledger_id" required >
+                         <select id="_account_ledger_id" class="form-control select2 _account_ledger_id multiple_select" name="_account_ledger_id[]" required >
                           @if(isset($request->_account_ledger_id)  )
                            @forelse($account_groups as $group)
-                           <option value="{{$group->id}}">{{$group->_name}}</option>
+                           <option value="{{$group->id}}" @if($group->id== $previous_filter["_account_ledger_id"]) selected @endif >{{$group->_name}}</option>
                            @empty
                            @endforelse
                           @endif
@@ -184,7 +184,7 @@
 
   function _nv_group_base_ledger(_account_group_id){
     var request = $.ajax({
-        url: "{{url('group-base-ledger')}}",
+        url: "{{url('group-base-bill-party-ledger')}}",
         method: "GET",
         data: { _account_group_id : _account_group_id },
         dataType: "HTML"
