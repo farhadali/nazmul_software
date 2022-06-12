@@ -442,7 +442,11 @@ class DamageAdjustmentController extends Controller
         
         }
 
-       
+            $_pfix = _damage_pfix().$_master_id;
+
+             \DB::table('damage_adjustments')
+             ->where('id',$_master_id)
+             ->update(['_order_number'=>$_pfix]);
 
            DB::commit();
             return redirect()->back()

@@ -12,7 +12,7 @@
 }
 }
   </style>
-<div style="padding-left: 20px;display: flex;">
+<div class="_report_button_header">
     <a class="nav-link"  href="{{url('damage')}}" role="button"><i class="fa fa-arrow-left"></i></a>
  @can('damage-edit')
     <a class="nav-link"  title="Edit" href="{{ route('damage.edit',$data->id) }}">
@@ -34,7 +34,7 @@
           <tr>
             <td style="border:none;width: 33%;text-align: left;">
               <table class="table" style="border:none;">
-                  <tr> <td style="border:none;" > <b>INVOICE NO: {{ $data->id ?? '' }}</b></td></tr>
+                  <tr> <td style="border:none;" > <b>INVOICE NO: {{ $data->_order_number ?? '' }}</b></td></tr>
                   <tr> <td style="border:none;" > <b>Date: </b>{{ _view_date_formate($data->_date ?? '') }}</td></tr>
                 <tr> <td style="border:none;" > <b> Customer:</b>  {{$data->_ledger->_name ?? '' }}</td></tr>
                 <tr> <td style="border:none;" > <b> Phone:</b>  {{$data->_phone ?? '' }} </td></tr>

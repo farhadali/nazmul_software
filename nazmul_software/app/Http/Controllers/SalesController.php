@@ -678,9 +678,10 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
             }
 
 $_l_balance = _l_balance_update($request->_main_ledger_id);
+        $_pfix = _sales_pfix().$_master_id;
              \DB::table('sales')
              ->where('id',$_master_id)
-             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
            DB::commit();
             return redirect()->back()
@@ -792,10 +793,10 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
             '_sales_id' => 'required'
         ]);
     //###########################
-    // Purchase Master information Save Start
+    // Sales Master information Save Start
     //###########################
-        // DB::beginTransaction();
-        // try {
+         DB::beginTransaction();
+         try {
         $_sales_id = $request->_sales_id;
         $_lock_check =  Sales::where('_lock',0)->find($_sales_id); 
         if(!$_lock_check){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
@@ -1167,17 +1168,19 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
 
  
              $_l_balance = _l_balance_update($request->_main_ledger_id);
+              $_pfix = _sales_pfix().$_master_id;
+
             
              \DB::table('sales')
              ->where('id',$_master_id)
-             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
-          // DB::commit();
+           DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$_master_id)->with('_print_value',$_print_value);
-       // } catch (\Exception $e) {
-       //     DB::rollback();
-       //     return redirect()->back()->with('danger','There is Something Wrong !');
-       //  }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('danger','There is Something Wrong !');
+        }
 
        
        

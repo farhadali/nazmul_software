@@ -104,16 +104,18 @@ $__user= Auth::user();
                            $sum_of_sub_total += $data->_sub_total ?? 0;
                         @endphp
                         <tr>
-                            
-                             <td>
-                                <a target="__blank"  class="btn btn-sm btn-warning _action_button" href="{{url('damage/print')}}/{{$data->id}}" >
-                                  <i class="nav-icon fas fa-print"></i>
-                                </a>
-                                @can('damage-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('damage.edit',$data->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
+                              <td style="display: flex;">
+                            <div class="dropdown mr-1">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false"> Action</button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                   <a class="dropdown-item "  href="{{url('damage/print')}}/{{$data->id}}" >View  </a>
+                                  @can('damage-edit')
+                                    <a class="dropdown-item " href="{{ route('damage.edit',$data->id) }}">Edit</a>
+                                  @endcan
+                                 
+                                </div>
+                              </div>
+                       
                                
                                 <a class="btn btn-sm btn-default _action_button" data-toggle="collapse" href="#collapseExample__{{$key}}" role="button" aria-expanded="false" aria-controls="collapseExample">
                                       <i class=" fas fa-angle-down"></i>

@@ -342,6 +342,40 @@ if (! function_exists('voucher_prefix')) {
         return "AC-";
     }
 }
+if (! function_exists('_sales_pfix')) {
+    function _sales_pfix()
+    {
+        return "S-";
+    }
+}
+
+if (! function_exists('_sales_return_pfix')) {
+    function _sales_return_pfix()
+    {
+        return "SR-";
+    }
+}
+
+
+if (! function_exists('_purchase_pfix')) {
+    function _purchase_pfix()
+    {
+        return "P-";
+    }
+}
+
+if (! function_exists('_purchase_return_pfix')) {
+    function _purchase_return_pfix()
+    {
+        return "PR-";
+    }
+}
+if (! function_exists('_damage_pfix')) {
+    function _damage_pfix()
+    {
+        return "DM-";
+    }
+}
 
 if (! function_exists('report_date_formate')) {
     function report_date_formate()
