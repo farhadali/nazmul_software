@@ -1,0 +1,6 @@
+<IfModule mime_module>
+RewriteRule ^$ public/index.php [L]
+
+    RewriteRule ^((?!public/).*)$ public/$1 [L,NC]
+  AddHandler application/x-httpd-ea-php73 .php .php7 .phtml
+</IfModule>
