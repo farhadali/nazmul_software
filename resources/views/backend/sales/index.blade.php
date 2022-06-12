@@ -82,8 +82,8 @@ $__user= Auth::user();
                   
                   <table class="table table-bordered _list_table">
                       <tr>
-                         <th class=" _nv_th_action _action_big"><b>Action</b></th>
-                         <th class=" _no"><b>ID</b></th>
+                         <th class=""><b>Action</b></th>
+                         <th class=""><b>ID</b></th>
                          <th class=""><b>Date</b></th>
                          @if(sizeof($permited_branch) !=1)
                          <th class=""><b>Branch</b></th>
@@ -163,13 +163,13 @@ $__user= Auth::user();
                               <input class="form-control _invoice_lock" type="checkbox" name="_lock" _attr_invoice_id="{{$data->id}}" value="{{$data->_lock}}" @if($data->_lock==1) checked @endif>
                               @endcan
 
-                              @if($__user->user_type !='admin')
+                              
                               @if($data->_lock==1)
                               <i class="fa fa-lock _green ml-1 _icon_change__{{$data->id}}" aria-hidden="true"></i>
                               @else
                               <i class="fa fa-lock _required ml-1 _icon_change__{{$data->id}}" aria-hidden="true"></i>
                               @endif
-                              @endif
+                              
 
                             </td>
                             
@@ -441,9 +441,9 @@ $__user= Auth::user();
                         <tr>
                           @php
                           if(sizeof($permited_branch) !=1){
-                          $conspan=7;
+                          $conspan=6;
                         }else{
-                           $conspan=8;
+                           $conspan=7;
                       }
                           @endphp
                           <td colspan="{{$conspan}}" class="text-center"><b>Total</b></td>

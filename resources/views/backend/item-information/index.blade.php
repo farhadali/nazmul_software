@@ -80,7 +80,7 @@ if($currentURL === $current){
                   <table class="table table-bordered _list_table">
                       <tr>
                          
-                         <th class="_action">Action</th>
+                         <th class="">Action</th>
                          <th>SL</th>
                          <th>ID</th>
                          <th>Item</th>
@@ -101,24 +101,23 @@ if($currentURL === $current){
                       </tr>
                         @foreach ($datas as $key => $data)
                         <tr>
-                           
-                             <td>
-                                <a class="btn btn-sm btn-info _action_button" href="{{ route('item-information.show',$data->id) }}">
-                                  <i class="nav-icon fas fa-eye"></i>
-                                </a>
-                                @can('item-information-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('item-information.edit',$data->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
-                                @can('item-information-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['item-information.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
-                                            <i class="nav-icon fas fa-trash"></i>
-                                        </button>
-                                    {!! Form::close() !!}
-                                @endcan
-                            </td>
+                              <td style="display: flex;">
+                            <div class="dropdown mr-1">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false"> Action</button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                   <a class="dropdown-item " href="{{ route('item-information.show',$data->id) }}">View  </a>
+                                   @can('item-information-edit')
+                                    <a class="dropdown-item " href="{{ route('item-information.edit',$data->id) }}">Edit</a>
+                                  @endcan
+                                  @can('item-information-delete')
+                                  {!! Form::open(['method' => 'DELETE','route' => ['item-information.destroy', $data->id],'style'=>'display:inline']) !!}
+                                      <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger"><i class="nav-icon fas fa-trash"></i></button>
+                                  {!! Form::close() !!}
+                                  @endcan
+                                </div>
+                              </div>
+                        </td>
+                            
                             <td>{{ ($key+1) }}</td>
                             <td>{{ $data->id ?? '' }}</td>
                             <td>{{ $data->_item ?? '' }}</td>

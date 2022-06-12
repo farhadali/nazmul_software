@@ -79,8 +79,8 @@ if($currentURL === $current){
                 <div class="table-responsive">
                   <table class="table table-bordered _list_table" >
                       <tr>
-                         
-                         <th class="_action">Action</th>
+                         <th>SL</th>
+                         <th class="">Action</th>
                          <th>ID</th>
                          <th>Name</th>
                          <th>Code</th>
@@ -100,43 +100,44 @@ if($currentURL === $current){
                         @foreach ($_new_datas as $key => $dat)
                         <tr>
                           
-                          <th colspan="9">{{ $key }} </th>
+                          <th colspan="11">{{ $key }} </th>
                          </tr>
                         
                           @forelse($dat as $key2=>$dates)
                          <tr>
                           <th></th>
-                          <th colspan="8">{{ $key2 }} </th>
+                          <th colspan="11">{{ $key2 }} </th>
                          </tr>
                            @forelse($dates as $key3=>$data)
 
                         <tr>
-                           
-                             <td>
-                                <a class="btn btn-sm btn-info _action_button" href="{{ route('account-ledger.show',$data->id) }}">
-                                  <i class="nav-icon fas fa-eye"></i>
-                                </a>
-                                @can('account-ledger-edit')
-                                    <a class="btn btn-sm btn-primary _action_button" href="{{ route('account-ledger.edit',$data->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
-                                @can('account-ledger-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['account-ledger.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
-                                            <i class="nav-icon fas fa-trash"></i>
-                                        </button>
-                                    {!! Form::close() !!}
-                                @endcan
-                            </td>
+                           <td>{{($key3+1)}}</td>
+                          <td style="display: flex;">
+                            <div class="dropdown mr-1">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false"> Action</button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                   <a class="dropdown-item " href="{{ route('account-ledger.show',$data->id) }}">View  </a>
+                                  @can('account-ledger-edit')
+                                    <a class="dropdown-item " href="{{ route('account-ledger.edit',$data->id) }}">Edit</a>
+                                  @endcan
+                                 @can('account-ledger-delete')
+                                 {!! Form::open(['method' => 'DELETE','route' => ['account-ledger.destroy', $data->id],'style'=>'display:inline']) !!}
+                                      <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm "><span class="_required">Delete</span></button>
+                                  {!! Form::close() !!}
+                                  @endcan
+                                </div>
+                              </div>
+                        </td>
+                             
+                            
                             <td>{{ $data->id }}</td>
                             <td>{{ $data->_name }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_email ?? '' }}</td>
                             <td>{{ $data->_phone ?? '' }}</td>
                             <td>{{ _show_amount_dr_cr(_report_amount(_last_balance($data->id)[0]->_balance ?? 0))  }}</td>
-                            <td>{{ $data->_short ?? '' }}</td>
                             <td>{{ $data->_note ?? '' }}</td>
+                            <td>{{ $data->_short ?? '' }}</td>
                            <td>{{ selected_status($data->_status) }}</td>
                            
                         </tr>

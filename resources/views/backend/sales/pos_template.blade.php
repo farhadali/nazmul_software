@@ -61,7 +61,7 @@
             		</td>
             		<td colspan="2" style="border: 1px dotted grey;">
             			<table style="width: 100%;text-align: left;">
-            				<tr> <td style="border:none;" > Invoice No: {{ $data->id ?? '' }}</td></tr>
+            				<tr> <td style="border:none;" > Invoice No: {{ $data->_order_number ?? '' }}</td></tr>
                   <tr> <td style="border:none;" > Date: {{ _view_date_formate($data->_date ?? '') }}</td></tr>
             			</table>
             		</td>

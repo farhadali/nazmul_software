@@ -24,13 +24,13 @@ class Sales extends Model
     }
 
     public function _ledger(){
-    	return $this->hasOne(AccountLedger::class,'id','_ledger_id');
+    	return $this->hasOne(AccountLedger::class,'id','_ledger_id')->select('id','_account_group_id','_account_head_id','_name','_balance');
     }
     public function _delivery_man(){
-        return $this->hasOne(AccountLedger::class,'id','_delivery_man_id');
+        return $this->hasOne(AccountLedger::class,'id','_delivery_man_id')->select('id','_account_group_id','_account_head_id','_name','_balance');
     } 
     public function _sales_man(){
-        return $this->hasOne(AccountLedger::class,'id','_sales_man_id');
+        return $this->hasOne(AccountLedger::class,'id','_sales_man_id')->select('id','_account_group_id','_account_head_id','_name','_balance');
     }
 
      public function _master_cost_center(){

@@ -35,7 +35,7 @@
           <tr>
             <td style="border:none;width: 33%;text-align: left;">
               <table class="table" style="border:none;">
-                  <tr> <td style="border:none;" > <b>{{$page_name}} No: {{ $data->id ?? '' }}</b></td></tr>
+                  <tr> <td style="border:none;" > <b>{{$page_name}} No: {{ $data->_order_number ?? '' }}</b></td></tr>
                   <tr> <td style="border:none;" > <b>Date: </b>{{ _view_date_formate($data->_date ?? '') }}</td></tr>
                 <tr> <td style="border:none;" > <b> Supplier:</b>  {{$data->_ledger->_name ?? '' }}</td></tr>
                 <tr> <td style="border:none;" > <b> Phone:</b>  {{$data->_phone ?? '' }} </td></tr>
@@ -109,7 +109,7 @@
                                             <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
                                             <td class="   @if($form_settings->_show_barcode==0) display_none @endif" >{!! $_item->_barcode ?? '' !!}</td>
                                             <td class="text-right  " >{!! _report_amount($_item->_qty ?? 0) !!}</td>
-                                            <td class="text-right  " >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
+                                            <td class="text-right  " >{!! _report_amount($_item->_rate ?? 0) !!}</td>
                                             <td class="text-right   @if($form_settings->_show_vat==0) display_none @endif" >{!! _report_amount($_item->_vat ?? 0) !!}</td>
                                             <td class="text-right   @if($form_settings->_show_vat==0) display_none @endif" >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
                                             

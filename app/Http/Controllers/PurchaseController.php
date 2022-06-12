@@ -540,10 +540,13 @@ public function moneyReceipt($id){
             }
 
              
-$_l_balance = _l_balance_update($request->_main_ledger_id);
+            $_l_balance = _l_balance_update($request->_main_ledger_id);
+            $_pfix = _purchase_pfix().$purchase_id;
+
+
              \DB::table('purchases')
              ->where('id',$purchase_id)
-             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
             DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
@@ -1031,10 +1034,12 @@ if($__sub_total > 0){
             }
 
              
-$_l_balance = _l_balance_update($request->_main_ledger_id);
+            $_l_balance = _l_balance_update($request->_main_ledger_id);
+            $_pfix = _purchase_pfix().$purchase_id;
+
              \DB::table('purchases')
              ->where('id',$purchase_id)
-             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
                 DB::commit();
         return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);

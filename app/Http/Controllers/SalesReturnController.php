@@ -868,10 +868,12 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
             }
 
            
-$_l_balance = _l_balance_update($request->_main_ledger_id);
+            $_l_balance = _l_balance_update($request->_main_ledger_id);
+            $_pfix = _sales_return_pfix().$_master_id;
+
              \DB::table('sales_returns')
              ->where('id',$_master_id)
-             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
             DB::commit();
             return redirect()->back()
@@ -1362,10 +1364,12 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
             }
 
          
-$_l_balance = _l_balance_update($request->_main_ledger_id);
+            $_l_balance = _l_balance_update($request->_main_ledger_id);
+            $_pfix = _sales_return_pfix().$_master_id;
+
              \DB::table('sales_returns')
              ->where('id',$_master_id)
-             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
             return redirect()->back()
                 ->with('success','Information save successfully')

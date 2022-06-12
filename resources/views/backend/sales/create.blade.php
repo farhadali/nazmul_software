@@ -445,7 +445,7 @@ $__user= Auth::user();
     </div>
 </div>
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog  modal-lg" role="document">
     <form action="{{ url('sales-settings')}}" method="POST">
         @csrf
     <div class="modal-content">
@@ -469,6 +469,15 @@ $__user= Auth::user();
 
 </div>
 @include('backend.common-modal.item_ledger_modal')
+
+@php
+      $_string_ids = $form_settings->_cash_customer ?? 0;
+      if($_string_ids !=0){
+        $_cash_customer = explode(",",$_string_ids);
+      }else{
+        $_cash_customer =[];
+      }
+      @endphp
 
 @endsection
 
@@ -1028,12 +1037,31 @@ function purchase_row_add(event){
 
     }
 @endif
-    if(_voucher_type ==""){
-       $(document).find('._voucher_type').addClass('required_border').focus();
-       alert('Please Select Voucher Type.');
-      return false;
-    }else if(_note ==""){
-       
+
+//Cash Customer Can not Sale without payment Start
+var _cash_customers = <?php echo json_encode($_cash_customer); ?>;
+if(_cash_customers.length > 0){
+  var _total_dr_amount = $(document).find('._total_dr_amount').val();
+  var _total = $(document).find('#_total').val();
+  var _main_ledger_id = $(document).find('#_main_ledger_id').val();
+  var check_cash_customer = 0;
+  for (var i = 0; i < _cash_customers.length; i++) {
+      if(_main_ledger_id ==_cash_customers[i]){
+        check_cash_customer =1;
+          break;
+      }
+  }
+  if(check_cash_customer ==1){
+    if(Math.round(_total_dr_amount) !=Math.round(_total)){
+        $(document).find("._total_dr_amount").addClass('required_border').focus();
+        alert(" You have to pay full Amount  ");
+        return false;
+    }
+  }
+
+} //Cash Customer Can not Sale without payment End
+
+   if(_note ==""){
        $(document).find('._note').focus().addClass('required_border');
       return false;
     }else if(_main_ledger_id ==""){

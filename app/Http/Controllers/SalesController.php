@@ -257,18 +257,18 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $page_name = $this->page_name;
         $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
         $account_groups = [];
-        $branchs = Branch::orderBy('_name','asc')->get();
+        $branchs = Branch::select('id','_name')->orderBy('_name','asc')->get();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
         $voucher_types = VoucherType::select('id','_name','_code')->orderBy('_code','asc')->get();
-        $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
+        $store_houses = StoreHouse::select('id','_name')->whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
         $form_settings = SalesFormSetting::first();
         $inv_accounts = [];
         $p_accounts = [];
         $dis_accounts = [];
         $vat_accounts =[];
-        $categories = ItemCategory::orderBy('_name','asc')->get();
-        $units = Units::orderBy('_name','asc')->get();
+        $categories = ItemCategory::select('id','_name')->orderBy('_name','asc')->get();
+        $units = Units::select('id','_name','_code')->orderBy('_name','asc')->get();
 
        return view('backend.sales.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units'));
     }
@@ -279,7 +279,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $p_accounts = AccountLedger::where('_account_head_id',8)->get();
         $dis_accounts = AccountLedger::where('_account_head_id',10)->get();
         $cost_of_solds = AccountLedger::where('_account_head_id',9)->get();
-        return view('backend.sales.form_setting_modal',compact('form_settings','inv_accounts','p_accounts','dis_accounts','cost_of_solds'));
+        $_cash_customers = AccountLedger::whereIn('_account_head_id',[12,13])->get();
+        return view('backend.sales.form_setting_modal',compact('form_settings','inv_accounts','p_accounts','dis_accounts','cost_of_solds','_cash_customers'));
     }
 
 
@@ -295,8 +296,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
             ->where('_qty','>',0)
             ->where('_status',1);
          if($request->has('_text_val') && $text_val !=''){
-            $datas = $datas->where('_item','like',"%text_val%")
-            ->orWhere('id','like',"%text_val%");
+            $datas = $datas->where('_item','like',"%$text_val%")
+            ->orWhere('id','like',"%$text_val%");
         }
         $datas = $datas->whereIn('_branch_id',explode(',',$users->branch_ids));
         $datas = $datas->whereIn('_cost_center_id',explode(',',$users->cost_center_ids));
@@ -312,6 +313,13 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         if(empty($data)){
             $data = new SalesFormSetting();
         }
+
+        $_cash_ledger_ids = 0;
+        $_cash_customer = $request->_cash_customer ?? [];
+        if(sizeof($_cash_customer) > 0){
+            $_cash_ledger_ids  =  implode(",",$_cash_customer);
+        }
+        
         $data->_default_inventory = $request->_default_inventory;
         $data->_default_sales = $request->_default_sales;
         $data->_default_discount = $request->_default_discount;
@@ -329,6 +337,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $data->_show_expire_date = $request->_show_expire_date ?? 1;
         $data->_show_p_balance = $request->_show_p_balance ?? 1;
         $data->_invoice_template = $request->_invoice_template ?? 1;
+        $data->_cash_customer = $_cash_ledger_ids ?? 0;
         $data->save();
 
 
@@ -356,6 +365,15 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
     //###########################
     // Purchase Master information Save Start
     //###########################
+    $SalesFormSetting = SalesFormSetting::first();
+    //_cash_customer_check($_cutomer_id,$_selected_customers,$_bill_amount,$_total)
+  $check_cash_customers=  _cash_customer_check($request->_main_ledger_id,$SalesFormSetting->_cash_customer,$request->_total,$request->_total_dr_amount);
+  if($check_cash_customers=='no'){
+     return redirect()->back()->with('error','Cash Customer Must Paid Full Amount!');
+  }
+
+
+
        DB::beginTransaction();
         try {
 
@@ -511,7 +529,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $_total_dr_amount = 0;
         $_total_cr_amount = 0;
 
-        $SalesFormSetting = SalesFormSetting::first();
+        
         $_default_inventory = $SalesFormSetting->_default_inventory;
         $_default_sales = $SalesFormSetting->_default_sales;
         $_default_discount = $SalesFormSetting->_default_discount;
@@ -678,9 +696,10 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
             }
 
 $_l_balance = _l_balance_update($request->_main_ledger_id);
+        $_pfix = _sales_pfix().$_master_id;
              \DB::table('sales')
              ->where('id',$_master_id)
-             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
            DB::commit();
             return redirect()->back()
@@ -792,13 +811,21 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
             '_sales_id' => 'required'
         ]);
     //###########################
-    // Purchase Master information Save Start
+    // Sales Master information Save Start
     //###########################
-        // DB::beginTransaction();
-        // try {
-        $_sales_id = $request->_sales_id;
-        $_lock_check =  Sales::where('_lock',0)->find($_sales_id); 
-        if(!$_lock_check){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
+
+          $SalesFormSetting = SalesFormSetting::first();
+    //_cash_customer_check($_cutomer_id,$_selected_customers,$_bill_amount,$_total)
+            $check_cash_customers=  _cash_customer_check($request->_main_ledger_id,$SalesFormSetting->_cash_customer,$request->_total,$request->_total_dr_amount);
+            if($check_cash_customers=='no'){
+            return redirect()->back()->with('error','Cash Customer Must Paid Full Amount!');
+            }
+            $_sales_id = $request->_sales_id;
+            $_lock_check =  Sales::where('_lock',0)->find($_sales_id); 
+            if(!$_lock_check){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
+         DB::beginTransaction();
+         try {
+        
        
 
         //====
@@ -994,7 +1021,7 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
         $_total_dr_amount = 0;
         $_total_cr_amount = 0;
 
-        $SalesFormSetting = SalesFormSetting::first();
+        
         $_default_inventory = $SalesFormSetting->_default_inventory;
         $_default_sales = $SalesFormSetting->_default_sales;
         $_default_discount = $SalesFormSetting->_default_discount;
@@ -1167,17 +1194,19 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
 
  
              $_l_balance = _l_balance_update($request->_main_ledger_id);
+              $_pfix = _sales_pfix().$_master_id;
+
             
              \DB::table('sales')
              ->where('id',$_master_id)
-             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance]);
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
-          // DB::commit();
+           DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$_master_id)->with('_print_value',$_print_value);
-       // } catch (\Exception $e) {
-       //     DB::rollback();
-       //     return redirect()->back()->with('danger','There is Something Wrong !');
-       //  }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('danger','There is Something Wrong !');
+        }
 
        
        

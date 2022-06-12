@@ -19,3 +19,13 @@
                       <p>{{ $message }}</p>
                     </div>
                     @endif
+                  @if ($message = Session::get('error'))
+                    <div class="alert _required _over_qty">
+                      <p>{{ $message }}</p>
+                    </div>
+                    @endif
+
+                    @if(isset($__message))
+
+                      <h1 class="text-center _required">{{$__message ?? ''}}</h1>
+                    @endif

@@ -38,9 +38,9 @@
                 <div class="d-flex">
                   <table class="table table-bordered _list_table">
                       <tr>
-                        
-                         <th class="_action">Action</th>
-                          <th class="_no">ID</th>
+                        <th>SL</th>
+                         <th class="">Action</th>
+                          <th class="">ID</th>
                          <th>Parents</th>
                          <th>Name</th>
                          
@@ -48,24 +48,24 @@
                       </tr>
                         @foreach ($datas as $key => $data)
                         <tr>
-                            
-                             <td>
-                                <a class="btn btn-sm btn-info" href="{{ route('item-category.show',$data->id) }}">
-                                  <i class="nav-icon fas fa-eye"></i>
-                                </a>
-                                @can('item-category-edit')
-                                    <a class="btn btn-sm btn-primary" href="{{ route('item-category.edit',$data->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
-                                @can('item-category-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['item-category.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger">
-                                            <i class="nav-icon fas fa-trash"></i>
-                                        </button>
-                                    {!! Form::close() !!}
-                                @endcan
-                            </td>
+                            <td>{{($key+1)}}</td>
+                          <td style="display: flex;">
+                            <div class="dropdown mr-1">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false"> Action</button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                   <a class="dropdown-item " href="{{ route('item-category.show',$data->id) }}">View  </a>
+                                  @can('item-category-edit')
+                                    <a class="dropdown-item " href="{{ route('item-category.edit',$data->id) }}">Edit</a>
+                                  @endcan
+                                 @can('item-category-delete')
+                                {!! Form::open(['method' => 'DELETE','route' => ['item-category.destroy', $data->id],'style'=>'display:inline']) !!}
+                                      <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm "><span class="_required">Delete</span></button>
+                                  {!! Form::close() !!}
+                                  @endcan
+                                </div>
+                              </div>
+                        </td>
+                             
                             <td>{{ $data->id }}</td>
                             <td> {{ $data->_parents->_name ?? '' }}</td>
                             <td> {{ $data->_name ?? '' }}</td>

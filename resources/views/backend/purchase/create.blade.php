@@ -153,41 +153,41 @@ $__user= Auth::user();
                                 <div class="table-responsive">
                                       <table class="table table-bordered" >
                                           <thead >
-                                            <th class="text-middle" >&nbsp;</th>
-                                            <th class="text-middle" >Item</th>
+                                            <th class="text-left" >&nbsp;</th>
+                                            <th class="text-left" >Item</th>
                                            
-                                            <th class="text-middle @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==0) display_none    @endif @endif" >Barcode</th>
+                                            <th class="text-left @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==0) display_none    @endif @endif" >Barcode</th>
                                          
-                                            <th class="text-middle" >Qty</th>
-                                            <th class="text-middle" >Rate</th>
-                                            <th class="text-middle" >Sales Rate</th>
+                                            <th class="text-left" >Qty</th>
+                                            <th class="text-left" >Rate</th>
+                                            <th class="text-left" >Sales Rate</th>
                                            
-                                            <th class="text-middle @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif @endif" >VAT%</th>
-                                            <th class="text-middle @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif @endif" >VAT Amount</th>
+                                            <th class="text-left @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif @endif" >VAT%</th>
+                                            <th class="text-left @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==0) display_none   @endif @endif" >VAT Amount</th>
                                           
 
-                                            <th class="text-middle" >Value</th>
+                                            <th class="text-left" >Value</th>
                                              @if(sizeof($permited_branch) > 1)
-                                            <th class="text-middle" >Branch</th>
+                                            <th class="text-left" >Branch</th>
                                             @else
-                                            <th class="text-middle display_none" >Branch</th>
+                                            <th class="text-left display_none" >Branch</th>
                                             @endif
                                              @if(sizeof($permited_costcenters) > 1)
-                                            <th class="text-middle" >Cost Center</th>
+                                            <th class="text-left" >Cost Center</th>
                                             @else
-                                             <th class="text-middle display_none" >Cost Center</th>
+                                             <th class="text-left display_none" >Cost Center</th>
                                             @endif
                                              @if(sizeof($store_houses) > 1)
-                                            <th class="text-middle" >Store</th>
+                                            <th class="text-left" >Store</th>
                                             @else
-                                             <th class="text-middle display_none" >Store</th>
+                                             <th class="text-left display_none" >Store</th>
                                             @endif
                                             
-                                             <th class="text-middle @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==0) display_none @endif
+                                             <th class="text-left @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==0) display_none @endif
                                             @endif" >Shelf</th>
-                                             <th class="text-middle @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
+                                             <th class="text-left @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
                                             @endif" >Manu. Date</th>
-                                             <th class="text-middle @if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none @endif
+                                             <th class="text-left @if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none @endif
                                             @endif"> Expired Date </th>
                                             
                                            

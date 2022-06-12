@@ -93,23 +93,22 @@
                         @foreach ($datas as $key => $data)
                         <tr>
                             
-                             <td>
-                                <a class="btn btn-sm btn-info" href="{{ route('unit.show',$data->id) }}">
-                                  <i class="nav-icon fas fa-eye"></i>
-                                </a>
-                                @can('unit-edit')
-                                    <a class="btn btn-sm btn-primary" href="{{ route('unit.edit',$data->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
-                                @can('unit-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['unit.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger">
-                                            <i class="nav-icon fas fa-trash"></i>
-                                        </button>
-                                    {!! Form::close() !!}
-                                @endcan
-                            </td>
+                           <td style="display: flex;">
+                            <div class="dropdown mr-1">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false"> Action</button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                   <a class="dropdown-item " href="{{ route('unit.show',$data->id) }}" >View  </a>
+                                   @can('unit-edit')
+                                    <a class="dropdown-item " href="{{ route('unit.edit',$data->id) }}" >Edit</a>
+                                  @endcan
+                                  @can('unit-delete')
+                                  {!! Form::open(['method' => 'DELETE','route' => ['unit.destroy', $data->id],'style'=>'display:inline']) !!}
+                                      <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger"><i class="nav-icon fas fa-trash"></i></button>
+                                  {!! Form::close() !!}
+                                  @endcan
+                                </div>
+                              </div>
+                        </td>
                             <td>{{ $data->id }} </td>
                             <td> {{ $data->_name ?? '' }}</td>
                             <td> {{ $data->_code ?? '' }}</td>

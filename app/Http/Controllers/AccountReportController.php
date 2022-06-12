@@ -58,30 +58,11 @@ class AccountReportController extends Controller
        session()->put('ledgerReprtFilter', $request->all());
        $previous_filter= Session::get('ledgerReprtFilter');
 
-     //    $balance = DB::table('accounts')
-     //                ->where('accounts._account_ledger','=',$request->_ledger_id)
-     //                ->whereDate('accounts._date','<=' ,$_datex)
-     //                ->whereIn('accounts._branch_id' ,$_branch_ids)
-     //                ->whereIn('accounts._cost_center' ,$_cost_center_ids)
-     //                ->select(DB::raw('sum(accounts._dr_amount) as _opening_dr_amount'), DB::raw('sum(accounts._cr_amount) as _opening_cr_amount'))
-     //                ->where('accounts._status',1)
-     //                ->first();
-
-     //     $ledger_details = DB::table('accounts')
-     //                    ->where('accounts._account_ledger','=',$request->_ledger_id)
-     //                   ->whereDate('accounts._date', '>', $_datex)
-     //                    ->whereDate('accounts._date', '<=', $_datey)
-     //                    ->whereIn('accounts._branch_id' ,$_branch_ids)
-     //                    ->whereIn('accounts._cost_center' ,$_cost_center_ids)
-     //                    ->where('accounts._status',1)
-     //                    ->get();
+     
                   
        $ledger_info = AccountLedger::with(['account_type','account_group','_entry_branch'])->find($request->_ledger_id);
-    	// $page_name = "Ledger Report";
-     //    $users = Auth::user();
-     //    $permited_branch = permited_branch(explode(',',$users->branch_ids));
-     //    $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
-       $users = Auth::user();
+    	
+        $users = Auth::user();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
         $datas=[];

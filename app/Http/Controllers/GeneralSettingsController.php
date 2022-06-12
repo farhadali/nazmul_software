@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\GeneralSettings;
+use Session;
+use Auth;
+use DB;
 
 class GeneralSettingsController extends Controller
 {
@@ -15,7 +18,7 @@ class GeneralSettingsController extends Controller
     function __construct()
     {
          $this->middleware('permission:admin-settings|admin-settings-store', ['only' => ['settings','settingsSave']]);
-         $this->middleware('permission:lock-permission', ['only' => ['lockAction']]);
+         $this->middleware('permission:lock-permission', ['only' => ['lockAction','allLockSystem','allLock']]);
          
     }
 
@@ -46,6 +49,50 @@ class GeneralSettingsController extends Controller
         return "ok";
 
     }
+
+    public function allLock(){
+        $users = \Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $page_name = "Transection Lock System";
+        $previous_filter= Session::get('_filter_lock_system');
+
+        
+
+        $tables=['sales'=>'Sales','sales_returns'=>'Sales Return','purchases'=>'Purchase','purchase_returns'=>'Purchase Return','voucher_masters'=>'Voucher','damage_adjustments'=>'Damage'];
+        return view('backend.settings.all-lock',compact('permited_branch','permited_costcenters','page_name','tables','previous_filter'));
+    }
+
+
+    public function allLockSystem(Request $request){
+
+        $_action = $request->_action;
+        $_table_name = $request->_table_name;
+          $_datex =  change_date_format($request->_datex);
+         $_datey=  change_date_format($request->_datey);
+         $branches=$request->_branch_id ?? [];
+        $cost_centers = $request->_cost_center ?? [];
+        session()->put('_filter_lock_system', $request->all());
+        $previous_filter= Session::get('_filter_lock_system');
+
+       $lock_update=  DB::table($_table_name)
+                ->whereIn('_branch_id',$branches);
+                if($_table_name !='voucher_masters'){
+                    $lock_update=$lock_update->whereIn('_cost_center_id',$cost_centers);
+                }
+                
+                $lock_update=$lock_update->whereDate('_date','>=', $_datex)
+                ->whereDate('_date','<=', $_datey)
+                ->update(['_lock'=>$_action]);
+         return redirect()->back()->with('success','Information Save successfully');
+
+    }
+
+    public function lockReset(){
+         Session::flash('_filter_lock_system');
+        return redirect()->back();
+    }
+
 
     public function settingsSave(Request $request){
        

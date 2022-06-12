@@ -159,6 +159,8 @@ class AccountHeadController extends Controller
      */
     public function destroy(AccountHead $accountHead)
     {
-        return "You Can not delete this Information";
+        $__message ="You Can not delete this Information";
+        $page_name ="Permission Denied";
+        return view('backend.message.permission_message',compact('__message','page_name'));
     }
 }

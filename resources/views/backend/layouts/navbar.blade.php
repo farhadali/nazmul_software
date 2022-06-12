@@ -433,6 +433,14 @@
           </a>
         </div>
          @endcan
+         <div class="dropdown-divider"></div>
+        @can('lock-permission')
+        <div style="display: flex;">
+          <a href="{{url('all-lock')}}" class="dropdown-item">
+            <i class="fas fa-lock _required   mr-2"></i>Transection Lock System
+          </a>
+        </div>
+         @endcan
         
               
               

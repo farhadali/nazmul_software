@@ -70,7 +70,7 @@
       </div>
 
       <div class="col-sm-4 invoice-col">
-       <b>Invoice/Bill No: {{ $data->id ?? '' }}</b><br>
+       <b>Invoice/Bill No: {{ $data->_order_number ?? '' }}</b><br>
        <b>Referance:</b> {!! $data->_referance ?? '' !!}<br>
        <b>Account Balance:</b>  {!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}<br>
        <b>Created By:</b> {!! $data->_user_name ?? '' !!}<br>
@@ -117,7 +117,7 @@
                                             <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
                                             
                                            <td class="text-right  " >{!! _report_amount($_item->_qty ?? 0) !!}</td>
-                                            <td class="text-right  " >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
+                                            <td class="text-right  " >{!! _report_amount($_item->_rate ?? 0) !!}</td>
                                             <td class="text-right  " >{!! _report_amount($_item->_discount_amount ?? 0) !!}</td>
                                             <td class="text-right  " >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
                                             

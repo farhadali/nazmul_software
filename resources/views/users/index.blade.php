@@ -34,7 +34,7 @@
                   <table class="table table-bordered _list_table">
                      <tr>
                        <th>No</th>
-                       <th class="_action">Action</th>
+                       <th class="">Action</th>
                        <th>Name</th>
                        <th>Email</th>
                        <th>Roles</th>
@@ -46,19 +46,26 @@
                       <tr>
 
                         <td>{{ $key+1 }}</td>
-                         <td>
-                           <a class="btn btn-sm btn-info btn btn-sm btn-info _action_button" href="{{ route('users.show',$user->id) }}">
-                             <i class="nav-icon fas fa-eye"></i>
-                           </a>
-                           <a class="btn btn-sm btn-primary btn btn-sm btn-info _action_button" href="{{ route('users.edit',$user->id) }}">
-                             <i class="nav-icon fas fa-edit"></i>
-                           </a>
-                            {!! Form::open(['method' => 'DELETE','route' => ['users.destroy', $user->id],'style'=>'display:inline']) !!}
-                               <button type="submit"  onclick="return confirm('Are you sure?')" class="btn btn-sm btn-danger btn btn-sm btn-info _action_button">
-                                 <i class="nav-icon fas fa-trash"></i>
-                            </button>
-                            {!! Form::close() !!}
+
+                               <td style="display: flex;">
+                            <div class="dropdown mr-1">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false"> Action</button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                   <a class="dropdown-item "  href="{{ route('users.show',$user->id) }}">View  </a>
+                                  @can('user-edit')
+                                    <a class="dropdown-item " href="{{ route('users.edit',$user->id) }}">Edit</a>
+                                  @endcan
+                                 @can('user-delete')
+                                    {!! Form::open(['method' => 'DELETE','route' => ['users.destroy', $user->id],'style'=>'display:inline']) !!}
+                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm ">
+                                            <span class="_required">Delete</span>
+                                        </button>
+                                    {!! Form::close() !!}
+                                @endcan
+                                </div>
+                              </div>
                         </td>
+                        
                         <td>{{ $user->id }} - {{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>

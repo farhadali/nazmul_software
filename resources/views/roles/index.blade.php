@@ -38,30 +38,32 @@
                 <div class="d-flex">
                   <table class="table table-bordered _list_table">
                       <tr>
-                         <th class="_no">No</th>
-                         <th class="_action">Action</th>
+                         <th class="">No</th>
+                         <th class="">Action</th>
                          <th>Name</th>
                       </tr>
                         @foreach ($roles as $key => $role)
                         <tr>
                             <td>{{ ++$i }}</td>
-                             <td>
-                                <a class="btn btn-sm btn-info" href="{{ route('roles.show',$role->id) }}">
-                                  <i class="nav-icon fas fa-eye"></i>
-                                </a>
-                                @can('role-edit')
-                                    <a class="btn btn-sm btn-primary" href="{{ route('roles.edit',$role->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
-                                @can('role-delete')
+                               <td style="display: flex;">
+                            <div class="dropdown mr-1">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false"> Action</button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                   <a class="dropdown-item "  href="{{ route('roles.show',$role->id) }}">View  </a>
+                                  @can('role-edit')
+                                    <a class="dropdown-item " href="{{ route('roles.edit',$role->id) }}">Edit</a>
+                                  @endcan
+                                 @can('role-delete')
                                     {!! Form::open(['method' => 'DELETE','route' => ['roles.destroy', $role->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger">
-                                            <i class="nav-icon fas fa-trash"></i>
+                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm ">
+                                            <span class="_required">Delete</span>
                                         </button>
                                     {!! Form::close() !!}
                                 @endcan
-                            </td>
+                                </div>
+                              </div>
+                        </td>
+                             
                             <td>{{ $role->name }}</td>
                            
                         </tr>

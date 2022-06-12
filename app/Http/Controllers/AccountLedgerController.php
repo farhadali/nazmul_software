@@ -315,7 +315,9 @@ class AccountLedgerController extends Controller
             AccountLedger::find($id)->delete();
             return redirect('account-ledger')->with('success','Information deleted successfully');
         }else{
-             return "You Can not delete this Information";
+            $__message ="You Can not delete this Information";
+            $page_name ="Permission Denied";
+            return view('backend.message.permission_message',compact('__message','page_name'));
         }
         
     }

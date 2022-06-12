@@ -513,12 +513,14 @@ body:not(.layout-fixed) .main-sidebar {
     }
     .cewReportTable th {
         border: 1px solid silver;
+        color: #000;
     }
     
     .cewReportTable thead {
         position: -webkit-sticky;
         position: sticky;
         top: 0px;
+        border: 1px solid silver;
     }
     .cewSubHeader tr{
         font-weight: bold;
@@ -583,4 +585,18 @@ background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063
 }
 .bg-white{
     background: #fff;
+}
+#dropdownMenuButton {
+    background-color: #3cc6c1;
+    border-color: #ddd;
+    color: #444;
+}
+._purchase_row_remove >i{
+    color: red;
+}
+._voucher_row_remove >i{
+    color: red;
+}
+.card{
+    margin-top: 3px;
 }

@@ -41,6 +41,24 @@ if (! function_exists('_php_round')) {
 }
 
 
+if (! function_exists('_cash_customer_check')) {
+    function _cash_customer_check($_cutomer_id,$_selected_customers,$_bill_amount,$_total)
+    {
+            if($_selected_customers !=0){
+                $selected_customer_array = explode(",",$_selected_customers);
+                if(in_array($_cutomer_id, $selected_customer_array)){
+                    if(intval($_bill_amount) !=intval($_total)){
+                        return "no";
+                    }
+                }
+              }
+    }
+}
+
+
+
+
+
 
 
 
@@ -340,6 +358,40 @@ if (! function_exists('voucher_prefix')) {
     function voucher_prefix()
     {
         return "AC-";
+    }
+}
+if (! function_exists('_sales_pfix')) {
+    function _sales_pfix()
+    {
+        return "S-";
+    }
+}
+
+if (! function_exists('_sales_return_pfix')) {
+    function _sales_return_pfix()
+    {
+        return "SR-";
+    }
+}
+
+
+if (! function_exists('_purchase_pfix')) {
+    function _purchase_pfix()
+    {
+        return "P-";
+    }
+}
+
+if (! function_exists('_purchase_return_pfix')) {
+    function _purchase_return_pfix()
+    {
+        return "PR-";
+    }
+}
+if (! function_exists('_damage_pfix')) {
+    function _damage_pfix()
+    {
+        return "DM-";
     }
 }
 

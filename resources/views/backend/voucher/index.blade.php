@@ -132,18 +132,20 @@ $__user= Auth::user();
                                         </a>
                                       @endif
                                     @endcan
+
+                                     @can('voucher-delete')
+                                    {!! Form::open(['method' => 'DELETE','route' => ['voucher.destroy', $data->id],'style'=>'display:inline']) !!}
+                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm ">
+                                            <span class="_required">Delete</span>
+                                        </button>
+                                    {!! Form::close() !!}
+                                @endcan
                                    
                                   </div>
                                 </div>
                                
                                
-                                @can('voucher-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['voucher.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger _action_button">
-                                            <i class="nav-icon fas fa-trash"></i>
-                                        </button>
-                                    {!! Form::close() !!}
-                                @endcan
+                               
                                 <a class="btn btn-sm btn-default _action_button" data-toggle="collapse" href="#collapseExample__{{$key}}" role="button" aria-expanded="false" aria-controls="collapseExample">
                                       <i class=" fas fa-angle-down"></i>
                                     </a>
@@ -162,12 +164,10 @@ $__user= Auth::user();
                               <input class="form-control _invoice_lock" type="checkbox" name="_lock" _attr_invoice_id="{{$data->id}}" value="{{$data->_lock}}" @if($data->_lock==1) checked @endif>
                               @endcan
 
-                              @if($__user->user_type !='admin')
                               @if($data->_lock==1)
                               <i class="fa fa-lock _green ml-1 _icon_change__{{$data->id}}" aria-hidden="true"></i>
                               @else
                               <i class="fa fa-lock _required ml-1 _icon_change__{{$data->id}}" aria-hidden="true"></i>
-                              @endif
                               @endif
 
                             </td>

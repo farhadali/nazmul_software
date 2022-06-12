@@ -163,8 +163,10 @@ class AccountGroupController extends Controller
      * @param  \App\Models\AccountGroup  $accountGroup
      * @return \Illuminate\Http\Response
      */
-    public function destroy(AccountGroup $accountGroup)
+   public function destroy(AccountHead $accountHead)
     {
-         return "You Can not delete this Information";
+        $__message ="You Can not delete this Information";
+        $page_name ="Permission Denied";
+        return view('backend.message.permission_message',compact('__message','page_name'));
     }
 }

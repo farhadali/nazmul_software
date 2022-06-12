@@ -1,3 +1,4 @@
+
 <div class="form-group row">
         <label for="_default_inventory" class="col-sm-5 col-form-label">Default Inventory</label>
         <select class="form-control col-sm-7" name="_default_inventory">
@@ -120,6 +121,7 @@
           <option value="1" @if(isset($form_settings->_show_p_balance))@if($form_settings->_show_p_balance==1) selected @endif @endif>YES</option>
         </select>
       </div>
+      
       <div class="form-group row">
         <label for="_invoice_template" class="col-sm-5 col-form-label">Invoice Template</label>
         <select class="form-control col-sm-7" name="_invoice_template">
@@ -130,3 +132,27 @@
           <option value="5" @if(isset($form_settings->_invoice_template))@if($form_settings->_invoice_template==5) selected @endif @endif>Pos Template</option>
         </select>
       </div>
+
+      @php
+      $_string_ids = $form_settings->_cash_customer ?? 0;
+      if($_string_ids !=0){
+        $_cash_customer = explode(",",$_string_ids);
+      }else{
+        $_cash_customer =[];
+      }
+      @endphp
+      <div class="form-group row">
+        <label for="_cash_customer" class="col-sm-4 col-form-label">Cash Customer</label>
+        <select class="form-control col-sm-8 select2" name="_cash_customer[]" multiple size="8">
+          @forelse($_cash_customers as $value)
+          <option value="{{$value->id}}" @if(in_array($value->id,$_cash_customer)) selected @endif >{{ $value->_name ?? '' }}</option>
+          @empty
+          @endforelse
+         
+        </select>
+      </div>
+      <br><br><br>
+
+      <script type="text/javascript">
+         $('.select2').select2()
+      </script>

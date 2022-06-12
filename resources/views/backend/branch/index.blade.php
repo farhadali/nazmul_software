@@ -39,7 +39,7 @@
                   <table class="table table-bordered _list_table">
                       <tr>
                          <th class="_no">No</th>
-                         <th class="_action">Action</th>
+                         <th class="">Action</th>
                          <th>Name</th>
                          <th>Address</th>
                          <th>Date</th>
@@ -52,23 +52,27 @@
                         @foreach ($datas as $key => $data)
                         <tr>
                             <td>{{ $key+1 }}</td>
-                             <td>
-                                <a class="btn btn-sm btn-info" href="{{ route('branch.show',$data->id) }}">
-                                  <i class="nav-icon fas fa-eye"></i>
-                                </a>
-                                @can('branch-edit')
-                                    <a class="btn btn-sm btn-primary" href="{{ route('branch.edit',$data->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
-                                @can('branch-delete')
+
+                               <td style="display: flex;">
+                            <div class="dropdown mr-1">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false"> Action</button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                   <a class="dropdown-item "  href="{{ route('branch.show',$data->id) }}">View  </a>
+                                  @can('branch-edit')
+                                    <a class="dropdown-item " href="{{ route('branch.edit',$data->id) }}">Edit</a>
+                                  @endcan
+                                 @can('branch-delete')
                                     {!! Form::open(['method' => 'DELETE','route' => ['branch.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger">
-                                            <i class="nav-icon fas fa-trash"></i>
+                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm ">
+                                            <span class="_required">Delete</span>
                                         </button>
                                     {!! Form::close() !!}
                                 @endcan
-                            </td>
+                                </div>
+                              </div>
+                        </td>
+                        
+                            
                             <td>{{ $data->id }} - {{ $data->_name }}</td>
                             <td>{{ $data->_address ?? '' }}</td>
                             <td>{{ $data->_date ?? '' }}</td>

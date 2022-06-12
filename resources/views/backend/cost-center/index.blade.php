@@ -48,23 +48,25 @@
                         @foreach ($datas as $key => $data)
                         <tr>
                             <td>{{ $key+1 }}</td>
-                             <td>
-                                <a class="btn btn-sm btn-info" href="{{ route('cost-center.show',$data->id) }}">
-                                  <i class="nav-icon fas fa-eye"></i>
-                                </a>
-                                @can('cost-center-edit')
-                                    <a class="btn btn-sm btn-primary" href="{{ route('cost-center.edit',$data->id) }}">
-                                      <i class="nav-icon fas fa-edit"></i>
-                                    </a>
-                                @endcan
-                                @can('cost-center-delete')
-                                    {!! Form::open(['method' => 'DELETE','route' => ['cost-center.destroy', $data->id],'style'=>'display:inline']) !!}
-                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm btn-danger">
-                                            <i class="nav-icon fas fa-trash"></i>
+
+                               <td style="display: flex;">
+                            <div class="dropdown mr-1">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false"> Action</button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                   <a class="dropdown-item "  href="{{ route('cost-center.show',$data->id) }}">View  </a>
+                                  @can('cost-center-edit')
+                                    <a class="dropdown-item " href="{{ route('cost-center.edit',$data->id) }}">Edit</a>
+                                  @endcan
+                                 @can('cost-center-delete')
+                                  {!! Form::open(['method' => 'DELETE','route' => ['cost-center.destroy', $data->id],'style'=>'display:inline']) !!}
+                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-sm ">
+                                            <span class="_required">Delete</span>
                                         </button>
                                     {!! Form::close() !!}
                                 @endcan
-                            </td>
+                                </div>
+                              </div>
+                        </td>
                             <td>{{ $data->id }} - {{ $data->_name }}</td>
                             <td>{{ $data->_branch->_name ?? '' }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
