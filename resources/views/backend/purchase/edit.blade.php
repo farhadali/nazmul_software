@@ -85,6 +85,7 @@ $__user= Auth::user();
                                   </div>
                               </div>
                               <input type="hidden" name="_purchase_id" value="{{$data->id}}">
+                              <input type="hidden" id="_search_form_value" name="_search_form_value" class="_search_form_value" value="1" >
                         </div>
 
                         <div class="col-xs-12 col-sm-12 col-md-3">
@@ -160,52 +161,52 @@ $__user= Auth::user();
                                 <div class="table-responsive">
                                       <table class="table table-bordered" >
                                           <thead >
-                                            <th class="text-middle" >&nbsp;</th>
-                                            <th class="text-middle" >ID</th>
-                                            <th class="text-middle" >Item</th>
+                                            <th class="text-left" >&nbsp;</th>
+                                            <th class="text-left" >ID</th>
+                                            <th class="text-left" >Item</th>
                                            @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                            <th class="text-middle" >Barcode</th>
+                                            <th class="text-left" >Barcode</th>
                                             @else
-                                            <th class="text-middle display_none" >Barcode</th>
+                                            <th class="text-left display_none" >Barcode</th>
                                             @endif
                                             @endif
-                                            <th class="text-middle" >Qty</th>
-                                            <th class="text-middle" >Rate</th>
-                                            <th class="text-middle" >Sales Rate</th>
+                                            <th class="text-left" >Qty</th>
+                                            <th class="text-left" >Rate</th>
+                                            <th class="text-left" >Sales Rate</th>
                                             @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                            <th class="text-middle" >VAT%</th>
-                                            <th class="text-middle" >VAT</th>
+                                            <th class="text-left" >VAT%</th>
+                                            <th class="text-left" >VAT</th>
                                              @else
-                                            <th class="text-middle display_none" >VAT%</th>
-                                            <th class="text-middle display_none" >VAT Amount</th>
+                                            <th class="text-left display_none" >VAT%</th>
+                                            <th class="text-left display_none" >VAT Amount</th>
                                             @endif
                                             @endif
 
-                                            <th class="text-middle" >Value</th>
+                                            <th class="text-left" >Value</th>
                                              @if(sizeof($permited_branch) > 1)
-                                            <th class="text-middle" >Branch</th>
+                                            <th class="text-left" >Branch</th>
                                             @else
-                                            <th class="text-middle display_none" >Branch</th>
+                                            <th class="text-left display_none" >Branch</th>
                                             @endif
                                              @if(sizeof($permited_costcenters) > 1)
-                                            <th class="text-middle" >Cost Center</th>
+                                            <th class="text-left" >Cost Center</th>
                                             @else
-                                             <th class="text-middle display_none" >Cost Center</th>
+                                             <th class="text-left display_none" >Cost Center</th>
                                             @endif
                                              @if(sizeof($store_houses) > 1)
-                                            <th class="text-middle" >Store</th>
+                                            <th class="text-left" >Store</th>
                                             @else
-                                             <th class="text-middle display_none" >Store</th>
+                                             <th class="text-left display_none" >Store</th>
                                             @endif
                                             @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                            <th class="text-middle" >Shelf</th>
+                                            <th class="text-left" >Shelf</th>
                                             @else
-                                             <th class="text-middle display_none" >Shelf</th>
+                                             <th class="text-left display_none" >Shelf</th>
                                             @endif
                                             @endif
-                                            <th class="text-middle @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
+                                            <th class="text-left @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
                                             @endif" >Manu. Date</th>
-                                             <th class="text-middle @if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none @endif
+                                             <th class="text-left @if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none @endif
                                             @endif"> Expired Date </th>
                                            
                                           </thead>
@@ -213,9 +214,11 @@ $__user= Auth::user();
                                           $_total_qty_amount = 0;
                                           $_total_vat_amount =0;
                                           $_total_value_amount =0;
+                                          $__master_details = $data->_master_details;
                                           @endphp
                                           <tbody class="area__purchase_details" id="area__purchase_details">
-                                            @forelse($data->_master_details as $detail)
+                                            @if(sizeof($__master_details) > 0)
+                                            @forelse($data->_master_details as $m_key=> $detail)
                                              @php
                                               $_total_qty_amount += $detail->_qty ??  0;
                                               $_total_vat_amount += $detail->_vat_amount ??  0;
@@ -239,11 +242,17 @@ $__user= Auth::user();
                                               </td>
                                               @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td>
-                                                <input type="text" name="_barcode[]" class="form-control _barcode "  value="{{$detail->_barcode ?? '' }}" >
+                                                <input type="text" name="{{($m_key+1)}}__barcode__{{$detail->_item_id}}" class="form-control _barcode {{($m_key+1)}}__barcode"  value="{{$detail->_barcode ?? '' }} " id="{{($m_key+1)}}__barcode" >
+                                               
+
+                                                <input type="hidden" name="_ref_counter[]" value="{{($m_key+1)}}" class="_ref_counter" id="{{($m_key+1)}}__ref_counter">
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode "  value="{{$detail->_barcode ?? '' }}" >
+                                                <input type="text" name="{{($m_key+1)}}__barcode__{{$detail->_item_id}}" class="form-control _barcode {{($m_key+1)}}__barcode"  value="{{$detail->_barcode ?? '' }} " id="{{($m_key+1)}}__barcode" >
+                                               
+
+                                                <input type="hidden" name="_ref_counter[]" value="{{($m_key+1)}}" class="_ref_counter" id="{{($m_key+1)}}__ref_counter">
                                               </td>
                                               @endif
                                             @endif
@@ -357,6 +366,7 @@ $__user= Auth::user();
                                             </tr>
                                             @empty
                                             @endforelse
+                                            @endif
                                           </tbody>
                                           <tfoot>
                                             <tr>
@@ -494,6 +504,7 @@ $__user= Auth::user();
                               <td style="width: 10%;border:0px;"><label for="_total">NET Total </label></td>
                               <td style="width: 70%;border:0px;">
                           <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{ _php_round($data->_total ?? 0)}}">
+                          <input type="hidden" name="_item_row_count" value="{{sizeof($__master_details)}}" class="_item_row_count">
                               </td>
                             </tr>
                           </table>
@@ -655,6 +666,12 @@ $__user= Auth::user();
   var default_date_formate = `{{default_date_formate()}}`;
   var _after_print = $(document).find("._after_print").val();
   var _master_id = $(document).find("._master_id").val();
+  var _item_row_count = parseFloat($(document).find('._item_row_count').val());
+  for (var i = 0; i <= _item_row_count; i++) {
+     _new_barcode_function(i)
+  }
+
+
   if(_after_print ==1){
       var open_new = window.open(_master_id, '_blank');
       if (open_new) {
@@ -743,6 +760,8 @@ $(document).on('click','.search_row_item',function(){
   $(this).parent().parent().parent().parent().parent().parent().find('._vat_amount').val(_vat_amount);
   $(this).parent().parent().parent().parent().parent().parent().find('._qty').val(1);
   $(this).parent().parent().parent().parent().parent().parent().find('._value').val(_item_rate);
+  var _ref_counter = $(this).parent().parent().parent().parent().parent().parent().find('._ref_counter').val();
+  $(this).parent().parent().parent().parent().parent().parent().find('._barcode').attr('name',_ref_counter+'__barcode__'+_id);
 
   _purchase_total_calculation();
   $('.search_box_item').hide();
@@ -915,7 +934,13 @@ $(document).on("change","#_discount_input",function(){
       $("#area__voucher_details").append(single_row);
   }
 
-var _purchase_row_single =`<tr class="_purchase_row">
+var _purchase_row_single =``;
+function purchase_row_add(event){
+   event.preventDefault();
+     _item_row_count= $("._item_row_count").val();
+      $("._item_row_count").val((parseFloat(_item_row_count)+1));
+     var  _item_row_count = (parseFloat(_item_row_count)+1);
+      $("#area__purchase_details").append(`<tr class="_purchase_row">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
@@ -929,18 +954,20 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                   
                                                 </div>
                                               </td>
-                                              @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
+                                             @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td>
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode[]" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode" >
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode[]" class="form-control _barcode  ${_item_row_count}__barcode " id="${_item_row_count}__barcode"  >
                                               </td>
                                               @endif
                                               @endif
+
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" >
+                                                <input type="hidden" name="_ref_counter[]" value="${_item_row_count}" class="_ref_counter" id="${_item_row_count}__ref_counter">
                                               </td>
                                               <td>
                                                 <input type="number" name="_rate[]" class="form-control _rate _common_keyup" >
@@ -1046,19 +1073,19 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                 <input type="date" name="_expire_date[]" class="form-control _expire_date " >
                                               </td>
                                               
-                                            </tr>`;
-function purchase_row_add(event){
-   event.preventDefault();
-      $("#area__purchase_details").append(_purchase_row_single);
+                                            </tr>`);
+       _new_barcode_function(_item_row_count);
 }
  $(document).on('click','._purchase_row_remove',function(event){
       event.preventDefault();
       var ledger_id = $(this).parent().parent('tr').find('._item_id').val();
       if(ledger_id ==""){
           $(this).parent().parent('tr').remove();
+          $(this).parent().parent('tr').find('._ref_counter').remove();
       }else{
         if(confirm('Are you sure your want to delete?')){
           $(this).parent().parent('tr').remove();
+          $(this).parent().parent('tr').find('._ref_counter').remove();
         } 
       }
       _purchase_total_calculation();
@@ -1222,6 +1249,7 @@ $(document).on("click",'.search_row_purchase_order',function(){
      
 if(data.length > 0 ){
   for (var i = 0; i < data.length; i++) {
+    var _item_row_count = (parseFloat(i)+1);
     var _item_name = (data[i]._items._name) ? data[i]._items._name : '' ;
     var _item_id = (data[i]._item_id) ? data[i]._item_id : '' ;
     var _qty   = (data[i]._qty  ) ? data[i]._qty   : 0 ;
@@ -1229,8 +1257,9 @@ if(data.length > 0 ){
     var _sales_rate =  0 ;
     var _value = ( (data[i]._qty*data[i]._rate) ) ? (data[i]._qty*data[i]._rate) : 0 ;
    
-
-       _purchase_row_single +=`<tr class="_purchase_row">
+$("._item_row_count").val(_item_row_count)
+       
+            $(document).find("#area__purchase_details").append(`<tr class="_purchase_row">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
@@ -1244,18 +1273,19 @@ if(data.length > 0 ){
                                                   
                                                 </div>
                                               </td>
-                                              @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
+                                             @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td>
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode[]" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode" >
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode[]" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode"  >
                                               </td>
                                               @endif
                                               @endif
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" value="${_qty}">
+                                                <input type="hidden" name="_ref_counter[]" value="${_item_row_count}" class="_ref_counter" id="${_item_row_count}__ref_counter">
                                               </td>
                                               <td>
                                                 <input type="number" name="_rate[]" class="form-control _rate _common_keyup" value="${_rate}">
@@ -1361,20 +1391,26 @@ if(data.length > 0 ){
                                                 <input type="date" name="_expire_date[]" class="form-control _expire_date " >
                                               </td>
                                               
-                                            </tr>`;
+                                            </tr>`);
+_new_barcode_function(_item_row_count);
                                           }
                                         }else{
                                           _purchase_row_single += `Returnable Item Not Found !`;
                                         }
 
-            $(document).find("#area__purchase_details").html(_purchase_row_single);
               _purchase_total_calculation();
     })
 
 
 
   })
-
+ function _new_barcode_function(_item_row_count){
+      $('#'+_item_row_count+'__barcode').amsifySuggestags({
+      trimValue: true,
+      dashspaces: true,
+      showPlusAfter: 1,
+      });
+  }
  
 
 

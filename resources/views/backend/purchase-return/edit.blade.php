@@ -74,6 +74,7 @@ $__user= Auth::user();
                                       </div>
                                   </div>
                               </div>
+                              <input type="hidden" id="_search_form_value" name="_search_form_value" class="_search_form_value" value="1" >
                         </div>
 
                         <div class="col-xs-12 col-sm-12 col-md-4">
@@ -133,47 +134,47 @@ $__user= Auth::user();
                                 <div class="table-responsive">
                                       <table class="table table-bordered" >
                                           <thead >
-                                            <th class="text-middle" >&nbsp;</th>
-                                            <th class="text-middle" >ID</th>
-                                            <th class="text-middle" >Item</th>
+                                            <th class="text-left" >&nbsp;</th>
+                                            <th class="text-left" >ID</th>
+                                            <th class="text-left" >Item</th>
                                            @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                            <th class="text-middle" >Barcode</th>
+                                            <th class="text-left" >Barcode</th>
                                             @else
-                                            <th class="text-middle display_none" >Barcode</th>
+                                            <th class="text-left display_none" >Barcode</th>
                                             @endif
                                             @endif
-                                            <th class="text-middle" >Qty</th>
-                                            <th class="text-middle" >Rate</th>
-                                            <th class="text-middle" >Sales Rate</th>
+                                            <th class="text-left" >Qty</th>
+                                            <th class="text-left" >Rate</th>
+                                            <th class="text-left" >Sales Rate</th>
                                             @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                            <th class="text-middle" >VAT%</th>
-                                            <th class="text-middle" >VAT</th>
+                                            <th class="text-left" >VAT%</th>
+                                            <th class="text-left" >VAT</th>
                                              @else
-                                            <th class="text-middle display_none" >VAT%</th>
-                                            <th class="text-middle display_none" >VAT Amount</th>
+                                            <th class="text-left display_none" >VAT%</th>
+                                            <th class="text-left display_none" >VAT Amount</th>
                                             @endif
                                             @endif
 
-                                            <th class="text-middle" >Value</th>
+                                            <th class="text-left" >Value</th>
                                              @if(sizeof($permited_branch) > 1)
-                                            <th class="text-middle" >Branch</th>
+                                            <th class="text-left" >Branch</th>
                                             @else
-                                            <th class="text-middle display_none" >Branch</th>
+                                            <th class="text-left display_none" >Branch</th>
                                             @endif
                                              @if(sizeof($permited_costcenters) > 1)
-                                            <th class="text-middle" >Cost Center</th>
+                                            <th class="text-left" >Cost Center</th>
                                             @else
-                                             <th class="text-middle display_none" >Cost Center</th>
+                                             <th class="text-left display_none" >Cost Center</th>
                                             @endif
                                              @if(sizeof($store_houses) > 1)
-                                            <th class="text-middle" >Store</th>
+                                            <th class="text-left" >Store</th>
                                             @else
-                                             <th class="text-middle display_none" >Store</th>
+                                             <th class="text-left display_none" >Store</th>
                                             @endif
                                             @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                            <th class="text-middle" >Shelf</th>
+                                            <th class="text-left" >Shelf</th>
                                             @else
-                                             <th class="text-middle display_none" >Shelf</th>
+                                             <th class="text-left display_none" >Shelf</th>
                                             @endif
                                             @endif
                                            
@@ -182,9 +183,12 @@ $__user= Auth::user();
                                           $_total_qty_amount = 0;
                                           $_total_vat_amount =0;
                                           $_total_value_amount =0;
+
+                                          $__master_details = $data->_master_details ?? [];
                                           @endphp
                                           <tbody class="area__purchase_details" id="area__purchase_details">
-                                            @forelse($data->_master_details as $detail)
+                                            @if(sizeof($__master_details)> 0)
+                                            @forelse($data->_master_details as $m_key=> $detail)
                                              @php
                                               $_total_qty_amount += $detail->_qty ??  0;
                                               $_total_vat_amount += $detail->_vat_amount ??  0;
@@ -208,13 +212,19 @@ $__user= Auth::user();
                                                   
                                                 </div>
                                               </td>
-                                              @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
+                                               @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td>
-                                                <input type="text" name="_barcode[]" class="form-control _barcode "  value="{{$detail->_barcode ?? '' }}" >
+                                                <input type="text" name="{{($m_key+1)}}__barcode__{{$detail->_item_id}}" class="form-control _barcode {{($m_key+1)}}__barcode"  value="{{$detail->_barcode ?? '' }} " id="{{($m_key+1)}}__barcode" >
+                                               
+
+                                                <input type="hidden" name="_ref_counter[]" value="{{($m_key+1)}}" class="_ref_counter" id="{{($m_key+1)}}__ref_counter">
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode "  value="{{$detail->_barcode ?? '' }}" >
+                                                <input type="text" name="{{($m_key+1)}}__barcode__{{$detail->_item_id}}" class="form-control _barcode {{($m_key+1)}}__barcode"  value="{{$detail->_barcode ?? '' }} " id="{{($m_key+1)}}__barcode" >
+                                               
+
+                                                <input type="hidden" name="_ref_counter[]" value="{{($m_key+1)}}" class="_ref_counter" id="{{($m_key+1)}}__ref_counter">
                                               </td>
                                               @endif
                                             @endif
@@ -321,6 +331,7 @@ $__user= Auth::user();
                                             </tr>
                                             @empty
                                             @endforelse
+                                            @endif
                                           </tbody>
                                           <tfoot>
                                             <tr>
@@ -455,6 +466,8 @@ $__user= Auth::user();
                               <td style="width: 10%;border:0px;"><label for="_total">NET Total </label></td>
                               <td style="width: 70%;border:0px;">
                           <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{_php_round($data->_total ?? 0)}}">
+
+                           <input type="hidden" name="_item_row_count" value="{{sizeof($__master_details)}}" class="_item_row_count">
                               </td>
                             </tr>
                           </table>
@@ -608,7 +621,10 @@ $__user= Auth::user();
       }
   }
 
-
+   var _item_row_count = parseFloat($(document).find('._item_row_count').val());
+  for (var i = 0; i <= _item_row_count; i++) {
+     _new_barcode_function(i)
+  }
 
   $(document).on('keyup','._search_order_ref_id',delay(function(e){
     $(document).find('._search_order_ref_id').removeClass('required_border');
@@ -1255,18 +1271,7 @@ function purchase_row_add(event){
       _voucher_total_calculation();
   })
 
-  // function _voucher_total_calculation(){
-  //   var _total_dr_amount = 0;
-  //   var _total_cr_amount = 0;
-  //     $(document).find("._cr_amount").each(function() {
-  //         _total_cr_amount +=parseFloat($(this).val());
-  //     });
-  //     $(document).find("._dr_amount").each(function() {
-  //         _total_dr_amount +=parseFloat($(this).val());
-  //     });
-  //     $("._total_dr_amount").val(_total_dr_amount);
-  //     $("._total_cr_amount").val(_total_cr_amount);
-  // }
+
 
 
   $(document).on('keyup','._dr_amount',function(){
@@ -1352,6 +1357,13 @@ function purchase_row_add(event){
   })
 
 
+ function _new_barcode_function(_item_row_count){
+      $('#'+_item_row_count+'__barcode').amsifySuggestags({
+      trimValue: true,
+      dashspaces: true,
+      showPlusAfter: 1,
+      });
+  }
 
 
  

@@ -124,7 +124,7 @@ if($currentURL === $current){
                             <td>{{ $data->_units->_name ?? '' }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_barcode ?? '' }}</td>
-                            <td>{{ $data->_category->_name ?? '' }}</td>
+                            <td>{{ $data->_category->_parents->_name ?? 'C' }}-{{ $data->_category->_name ?? '' }}</td>
                             <td>{{ _report_amount( $data->_discount ?? 0 ) }}</td>
                             <td>{{ _report_amount( $data->_vat ?? 0 ) }}</td>
                             <td>{{ _report_amount($data->_pur_rate ?? 0 ) }}</td>

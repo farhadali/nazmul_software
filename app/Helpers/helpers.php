@@ -12,6 +12,101 @@ use App\Models\StoreHouse;
 use App\Models\ItemCategory;
 use App\Models\Units;
 
+
+if (!function_exists('sms_send')) {
+    function sms_send($messages, $to){
+        $sending_phone_numbers = array();
+        $phone_numbers = "";
+        if($to !=""){
+            $phone_array=explode(",",$to);
+            foreach ($phone_array as $_phone_num) {
+                $newstring = "88".substr($_phone_num, -11);
+                if(strlen($newstring)==13){
+                    array_push($sending_phone_numbers, $newstring);
+                } 
+            }
+        }
+        if(sizeof($sending_phone_numbers) > 0){
+           $phone_numbers = implode(",",$sending_phone_numbers);
+        }
+
+        if($phone_numbers !=""){
+            $api_key ="F54d7hem0z1h8SrN9HAt4hvhJZzd0gB1vgUW935O"; 
+            $url="https://api.sms.net.bd/sendsms?api_key=".$api_key."&msg=".$messages."&to=".$phone_numbers."";  
+            $curl = curl_init();
+            
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT , 30);
+            curl_setopt($curl, CURLOPT_USERAGENT , "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)");
+            curl_setopt($curl, CURLOPT_HEADER, 0);
+            $result = curl_exec($curl);
+            $err = curl_error($curl);
+            curl_close($curl);
+
+            if($err)
+                return $err;
+            else
+                return $result;
+        }else{
+            return "no";
+        }
+
+        
+    }
+ }
+
+if (!function_exists('_barcode_insert_update')) {
+    function _barcode_insert_update($modelName, $_p_p_id,$_item_id,$_no_id,$_no_detail_id,$_qty,$_barcode,$_status,$_return=0,$p=0){
+        
+        $modelName = "\\App\\Models\\".$modelName;
+           
+         $data = $modelName::where('_p_p_id',$_p_p_id)
+                            ->where('_item_id',$_item_id)
+                            //->where('_no_id',$_no_id)
+                            //->where('_no_detail_id',$_no_detail_id)
+                            ->where('_barcode',$_barcode)
+                            ->first();
+        if(empty($data)){
+            $data = new $modelName();
+        }
+       $data->_p_p_id = $_p_p_id;
+       $data->_item_id = $_item_id;
+       if($p==0){
+            $data->_no_id = $_no_id;
+            $data->_no_detail_id = $_no_detail_id;
+       }
+       
+       if($_return ==1){
+         $data->_qty = ($data->_qty-$_qty);
+         }else{
+            $data->_qty = $_qty;
+         }
+      
+       $data->_barcode = $_barcode;
+       $data->_status = $_status;
+       $data->save();
+
+       if($data->_qty < 1){
+          $id = $data->id;
+          $modelName::where('id',$id)->update(['_status'=>0]);
+       }
+       
+        
+    }
+ }
+
+
+
+if (! function_exists('_barcode_status')) {
+    function _barcode_status($modelName,$_no_id)
+    {
+        $modelName = "\\App\\Models\\".$modelName; 
+        $data = $modelName::where('_no_id',$_no_id)
+                            ->update(['_status'=>0,'_qty'=>0]);
+    }
+}
+
 if (! function_exists('convertLocalToUTC')) {
     function convertLocalToUTC($time)
     {

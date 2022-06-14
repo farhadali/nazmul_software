@@ -88,6 +88,7 @@ $__user= Auth::user();
                             <div class="form-group">
                               <label class="mr-2" for="_order_number">Invoice Number:</label>
                               <input type="text" id="_order_number" name="_order_number" class="form-control _order_number" value="{{old('_order_number')}}" placeholder="Invoice Number" readonly >
+                <input type="hidden" id="_search_form_value" name="_search_form_value" class="_search_form_value" value="2" >
                                 
                             </div>
                         </div>
@@ -219,7 +220,7 @@ $__user= Auth::user();
                                            
                                           </thead>
                                           <tbody class="area__purchase_details" id="area__purchase_details">
-                                            <tr class="_purchase_row">
+                                            <tr class="_purchase_row _purchase_row__">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
@@ -642,6 +643,8 @@ $(document).on('click','.search_row_item',function(){
   $(this).parent().parent().parent().parent().parent().parent().find('._store_salves_id').val(_store_salves_id);
   $(this).parent().parent().parent().parent().parent().parent().find('._manufacture_date').val(_manufacture_date);
   $(this).parent().parent().parent().parent().parent().parent().find('._expire_date').val(_expire_date);
+var _search_item_id="_search_item_id__"+row_id;
+  $(this).parent().parent().parent().parent().parent().parent().find('._search_item_id').addClass(_search_item_id)
 
 
   _purchase_total_calculation();
@@ -971,11 +974,15 @@ function purchase_row_add(event){
               });
                
               request.done(function( result ) {
-                
+                console.log(result);
+                $("._search_item_id").removeClass('_required');
                   if(result.length > 0){
-                     
+                     for (var i = 0; i < result.length; i++) {
+                      $("._search_item_id__"+result[i]).addClass('_required'); 
+                     }
                    _stop_sales=1;
                   }else{
+                    $("._search_item_id__"+result[i]).removeClass('_required') 
                      $(document).find("._over_qty").text('');
                   }
               })

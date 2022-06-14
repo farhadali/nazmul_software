@@ -21,6 +21,8 @@ use App\Models\Inventory;
 use App\Models\ItemCategory;
 use App\Models\Units;
 use App\Models\SalesDetail;
+use App\Models\BarcodeDetail;
+use App\Models\PurchaseBarcode;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -219,7 +221,8 @@ public function moneyReceipt($id){
     public function store(Request $request)
     {
          
-      // return $request->all();
+        
+       $all_req= $request->all();
          $this->validate($request, [
             '_date' => 'required',
             '_branch_id' => 'required',
@@ -229,8 +232,8 @@ public function moneyReceipt($id){
     //###########################
     // Purchase Master information Save Start
     //###########################
-      DB::beginTransaction();
-       try {
+       DB::beginTransaction();
+        try {
         $_p_balance = _l_balance_update($request->_main_ledger_id);
          $__sub_total = (float) $request->_sub_total;
          $__total = (float) $request->_total;
@@ -283,6 +286,7 @@ public function moneyReceipt($id){
         $_store_salves_ids = $request->_store_salves_id;
         $_manufacture_dates = $request->_manufacture_date;
         $_expire_dates = $request->_expire_date;
+        $_ref_counters = $request->_ref_counter;
 
 
        
@@ -293,7 +297,10 @@ public function moneyReceipt($id){
                 $PurchaseDetail = new PurchaseDetail();
                 $PurchaseDetail->_item_id = $_item_ids[$i];
                 $PurchaseDetail->_qty = $_qtys[$i];
-                $PurchaseDetail->_barcode = $_barcodes[$i];
+                //Barcode 
+                $barcode_string=$all_req[$_ref_counters[$i]."__barcode__".$_item_ids[$i]] ?? '';
+
+                $PurchaseDetail->_barcode = $barcode_string;
                 $PurchaseDetail->_manufacture_date =$_manufacture_dates[$i] ?? null;
                 $PurchaseDetail->_expire_date = $_expire_dates[$i] ?? null;
                 $PurchaseDetail->_rate = $_rates[$i];
@@ -313,13 +320,17 @@ public function moneyReceipt($id){
                 $PurchaseDetail->save();
                 $_purchase_detail_id = $PurchaseDetail->id;
 
+               
+
+
+
                 $item_info = Inventory::where('id',$_item_ids[$i])->first();
 
                 $ProductPriceList = new ProductPriceList();
                 $ProductPriceList->_item_id = $_item_ids[$i];
 
                 $ProductPriceList->_item = $item_info->_item ?? '';
-                $ProductPriceList->_barcode =$_barcodes[$i] ?? '';
+                $ProductPriceList->_barcode =$barcode_string ?? '';
                 $ProductPriceList->_manufacture_date =$_manufacture_dates[$i] ?? null;
 
                 $ProductPriceList->_expire_date = $_expire_dates[$i] ?? null;
@@ -343,6 +354,33 @@ public function moneyReceipt($id){
                 $ProductPriceList->_status =1;
                 $ProductPriceList->_created_by = $users->id."-".$users->name;
                 $ProductPriceList->save();
+                $product_price_id =  $ProductPriceList->id;
+
+/*
+    Barcode insert into database section
+   _barcode_insert_update($modelName, $_p_p_id,$_item_id,$_no_id,$_no_detail_id,$_qty,$_barcode,$_status,$_return=0,$p=0)
+   IF RETURN ACTION THEN $_return = 1; and BarcodeDetail avoid 
+                [  $data->_no_id = $_no_id;
+                    $data->_no_detail_id = $_no_detail_id;
+                    ] use  $p=1;
+*/
+                 if($barcode_string !=""){
+                   $barcode_array=  explode(",",$barcode_string);
+                   $_qty = (sizeof($barcode_array) <= 1) ? $_qtys[$i] : 1;
+                   $_stat = 1;
+                   $_return=0;
+                   $p=0;
+                   foreach ($barcode_array as $_b_v) {
+                    _barcode_insert_update('BarcodeDetail',$product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,$_return,$p);
+                    _barcode_insert_update('PurchaseBarcode',$product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,$_return,$p);
+                     
+                   }
+                }
+
+                
+/*
+    Barcode insert into database section
+*/
 
 
                 $ItemInventory = new ItemInventory();
@@ -547,6 +585,15 @@ public function moneyReceipt($id){
              \DB::table('purchases')
              ->where('id',$purchase_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
+               //SMS SEND to Customer and Supplier
+             $_send_sms = $request->_send_sms ?? '';
+             if($_send_sms=='yes'){
+                $_name = _ledger_name($request->_main_ledger_id);
+                $_phones = $request->_phone;
+                $messages = "Dear ".$_name.", Invoice N0.".$_pfix." Invoice Amount: ".prefix_taka()."."._report_amount($request->_total).". Payment Amount. ".prefix_taka()."."._report_amount($_total_cr_amount).". Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". Current Balance:".prefix_taka()."."._report_amount($_l_balance);
+                sms_send($messages, $_phones);
+             }
+             //End Sms Send to customer and Supplier
 
             DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
@@ -648,7 +695,7 @@ public function moneyReceipt($id){
     {
          
       // return $request->all();
-
+        $all_req= $request->all();
         $this->validate($request, [
             '_purchase_id' => 'required',
             '_form_name' => 'required',
@@ -674,8 +721,8 @@ public function moneyReceipt($id){
     //###########################
     // Purchase Master information Save Start
     //###########################
-     DB::beginTransaction();
-       try {
+      DB::beginTransaction();
+        try {
 
     
     PurchaseDetail::where('_no', $purchase_id)
@@ -693,7 +740,9 @@ public function moneyReceipt($id){
     Accounts::where('_ref_master_id',$purchase_id)
                     ->where('_table_name','purchase_accounts')
                      ->update(['_status'=>0]); 
-    $_p_balance = _l_balance_update($request->_main_ledger_id);             
+    $_p_balance = _l_balance_update($request->_main_ledger_id);   
+    _barcode_status("BarcodeDetail",$purchase_id);          
+    _barcode_status("PurchaseBarcode",$purchase_id);          
 
     //###########################
     // Purchase Master information Save Start
@@ -749,6 +798,7 @@ public function moneyReceipt($id){
         $purchase_detail_ids = $request->purchase_detail_id;
         $_manufacture_dates = $request->_manufacture_date;
         $_expire_dates = $request->_expire_date;
+        $_ref_counters = $request->_ref_counter;
 
         if(sizeof($_item_ids) > 0){
             for ($i = 0; $i <sizeof($_item_ids) ; $i++) {
@@ -761,9 +811,12 @@ public function moneyReceipt($id){
                 $PurchaseDetail->_manufacture_date =$_manufacture_dates[$i] ?? null;
                 $PurchaseDetail->_expire_date = $_expire_dates[$i] ?? null;
 
+                //Barcode 
+                $barcode_string=$all_req[$_ref_counters[$i]."__barcode__".$_item_ids[$i]] ?? '';
+
+                $PurchaseDetail->_barcode = $barcode_string;
                 $PurchaseDetail->_item_id = $_item_ids[$i];
                 $PurchaseDetail->_qty = $_qtys[$i];
-                $PurchaseDetail->_barcode = $_barcodes[$i];
                 $PurchaseDetail->_rate = $_rates[$i];
                 $PurchaseDetail->_sales_rate = $_sales_rates[$i];
                 $PurchaseDetail->_discount = $_discounts[$i] ?? 0;
@@ -794,7 +847,7 @@ public function moneyReceipt($id){
                 $ProductPriceList->_item_id = $_item_ids[$i];
                 $ProductPriceList->_item = $item_info->_item ?? '';
                 $ProductPriceList->_unit_id =  $item_info->_unit_id ?? 1;
-                $ProductPriceList->_barcode =$_barcodes[$i] ?? '';
+                $ProductPriceList->_barcode =$barcode_string ?? '';
                 $ProductPriceList->_manufacture_date =$_manufacture_dates[$i] ?? null;
                 $ProductPriceList->_expire_date = $_expire_dates[$i] ?? null;
                 $ProductPriceList->_qty = $_qtys[$i];
@@ -816,6 +869,38 @@ public function moneyReceipt($id){
                 $ProductPriceList->_status =1;
                 $ProductPriceList->_updated_by = $users->id."-".$users->name;
                 $ProductPriceList->save();
+
+
+
+                    $product_price_id =  $ProductPriceList->id;
+
+/*
+    Barcode insert into database section
+   _barcode_insert_update($modelName, $_p_p_id,$_item_id,$_no_id,$_no_detail_id,$_qty,$_barcode,$_status,$_return=0,$p=0)
+   IF RETURN ACTION THEN $_return = 1; and BarcodeDetail avoid 
+                [  $data->_no_id = $_no_id;
+                    $data->_no_detail_id = $_no_detail_id;
+                    ] use  $p=1;
+*/
+                 if($barcode_string !=""){
+                   $barcode_array=  explode(",",$barcode_string);
+                   $_qty = (sizeof($barcode_array) <= 1) ? $_qtys[$i] : 1;
+                   $_stat = 1;
+                   $_return=0;
+                   $p=0;
+                   foreach ($barcode_array as $_b_v) {
+                    _barcode_insert_update('BarcodeDetail', $product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,$_return,$p);
+                    _barcode_insert_update('PurchaseBarcode', $product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,$_return,$p);
+                     
+                   }
+                }
+
+                 
+
+                
+/*
+    Barcode insert into database section
+*/
 
 
                 $ItemInventory = ItemInventory::where('_transection',"Purchase")
@@ -1041,7 +1126,17 @@ if($__sub_total > 0){
              ->where('id',$purchase_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
-                DB::commit();
+             //SMS SEND to Customer and Supplier
+             $_send_sms = $request->_send_sms ?? '';
+             if($_send_sms=='yes'){
+                $_name = _ledger_name($request->_main_ledger_id);
+                $_phones = $request->_phone;
+                $messages = "Dear ".$_name.", Invoice N0.".$_pfix." Invoice Amount: ".prefix_taka()."."._report_amount($request->_total).". Payment Amount. ".prefix_taka()."."._report_amount($_total_cr_amount).". Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". Current Balance:".prefix_taka()."."._report_amount($_l_balance);
+                sms_send($messages, $_phones);
+             }
+             //End Sms Send to customer and Supplier
+
+               DB::commit();
         return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
        } catch (\Exception $e) {
            DB::rollback();

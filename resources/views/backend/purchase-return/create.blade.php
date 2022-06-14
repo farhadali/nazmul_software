@@ -42,11 +42,9 @@ $__user= Auth::user();
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
-  <div class="card-header">
-                 
-                    @include('backend.message.message')
-                    
-              </div>
+  <div class="card-header">          
+      @include('backend.message.message')       
+  </div>
     <div class="content">
       <div class="container-fluid">
         <div class="row">
@@ -69,6 +67,7 @@ $__user= Auth::user();
                                       </div>
                                   </div>
                               </div>
+                              <input type="hidden" id="_search_form_value" name="_search_form_value" class="_search_form_value" value="1" >
                         </div>
 
                         <div class="col-xs-12 col-sm-12 col-md-4">
@@ -188,14 +187,20 @@ $__user= Auth::user();
                                               </td>
                                               @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td>
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode_[]" class="form-control _barcode 1__barcode"  value="" id="1__barcode" >
+                                                <input type="hidden" name="_ref_counter[]" value="1" class="_ref_counter" id="1__ref_counter">
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                 <input type="text" name="_barcode_[]" class="form-control _barcode 1__barcode"  value="" id="1__barcode" >
+                                                <input type="hidden" name="_ref_counter[]" value="1" class="_ref_counter" id="1__ref_counter">
                                               </td>
                                               @endif
                                             @endif
+
+                                           
+
+
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" >
                                               </td>
@@ -426,6 +431,7 @@ $__user= Auth::user();
                               <td style="width: 10%;border:0px;"><label for="_total">NET Total </label></td>
                               <td style="width: 70%;border:0px;">
                           <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="0">
+                           <input type="hidden" name="_item_row_count" value="1" class="_item_row_count">
                               </td>
                             </tr>
                           </table>
@@ -579,6 +585,11 @@ $__user= Auth::user();
       }
   }
 
+  var _item_row_count = parseFloat($(document).find('._item_row_count').val());
+  for (var i = 0; i <= _item_row_count; i++) {
+     _new_barcode_function(i)
+  }
+
 
 
   $(document).on('keyup','._search_order_ref_id',delay(function(e){
@@ -655,10 +666,16 @@ $__user= Auth::user();
     request.done(function( result ) {
       var data = result;
       var _purchase_row_single = ``;
+      $(document).find("#area__purchase_details").empty();
+      console.log(data)
      
 if(data.length > 0 ){
+
   for (var i = 0; i < data.length; i++) {
-       _purchase_row_single +=`<tr class="_purchase_row">
+      var _item_row_count = (parseFloat(i)+1);
+   $("._item_row_count").val(_item_row_count)
+
+            $(document).find("#area__purchase_details").append(`<tr class="_purchase_row">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove _purchase_row_remove__${i}" ><i class="fa fa-trash"></i></a>
                                               </td>
@@ -675,16 +692,18 @@ if(data.length > 0 ){
                                               </td>
                                               @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td>
-                                                <input type="text" name="_barcode[]" class="form-control _barcode _barcode__${i} " value="${((data[i]._barcode=='null') ? '' : data[i]._barcode) }" >
+                                                <input type="text" name="${_item_row_count}__barcode__${data[i]._item_id}" class="form-control _barcode _barcode__${i} ${_item_row_count}__barcode " value="${((data[i]._barcode=='null') ? '' : data[i]._barcode) }" id="${_item_row_count}__barcode"   >
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode _barcode__${i} " value="${((data[i]._barcode=='null') ? '' : data[i]._barcode) }"  >
+                                                <input type="text" name="${_item_row_count}__barcode__${data[i]._item_id}" class="form-control _barcode _barcode__${i} ${_item_row_count}__barcode " value="${((data[i]._barcode=='null') ? '' : data[i]._barcode) }" id="${_item_row_count}__barcode"   >
+                                                
                                               </td>
                                               @endif
                                               @endif
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _qty__${i} _common_keyup" value="${data[i]._qty}" >
+                                                 <input type="hidden" name="_ref_counter[]" value="${_item_row_count}" class="_ref_counter" id="${_item_row_count}__ref_counter">
                                               </td>
                                               <td>
                                                 <input type="number" name="_rate[]" class="form-control _rate _rate__${i} _common_keyup" value="${data[i]._pur_rate}" >
@@ -765,13 +784,14 @@ if(data.length > 0 ){
 
                                               @endif
                                               
-                                            </tr>`;
+                                            </tr>`);
+                          _new_barcode_function(_item_row_count);
+       
                                           }
                                         }else{
                                           _purchase_row_single += `Returnable Item Not Found !`;
                                         }
 
-            $(document).find("#area__purchase_details").html(_purchase_row_single);
               _purchase_total_calculation();
     })
 
@@ -1318,7 +1338,13 @@ function purchase_row_add(event){
   })
 
 
-
+ function _new_barcode_function(_item_row_count){
+      $('#'+_item_row_count+'__barcode').amsifySuggestags({
+      trimValue: true,
+      dashspaces: true,
+      showPlusAfter: 1,
+      });
+  }
 
  
 

@@ -103,7 +103,7 @@ thead{
     font-family: math !important;
 }
 tfoot{
-    background: #fff;
+    background: #3ebbbdad;
      font-family: math !important;
 }
 .form_body {
@@ -555,12 +555,12 @@ margin-bottom: 50px;
    background: rgb(19,173,180);
 background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
 }
-.bottom_save_section{
+.bottom_save_section {
     position: fixed;
     bottom: 0px;
     width: 100%;
     padding: 10px;
-   background: rgb(19,173,180);
+    background: rgb(19 173 180 / 39%);
 }
 
 ._report_button_header{

@@ -139,7 +139,7 @@ class AccountLedgerController extends Controller
         if($_form ==2){
             $datas = $datas->where('_is_sales_form','=',1);
         }
-        if($_form ==2){
+        if($_form ==1){
            $datas = $datas->where('_is_purchase_form','=',1);
         }
            $datas = $datas->where('_status',1);
@@ -297,7 +297,7 @@ class AccountLedgerController extends Controller
         $data->_status = $request->_status;
         $data->_updated_by = Auth::user()->id."-".Auth::user()->name;
         $data->save();
-        return redirect('account-ledger')->with('success','Information save successfully');
+        return redirect()->back()->with('success','Information save successfully');
     }
 
     /**

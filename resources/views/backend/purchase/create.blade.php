@@ -76,6 +76,8 @@ $__user= Auth::user();
                                       </div>
                                   </div>
                               </div>
+                              <input type="hidden" id="_search_form_value" name="_search_form_value" class="_search_form_value" value="1" >
+                              <input type="hidden" name="_item_row_count" value="1" class="_item_row_count">
                         </div>
 
                         <div class="col-xs-12 col-sm-12 col-md-3">
@@ -98,6 +100,7 @@ $__user= Auth::user();
                                 
                             </div>
                         </div>
+
                         
 
                           <div class="col-xs-12 col-sm-12 col-md-3 ">
@@ -206,7 +209,10 @@ $__user= Auth::user();
                                               </td>
                                               
                                               <td class="@if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==0) display_none   @endif @endif">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode[]" class="form-control _barcode 1__barcode "  id="1__barcode">
+
+                                                <input type="hidden" name="_ref_counter[]" value="1" class="_ref_counter" id="1__ref_counter">
+
                                               </td>
                                             
                                               <td>
@@ -576,12 +582,14 @@ $__user= Auth::user();
 @section('script')
 
 <script type="text/javascript">
+
   @if(empty($form_settings))
     $("#form_settings").click();
   @endif
   var default_date_formate = `{{default_date_formate()}}`;
   var _after_print = $(document).find("._after_print").val();
   var _master_id = $(document).find("._master_id").val();
+  var _item_row_count =1;
   if(_after_print ==1){
       var open_new = window.open(_master_id, '_blank');
       if (open_new) {
@@ -594,7 +602,6 @@ $__user= Auth::user();
   }
 
 
-  
 
   
 
@@ -674,6 +681,8 @@ $(document).on('click','.search_row_item',function(){
   $(this).parent().parent().parent().parent().parent().parent().find('._vat_amount').val(_vat_amount);
   $(this).parent().parent().parent().parent().parent().parent().find('._qty').val(1);
   $(this).parent().parent().parent().parent().parent().parent().find('._value').val(_item_rate);
+ var _ref_counter = $(this).parent().parent().parent().parent().parent().parent().find('._ref_counter').val();
+  $(this).parent().parent().parent().parent().parent().parent().find('._barcode').attr('name',_ref_counter+'__barcode__'+_id);
 
   _purchase_total_calculation();
   $('.search_box_item').hide();
@@ -836,22 +845,28 @@ $(document).on("click",'.search_row_purchase_order',function(){
       dataType: "JSON"
     });
     request.done(function( result ) {
-      console.log(result)
+     
       var data = result;
       var _purchase_row_single = ``;
       $(document).find("#area__purchase_details").empty();
      
 if(data.length > 0 ){
+  $('._purchase_row').remove();
+  $("._item_row_count").val(0)
   for (var i = 0; i < data.length; i++) {
+   var _item_row_count = (parseFloat(i)+1);
     var _item_name = (data[i]._items._name) ? data[i]._items._name : '' ;
     var _item_id = (data[i]._item_id) ? data[i]._item_id : '' ;
     var _qty   = (data[i]._qty  ) ? data[i]._qty   : 0 ;
     var _rate    = (data[i]._rate) ? data[i]._rate    : 0 ;
     var _sales_rate =  0 ;
     var _value = ( (data[i]._qty*data[i]._rate) ) ? (data[i]._qty*data[i]._rate) : 0 ;
+    
+
+    $("._item_row_count").val(_item_row_count)
    
 
-       _purchase_row_single +=`<tr class="_purchase_row">
+      $(document).find("#area__purchase_details").append(`<tr class="_purchase_row">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
@@ -861,19 +876,21 @@ if(data.length > 0 ){
                                                 <div class="search_box_item">
                                                   
                                                 </div>
+
                                               </td>
                                               @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td>
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode[]" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode" >
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode[]" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode"  >
                                               </td>
                                               @endif
                                               @endif
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" value="${_qty}">
+                                                <input type="hidden" name="_ref_counter[]" value="${_item_row_count}" class="_ref_counter" id="${_item_row_count}__ref_counter">
                                               </td>
                                               <td>
                                                 <input type="number" name="_rate[]" class="form-control _rate _common_keyup" value="${_rate}">
@@ -979,13 +996,17 @@ if(data.length > 0 ){
                                                 <input type="date" name="_expire_date[]" class="form-control _expire_date " >
                                               </td>
                                               
-                                            </tr>`;
+                                            </tr>`);
+                                           
+                                            _new_barcode_function(_item_row_count);
                                           }
+
                                         }else{
                                           _purchase_row_single += `Returnable Item Not Found !`;
                                         }
 
-            $(document).find("#area__purchase_details").html(_purchase_row_single);
+            
+            
               _purchase_total_calculation();
     })
 
@@ -1092,7 +1113,15 @@ if(data.length > 0 ){
       $("#area__voucher_details").append(single_row);
   }
 
-var _purchase_row_single =`<tr class="_purchase_row">
+
+function purchase_row_add(event){
+   event.preventDefault();
+      
+
+       _item_row_count= $("._item_row_count").val();
+      $("._item_row_count").val((parseFloat(_item_row_count)+1));
+     var  _item_row_count = (parseFloat(_item_row_count)+1);
+     $("#area__purchase_details").append(`<tr class="_purchase_row">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
@@ -1105,16 +1134,17 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                               </td>
                                               @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td>
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode[]" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode" >
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode[]" class="form-control _barcode  ${_item_row_count}__barcode " id="${_item_row_count}__barcode"  >
                                               </td>
                                               @endif
                                               @endif
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" >
+                                                 <input type="hidden" name="_ref_counter[]" value="${_item_row_count}" class="_ref_counter" id="${_item_row_count}__ref_counter">
                                               </td>
                                               <td>
                                                 <input type="number" name="_rate[]" class="form-control _rate _common_keyup" >
@@ -1220,23 +1250,28 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                 <input type="date" name="_expire_date[]" class="form-control _expire_date " >
                                               </td>
                                               
-                                            </tr>`;
-function purchase_row_add(event){
-   event.preventDefault();
-      $("#area__purchase_details").append(_purchase_row_single);
+                                            </tr>`);
+     
+      _new_barcode_function(_item_row_count);
+
 }
  $(document).on('click','._purchase_row_remove',function(event){
       event.preventDefault();
       var ledger_id = $(this).parent().parent('tr').find('._item_id').val();
       if(ledger_id ==""){
           $(this).parent().parent('tr').remove();
+        
+        $(this).parent().parent('tr').find('._ref_counter').remove();
       }else{
         if(confirm('Are you sure your want to delete?')){
           $(this).parent().parent('tr').remove();
+           $(this).parent().parent('tr').find('._ref_counter').remove();
         } 
       }
       _purchase_total_calculation();
   })
+
+ var _purchase_row_single_new =``;
 
   
 
@@ -1294,7 +1329,14 @@ function purchase_row_add(event){
     }
   })
 
-
+_new_barcode_function(_item_row_count);
+  function _new_barcode_function(_item_row_count){
+      $('#'+_item_row_count+'__barcode').amsifySuggestags({
+      trimValue: true,
+      dashspaces: true,
+      showPlusAfter: 1,
+      });
+  }
 
 
  

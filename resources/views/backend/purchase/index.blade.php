@@ -128,7 +128,7 @@ $__user= Auth::user();
                                      @can('money-receipt-print')
                                      @if(sizeof($__purchase_account) > 0)
                                         <a class="dropdown-item " href="{{ url('purchase-money-receipt') }}/{{$data->id}}">
-                                         Money Receipt
+                                         Payment Receipt
                                         </a>
                                      @endif
                                     @endcan
@@ -174,46 +174,46 @@ $__user= Auth::user();
                             <div class="card " >
                               <table class="table">
                                 <thead >
-                                            <th class="text-middle" >ID</th>
-                                            <th class="text-middle" >Item</th>
+                                            <th class="text-left" >ID</th>
+                                            <th class="text-left" >Item</th>
                                            @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
-                                            <th class="text-middle" >Barcode</th>
+                                            <th class="text-left" >Barcode</th>
                                             @else
-                                            <th class="text-middle display_none" >Barcode</th>
+                                            <th class="text-left display_none" >Barcode</th>
                                             @endif
                                             @endif
-                                            <th class="text-middle" >Qty</th>
-                                            <th class="text-middle" >Rate</th>
-                                            <th class="text-middle" >Sales Rate</th>
+                                            <th class="text-right" >Qty</th>
+                                            <th class="text-right" >Rate</th>
+                                            <th class="text-right" >Sales Rate</th>
                                             @if(isset($form_settings->_show_vat)) @if($form_settings->_show_vat==1)
-                                            <th class="text-middle" >VAT%</th>
-                                            <th class="text-middle" >VAT</th>
+                                            <th class="text-right" >VAT%</th>
+                                            <th class="text-right" >VAT</th>
                                              @else
-                                            <th class="text-middle display_none" >VAT%</th>
-                                            <th class="text-middle display_none" >VAT Amount</th>
+                                            <th class="text-left display_none" >VAT%</th>
+                                            <th class="text-left display_none" >VAT</th>
                                             @endif
                                             @endif
 
-                                            <th class="text-middle" >Value</th>
+                                            <th class="text-right" >Value</th>
                                              @if(sizeof($permited_branch) > 1)
-                                            <th class="text-middle" >Branch</th>
+                                            <th class="text-left" >Branch</th>
                                             @else
-                                            <th class="text-middle display_none" >Branch</th>
+                                            <th class="text-left display_none" >Branch</th>
                                             @endif
                                              @if(sizeof($permited_costcenters) > 1)
-                                            <th class="text-middle" >Cost Center</th>
+                                            <th class="text-left" >Cost Center</th>
                                             @else
-                                             <th class="text-middle display_none" >Cost Center</th>
+                                             <th class="text-left display_none" >Cost Center</th>
                                             @endif
                                              @if(sizeof($store_houses) > 1)
-                                            <th class="text-middle" >Store</th>
+                                            <th class="text-left" >Store</th>
                                             @else
-                                             <th class="text-middle display_none" >Store</th>
+                                             <th class="text-left display_none" >Store</th>
                                             @endif
                                             @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==1)
-                                            <th class="text-middle" >Shelf</th>
+                                            <th class="text-left" >Shelf</th>
                                             @else
-                                             <th class="text-middle display_none" >Shelf</th>
+                                             <th class="text-left display_none" >Shelf</th>
                                             @endif
                                             @endif
                                            
