@@ -292,11 +292,17 @@ class PurchaseReturnController extends Controller
                             INNER JOIN barcode_details as t2 ON t1.id=t2._p_p_id
                             WHERE t2._barcode='".$_barcods_arr_val."' AND t1._qty >=".$_qty." AND t1.id=".$_price_list_ids[$i]." ");
                              
-                                if(empty($checkqty)){
-                                    array_push($over_qty, 1);
-                                }
+                            if(empty($checkqty)){
+                                array_push($over_qty, 1);
+                            }
                         }
                     }
+                 }else{
+                    $checkqty = ProductPriceList::where('_qty','>=',$_qtys[$i])
+                                    ->where('id',$_price_list_ids[$i])->first();
+                        if(empty($checkqty)){
+                            array_push($over_qty, 1);
+                        }
                  }
                 
                
@@ -307,8 +313,8 @@ class PurchaseReturnController extends Controller
         }
 
 
-        DB::beginTransaction();
-       try {
+       //  DB::beginTransaction();
+       // try {
        
  $_p_balance = _l_balance_update($request->_main_ledger_id);
     //###########################
@@ -350,6 +356,7 @@ class PurchaseReturnController extends Controller
                 $PurchaseReturnDetail = new PurchaseReturnDetail();
                 $PurchaseReturnDetail->_item_id = $_item_ids[$i];
                 $PurchaseReturnDetail->_qty = $_qtys[$i];
+
                 $barcode_string=$all_req[$_ref_counters[$i]."__barcode__".$_item_ids[$i]] ?? '';
                 $PurchaseReturnDetail->_barcode = $barcode_string;
 
@@ -388,8 +395,13 @@ class PurchaseReturnController extends Controller
                     $_new_barcode_array = explode(",",$barcode_string);
                 }
                 if(sizeof($_new_barcode_array) > 0 && sizeof($_old_barcode_array) > 0){
-                  $_last_barcode_array=  array_diff($_old_barcode_array,$_new_barcode_array);
-                  $_last_barcode_string = implode(",",$_last_barcode_array);
+                  $_last_barcode_array =  array_diff($_old_barcode_array,$_new_barcode_array);
+                  if(sizeof($_last_barcode_array ) > 0){
+                    $_last_barcode_string = implode(",",$_last_barcode_array);
+                  }else{
+                    $_last_barcode_string = $barcode_string;
+                  }
+                  
                   $ProductPriceList->_barcode = $_last_barcode_string;
                 }
 
@@ -626,13 +638,13 @@ $_pfix = _purchase_return_pfix().$purchase_id;
              \DB::table('purchase_returns')
              ->where('id',$purchase_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
-     DB::commit();
+        //DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
-       } catch (\Exception $e) {
-           DB::rollback();
+       // } catch (\Exception $e) {
+       //     DB::rollback();
            
-           return redirect()->back()->with('danger',"Information Not Save. There Is an ERROR ");
-        }
+       //     return redirect()->back()->with('danger',"Information Not Save. There Is an ERROR ");
+       //  }
       
     }
 
@@ -722,8 +734,8 @@ $_pfix = _purchase_return_pfix().$purchase_id;
     public function update(Request $request)
     {
          
-       // return $request->all();
-
+     // return $request->all();
+         $all_req= $request->all();
         $this->validate($request, [
             '_order_number' => 'required',
             '_form_name' => 'required',
@@ -745,6 +757,8 @@ $_pfix = _purchase_return_pfix().$purchase_id;
         $purchase_detail_ids = $request->purchase_detail_id;
          $_price_list_ids = $request->_price_list_id;
          $_purchase_detal_refs = $request->_purchase_detal_ref;
+         $_ref_counters = $request->_ref_counter;
+
         $checkqty = array();
         $over_qtys = array();
 
@@ -752,18 +766,54 @@ $_pfix = _purchase_return_pfix().$purchase_id;
      if(!$_lock_check){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
 
     //Prevoius Return information
-     $previous_infos = PurchaseReturnDetail::where('_no',$purchase_id)->get();
+     $previous_infos = PurchaseReturnDetail::where('_no',$purchase_id)->where('_status',1)->get();
     foreach ($previous_infos as $value) {
-        $product_prices = ProductPriceList::where('_purchase_detail_id',$value->_purchase_detal_ref)->first();
+         $product_prices = ProductPriceList::where('_purchase_detail_id',$value->_purchase_detal_ref)->first();
          $new_qty = ($value->_qty+$product_prices->_qty);
-         array_push($checkqty, ['id'=>$product_prices->_purchase_detail_id,'_qty'=>$new_qty]);
+         $_old_new_barcode = $value->_barcode.",".$product_prices->_barcode;
+         array_push($checkqty, ['id'=>$product_prices->_purchase_detail_id,'_qty'=>$new_qty,'_barcode'=>$_old_new_barcode]);
     }
 
     foreach ($_purchase_detal_refs as $item_key=> $_item) {
         foreach ($checkqty as $check_item) {
-            if($_item==$check_item["id"] && $_qtys[$item_key] > $check_item["_qty"] ){
-                array_push($over_qtys, $_item);
+              $barcode_string=$all_req[$_ref_counters[$item_key]."__barcode__".$_item_ids[$item_key]] ?? '';
+
+            if(strlen($barcode_string) > 0){ //Check Barcode Available
+                if($_item==$check_item["id"]){ //Check Previous item id and Current Item id Same
+                    $_req_barcode_array = explode(",",$barcode_string); // Barcode make array from string
+                    foreach ($_req_barcode_array as $_bar_value) {
+                        $_barcode_yes = str_contains($check_item["_barcode"], $_bar_value); //Check available barcode number with product price list table and previous purchase return details table
+                        if(!$_barcode_yes){
+                           // if Return false then its wrong barcode and send message
+                            $msg = "You Input Wrong Barcode. Wrong Barcode Numer is- ". $_bar_value;
+                            return redirect()->back()->with('danger',$msg);
+                        }else{
+                            //this section come after check available 
+                          $check_model_or_unique =   explode(",",$check_item["_barcode"]); //Barcode string to array to check model barcode or unique barcode
+
+                          if(sizeof(array_unique($check_model_or_unique)) ==1){ // if sizeof($check_model_or_unique)==1 then we desied that its used a model barcode 
+                           
+                              //Model Barcode and now check quantity
+                                if($_item==$check_item["id"] && $_qtys[$item_key] > $check_item["_qty"] ){
+                                    array_push($over_qtys, $_item); //if use model barcode and want to return more then purchase quantity then show a messge
+                                 }
+                          }
+                           //Unique Barcode Olready Check as wrong Barcode number
+
+                          
+                        }
+                       
+                    }
+                }
+            }else{
+
+                 //This section come when no barcode used for item purchase and purchase return
+                //Here we need to check item id and item available qty
+                if($_item==$check_item["id"] && $_qtys[$item_key] > $check_item["_qty"] ){
+                    array_push($over_qtys, $_item); //If input Extra qty then shw a messge
+                }
             }
+            
         }
     }
 
@@ -771,14 +821,17 @@ $_pfix = _purchase_return_pfix().$purchase_id;
         return redirect()->back()->with('danger','You Can not Return More then available Qty !');
     }else{
          foreach ($previous_infos as $value) {
+
             $product_prices = ProductPriceList::where('_purchase_detail_id',$value->_purchase_detal_ref)->first();
              $new_qty = ($value->_qty+$product_prices->_qty);
+              $_old_new_barcode = $value->_barcode.",".$product_prices->_barcode;
+             $product_prices->_barcode =$_old_new_barcode;
              $product_prices->_qty =$new_qty;
              $product_prices->save();
 
         }
     }
-   // return $over_qtys;
+    
 
        //######################
        // Previous information need to make zero for every thing.
@@ -802,8 +855,9 @@ $_pfix = _purchase_return_pfix().$purchase_id;
                     ->where('_table_name','purchase_return_accounts')
                      ->update(['_status'=>0]);  
     $_p_balance = _l_balance_update($request->_main_ledger_id); 
-
-     $_p_balance = _l_balance_update($request->_main_ledger_id);
+        
+    _barcode_status("PurchaseReturnBarcode",$purchase_id); //Status Change to Zero before row update
+     
 
       //  return 6;           
 
@@ -814,7 +868,7 @@ $_pfix = _purchase_return_pfix().$purchase_id;
        $users = Auth::user();
         $PurchaseReturn = PurchaseReturn::where('id',$purchase_id)->first();
         if(empty($PurchaseReturn)){
-            return redirect()->back()->with('danger','Something Went Wrong !');
+            return redirect()->back()->with('danger','Purchase Return Numbe Is not Correct!');
         }
         $PurchaseReturn->_date = change_date_format($request->_date);
         $PurchaseReturn->_time = date('H:i:s');
@@ -852,10 +906,11 @@ $_pfix = _purchase_return_pfix().$purchase_id;
                 }else{
                     $PurchaseReturnDetail = PurchaseReturnDetail::find($purchase_detail_ids[$i]);
                 }
+                $barcode_string=$all_req[$_ref_counters[$i]."__barcode__".$_item_ids[$i]] ?? '';
+                $PurchaseReturnDetail->_barcode = $barcode_string;
                 
                 $PurchaseReturnDetail->_item_id = $_item_ids[$i];
                 $PurchaseReturnDetail->_qty = $_qtys[$i];
-                $PurchaseReturnDetail->_barcode = $_barcodes[$i] ?? '';
                 $PurchaseReturnDetail->_rate = $_rates[$i];
                 $PurchaseReturnDetail->_sales_rate = $_sales_rates[$i];
                 $PurchaseReturnDetail->_discount = $_discounts[$i] ?? 0;
@@ -878,15 +933,64 @@ $_pfix = _purchase_return_pfix().$purchase_id;
                 $item_info = Inventory::where('id',$_item_ids[$i])->first();
 
                 
-                $ProductPriceList = ProductPriceList::where('_purchase_detail_id',$_purchase_detal_refs[$i])
+                 $ProductPriceList = ProductPriceList::where('_purchase_detail_id',$_purchase_detal_refs[$i])
                                                     ->where('_master_id',$request->_order_ref_id)->first();
+
+
+                 
                 $_p_qty = $ProductPriceList->_qty;
+
+                //Barcode  deduction from old string data
+                 $_old_barcode_strings =  $ProductPriceList->_barcode;
+                $_new_barcode_array = array();
+                if($_old_barcode_strings !=""){
+                    $_old_barcode_array = explode(",",$_old_barcode_strings);
+                }
+                if($barcode_string !=""){
+                    $_new_barcode_array = explode(",",$barcode_string);
+                }
+                if(sizeof($_new_barcode_array) > 0 && sizeof($_old_barcode_array) > 0){
+                  $_last_barcode_array=  array_diff($_old_barcode_array,$_new_barcode_array);
+                  if(sizeof($_last_barcode_array ) > 0){
+                    $_last_barcode_string = implode(",",$_last_barcode_array);
+                     $ProductPriceList->_barcode = $_last_barcode_string; //For Unique Barcode
+                  }else{
+                    $_last_barcode_string = $barcode_string;
+                    $ProductPriceList->_barcode = $_last_barcode_string; //for Model Barcode
+                  }
+                }else{
+                 $ProductPriceList->_barcode = ''; //For No barcode
+                }
+
+                //Barcode  deduction from old string data
                
                 $_status = (($_p_qty-$_qtys[$i]) > 0) ? 1 : 0;
                
                 $ProductPriceList->_qty = ($_p_qty - $_qtys[$i]);
                 $ProductPriceList->_status = $_status;
                 $ProductPriceList->save();
+
+                /*
+    Barcode insert into database section
+   _barcode_insert_update($modelName, $_p_p_id,$_item_id,$_no_id,$_no_detail_id,$_qty,$_barcode,$_status,$_return=0,$p=0)
+   IF RETURN ACTION THEN $_return = 1; and BarcodeDetail avoid 
+                [  $data->_no_id = $_no_id;
+                    $data->_no_detail_id = $_no_detail_id;
+                    ] use  $p=1;
+*/
+                $product_price_id =  $ProductPriceList->id;
+                 if($barcode_string !=""){
+                   $barcode_array=  explode(",",$barcode_string);
+                   $_qty = (sizeof($barcode_array) <= 1) ? $_qtys[$i] : 1;
+                   $_stat = 1;
+                   $_return=1;
+                   
+                   foreach ($barcode_array as $_b_v) {
+                    _barcode_insert_update('BarcodeDetail', $product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,1,1);
+                    _barcode_insert_update('PurchaseReturnBarcode', $product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,1,0);
+                     
+                   }
+                }
 
 
                 

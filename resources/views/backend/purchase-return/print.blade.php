@@ -77,16 +77,16 @@
                                 <thead >
                                             <th class="text-left " style="color:#000;" >SL</th>
                                             <th class="text-left " style="color:#000;" >Item</th>
-                                            <th class="text-middle  @if($form_settings->_show_barcode==0) display_none @endif"  style="color:#000;">Barcode</th>
+                                            <th class="text-left  @if($form_settings->_show_barcode==0) display_none @endif"  style="color:#000;">Barcode</th>
                                             <th class="text-right "  style="color:#000;">Qty</th>
                                             <th class="text-right " style="color:#000;" >Rate</th>
                                             <th class="text-right @if($form_settings->_show_vat==0) display_none @endif" style="color:#000;" >VAT%</th>
                                             <th class="text-right @if($form_settings->_show_vat==0) display_none @endif" style="color:#000;" >VAT Amount</th>
                                             <th class="text-right " style="color:#000;" >Value</th>
-                                            <th class="text-middle   @if(sizeof($permited_branch) ==1) display_none @endif " style="color:#000;" >Branch</th>
-                                             <th class="text-middle   @if(sizeof($permited_costcenters) ==1) display_none @endif " style="color:#000;" >Cost Center</th>
-                                             <th class="text-middle  @if(sizeof($store_houses) ==1) display_none @endif" style="color:#000;" >Store</th>
-                                             <th class="text-middle @if($form_settings->_show_self==0) display_none @endif" style="color:#000;" >Shelf</th>
+                                            <th class="text-left   @if(sizeof($permited_branch) ==1) display_none @endif " style="color:#000;" >Branch</th>
+                                             <th class="text-left   @if(sizeof($permited_costcenters) ==1) display_none @endif " style="color:#000;" >Cost Center</th>
+                                             <th class="text-left  @if(sizeof($store_houses) ==1) display_none @endif" style="color:#000;" >Store</th>
+                                             <th class="text-left @if($form_settings->_show_self==0) display_none @endif" style="color:#000;" >Shelf</th>
                                             
                                            
                                           </thead>
