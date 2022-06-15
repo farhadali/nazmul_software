@@ -68,6 +68,15 @@ $__user= Auth::user();
                     
               </div>
               <div class="card-body">
+                <div class="row mb-2">
+                                      <div style="width: 70%;margin:0px auto;">
+                                        <div class="form-group">
+                                          <input required="" type="text" id="_serach_baorce" name="_serach_baorce" class="form-control _serach_baorce"  placeholder="Search with item name or Barcode"  >
+
+                                        </div>
+                                    </div>
+                                    
+                                </div>
                <form action="{{route('sales.store')}}" method="POST" class="purchase_form" >
                 @csrf
                     <div class="row">
@@ -176,8 +185,9 @@ $__user= Auth::user();
                         <div class="col-md-12  ">
                              <div class="card">
                               <div class="card-header">
-                                <strong>Details</strong>
-
+                                <strong>Item Details</strong>
+                                
+                               
                               </div>
                              
                               <div class="card-body">
@@ -521,6 +531,28 @@ $__user= Auth::user();
          })
   }
 
+
+$(document).on('keyup','#_serach_baorce',function(event){
+  event.preventDefault();
+  console.log(event.which)
+  console.log(event.keyCode )
+      if(event.keyCode ==13){
+        event.preventDefault();
+        var _text_val = $(this).val();
+
+            var request = $.ajax({
+              url: "{{url('item-sales-barcode-search')}}",
+              method: "GET",
+              data: { _text_val : _text_val },
+              dataType: "JSON"
+            });
+            request.done(function( result ) {
+console.log(result)
+            })
+
+      }
+  
+});
 
   
 
@@ -946,6 +978,11 @@ function purchase_row_add(event){
   $(document).on('click','.submit-button',function(event){
     event.preventDefault();
 
+     var _serach_baorce = $("#_serach_baorce").val()
+    if(_serach_baorce){
+      return false;
+    }
+
     var _p_p_l_ids_qtys = new Array();
      var _only_p_ids = [];
      var empty_qty = [];
@@ -1027,6 +1064,8 @@ function purchase_row_add(event){
           empty_ledger.push(1);
         }  
     })
+
+
 
     if(empty_ledger.length > 0){
       return false;

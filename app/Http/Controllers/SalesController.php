@@ -29,6 +29,7 @@ use App\Models\SalesReturnDetail;
 use App\Models\SalesReturnAccount;
 use App\Models\SalesReturnFormSetting;
 use App\Models\GeneralSettings;
+use App\Models\BarcodeDetail;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -314,6 +315,51 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
         
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
         return json_encode( $datas);
+    }
+
+    public function itemSalesBarcodeSearch(Request $request){
+        $users = Auth::user();
+        $limit = $request->limit ?? default_pagination();
+        $_asc_desc = $request->_asc_desc ?? 'ASC';
+        $asc_cloumn =  $request->asc_cloumn ?? '_qty';
+       $text_val = trim($request->_text_val);
+        if($text_val =='%'){ $text_val=''; }
+
+        //First Check Unique Barcode or Model Barcode to compare barcode details table qty
+        // if qty =1 then we can deside that's it's an unique barcode then we fetch baroce base all information from product prince list table as we use without barcode version 
+
+        $check_barcode_types = BarcodeDetail::select('_p_p_id','_item_id','_barcode','_qty')
+                              ->where('_barcode',$text_val)
+                              ->where('_status',1) 
+                              ->where('_qty','>',0)
+                              ->first();
+$datas = ProductPriceList::select('id','_item as _name','_item_id','_unit_id','_barcode','_manufacture_date','_expire_date','_qty','_sales_rate','_pur_rate','_sales_discount','_sales_vat','_purchase_detail_id','_master_id','_branch_id','_cost_center_id','_store_id','_store_salves_id')
+            ->where('_qty','>',0)
+            ->where('_status',1);
+    $datas = $datas->whereIn('_branch_id',explode(',',$users->branch_ids));
+    $datas = $datas->whereIn('_cost_center_id',explode(',',$users->cost_center_ids));
+
+        $_item_qty  = $check_barcode_types->_qty ?? 0;
+        if($_item_qty ==1){ 
+          $_search_type='unique_barcode';
+            $datas = $datas->where('id',$check_barcode_types->_p_p_id)->first();
+        }elseif($_item_qty > 1) {
+          $_search_type='model_barcode';
+          $datas = $datas->where('id',$check_barcode_types->_p_p_id);
+          $datas = $datas->where('_item_id',$check_barcode_types->_item_id)->first();
+        }else{
+          $_search_type='item_search';
+          if($request->has('_text_val') && $text_val !=''){
+              $datas = $datas->where('_item','like',"%trim($text_val)%")
+              ->orWhere('id','like',"%trim($text_val)%");
+          }
+          $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
+
+        }
+               
+        $data["datas"]=$datas;
+        $data["_search_type"]=$_search_type;
+        return json_encode( $data);
     }
 
 

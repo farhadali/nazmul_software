@@ -78,7 +78,10 @@ if (!function_exists('_barcode_insert_update')) {
        }
        
        if($_return ==1){
-         $data->_qty = ($data->_qty-$_qty);
+            if(($data->_qty-$_qty) >=0){
+                $data->_qty = ($data->_qty-$_qty);
+            }
+         
          }else{
             $data->_qty = $_qty;
          }

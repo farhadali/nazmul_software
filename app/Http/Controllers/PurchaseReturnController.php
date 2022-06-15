@@ -23,6 +23,8 @@ use App\Models\Inventory;
 use App\Models\ItemCategory;
 use App\Models\Units;
 use App\Models\SalesDetail;
+use App\Models\BarcodeDetail;
+use App\Models\PurchaseReturnBarcode;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -824,9 +826,37 @@ $_pfix = _purchase_return_pfix().$purchase_id;
 
             $product_prices = ProductPriceList::where('_purchase_detail_id',$value->_purchase_detal_ref)->first();
              $new_qty = ($value->_qty+$product_prices->_qty);
-              $_old_new_barcode = $value->_barcode.",".$product_prices->_barcode;
-             $product_prices->_barcode =$_old_new_barcode;
-             $product_prices->_qty =$new_qty;
+             $_up_status = (($new_qty) > 0) ? 1 : 0;
+             if($value->_barcode ==$product_prices->_barcode){
+                $_old_new_barcode = $product_prices->_barcode;
+                $product_prices->_barcode =$_old_new_barcode;
+                $product_prices->_qty =$new_qty;
+                BarcodeDetail::where('_p_p_id',$product_prices->id)
+                                ->where('_item_id',$product_prices->_item_id)
+                                ->where('_no_detail_id',$value->_purchase_detal_ref)
+                                ->where('_barcode',$value->_barcode)
+                                ->update(['_qty'=>$new_qty,'_status'=>$_up_status]);
+
+             }else{
+                $_old_new_barcode = $value->_barcode.",".$product_prices->_barcode;
+                $product_prices->_barcode =$_old_new_barcode;
+                $product_prices->_qty =$new_qty;
+                if($_old_new_barcode !=""){
+                    $_unique_old_newbarcode_array =   explode(",",$_old_new_barcode);
+                    if(sizeof($_unique_old_newbarcode_array) > 0){
+                        foreach ($_unique_old_newbarcode_array as $_bar_value) {
+                                BarcodeDetail::where('_p_p_id',$product_prices->id)
+                                            ->where('_item_id',$product_prices->_item_id)
+                                            ->where('_no_detail_id',$value->_purchase_detal_ref)
+                                            ->where('_barcode',$_bar_value)
+                                            ->update(['_qty'=>1,'_status'=>1]);
+                            }
+                    }
+                }
+                
+             }
+             
+             
              $product_prices->save();
 
         }
@@ -986,8 +1016,28 @@ $_pfix = _purchase_return_pfix().$purchase_id;
                    $_return=1;
                    
                    foreach ($barcode_array as $_b_v) {
-                    _barcode_insert_update('BarcodeDetail', $product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,1,1);
+                   _barcode_insert_update('BarcodeDetail', $product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,1,1);
                     _barcode_insert_update('PurchaseReturnBarcode', $product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,1,0);
+
+                    $bar_ab=PurchaseReturnBarcode::where('_p_p_id',$product_price_id)
+                                            ->where('_item_id',$_item_ids[$i])
+                                            ->where('_no_id',$purchase_id)
+                                            ->where('_no_detail_id',$_purchase_detail_id)
+                                            ->where('_barcode',$_b_v)
+                                            ->first();
+                    if(empty($bar_ab)){
+                        $bar_ab = new PurchaseReturnBarcode();
+                        $bar_ab->_p_p_id =$product_price_id;
+                        $bar_ab->_item_id =$_item_ids[$i];
+                        $bar_ab->_no_id =$purchase_id;
+                        $bar_ab->_no_detail_id =$_purchase_detail_id;
+                        $bar_ab->_barcode =$_b_v;
+
+                    }
+                    $bar_ab->_qty =$_qty;
+                    $bar_ab->_status =$_stat;
+                    $bar_ab->save();
+
                      
                    }
                 }

@@ -127,6 +127,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('sales-settings', 'App\Http\Controllers\SalesController@Settings');
     Route::get('sales-setting-modal', 'App\Http\Controllers\SalesController@formSettingAjax');
     Route::get('item-sales-search', 'App\Http\Controllers\SalesController@itemSalesSearch');
+    Route::get('item-sales-barcode-search', 'App\Http\Controllers\SalesController@itemSalesBarcodeSearch');
     Route::get('check-available-qty', 'App\Http\Controllers\SalesController@checkAvailableQty');
     Route::get('check-available-qty-update', 'App\Http\Controllers\SalesController@checkAvailableQtyUpdate');
     Route::get('sales-money-receipt/{id}', 'App\Http\Controllers\SalesController@moneyReceipt');
