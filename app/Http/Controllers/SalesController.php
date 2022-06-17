@@ -318,12 +318,14 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
     }
 
     public function itemSalesBarcodeSearch(Request $request){
+     // return $request->all();
         $users = Auth::user();
         $limit = $request->limit ?? default_pagination();
         $_asc_desc = $request->_asc_desc ?? 'ASC';
         $asc_cloumn =  $request->asc_cloumn ?? '_qty';
        $text_val = trim($request->_text_val);
         if($text_val =='%'){ $text_val=''; }
+        $_this_barcode='';
 
         //First Check Unique Barcode or Model Barcode to compare barcode details table qty
         // if qty =1 then we can deside that's it's an unique barcode then we fetch baroce base all information from product prince list table as we use without barcode version 
@@ -333,32 +335,39 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
                               ->where('_status',1) 
                               ->where('_qty','>',0)
                               ->first();
-$datas = ProductPriceList::select('id','_item as _name','_item_id','_unit_id','_barcode','_manufacture_date','_expire_date','_qty','_sales_rate','_pur_rate','_sales_discount','_sales_vat','_purchase_detail_id','_master_id','_branch_id','_cost_center_id','_store_id','_store_salves_id')
+
+
+       
+        
+        $datas = ProductPriceList::select('id','_item as _name','_item_id','_unit_id','_barcode','_manufacture_date','_expire_date','_qty','_sales_rate','_pur_rate','_sales_discount','_sales_vat','_purchase_detail_id','_master_id','_branch_id','_cost_center_id','_store_id','_store_salves_id')
             ->where('_qty','>',0)
             ->where('_status',1);
-    $datas = $datas->whereIn('_branch_id',explode(',',$users->branch_ids));
-    $datas = $datas->whereIn('_cost_center_id',explode(',',$users->cost_center_ids));
+         if($request->has('_text_val') && $text_val !=''){
+            $datas = $datas->where('_item','like',"%$text_val%")
+            ->orWhere('_barcode','like',"%$text_val%")
+            ->orWhere('id','like',"%$text_val%");
+        }
+        $datas = $datas->whereIn('_branch_id',explode(',',$users->branch_ids));
+        $datas = $datas->whereIn('_cost_center_id',explode(',',$users->cost_center_ids));
+        
+        
+        $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
 
-        $_item_qty  = $check_barcode_types->_qty ?? 0;
+         $_item_qty  = $check_barcode_types->_qty ?? 0;
         if($_item_qty ==1){ 
-          $_search_type='unique_barcode';
-            $datas = $datas->where('id',$check_barcode_types->_p_p_id)->first();
+            $_search_type='unique_barcode';
         }elseif($_item_qty > 1) {
           $_search_type='model_barcode';
-          $datas = $datas->where('id',$check_barcode_types->_p_p_id);
-          $datas = $datas->where('_item_id',$check_barcode_types->_item_id)->first();
         }else{
-          $_search_type='item_search';
-          if($request->has('_text_val') && $text_val !=''){
-              $datas = $datas->where('_item','like',"%trim($text_val)%")
-              ->orWhere('id','like',"%trim($text_val)%");
-          }
-          $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
-
+           $_search_type='item_search';
+            $_this_barcode=$text_val;
         }
-               
+
+
+        $_this_barcode=$text_val;
         $data["datas"]=$datas;
         $data["_search_type"]=$_search_type;
+        $data["_this_barcode"]=$_this_barcode;
         return json_encode( $data);
     }
 

@@ -5,6 +5,19 @@
 @php
 $__user= Auth::user();
 @endphp
+<style type="text/css">
+  ._main_item_search_box{
+   width: 100%;
+    position: absolute;
+    z-index: 999;
+  }
+  ._barcode_search_div{
+
+    margin: 0px auto;
+    padding: 10px;
+    background: #0986a2;
+  }
+</style>
 <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
@@ -69,13 +82,23 @@ $__user= Auth::user();
               </div>
               <div class="card-body">
                 <div class="row mb-2">
-                                      <div style="width: 70%;margin:0px auto;">
+                  <div class="col-md-2"></div>
+                 <div class="col-md-8">
+                   <div class="_barcode_search_div mt-2" >
                                         <div class="form-group">
                                           <input required="" type="text" id="_serach_baorce" name="_serach_baorce" class="form-control _serach_baorce"  placeholder="Search with item name or Barcode"  >
-
+                                            <div class="_main_item_search_box"></div>
                                         </div>
-                                    </div>
+                            </div>
+                    </div>
+                    <div class="col-md-2">
+                   <button class="btn btn-danger mt-2 _clear_icon" title="Clear Search"><i class=" fas fa-retweet "></i></button>
+                 </div> 
+                      
                                     
+                  
+                                      
+                                     
                                 </div>
                <form action="{{route('sales.store')}}" method="POST" class="purchase_form" >
                 @csrf
@@ -513,7 +536,7 @@ $__user= Auth::user();
       }
   }
 
-
+var _text_val="";
 
 
   $(document).on("click","#form_settings",function(){
@@ -532,29 +555,438 @@ $__user= Auth::user();
   }
 
 
-$(document).on('keyup','#_serach_baorce',function(event){
+$(document).on('keyup','#_serach_baorce',delay(function(event){
   event.preventDefault();
-  console.log(event.which)
-  console.log(event.keyCode )
-      if(event.keyCode ==13){
+  
+      _text_val = $(this).val().trim();
+       _main_item_search(_text_val)
+      if(event.keyCode ==13 || event.which==13){
         event.preventDefault();
-        var _text_val = $(this).val();
-
-            var request = $.ajax({
-              url: "{{url('item-sales-barcode-search')}}",
-              method: "GET",
-              data: { _text_val : _text_val },
-              dataType: "JSON"
-            });
-            request.done(function( result ) {
-console.log(result)
-            })
-
+         // console.log("Press Enter")
+          $("._serach_baorce").val('');
+          $("._serach_baorce").focus();
       }
   
-});
+
+}, 500));
+
+
+$(document).on('click','._action_button',function(){
+  $(this).closest('td').css({"background":"#fff"})
+})
+
+function _main_item_search(_text_val){
+  var request = $.ajax({
+      url: "{{url('item-sales-barcode-search')}}",
+      method: "GET",
+      data: { _text_val : _text_val },
+      dataType: "JSON"
+    });
+  request.done(function( result ) {
+// console.log("keyup call function and ger data")
+console.log(result)
+      var search_html =``;
+      var data = result.datas.data; 
+      if(data.length > 0 ){
+            search_html +=`<div class="card"><table style="width: 70%;">
+                            <tbody>`;
+                        for (var i = 0; i < data.length; i++) {
+                          var _barcode_array =[];
+                      var __barcode = data[i]._barcode;
+                      __barcode = isEmpty(__barcode);
+                      if(__barcode !=''){
+                         _barcode_array = __barcode.split(",");
+                      } 
+
+ search_html += `<tr class="_barcode_search_row_item" >
+                <td>${data[i]._master_id}
+                <input type="hidden" name="_id_item" class="_id_item" value="${data[i]._item_id}">
+                </td><td>${data[i]._name} </td>
+                                   
+                                   <td>${data[i]._qty}</td>
+                                    <td>${data[i]._sales_rate}</td>
+                                    `;
+                                    if(_barcode_array.length == 1){ //_barcode _array_means it's Model Barcode if item qty is 1 then unique barcode count as model barcode 
+                              search_html +=`<td class="text-center">
+                                          <table class="table">`;
+                                      for (var j = 0; j < _barcode_array.length; j++) {
+                                       search_html +=`<tr><td class="_cursor_pointer _barcode_single_item" 
+                                       _attr__id_item="${data[i]._item_id}" 
+                                       _attr__p_item_row_id="${data[i].id}"
+                                       _attr__p_item__name="${data[i]._name}"
+                                       _attr__p_item_item_id="${data[i]._item_id}"
+                                       _attr__p_item__unit_id="${data[i]._unit_id}"
+                                       _attr__p_item_barcode="${_barcode_array[j]}"
+                                       _attr__p_item_manufacture_date="${data[i]._manufacture_date}"
+                                       _attr__p_item_expire_date="${data[i]._expire_date}"
+                                       _attr__p_item_sales_rate="${data[i]._sales_rate}"
+                                       _attr__p_item_qty="${data[i]._qty}"
+                                       _attr__p_item_pur_rate="${data[i]._pur_rate}"
+                                       _attr__p_item_sales_discount="${data[i]._sales_discount}"
+                                       _attr__p_item_sales_vat="${data[i]._sales_vat}"
+                                       _attr__p_item_purchase_detail_id="${data[i]._purchase_detail_id}"
+                                       _attr__p_item_master_id="${data[i]._master_id}"
+                                       _attr__p_item_branch_id="${data[i]._branch_id}"
+                                       _attr__p_item_cost_center_id="${data[i]._cost_center_id}"
+                                       _attr__p_item_store_id="${data[i]._store_id}"
+                                       _attr__p_item_store_salves_id="${data[i]._store_salves_id}"
+                                        >${_barcode_array[j]} <i class="fas fa-plus"></i></td></tr>`;
+                                      }
+                                           
+                             search_html +=` </table></td>`;
+                                    }else if(_barcode_array.length > 1){ //_barcode _array_means more then 1 means  it's Unique Barcode and it's qty will be aa 
+                              search_html +=`<td class="text-center"><a class="btn btn-sm btn-default _action_button" data-toggle="collapse" href="#collapseExample__${data[i].id}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                      <i class=" fas fa-angle-down"></i></a>
+                                      <div class="collapse" id="collapseExample__${data[i].id}" style="max-height:200px;overflow:scroll;">
+                                          <table class="table">`;
+                                      for (var j = 0; j < _barcode_array.length; j++) {
+                                       search_html +=`<tr style="border:1px solid silver;"><td class="_cursor_pointer _barcode_single_item" 
+                                       _attr__id_item="${data[i]._item_id}" 
+                                       _attr__p_item_row_id="${data[i].id}"
+                                       _attr__p_item__name="${data[i]._name}"
+                                       _attr__p_item_item_id="${data[i]._item_id}"
+                                       _attr__p_item__unit_id="${data[i]._unit_id}"
+                                       _attr__p_item_barcode="${_barcode_array[j]}"
+                                       _attr__p_item_manufacture_date="${data[i]._manufacture_date}"
+                                       _attr__p_item_expire_date="${data[i]._expire_date}"
+                                       _attr__p_item_sales_rate="${data[i]._sales_rate}"
+                                       _attr__p_item_qty="1"
+                                       _attr__p_item_pur_rate="${data[i]._pur_rate}"
+                                       _attr__p_item_sales_discount="${data[i]._sales_discount}"
+                                       _attr__p_item_sales_vat="${data[i]._sales_vat}"
+                                       _attr__p_item_purchase_detail_id="${data[i]._purchase_detail_id}"
+                                       _attr__p_item_master_id="${data[i]._master_id}"
+                                       _attr__p_item_branch_id="${data[i]._branch_id}"
+                                       _attr__p_item_cost_center_id="${data[i]._cost_center_id}"
+                                       _attr__p_item_store_id="${data[i]._store_id}"
+                                       _attr__p_item_store_salves_id="${data[i]._store_salves_id}"
+                                        >${_barcode_array[j]} <i class="fas fa-plus"></i></td></tr>`;
+                                      }
+                                           
+                             search_html +=` </table>
+                                      <div></td>`;
+                                    }else{
+                              search_html +=`<td class="_cursor_pointer text-center _barcode_single_item" 
+                                       _attr__id_item="${data[i]._item_id}" 
+                                       _attr__p_item_row_id="${data[i].id}"
+                                       _attr__p_item__name="${data[i]._name}"
+                                       _attr__p_item_item_id="${data[i]._item_id}"
+                                       _attr__p_item__unit_id="${data[i]._unit_id}"
+                                       _attr__p_item_barcode="${_barcode_array[j]}"
+                                       _attr__p_item_manufacture_date="${data[i]._manufacture_date}"
+                                       _attr__p_item_expire_date="${data[i]._expire_date}"
+                                       _attr__p_item_sales_rate="${data[i]._sales_rate}"
+                                       _attr__p_item_qty="${data[i]._qty}"
+                                       _attr__p_item_pur_rate="${data[i]._pur_rate}"
+                                       _attr__p_item_sales_discount="${data[i]._sales_discount}"
+                                       _attr__p_item_sales_vat="${data[i]._sales_vat}"
+                                       _attr__p_item_purchase_detail_id="${data[i]._purchase_detail_id}"
+                                       _attr__p_item_master_id="${data[i]._master_id}"
+                                       _attr__p_item_branch_id="${data[i]._branch_id}"
+                                       _attr__p_item_cost_center_id="${data[i]._cost_center_id}"
+                                       _attr__p_item_store_id="${data[i]._store_id}"
+                                       _attr__p_item_store_salves_id="${data[i]._store_salves_id}" >
+                              <i class="fas fa-plus"></i>`;
+                                    }
+                              search_html +=` </td>
+                                   </tr>`;
+                        }                         
+            search_html += ` </tbody> </table></div>`;
+      }else{
+        search_html +=`<div class="card"><table style="width: 300px;"> 
+        <thead><th colspan="3">No Data Found</th></thead><tbody></tbody></table></div>`;
+      }     
+      $(document).find('._main_item_search_box').html(search_html);
+      $(document).find('._main_item_search_box').addClass('search_box_show').show();
+      
+    });
+     
+    request.fail(function( jqXHR, textStatus ) {
+      alert( "Request failed: " + textStatus );
+    });
+
+
+} 
+
+$(document).on('click','._clear_icon',function(){
+  $("._serach_baorce").val('');
+  $(document).find('._main_item_search_box').removeClass('search_box_show').hide();
+}) 
+
+$(document).on('click','._barcode_single_item',function(){
+  var _vat_amount =0;
+  var row_id = $(this).attr('_attr__p_item_row_id');
+  var _name = $(this).attr('_attr__p_item__name');
+  var _p_item_item_id = $(this).attr('_attr__p_item_item_id');
+  var _unit_id = $(this).attr('_attr__p_item__unit_id');
+  var _barcode = $(this).attr('_attr__p_item_barcode');
+  var _manufacture_date = $(this).attr('_attr__p_item_manufacture_date');
+  var _expire_date = $(this).attr('_attr__p_item_expire_date');
+  var _sales_rate = parseFloat($(this).attr('_attr__p_item_sales_rate'));
+  var _qty = parseFloat($(this).attr('_attr__p_item_qty'));
+  var _pur_rate = parseFloat($(this).attr('_attr__p_item_pur_rate'));
+  var _sales_discount = parseFloat($(this).attr('_attr__p_item_sales_discount'));
+  var _sales_vat = parseFloat($(this).attr('_attr__p_item_sales_vat'));
+  var _purchase_detail_id = $(this).attr('_attr__p_item_purchase_detail_id');
+  var _master_id = $(this).attr('_attr__p_item_master_id');
+  var _branch_id = $(this).attr('_attr__p_item_branch_id');
+  var _cost_center_id = $(this).attr('_attr__p_item_cost_center_id');
+  var _store_id = $(this).attr('_attr__p_item_store_id');
+  var _store_salves_id = $(this).attr('_attr__p_item_store_salves_id');
+  
+ _barcode = isEmpty(_barcode);
+ _manufacture_date = isEmpty(_manufacture_date);
+ _expire_date = isEmpty(_expire_date);
+ _store_salves_id = isEmpty(_store_salves_id);
 
   
+
+
+  var _search_item_id_s = $("._search_item_id");
+  var _item_id_s = $("._item_id");
+  var _p_p_l_id_s = $("._p_p_l_id");
+  var _purchase_invoice_no_s = $("._purchase_invoice_no");
+  var _purchase_detail_id_s = $("._purchase_detail_id");
+  var _barcode_s = $("._barcode");
+  var _rate_s = $("._rate");
+  var _sales_rate_s = $("._sales_rate");
+  var _vat_s = $("._vat");
+  var _discount_s = $("._discount");
+  var _vat_amount_s = $("._vat_amount");
+  var _discount_amount_s = $("._discount_amount");
+  var _qty_s = $("._qty");
+  var _value_s = $("._value");
+  var _store_salves_id_s = $("._store_salves_id");
+  var _manufacture_date_s = $("._manufacture_date");
+  var _expire_date_s = $("._expire_date");
+  var _add_row_or_not = 0;
+
+ //console.log("this row id "+row_id)
+    for(var i = 0; i < _p_p_l_id_s.length; i++){
+      var _p_p_l_id_s_val = $(_p_p_l_id_s[i]).val();
+      //console.log("_p_p_l_id_s_val "+_p_p_l_id_s_val)
+  //Remove all extra row where information is not available
+      if(_p_p_l_id_s_val ==""){
+        _add_row_or_not = 0;
+        $(_p_p_l_id_s[i]).closest('tr').remove();
+       
+      }
+    }
+  //First check added this row is available yes or not if yes then increase the item qty amount or create new row
+      var _has_item_row= $('._p_p_l_id').hasClass('_p_p_l_id__'+row_id); 
+      // console.log("__new_qty  "+__new_qty);
+       //  console.log("row_id  "+row_id);
+
+      if(_has_item_row ==true){
+         var _old_qty = parseFloat($("._qty__"+row_id).val());
+        if(isNaN(_old_qty)){ _old_qty =1 }
+
+        
+//Check unique Barcode add
+      // _qty = parseFloat($(this).attr('_attr__p_item_qty'));
+        var _barcode__ = $("._barcode__"+row_id).val();
+        var old_barcode =    isEmpty(_barcode__);
+        /*console.log("old_barcode "+old_barcode)
+        console.log('current_barcode '+_barcode)*/
+        if(old_barcode !=''){
+         var  _attr__p_item_qty = parseFloat($(this).attr('_attr__p_item_qty'));
+         var _check_duplicate_barcode = [];
+         var  _old_barcode_array = old_barcode.split(",");
+           for (var i = 0; i < _old_barcode_array.length; i++) {
+                if(_old_barcode_array[i] ==_barcode && _attr__p_item_qty ==1){
+                    var yes_no =   confirm("Do You Want to Remove This Item !");
+                    if(yes_no ==true){
+                      $("._barcode__"+row_id).val(old_barcode.replace(","+_barcode,"").replace(_barcode+",","").replace(_barcode,""));
+                      var __new_qty = (_old_qty-1);
+                      console.log(" After remove barcode "+$("._barcode__"+row_id).val())
+                     
+                    }
+                } 
+                if(!_old_barcode_array.includes(_barcode)  && _attr__p_item_qty == 1){
+                //if(_old_barcode_array[i] !=_barcode && _attr__p_item_qty == 1){
+                  console.log("added new barcode ");
+                    var _added_new_barcode = old_barcode+","+_barcode;
+                    $("._barcode__"+row_id).val(old_barcode+","+_barcode);
+                    var __new_qty = (_old_qty+1);
+                     console.log(" After added barcode "+ $("._barcode__"+row_id).val())
+                }
+                if(_old_barcode_array.includes(_barcode)  && _attr__p_item_qty > 1){
+                //if(_old_barcode_array[i] !=_barcode && _attr__p_item_qty == 1){
+                  console.log("added model barcode ");
+                    var __new_qty = (_old_qty+1);
+                     console.log(" After added barcode "+ $("._barcode__"+row_id).val())
+                }
+           }
+        }else{
+          __new_qty =(_old_qty+1);
+          $("._barcode__"+row_id).val(_barcode);
+        } 
+
+        var _sales_rate__ = parseFloat($("._sales_rate__"+row_id).val());
+        var _rate__ = parseFloat($("._rate__"+row_id).val());
+        var _vat__ = parseFloat($("._vat__"+row_id).val());
+        var _vat_amount__ = parseFloat($("._vat_amount__"+row_id).val());
+        var _discount__ = parseFloat($("._discount__"+row_id).val());
+        var _discount_amount__ = parseFloat($("._discount_amount__"+row_id).val());
+        var _value__ = parseFloat($("._value__"+row_id).val());
+          
+          if(isNaN(_sales_rate__)){ _sales_rate__=0 }
+          if(isNaN(_rate__)){ _rate__=0 }
+          if(isNaN(_vat__)){ _vat__=0 }
+          if(isNaN(_discount__)){ _discount__=0 }
+        
+       var __value_ = (parseFloat(__new_qty)*parseFloat(_sales_rate__));
+
+          _vat_amount = ((__value_*_vat__)/100)
+          if(isNaN(_sales_discount)){ _sales_discount=0 }
+          _discount_amount = parseFloat((__value_*_discount__)/100);
+
+
+
+       
+         
+        
+
+
+        
+        $("._qty__"+row_id).val(__new_qty);
+        $("._sales_rate__"+row_id).val(_sales_rate__);
+        $("._rate__"+row_id).val(_rate__);
+        $("._vat__"+row_id).val(_vat__);
+        $("._discount__"+row_id).val(_discount__);
+        $("._discount_amount__"+row_id).val(_discount_amount);
+        $("._vat_amount__"+row_id).val(_vat_amount);
+        $("._value__"+row_id).val(__value_);
+         _purchase_total_calculation();
+        //Update this row information 
+      }else{
+        //Add new row for new data entry with all new data
+          var  _qty=1; 
+          if(isNaN(_sales_rate)){ _sales_rate=0 }
+          if(isNaN(_pur_rate)){ _pur_rate=0 }
+          if(isNaN(_sales_vat)){ _sales_vat=0 }
+
+          _vat_amount = ((_sales_rate*_sales_vat)/100)
+          if(isNaN(_sales_discount)){ _sales_discount=0 }
+          _discount_amount = ((_sales_rate*_sales_discount)/100);
+          var _value = (parseFloat(_qty)*parseFloat(_sales_rate));
+
+        _add_new_row_for_barcode(row_id,_name,_p_item_item_id,_unit_id,_barcode,_manufacture_date,_expire_date,_sales_rate,_qty,_pur_rate,_sales_discount,_sales_vat,_purchase_detail_id,_master_id,_branch_id,_cost_center_id,_store_id,_store_salves_id,_sales_vat,_discount_amount,_vat_amount,_value);
+        _purchase_total_calculation();
+      }
+     
+      
+  
+   
+  //$(document).find('._main_item_search_box').removeClass('search_box_show').hide();
+})
+
+function isEmpty(value){
+  if ( value === 'undefined' || value =="" || value =="null" || value ==null || value ==undefined) {
+        return  value = "";
+    }else{
+      return value;
+    }
+}
+
+function _add_new_row_for_barcode(row_id,_name,_p_item_item_id,_unit_id,_barcode,_manufacture_date,_expire_date,_sales_rate,_qty,_pur_rate,_sales_discount,_sales_vat,_purchase_detail_id,_master_id,_branch_id,_cost_center_id,_store_id,_store_salves_id,_discount_amount,_vat_amount,_value){
+  // console.log("_value "+_value)
+  // console.log("_qty "+_qty)
+  // console.log("_sales_rate "+_sales_rate)
+  var _value_line = parseFloat(parseFloat(_qty)*parseFloat(_sales_rate));
+
+ $("#area__purchase_details").append( `<tr class="_purchase_row">
+                                              <td>
+                                                <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
+                                              </td>
+                                              <td>
+                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id _search_item_id__${row_id} width_280_px" placeholder="Item" value="${_name}">
+                                                <input type="hidden" name="_item_id[]" class="form-control _item_id _item_id__${row_id} width_200_px" value="${_p_item_item_id}">
+                                                <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id _p_p_l_id__${row_id} " value="${row_id}">
+                                                <input type="hidden" name="_purchase_invoice_no[]" class="form-control _purchase_invoice_no _purchase_invoice_no__${row_id}" value="${_master_id}" >
+                                                <input type="hidden" name="_purchase_detail_id[]" class="form-control _purchase_detail_id _purchase_detail_id__${row_id}" value=${_purchase_detail_id} >
+                                                
+                                                <div class="search_box_item">
+                                                  
+                                                </div>
+                                              </td>
+                                             
+                                              <td class="@if($_show_barcode==0) display_none @endif">
+                                                <input type="text" readonly name="_barcode[]" class="form-control _barcode _barcode__${row_id} " value="${_barcode}" >
+                                              </td>
+                                              <td>
+                                                <input type="number" name="_qty[]" class="form-control _qty _qty__${row_id} _common_keyup" value="${_qty}" >
+                                              </td>
+                                              <td class="@if($_show_cost_rate==0) display_none @endif">
+                                                <input type="number" name="_rate[]" class="form-control _rate _rate__${row_id} " readonly value="${_pur_rate}" >
+                                              </td>
+                                              <td>
+                                                <input type="number" name="_sales_rate[]" class="form-control _sales_rate _sales_rate__${row_id} _common_keyup" value="${_sales_rate}" >
+                                              </td>
+                                               
+                                                <td class="@if($_show_vat==0) display_none @endif">
+                                                <input type="number" name="_vat[]" class="form-control  _vat _vat__${row_id} _common_keyup" value="${_sales_vat}" >
+                                              </td>
+                                              <td class="@if($_show_vat==0) display_none @endif">
+                                                <input type="number" name="_vat_amount[]" class="form-control  _vat_amount _vat_amount__${row_id}" value="${_vat_amount}" >
+                                              </td>
+                                                <td class="@if($_inline_discount==0) display_none @endif">
+                                                <input type="number" name="_discount[]" class="form-control  _discount _discount__${row_id} _common_keyup" value="${_sales_discount}" >
+                                              </td>
+                                              <td class="@if($_inline_discount==0) display_none @endif">
+                                                <input type="number" name="_discount_amount[]" class="form-control  _discount_amount _discount_amount__${row_id}" value="${_discount_amount}" >
+                                              </td>
+                                             
+                                              <td>
+                                                <input type="number" name="_value[]" class="form-control _value _value__${row_id} " readonly value="${_value_line}" >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date__${row_id} _manufacture_date " value="${_manufacture_date}" >
+                                              </td>
+                                              <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date__${row_id} _expire_date " value="${_expire_date}" >
+                                              </td>
+                                              
+                                              <td class="@if(sizeof($permited_branch)==1) display_none @endif">
+                                                <select class="form-control  _main_branch_id_detail__${row_id} _main_branch_id_detail" name="_main_branch_id_detail[]"  required>
+                                                  @forelse($permited_branch as $branch )
+                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
+                                                  @empty
+                                                  @endforelse
+                                                </select>
+                                              </td>
+                                              
+                                               <td class="@if(sizeof($permited_costcenters)==1) display_none @endif">
+                                                 <select class="form-control  _main_cost_center__${row_id} _main_cost_center" name="_main_cost_center[]" required >
+                                            
+                                                  @forelse($permited_costcenters as $costcenter )
+                                                  <option value="{{$costcenter->id}}" @if(isset($request->_main_cost_center)) @if($request->_main_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  @empty
+                                                  @endforelse
+                                                </select>
+                                              </td>
+                                              
+                                             
+                                              <td class="@if(sizeof($store_houses)==1) display_none @endif">
+                                                <select class="form-control  _main_store_id__${row_id} _main_store_id" name="_main_store_id[]">
+                                                  @forelse($store_houses as $store)
+                                                  <option value="{{$store->id}}" >{{$store->_name ?? '' }}</option>
+                                                  @empty
+                                                  @endforelse
+                                                </select>
+                                                
+                                              </td>
+                                              
+                                              <td class="@if($_show_self==0) display_none @endif">
+                                                <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id _store_salves_id__${row_id} " value="${_store_salves_id}" >
+                                              </td>
+                                              
+                                              
+                                            </tr>`);
+
+_purchase_total_calculation();
+
+}
 
   
 
@@ -654,7 +1086,7 @@ $(document).on('click','.search_row_item',function(){
   if(isNaN(_sales_vat)){ _sales_vat=0 }
   _vat_amount = ((_sales_rate*_sales_vat)/100)
   if(isNaN(_sales_discount)){ _sales_discount=0 }
-  _discount_amount = ((_sales_rate*_sales_discount)/100)
+  _discount_amount = ((_sales_rate*_sales_discount)/100);
   
 
   $(this).parent().parent().parent().parent().parent().parent().find('._item_id').val(_p_item_item_id);

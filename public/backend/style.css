@@ -169,6 +169,21 @@ label{
     background: #e9ecef;
     cursor: pointer;
 }
+._barcode_search_row_item{
+    
+    background: #fff;
+    border: 1px solid silver;
+}
+._cursor_pointer{
+    cursor: pointer;
+}
+._cursor_pointer:hover{
+    background: #e9ecef;
+    cursor: pointer;
+}
+._barcode_search_row_item:hover{
+    background: #a3dfe2;
+}
 .search_box{
 	position: absolute;
     z-index: 9999;
