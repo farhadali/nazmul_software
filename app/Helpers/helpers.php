@@ -12,6 +12,32 @@ use App\Models\StoreHouse;
 use App\Models\ItemCategory;
 use App\Models\Units;
 
+
+if (!function_exists('sms_send')) {
+    
+
+
+    function sms_send($messages, $to){
+        $api_key ="F54d7hem0z1h8SrN9HAt4hvhJZzd0gB1vgUW935O"; 
+        $url="https://api.sms.net.bd/sendsms?api_key=".$api_key."&msg=".$messages."&to=".$to."";  
+        $curl = curl_init();
+        
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT , 30);
+        curl_setopt($curl, CURLOPT_USERAGENT , "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)");
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        $result = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        if($err)
+            return $err;
+        else
+            return $result;
+    }
+ }
+
 if (! function_exists('convertLocalToUTC')) {
     function convertLocalToUTC($time)
     {

@@ -76,6 +76,7 @@ $__user= Auth::user();
                                       </div>
                                   </div>
                               </div>
+                              <input type="hidden" id="_search_form_value" name="_search_form_value" class="_search_form_value" value="1" >
                         </div>
 
                         <div class="col-xs-12 col-sm-12 col-md-3">
@@ -98,6 +99,7 @@ $__user= Auth::user();
                                 
                             </div>
                         </div>
+
                         
 
                           <div class="col-xs-12 col-sm-12 col-md-3 ">

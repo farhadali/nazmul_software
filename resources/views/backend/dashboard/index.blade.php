@@ -140,7 +140,7 @@ WHERE t1._status=1 AND t1.`_branch_id` IN(".$users->branch_ids.") AND t1.`_cost_
 </span>
                         @forelse($_purchase as $val)
                       <div class="info-box-content">
-                        <span class="info-box-text"><h4>Total  {{ _ledger_name($val->_account_ledger) ?? 'Purchase' }}</h4></span>
+                        <span class="info-box-text"><h4>Total Purchase</h4></span>
                         <span class="info-box-number total_purchase"><h3> {{prefix_taka()}}. {{ _report_amount($val->_balance ?? 0) }}</h3></span>
                       </div>
                       @empty
@@ -161,7 +161,7 @@ WHERE t1._status=1 AND t1.`_branch_id` IN(".$users->branch_ids.") AND t1.`_cost_
                       <span class="info-box-icon bg-yellow"><i class="fa fa-shopping-cart text-white" aria-hidden="true"></i></span>
                         @forelse($data as $val)
                       <div class="info-box-content">
-                        <span class="info-box-text"><h4>Total  {{ _ledger_name($val->_account_ledger) }}</h4></span>
+                        <span class="info-box-text"><h4>Total Sales</h4></span>
                         <span class="info-box-number total_purchase"><h3> {{prefix_taka()}}. {{ _report_amount($val->_balance ?? 0) }}</h3></span>
                       </div>
                       @empty
@@ -182,7 +182,7 @@ WHERE t1._status=1 AND t1.`_branch_id` IN(".$users->branch_ids.") AND t1.`_cost_
                       <span class="info-box-icon bg-red"><i class="fa fa-shopping-basket  text-white" aria-hidden="true"></i></span>
                         @forelse($data as $val)
                       <div class="info-box-content">
-                        <span class="info-box-text"><h4>Total  {{ _ledger_name($val->_account_ledger) }}</h4></span>
+                        <span class="info-box-text"><h4>Total Purchase Return</h4></span>
                         <span class="info-box-number total_purchase"><h3> {{prefix_taka()}}. {{ _report_amount($val->_balance ?? 0) }}</h3></span>
                       </div>
                       @empty
@@ -203,7 +203,7 @@ WHERE t1._status=1 AND t1.`_branch_id` IN(".$users->branch_ids.") AND t1.`_cost_
                       <span class="info-box-icon bg-red"><i class="fa fa-shopping-cart   text-white" aria-hidden="true"></i></span>
                         @forelse($data as $val)
                       <div class="info-box-content">
-                        <span class="info-box-text"><h4>Total  {{ _ledger_name($val->_account_ledger) }}</h4></span>
+                        <span class="info-box-text"><h4>Total Sales Return</h4></span>
                         <span class="info-box-number total_purchase"><h3> {{prefix_taka()}}. {{ _report_amount($val->_balance ?? 0) }}</h3></span>
                       </div>
                       @empty

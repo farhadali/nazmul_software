@@ -82,6 +82,7 @@ $__user= Auth::user();
                                   </div>
                               </div>
                               <input type="hidden" name="_sales_return_id" class="_sales_return_id" value="">
+                              <input type="hidden" id="_search_form_value" name="_search_form_value" class="_search_form_value" value="2" >
                         </div>
 
                         <div class="col-xs-12 col-sm-12 col-md-2 @if(sizeof($permited_branch) == 1) display_none @endif ">

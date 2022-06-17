@@ -52,7 +52,7 @@
                                <select  class="form-control _category_id select2" name="_category_id" required>
                                   <option value="">--Select Category--</option>
                                   @forelse($categories as $category )
-                                  <option value="{{$category->id}}" @if(isset($request->_category_id)) @if($request->_category_id == $category->id) selected @endif   @endif>{{ $category->_name ?? '' }}</option>
+                                  <option value="{{$category->id}}" @if(isset($request->_category_id)) @if($request->_category_id == $category->id) selected @endif   @endif>{{ $category->_parents->_name ?? 'C' }}->{{ $category->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                 </select>

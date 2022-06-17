@@ -96,18 +96,9 @@ $__user= Auth::user();
                                   </div>
                               </div>
                               <input type="hidden" name="_sales_id" value="{{$data->id}}" class="_sales_id" >
+                              <input type="hidden" id="_search_form_value" name="_search_form_value" class="_search_form_value" value="2" >
                         </div>
-                         <div class="col-xs-12 col-sm-12 col-md-3 ">
-                            <div class="form-group">
-                              <label class="mr-2" for="_main_ledger_id">Supplier:<span class="_required">*</span></label>
-                            <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="{{old('_search_main_ledger_id',$data->_ledger->_name ?? '' )}}" placeholder="Supplier" required>
-
-                            <input type="hidden" id="_main_ledger_id" name="_main_ledger_id" class="form-control _main_ledger_id" value="{{old('_main_ledger_id',$data->_ledger_id)}}" placeholder="Supplier" required>
-                            <div class="search_box_main_ledger"> </div>
-
-                                
-                            </div>
-                        </div>
+                         
 
                         <div class="col-xs-12 col-sm-12 col-md-2 @if(sizeof($permited_branch) == 1) display_none @endif ">
                             <div class="form-group ">
@@ -154,8 +145,20 @@ $__user= Auth::user();
                             <div class="search_box_delivery_man"> </div>
                             </div>
                         </div>
+                      </div>
+                        <div class="row">
 
-                        
+                        <div class="col-xs-12 col-sm-12 col-md-3 ">
+                            <div class="form-group">
+                              <label class="mr-2" for="_main_ledger_id">Supplier:<span class="_required">*</span></label>
+                            <input type="text" id="_search_main_ledger_id" name="_search_main_ledger_id" class="form-control _search_main_ledger_id" value="{{old('_search_main_ledger_id',$data->_ledger->_name ?? '' )}}" placeholder="Supplier" required>
+
+                            <input type="hidden" id="_main_ledger_id" name="_main_ledger_id" class="form-control _main_ledger_id" value="{{old('_main_ledger_id',$data->_ledger_id)}}" placeholder="Supplier" required>
+                            <div class="search_box_main_ledger"> </div>
+
+                                
+                            </div>
+                        </div>
                         
                         <div class="col-xs-12 col-sm-12 col-md-3 ">
                             <div class="form-group">
@@ -179,6 +182,8 @@ $__user= Auth::user();
                                 
                             </div>
                         </div>
+                      </div>
+
                         <div class="col-md-12  ">
                              <div class="card">
                               <div class="card-header">
@@ -245,7 +250,7 @@ $__user= Auth::user();
                                                 
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item" value="{{ $detail->_purchase_invoice_no ?? '' }},{{$detail->_items->_name ?? '' }}, {{$detail->_items->_qty ?? '' }}">
+                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px _search_item_id__{{$detail->_p_p_l_id}}" placeholder="Item" value="{{ $detail->_purchase_invoice_no ?? '' }},{{$detail->_items->_name ?? '' }}, {{$detail->_items->_qty ?? '' }}">
                                                 <input type="hidden" name="_item_id[]" class="form-control _item_id width_200_px" value="{{$detail->_item_id}}">
 
                                                 
@@ -666,6 +671,9 @@ $(document).on('click','.search_row_item',function(){
   $(this).parent().parent().parent().parent().parent().parent().find('._store_salves_id').val(_store_salves_id);
   $(this).parent().parent().parent().parent().parent().parent().find('._manufacture_date').val(_manufacture_date);
   $(this).parent().parent().parent().parent().parent().parent().find('._expire_date').val(_expire_date);
+  var _search_item_id="_search_item_id__"+row_id;
+  $(this).parent().parent().parent().parent().parent().parent().find('._search_item_id').addClass(_search_item_id)
+
 
   _purchase_total_calculation();
   $('.search_box_item').hide();
@@ -1007,6 +1015,9 @@ function purchase_row_add(event){
     })
      var unique_p_ids = [...new Set(_only_p_ids)];
      var _sales_id = $("._sales_id").val();
+     console.log(_p_p_l_ids_qtys)
+     console.log(unique_p_ids)
+     console.log(_sales_id)
      var _stop_sales =0;
     if(_p_p_l_ids_qtys.length > 0){
         var request = $.ajax({
@@ -1018,13 +1029,16 @@ function purchase_row_add(event){
               });
                
               request.done(function( result ) {
-                console.log(result)
-                
+                console.log(result);
+                $("._search_item_id").removeClass('_required');
                   if(result.length > 0){
-                     
+                     for (var i = 0; i < result.length; i++) {
+                      $("._search_item_id__"+result[i]).addClass('_required'); 
+                     }
                    _stop_sales=1;
                   }else{
-                     $(document).find("._over_qty").text('');
+                    $("._search_item_id__"+result[i]).removeClass('_required') 
+                     $(document).find(".alert").text('');
                   }
               })
     }
@@ -1032,7 +1046,8 @@ function purchase_row_add(event){
     if(_stop_sales ==1){
       alert(" You Can not Sales More then Available Qty  ");
        var _message =" You Can not Sales More then Available Qty";
-        $(document).find("._over_qty").text(_message);
+       $(document).find(".alert").addClass('_required')
+        $(document).find(".alert").text(_message);
        
         $(".remove_area").hide();
       return false;

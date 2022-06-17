@@ -82,7 +82,7 @@ class InventoryController extends Controller
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
         $page_name = $this->page_name;
 
-        $categories = ItemCategory::orderBy('_name','asc')->get();
+        $categories = ItemCategory::with(['_parents'])->orderBy('_name','asc')->get();
         if($request->has('print')){
             if($request->print =="single"){
                 return view('backend.item-information.master_print',compact('datas','page_name','request','limit'));
@@ -161,7 +161,7 @@ class InventoryController extends Controller
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
         $page_name ='Lot Wise Item Information';
 
-        $categories = ItemCategory::orderBy('_name','asc')->get();
+        $categories = ItemCategory::with('_parents')->orderBy('_name','asc')->get();
         if($request->has('print')){
             if($request->print =="single"){
                 return view('backend.item-information.lot_print',compact('datas','page_name','request','limit'));
@@ -233,7 +233,7 @@ class InventoryController extends Controller
      public function create()
     {
         $page_name = $this->page_name;
-        $categories = ItemCategory::orderBy('_name','asc')->get();
+        $categories = ItemCategory::with(['_parents'])->orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
        return view('backend.item-information.create',compact('page_name','categories','units'));
     }
@@ -311,7 +311,7 @@ class InventoryController extends Controller
     {
         $page_name = $this->page_name;
          $data= Inventory::with(['_category','_units'])->find($id);
-        $categories = ItemCategory::orderBy('_name','asc')->get();
+        $categories = ItemCategory::with(['_parents'])->orderBy('_name','asc')->get();
        return view('backend.item-information.show',compact('page_name','categories','data'));
     }
 
@@ -325,7 +325,7 @@ class InventoryController extends Controller
     {
          $page_name = $this->page_name;
          $data= Inventory::find($id);
-        $categories = ItemCategory::orderBy('_name','asc')->get();
+        $categories = ItemCategory::with(['_parents'])->orderBy('_name','asc')->get();
          $units = Units::orderBy('_name','asc')->get();
        return view('backend.item-information.edit',compact('page_name','categories','data','units'));
     }

@@ -213,10 +213,19 @@ class SalesController extends Controller
         return json_encode($_over_qty); 
     }
     public function checkAvailableQtyUpdate(Request $request){
+        $unique_p_ids = $request->unique_p_ids ?? [];
+        $_p_ids = implode(",",$unique_p_ids);
 
-        $previous_sales_details = \DB::select(" SELECT s1._p_p_l_id,s1._item_id,SUM(s1._qty+s2._qty) as _total_qty FROM sales_details as s1
-INNER JOIN product_price_lists AS s2 ON s1._p_p_l_id=s2.id
-WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
+        $previous_sales_details = \DB::select(" SELECT t1._p_p_l_id,t1._item_id,SUM(t1._qty) as _total_qty
+FROM (
+SELECT s1._p_p_l_id,s1._item_id,s1._qty
+    FROM sales_details as s1
+WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id
+UNION ALL
+SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty 
+    FROM product_price_lists AS s1 WHERE s1.id IN(".$_p_ids.")
+    ) as t1 GROUP BY t1._p_p_l_id ");
+
         $unique_p_q = [];
         foreach($request->_p_p_l_ids_qtys as $index=> $val){
          $unique_p_q[$val["_p_id"]][]=$val;
@@ -354,8 +363,11 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
      */
     public function store(Request $request)
     {
+        // $messages="Hello,THis is farhad";
+        // $to="8801756256562";
+        // sms_send($messages, $to);
          
-     // return $request->all();
+    
          $this->validate($request, [
             '_date' => 'required',
             '_branch_id' => 'required',
@@ -369,7 +381,9 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
     //_cash_customer_check($_cutomer_id,$_selected_customers,$_bill_amount,$_total)
   $check_cash_customers=  _cash_customer_check($request->_main_ledger_id,$SalesFormSetting->_cash_customer,$request->_total,$request->_total_dr_amount);
   if($check_cash_customers=='no'){
-     return redirect()->back()->with('error','Cash Customer Must Paid Full Amount!');
+     return redirect()->back()
+     ->with('request',$request->all())
+     ->with('error','Cash Customer Must Paid Full Amount!');
   }
 
 
@@ -416,11 +430,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $Sales->_sales_type = $request->_sales_type ?? 'sales';
         $Sales->_status = 1;
         $Sales->save();
-        $_master_id = $Sales->id;
-
-       
-
-                                           
+        $_master_id = $Sales->id;             
 
         //###########################
         // Purchase Master information Save End
@@ -712,7 +722,9 @@ $_l_balance = _l_balance_update($request->_main_ledger_id);
                 ->with('delivery_man_name_leder',$delivery_man_name_leder);
        } catch (\Exception $e) {
            DB::rollback();
-           return redirect()->back()->with('danger','There is Something Wrong !');
+           return redirect()->back()
+           ->with('request',$request->all())
+           ->with('danger','There is Something Wrong !');
         }
 
        
