@@ -10,7 +10,7 @@ class PurchaseOrderDetail extends Model
     use HasFactory;
 
      public function _items(){
-    	return $this->hasOne(Inventory::class,'id','_item_id')->select('id','_item as _name','_unit_id')->with(['_units']);
+    	return $this->hasOne(Inventory::class,'id','_item_id')->select('id','_item as _name','_unit_id','_unique_barcode')->with(['_units']);
     }
 
 

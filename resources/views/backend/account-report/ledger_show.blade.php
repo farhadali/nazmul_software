@@ -61,13 +61,44 @@
     <table class="cewReportTable">
           <thead>
           <tr>
-            <th style="width: 15%;">Date</th>
-            <th style="width: 10%;">ID</th>
-            <th style="width: 20%;">Short Narration</th>
-            <th style="width: 25%;">Narration</th>
-            <th style="width: 10%;" class="text-right" >Dr. Amount</th>
-            <th style="width: 10%;" class="text-right" >Cr. Amount</th>
-            <th style="width: 10%;" class="text-right" >Balance</th>
+            @php
+            $colspan=4;
+            $_less=0;
+            $grand_colspan =1;
+             
+            @endphp
+            <th style="width: 15%;border:1px solid silver;">Date</th>
+            @if(isset($previous_filter['_check_id']))
+            @php
+            $colspan +=1;
+            $grand_colspan +=1;
+            @endphp
+            <th style="width: 10%;border:1px solid silver;">ID</th>
+            @else
+            
+            @endif
+
+            @if(isset($previous_filter['short_naration']))
+            <th style="width: 10%;border:1px solid silver;">Short Narration</th>
+            @php
+            $colspan +=1;
+            $grand_colspan +=1;
+            @endphp
+           @else
+            
+            @endif
+            @if(isset($previous_filter['naration']))
+            <th style="width: 10%;border:1px solid silver;">Narration</th>
+            @php
+            $colspan +=1;
+            $grand_colspan +=1;
+            @endphp
+            @else
+            
+            @endif
+            <th style="width: 10%;border:1px solid silver;" class="text-right" >Dr. Amount</th>
+            <th style="width: 10%;border:1px solid silver;" class="text-right" >Cr. Amount</th>
+            <th style="width: 10%;border:1px solid silver;" class="text-right" >Balance</th>
           </tr>
           
           
@@ -105,7 +136,7 @@
                     <td style="text-align: left;">
                       
                       {{ _view_date_formate($detail->_date ?? $_datex) }} </td>
-                     
+                 @if(isset($previous_filter['_check_id']))    
                     <td class="text-left">
                     @if($detail->_table_name=="voucher_masters")
                  <a style="text-decoration: none;" target="__blank" href="{{ route('voucher.show',$detail->_id) }}">
@@ -148,8 +179,13 @@
                   DM-{!! $detail->_id ?? '' !!}</a>
                     @endif
              </td>
+             @endif
+             @if(isset($previous_filter['short_naration']))
                     <td style="text-align: left;">{{ $detail->_short_narration ?? '' }} </td>
+              @endif
+             @if(isset($previous_filter['naration']))
                     <td style="text-align: left;">{{ $detail->_narration ?? '' }} </td>
+            @endif
                     <td style="text-align: right;">{{ _report_amount($detail->_dr_amount ?? 0) }} </td>
                     <td style="text-align: right;">{{ _report_amount($detail->_cr_amount ?? 0) }} </td>
                     <td style="text-align: right;">{{ _show_amount_dr_cr(_report_amount(  $runing_balance_total )) }} </td>
@@ -169,14 +205,14 @@
 
               
             <tr>
-                  <td colspan="7"></td>
+                 <td colspan="{{$colspan}}"></td>
             </tr>
 
             @empty
             @endforelse
             <tr>
               
-                <td colspan="4" style="text-align: left;background: #f5f9f9;"><b>Grand Total </b> </td>
+                <td colspan="{{($grand_colspan)}}" style="text-align: left;background: #f5f9f9;"><b>Grand Total </b> </td>
                 <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_dr_grand_total) }}</b> </td>
                 <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_cr_grand_total) }}</b> </td>
                 <td style="text-align: right;background: #f5f9f9;"> <b>{{_show_amount_dr_cr(_report_amount($_total_balance)) }}</b> </td>
@@ -185,13 +221,14 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="7">
+              <td colspan="{{$colspan}}">
                 <div class="col-12 mt-5">
                   <div class="row">
-                    <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>
+                    
                     <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Prepared By</span></div>
                     <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Checked By</span></div>
                     <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;"> Approved By</span></div>
+                    <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>
                   </div>
 
                     

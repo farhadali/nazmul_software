@@ -72,7 +72,7 @@
                 <table style="width: 100%">
                   <tr><td>
                     <b>Invoice No: {{ $data->id ?? '' }}</b><br>
-                    <b>Date:</b> Date: {{ _view_date_formate($data->_date ?? '') }}  {{$data->_time ?? ''}}<br>
+                    <b>Date:</b>  {{ _view_date_formate($data->_date ?? '') }}  {{$data->_time ?? ''}}<br>
                     <b>Created By:</b> {{$data->_user_name ?? ''}}<br>
                     <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}
                   </td></tr>

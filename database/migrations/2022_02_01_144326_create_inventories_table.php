@@ -31,6 +31,7 @@ class CreateInventoriesTable extends Migration
             $table->string('_manufacture_company')->nullable();
             $table->tinyInteger('_status')->default(0);
             $table->tinyInteger('_is_used')->default(0);
+            $table->tinyInteger('_unique_barcode')->default(0);
             $table->string('_created_by',60)->nullable();
             $table->string('_updated_by',60)->nullable();
             $table->timestamps();

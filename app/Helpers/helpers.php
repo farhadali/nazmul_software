@@ -165,7 +165,7 @@ if (! function_exists('inventory_stock_update')) {
     function inventory_stock_update($item_id)
     {
         $balance=\DB::select("SELECT SUM(IFNULL(_qty,0)) as _balance FROM item_inventories WHERE _item_id=$item_id ");
-        \DB::table('inventories')->where('id',$item_id)->update(['_balance'=>$balance[0]->_balance]);
+        \DB::table('inventories')->where('id',$item_id)->update(['_balance'=>$balance[0]->_balance,'_is_used'=>1]);
     }
 }
 

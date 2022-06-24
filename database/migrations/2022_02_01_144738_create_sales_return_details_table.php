@@ -28,6 +28,7 @@ class CreateSalesReturnDetailsTable extends Migration
             $table->double('_vat',15,4)->default(0);
             $table->double('_value',15,4)->default(0);
             $table->integer('_store_id')->default(0);
+            $table->string('_warranty')->default(0);
             $table->integer('_cost_center_id')->default(0);
             $table->integer('_store_salves_id')->default(0);
             $table->date('_manufacture_date')->nullable();

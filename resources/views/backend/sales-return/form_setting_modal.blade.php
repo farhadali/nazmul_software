@@ -99,6 +99,13 @@
           <option value="1" @if(isset($form_settings->_show_self))@if($form_settings->_show_self==1) selected @endif @endif>YES</option>
         </select>
       </div>
+      <div class="form-group row">
+        <label for="_show_warranty" class="col-sm-5 col-form-label">Show Warranty</label>
+        <select class="form-control col-sm-7" name="_show_warranty">
+          <option value="0" @if(isset($form_settings->_show_warranty))@if($form_settings->_show_warranty==0) selected @endif @endif>NO</option>
+          <option value="1" @if(isset($form_settings->_show_warranty))@if($form_settings->_show_warranty==1) selected @endif @endif>YES</option>
+        </select>
+      </div>
 
       <div class="form-group row">
         <label for="_show_expire_date" class="col-sm-5 col-form-label">Show Expire Date</label>

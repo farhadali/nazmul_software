@@ -64,7 +64,7 @@ $__user= Auth::user();
                     <div class="row">
 
                        <div class="col-xs-12 col-sm-12 col-md-4">
-                        <input type="hidden" name="_form_name" value="purchases_return">
+                        <input type="hidden" name="_form_name" class="_form_name"  value="purchases_return">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -229,6 +229,15 @@ $__user= Auth::user();
                                               @endif
                                             @endif
                                               <td>
+@if($detail->_items->_unique_barcode==1)
+ <script type="text/javascript">
+  $('#<?php echo ($m_key+1);?>__barcode').amsifySuggestags({
+      trimValue: true,
+      dashspaces: true,
+      showPlusAfter: 1,
+      });
+</script>
+@endif
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup"  value="{{$detail->_qty ?? 0 }}" >
                                               </td>
                                               <td>
@@ -470,6 +479,7 @@ $__user= Auth::user();
                            <input type="hidden" name="_item_row_count" value="{{sizeof($__master_details)}}" class="_item_row_count">
                               </td>
                             </tr>
+                             @include('backend.message.send_sms')
                           </table>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
@@ -622,9 +632,7 @@ $__user= Auth::user();
   }
 
    var _item_row_count = parseFloat($(document).find('._item_row_count').val());
-  for (var i = 0; i <= _item_row_count; i++) {
-     _new_barcode_function(i)
-  }
+  
 
   $(document).on('keyup','._search_order_ref_id',delay(function(e){
     $(document).find('._search_order_ref_id').removeClass('required_border');

@@ -66,7 +66,7 @@ $__user= Auth::user();
                                    <div class="row">
 
                        <div class="col-xs-12 col-sm-12 col-md-3">
-                        <input type="hidden" name="_form_name" value="purchases">
+                        <input type="hidden" name="_form_name" class="_form_name" value="purchases">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -435,6 +435,7 @@ $__user= Auth::user();
                           <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="0">
                               </td>
                             </tr>
+                             @include('backend.message.send_sms')
                           </table>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
@@ -634,6 +635,7 @@ $__user= Auth::user();
                                         <input type="hidden" name="_name_item" class="_name_item" value="${data[i]._name}">
                                   <input type="hidden" name="_item_barcode" class="_item_barcode" value="${data[i]._barcode}">
                                   <input type="hidden" name="_item_rate" class="_item_rate" value="${data[i]._pur_rate}">
+                                  <input type="hidden" name="_unique_barcode" class="_unique_barcode" value="${data[i]._unique_barcode}">
                                   <input type="hidden" name="_item_sales_rate" class="_item_sales_rate" value="${data[i]._sale_rate}">
                                   <input type="hidden" name="_item_vat" class="_item_vat" value="${data[i]._vat}">
                                    </td>
@@ -667,6 +669,12 @@ $(document).on('click','.search_row_item',function(){
   var _item_rate = $(this).find('._item_rate').val();
   var _item_sales_rate = $(this).find('._item_sales_rate').val();
   var _item_vat = parseFloat($(this).find('._item_vat').val());
+  var _unique_barcode = parseFloat($(this).find('._unique_barcode').val());
+ var _item_row_count = _ref_counter;
+  if(_unique_barcode ==1){
+    _new_barcode_function(_item_row_count);
+  }
+  
   if(isNaN(_item_vat)){ _item_vat=0 }
   _vat_amount = ((_item_rate*_item_vat)/100)
   
@@ -683,10 +691,15 @@ $(document).on('click','.search_row_item',function(){
   $(this).parent().parent().parent().parent().parent().parent().find('._value').val(_item_rate);
  var _ref_counter = $(this).parent().parent().parent().parent().parent().parent().find('._ref_counter').val();
   $(this).parent().parent().parent().parent().parent().parent().find('._barcode').attr('name',_ref_counter+'__barcode__'+_id);
+  var _item_row_count = _ref_counter;
+  if(_unique_barcode ==1){
+    _new_barcode_function(_item_row_count);
+  }
 
   _purchase_total_calculation();
   $('.search_box_item').hide();
   $('.search_box_item').removeClass('search_box_show').hide();
+  
 })
 
 $(document).on('click',function(){
@@ -856,6 +869,7 @@ if(data.length > 0 ){
   for (var i = 0; i < data.length; i++) {
    var _item_row_count = (parseFloat(i)+1);
     var _item_name = (data[i]._items._name) ? data[i]._items._name : '' ;
+    var _unique_barcode = (data[i]._items._unique_barcode) ? data[i]._items._unique_barcode : '' ;
     var _item_id = (data[i]._item_id) ? data[i]._item_id : '' ;
     var _qty   = (data[i]._qty  ) ? data[i]._qty   : 0 ;
     var _rate    = (data[i]._rate) ? data[i]._rate    : 0 ;
@@ -880,11 +894,11 @@ if(data.length > 0 ){
                                               </td>
                                               @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td>
-                                                <input type="text" name="_barcode[]" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode" >
+                                                <input type="text" name="${_item_row_count}_barcode__${_item_id}" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode" >
                                               </td>
                                               @else
                                               <td class="display_none">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode"  >
+                                                <input type="text" name="${_item_row_count}_barcode__${_item_id}" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode"  >
                                               </td>
                                               @endif
                                               @endif
@@ -997,8 +1011,11 @@ if(data.length > 0 ){
                                               </td>
                                               
                                             </tr>`);
+if(_unique_barcode ==1){
+  _new_barcode_function(_item_row_count);
+}
                                            
-                                            _new_barcode_function(_item_row_count);
+                                            
                                           }
 
                                         }else{
@@ -1252,7 +1269,7 @@ function purchase_row_add(event){
                                               
                                             </tr>`);
      
-      _new_barcode_function(_item_row_count);
+      
 
 }
  $(document).on('click','._purchase_row_remove',function(event){
@@ -1329,7 +1346,7 @@ function purchase_row_add(event){
     }
   })
 
-_new_barcode_function(_item_row_count);
+//_new_barcode_function(_item_row_count);
   function _new_barcode_function(_item_row_count){
       $('#'+_item_row_count+'__barcode').amsifySuggestags({
       trimValue: true,

@@ -26,6 +26,9 @@ use App\Models\ItemCategory;
 use App\Models\Units;
 use App\Models\DamageFormSetting;
 use App\Models\DamageAdjustmentDetail;
+use App\Models\Warranty;
+use App\Models\BarcodeDetail;
+use App\Models\DamageBarcode;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -177,8 +180,9 @@ class DamageAdjustmentController extends Controller
         $vat_accounts =[];
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
+         $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->get();
 
-       return view('backend.damage.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units'));
+       return view('backend.damage.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','_warranties'));
     }
 
      public function formSettingAjax(){
@@ -208,6 +212,7 @@ class DamageAdjustmentController extends Controller
         $data->_show_cost_rate = $request->_show_cost_rate ?? 1;
         $data->_show_manufacture_date = $request->_show_manufacture_date ?? 1;
         $data->_show_expire_date = $request->_show_expire_date ?? 1;
+        $data->_show_warranty = $request->_show_warranty ?? 0;
         $data->save();
 
 
@@ -238,18 +243,46 @@ class DamageAdjustmentController extends Controller
     public function store(Request $request)
     {
          
-     // return $request->all();
+      // $request->all();
+        $all_req= $request->all();
          $this->validate($request, [
             '_date' => 'required',
             '_branch_id' => 'required',
             '_main_ledger_id' => 'required',
             '_form_name' => 'required'
         ]);
+
+
+         //###########################
+        // Purchase Details information Save Start
+        //###########################
+        $_item_ids = $request->_item_id;
+        $_barcodes = $request->_barcode;
+        $_qtys = $request->_qty;
+        $_rates = $request->_rate;
+        $_sales_rates = $request->_sales_rate;
+        $_vats = $request->_vat;
+        $_vat_amounts = $request->_vat_amount;
+        $_values = $request->_value;
+        $_main_branch_id_detail = $request->_main_branch_id_detail;
+        $_main_cost_center = $request->_main_cost_center;
+        $_store_ids = $request->_main_store_id;
+        $_store_salves_ids = $request->_store_salves_id;
+        $_p_p_l_ids = $request->_p_p_l_id;
+        $_purchase_invoice_nos = $request->_purchase_invoice_no;
+        $_purchase_detail_ids = $request->_purchase_detail_id;
+        $_discounts = $request->_discount;
+        $_discount_amounts = $request->_discount_amount;
+        $_manufacture_dates = $request->_manufacture_date;
+        $_expire_dates = $request->_expire_date;
+         $_ref_counters = $request->_ref_counter;
+         $_warrantys = $request->_warranty;
     //###########################
     // Purchase Master information Save Start
     //###########################
-        DB::beginTransaction();
-        try {
+         DB::beginTransaction();
+         try {
+             $_p_balance = _l_balance_update($request->_main_ledger_id);
          $__sub_total = (float) $request->_sub_total;
          $__total = (float) $request->_total;
          $__discount_input = (float) $request->_discount_input;
@@ -285,29 +318,7 @@ class DamageAdjustmentController extends Controller
         // Purchase Master information Save End
         //###########################
 
-        //###########################
-        // Purchase Details information Save Start
-        //###########################
-        $_item_ids = $request->_item_id;
-        $_barcodes = $request->_barcode;
-        $_qtys = $request->_qty;
-        $_rates = $request->_rate;
-        $_sales_rates = $request->_sales_rate;
-        $_vats = $request->_vat;
-        $_vat_amounts = $request->_vat_amount;
-        $_values = $request->_value;
-        $_main_branch_id_detail = $request->_main_branch_id_detail;
-        $_main_cost_center = $request->_main_cost_center;
-        $_store_ids = $request->_main_store_id;
-        $_store_salves_ids = $request->_store_salves_id;
-        $_p_p_l_ids = $request->_p_p_l_id;
-        $_purchase_invoice_nos = $request->_purchase_invoice_no;
-        $_purchase_detail_ids = $request->_purchase_detail_id;
-        $_discounts = $request->_discount;
-        $_discount_amounts = $request->_discount_amount;
-        $_manufacture_dates = $request->_manufacture_date;
-        $_expire_dates = $request->_expire_date;
-       
+        
         $_total_cost_value=0;
 
         if(sizeof($_item_ids) > 0){
@@ -320,7 +331,11 @@ class DamageAdjustmentController extends Controller
                 $DamageAdjustmentDetail->_purchase_invoice_no = $_purchase_invoice_nos[$i];
                 $DamageAdjustmentDetail->_purchase_detail_id = $_purchase_detail_ids[$i];
                 $DamageAdjustmentDetail->_qty = $_qtys[$i];
-                $DamageAdjustmentDetail->_barcode = $_barcodes[$i];
+                 $barcode_string=$all_req[$_ref_counters[$i]."__barcode__".$_p_p_l_ids[$i]] ?? '';
+
+                $DamageAdjustmentDetail->_barcode = $barcode_string;
+                 $DamageAdjustmentDetail->_warranty = $_warrantys[$i] ?? 0;
+
                 $DamageAdjustmentDetail->_manufacture_date = $_manufacture_dates[$i];
                 $DamageAdjustmentDetail->_expire_date = $_expire_dates[$i];
                 $DamageAdjustmentDetail->_rate = $_rates[$i];
@@ -346,8 +361,54 @@ class DamageAdjustmentController extends Controller
                 $_p_qty = $ProductPriceList->_qty;
                 $_status = (($_p_qty - $_qtys[$i]) > 0) ? 1 : 0;
                 $ProductPriceList->_qty = ($_p_qty - $_qtys[$i]);
+
+                $_unique_barcode = $ProductPriceList->_unique_barcode;
+
+                //Barcode  deduction from old string data
+                if($_unique_barcode ==1){
+                     $_old_barcode_strings =  $ProductPriceList->_barcode;
+                        $_new_barcode_array = array();
+                        if($_old_barcode_strings !=""){
+                            $_old_barcode_array = explode(",",$_old_barcode_strings);
+                        }
+                        if($barcode_string !=""){
+                            $_new_barcode_array = explode(",",$barcode_string);
+                        }
+                        if(sizeof($_new_barcode_array) > 0 && sizeof($_old_barcode_array) > 0){
+                          $_last_barcode_array =  array_diff($_old_barcode_array,$_new_barcode_array);
+                          if(sizeof($_last_barcode_array ) > 0){
+                            $_last_barcode_string = implode(",",$_last_barcode_array);
+                          }else{
+                            $_last_barcode_string = $barcode_string;
+                          }
+                         
+                          $ProductPriceList->_barcode = $_last_barcode_string;
+                        }
+                }else{
+                  $ProductPriceList->_barcode = $barcode_string;
+                }
+                //Barcode  deduction from old string data
+
                 $ProductPriceList->_status = $_status;
                 $ProductPriceList->save();
+
+
+
+                   $product_price_id =  $ProductPriceList->id;
+             if($_unique_barcode ==1){
+                  if($barcode_string !=""){
+                       $barcode_array=  explode(",",$barcode_string);
+                       $_qty = 1;
+                       $_stat = 1;
+                       $_return=1;
+                       
+                       foreach ($barcode_array as $_b_v) {
+                        _barcode_insert_update('BarcodeDetail', $product_price_id,$_item_ids[$i],$_master_id,$_sales_details_id,$_qty,$_b_v,$_stat,1,1);
+                        _barcode_insert_update('DamageBarcode', $product_price_id,$_item_ids[$i],$_master_id,$_sales_details_id,$_qty,$_b_v,$_stat,0,0);
+                         
+                       }
+                    }
+             }
 
                 $ItemInventory = new ItemInventory();
                 $ItemInventory->_item_id =  $_item_ids[$i];
@@ -406,9 +467,6 @@ class DamageAdjustmentController extends Controller
         $_name =$users->name;
         
         if($__sub_total > 0){
-
-           
-
             //Default Damage DR.
             account_data_save($_ref_master_id,$_ref_detail_id,_find_ledger($_default_inventory),$_narration,$_reference,$_transaction,$_date,$_table_name,$request->_main_ledger_id,$__sub_total,0,$_branch_id,$_cost_center,$_name,1);
            // _default_inventory  Cr.
@@ -442,11 +500,13 @@ class DamageAdjustmentController extends Controller
         
         }
 
-            $_pfix = _damage_pfix().$_master_id;
+             $_l_balance = _l_balance_update($request->_main_ledger_id);
+        $_pfix = _sales_pfix().$_master_id;
 
-             \DB::table('damage_adjustments')
+            
+        \DB::table('damage_adjustments')
              ->where('id',$_master_id)
-             ->update(['_order_number'=>$_pfix]);
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
            DB::commit();
             return redirect()->back()
@@ -496,12 +556,13 @@ class DamageAdjustmentController extends Controller
         $vat_accounts =[];
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
+         $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->get();
          $data =  DamageAdjustment::with(['_master_branch','_master_details','_ledger'])->where('_lock',0)->find($id);
          if(!$data){
             return redirect()->back()->with('danger','You have no permission to edit or update !');
          }
         
-       return view('backend.damage.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data'));
+       return view('backend.damage.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data','_warranties'));
     }
 
     /**
@@ -517,6 +578,7 @@ class DamageAdjustmentController extends Controller
 
          
         //return $request->all();
+         $all_req= $request->all();
          $this->validate($request, [
             '_date' => 'required',
             '_branch_id' => 'required',
@@ -525,16 +587,118 @@ class DamageAdjustmentController extends Controller
             '_sales_id' => 'required'
         ]);
 
+         //###########################
+        // Purchase Master information Save End
+        //###########################
+
+        //###########################
+        // Purchase Details information Save Start
+        //###########################
+        $_item_ids = $request->_item_id;
+        $_barcodes = $request->_barcode;
+        $_qtys = $request->_qty;
+        $_rates = $request->_rate;
+        $_sales_rates = $request->_sales_rate;
+        $_vats = $request->_vat;
+        $_vat_amounts = $request->_vat_amount;
+        $_values = $request->_value;
+        $_main_branch_id_detail = $request->_main_branch_id_detail;
+        $_main_cost_center = $request->_main_cost_center;
+        $_store_ids = $request->_main_store_id;
+        $_store_salves_ids = $request->_store_salves_id;
+        $_p_p_l_ids = $request->_p_p_l_id;
+        $_purchase_invoice_nos = $request->_purchase_invoice_no;
+        $_purchase_detail_ids = $request->_purchase_detail_id;
+        $_discounts = $request->_discount;
+        $_discount_amounts = $request->_discount_amount;
+        $_sales_detail_row_ids = $request->_sales_detail_row_id;
+         $_manufacture_dates = $request->_manufacture_date;
+        $_expire_dates = $request->_expire_date;
+        $_ref_counters = $request->_ref_counter;
+        $_warrantys = $request->_warranty;
+        $checkqty = array();
+        $over_qtys = array();
+        $_sales_id = $request->_sales_id;
+
          $data =  DamageAdjustment::where('_lock',0)->find($request->_sales_id);
          if(!$data){
             return redirect()->back()->with('danger','You have no permission to edit or update !');
          }
+
+         //Prevoius Return information
+     $previous_sales_details = DamageAdjustmentDetail::where('_no',$_sales_id)->where('_status',1)->get();
+    foreach ($previous_sales_details as $value) {
+         $product_prices = ProductPriceList::where('_purchase_detail_id',$value->_purchase_detail_id)->first();
+         $new_qty = ($value->_qty+$product_prices->_qty);
+         $_unique_barcode = $product_prices->_unique_barcode;
+         $_old_new_barcode = $value->_barcode.",".$product_prices->_barcode;
+         array_push($checkqty, ['id'=>$product_prices->_purchase_detail_id,'_qty'=>$new_qty,'_barcode'=>$_old_new_barcode,'_unique_barcode'=>$_unique_barcode]);
+    }
+
+
+
+    foreach ($_purchase_detail_ids as $item_key=> $_item) {
+        foreach ($checkqty as $check_item) {
+              $barcode_string=$all_req[$_ref_counters[$item_key]."__barcode__".$_item_ids[$item_key]] ?? '';
+          if($_unique_barcode ==1){
+            if(strlen($barcode_string) > 0){ //Check Barcode Available
+                if($_item==$check_item["id"]){ //Check Previous item id and Current Item id Same
+                    $_req_barcode_array = explode(",",$barcode_string); // Barcode make array from string
+                    foreach ($_req_barcode_array as $_bar_value) {
+                        $_barcode_yes = str_contains($check_item["_barcode"], $_bar_value); //Check available barcode number with product price list table and previous purchase return details table
+                        if(!$_barcode_yes){
+                           // if Return false then its wrong barcode and send message
+                            $msg = "You Input Wrong Barcode. Wrong Barcode Numer is- ". $_bar_value;
+                            return redirect()->back()->with('danger',$msg);
+                        }else{
+                            //this section come after check available 
+                          $check_model_or_unique =   explode(",",$check_item["_barcode"]); //Barcode string to array to check model barcode or unique barcode
+
+                          if(sizeof(array_unique($check_model_or_unique)) ==1){ // if sizeof($check_model_or_unique)==1 then we desied that its used a model barcode 
+                           
+                              //Model Barcode and now check quantity
+                                if($_item==$check_item["id"] && $_qtys[$item_key] > $check_item["_qty"] ){
+                                    array_push($over_qtys, $_item); //if use model barcode and want to return more then purchase quantity then show a messge
+                                 }
+                          }
+                           //Unique Barcode Olready Check as wrong Barcode number
+                        }
+                       
+                    }
+                }
+            }
+
+
+          }else{
+
+                 //This section come when no barcode used for item purchase and purchase return
+                //Here we need to check item id and item available qty
+                if($_item==$check_item["id"] && $_qtys[$item_key] > $check_item["_qty"] ){
+                    array_push($over_qtys, $_item); //If input Extra qty then shw a messge
+                }
+            }
+            
+        }
+    }
+
+    if(sizeof($over_qtys) > 0){
+        return redirect()->back()
+        ->with('request',$request->all())
+        ->with('danger','You Can not Return More then available Qty !');
+    }
+
+
+
+
+
+
+
     //###########################
     // Purchase Master information Save Start
     //###########################
         DB::beginTransaction();
         try {
-        $_sales_id = $request->_sales_id;
+        
 
        
 
@@ -543,14 +707,47 @@ class DamageAdjustmentController extends Controller
         // 
         //======
 
-        $previous_sales_details = DamageAdjustmentDetail::where('_no',$_sales_id)->get();
+        // $previous_sales_details = DamageAdjustmentDetail::where('_no',$_sales_id)->get();
+        // foreach ($previous_sales_details as $value) {
+        //         $ProductPriceList = ProductPriceList::where('id',$value->_p_p_l_id)->first();
+        //         $_p_qty = $ProductPriceList->_qty;
+        //         $_status = (($_p_qty + $value->_qty) > 0) ? 1 : 0;
+        //         $ProductPriceList->_qty = ($_p_qty + $value->_qty);
+        //         $ProductPriceList->_status = $_status;
+        //         $ProductPriceList->save();
+        // }
+
         foreach ($previous_sales_details as $value) {
-                $ProductPriceList = ProductPriceList::where('id',$value->_p_p_l_id)->first();
-                $_p_qty = $ProductPriceList->_qty;
-                $_status = (($_p_qty + $value->_qty) > 0) ? 1 : 0;
-                $ProductPriceList->_qty = ($_p_qty + $value->_qty);
-                $ProductPriceList->_status = $_status;
-                $ProductPriceList->save();
+
+            $product_prices =ProductPriceList::where('id',$value->_p_p_l_id)->first();
+             $new_qty = ($value->_qty+$product_prices->_qty);
+             $_unique_barcode = $product_prices->_unique_barcode;
+             $_up_status = (($new_qty) > 0) ? 1 : 0;
+             if($_unique_barcode ==1){
+                $_old_new_barcode = $value->_barcode.",".$product_prices->_barcode;
+                if($_old_new_barcode !=""){
+                    $_unique_old_newbarcode_array =   explode(",",$_old_new_barcode);
+                    foreach ($_unique_old_newbarcode_array as $_arraY_val) {
+                      $_unique_old_newbarcode_array[]=trim($_arraY_val);
+                    }
+                    $_unique_old_newbarcode_array = array_unique($_unique_old_newbarcode_array);
+                     $_last_barcode_string = implode(",",$_unique_old_newbarcode_array);
+                     $product_prices->_barcode =$_last_barcode_string;
+                    if(sizeof($_unique_old_newbarcode_array) > 0){
+                        foreach ($_unique_old_newbarcode_array as $_bar_value) {
+                                BarcodeDetail::where('_p_p_id',$product_prices->id)
+                                            ->where('_item_id',$product_prices->_item_id)
+                                            ->where('_barcode',$_bar_value)
+                                            ->update(['_qty'=>1,'_status'=>1]);
+                            }
+                    }
+                }
+                
+             }
+             $product_prices->_qty = $new_qty;
+             
+             $product_prices->save();
+
         }
 
      
@@ -563,6 +760,9 @@ class DamageAdjustmentController extends Controller
     Accounts::where('_ref_master_id',$_sales_id)
                     ->where('_table_name',$request->_form_name)
                      ->update(['_status'=>0]);  
+    DamageBarcode::where('_no_id',$_sales_id)
+                  ->update(['_status'=>0,'_qty'=>0]);
+    $_p_balance = _l_balance_update($request->_main_ledger_id);
   
         
          $__sub_total = (float) $request->_sub_total;
@@ -597,33 +797,7 @@ class DamageAdjustmentController extends Controller
         $_master_id = $DamageAdjustment->id;
                                            
 
-        //###########################
-        // Purchase Master information Save End
-        //###########################
-
-        //###########################
-        // Purchase Details information Save Start
-        //###########################
-        $_item_ids = $request->_item_id;
-        $_barcodes = $request->_barcode;
-        $_qtys = $request->_qty;
-        $_rates = $request->_rate;
-        $_sales_rates = $request->_sales_rate;
-        $_vats = $request->_vat;
-        $_vat_amounts = $request->_vat_amount;
-        $_values = $request->_value;
-        $_main_branch_id_detail = $request->_main_branch_id_detail;
-        $_main_cost_center = $request->_main_cost_center;
-        $_store_ids = $request->_main_store_id;
-        $_store_salves_ids = $request->_store_salves_id;
-        $_p_p_l_ids = $request->_p_p_l_id;
-        $_purchase_invoice_nos = $request->_purchase_invoice_no;
-        $_purchase_detail_ids = $request->_purchase_detail_id;
-        $_discounts = $request->_discount;
-        $_discount_amounts = $request->_discount_amount;
-        $_sales_detail_row_ids = $request->_sales_detail_row_id;
-         $_manufacture_dates = $request->_manufacture_date;
-        $_expire_dates = $request->_expire_date;
+        
 
 
 
@@ -640,6 +814,9 @@ class DamageAdjustmentController extends Controller
                 }else{
                     $DamageAdjustmentDetail = DamageAdjustmentDetail::find($_sales_detail_row_ids[$i]);
                 }
+                 $barcode_string=$all_req[$_ref_counters[$i]."__barcode__".$_item_ids[$i]] ?? '';
+                $DamageAdjustmentDetail->_barcode = $barcode_string;
+                $DamageAdjustmentDetail->_warranty = $_warrantys[$i] ?? 0;
 
                 
                 $DamageAdjustmentDetail->_item_id = $_item_ids[$i];
@@ -647,7 +824,7 @@ class DamageAdjustmentController extends Controller
                 $DamageAdjustmentDetail->_purchase_invoice_no = $_purchase_invoice_nos[$i];
                 $DamageAdjustmentDetail->_purchase_detail_id = $_purchase_detail_ids[$i];
                 $DamageAdjustmentDetail->_qty = $_qtys[$i];
-                $DamageAdjustmentDetail->_barcode = $_barcodes[$i];
+                
                 $DamageAdjustmentDetail->_rate = $_rates[$i];
                 $DamageAdjustmentDetail->_sales_rate = $_sales_rates[$i];
                 $DamageAdjustmentDetail->_discount = $_discounts[$i] ?? 0;
@@ -670,11 +847,65 @@ class DamageAdjustmentController extends Controller
                 $item_info = Inventory::where('id',$_item_ids[$i])->first();
 
                 $ProductPriceList = ProductPriceList::find($_p_p_l_ids[$i]);
+                 $_p_qty = $ProductPriceList->_qty;
+                $_unique_barcode = $ProductPriceList->_unique_barcode;
+ if($_unique_barcode ==1){
+
+                //Barcode  deduction from old string data
+                 $_old_barcode_strings =  $ProductPriceList->_barcode;
+                 $_last_barcode_array = array();
+                $_new_barcode_array = array();
+                if($_old_barcode_strings !=""){
+                    $_old_barcode_array = explode(",",$_old_barcode_strings);
+                }
+                if($barcode_string !=""){
+                    $_new_barcode_array = explode(",",$barcode_string);
+                }
+
+                foreach ($_old_barcode_array as $_old_value) {
+                  if(!in_array($_old_value, $_new_barcode_array)){
+                   
+                    array_push($_last_barcode_array, $_old_value);
+                  }
+                }
+               
+                if(sizeof($_last_barcode_array ) > 0){
+                  $_new_last_barcode_string = implode(",",$_last_barcode_array);
+                  
+                }else{
+                  $_new_last_barcode_string = '';
+                }
+
+$ProductPriceList->_barcode = $_new_last_barcode_string;
+              
+}
+                //Barcode  deduction from old string data
                 $_p_qty = $ProductPriceList->_qty;
                 $_status = (($_p_qty - $_qtys[$i]) > 0) ? 1 : 0;
                 $ProductPriceList->_qty = ($_p_qty - $_qtys[$i]);
                 $ProductPriceList->_status = $_status;
                 $ProductPriceList->save();
+
+                $product_price_id =  $ProductPriceList->id;
+                 $_unique_barcode =  $ProductPriceList->_unique_barcode;
+                  if($_unique_barcode ==1){
+                 if($barcode_string !=""){
+                       $barcode_array=  explode(",",$barcode_string);
+                       $_qty = 1;
+                       $_stat = 1;
+                       $_return=1;
+                       
+                       foreach ($barcode_array as $_b_v) {
+                        _barcode_insert_update('BarcodeDetail', $product_price_id,$_item_ids[$i],$_master_id,$_sales_details_id,$_qty,$_b_v,$_stat,1,1);
+                        _barcode_insert_update('DamageBarcode', $product_price_id,$_item_ids[$i],$_master_id,$_sales_details_id,$_qty,$_b_v,$_stat,0,0);
+                         
+                       }
+                    }
+              }
+
+
+
+
 
                 $ItemInventory = ItemInventory::where('_transection',"Sales")
                                     ->where('_transection_ref',$_sales_id)
@@ -774,7 +1005,13 @@ class DamageAdjustmentController extends Controller
         
         }
 
-       
+        $_l_balance = _l_balance_update($request->_main_ledger_id);
+        $_pfix = _sales_pfix().$_master_id;
+
+            
+        \DB::table('damage_adjustments')
+             ->where('id',$_master_id)
+             ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
        
 

@@ -55,6 +55,18 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Warranty: </label>
+                               <select  class="form-control _warranty select2" name="_warranty" required>
+                                  <option value="">--Select Warranty--</option>
+                                  @forelse($_warranties as $_warranty )
+                                  <option value="{{$_warranty->id}}" @if(isset($data->_warranty)) @if($data->_warranty == $_warranty->id) selected @endif   @endif>{{ $_warranty->_name ?? '' }}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
+                            </div>
+                        </div>
                       
                        
                         <div class="col-xs-12 col-sm-12 col-md-6">
@@ -137,6 +149,15 @@
                                 <select class="form-control" name="_status" id="_status">
                                  <option value="1" @if($data->_status==1) selected @endif >Active</option>
                                   <option value="0" @if($data->_status==0) selected @endif >In Active</option>
+                                </select>
+                            </div>
+                        </div>
+                         <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="_unique_barcode">Use Unique Barcode ?:</label>
+                                <select class="form-control" name="_unique_barcode" id="_unique_barcode">
+                                 <option value="1" @if($data->_unique_barcode==1) selected @endif >Active</option>
+                                  <option value="0" @if($data->_unique_barcode==0) selected @endif >In Active</option>
                                 </select>
                             </div>
                         </div>

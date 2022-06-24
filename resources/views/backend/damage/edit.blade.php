@@ -73,7 +73,7 @@
                       <div class="row">
 
                        <div class="col-xs-12 col-sm-12 col-md-2">
-                        <input type="hidden" name="_form_name" value="damage">
+                        <input type="hidden" name="_form_name" class="_form_name"  value="damage">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -105,7 +105,7 @@
                                 
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-2 ">
+                        <div class="col-xs-12 col-sm-12 col-md-2 display_none">
                             <div class="form-group">
                               <label class="mr-2" for="_order_ref_id">Damage Order:</label>
                               <input type="text" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id',$data->_order_ref_id)}}" placeholder="Damage Order" >
@@ -148,6 +148,15 @@
                                 
                             </div>
                         </div>
+                        @php
+   
+    $_show_barcode = $form_settings->_show_barcode ?? 0;
+    $_show_cost_rate =  $form_settings->_show_cost_rate ?? 0;
+    $_show_vat =  $form_settings->_show_vat ?? 0;
+    $_inline_discount = $form_settings->_inline_discount ?? 0;
+    $_show_self = $_show_self ?? 0;
+    $_show_warranty = $form_settings->_show_warranty ?? 0;
+    @endphp
                         <div class="col-md-12  ">
                              <div class="card">
                               <div class="card-header">
@@ -163,17 +172,18 @@
                                             <th class="text-left" >ID</th>
                                             <th class="text-left" >Item</th>
                                            
-                                            <th class="text-left @if($form_settings->_show_barcode == 0) display_none @endif" >Barcode</th>
+                                            <th class="text-left @if($_show_barcode == 0) display_none @endif" >Barcode</th>
+                                             <th class="text-left @if($_show_warranty  ==0) display_none @endif" >Warranty</th>
                                            
                                             <th class="text-left" >Qty</th>
-                                            <th class="text-left @if($form_settings->_show_cost_rate == 0) display_none @endif" >Cost Rate</th>
+                                            <th class="text-left @if($_show_cost_rate == 0) display_none @endif" >Cost Rate</th>
                                             <th class="text-left" > Rate</th>
                                             
-                                            <th class="text-left @if($form_settings->_show_vat == 0) display_none @endif " >VAT%</th>
-                                            <th class="text-left @if($form_settings->_show_vat == 0) display_none @endif" >VAT Amount</th>
+                                            <th class="text-left @if($_show_vat == 0) display_none @endif " >VAT%</th>
+                                            <th class="text-left @if($_show_vat == 0) display_none @endif" >VAT Amount</th>
                                             
-                                            <th class="text-left @if($form_settings->_inline_discount == 0) display_none @endif " >Dis%</th>
-                                            <th class="text-left @if($form_settings->_inline_discount == 0) display_none @endif " >Dis</th>
+                                            <th class="text-left @if($_inline_discount == 0) display_none @endif " >Dis%</th>
+                                            <th class="text-left @if($_inline_discount == 0) display_none @endif " >Dis</th>
                                             <th class="text-left" >Value</th>
                                              <th class="text-middle @if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none @endif
                                             @endif" >Manu. Date</th>
@@ -186,7 +196,7 @@
                                              <th class="text-left @if(sizeof($store_houses) == 1) display_none @endif" >Store</th>
                                            
                                             
-                                             <th class="text-left @if($form_settings->_show_self==0) display_none @endif" >Shelf</th>
+                                             <th class="text-left @if($_show_self==0) display_none @endif" >Shelf</th>
                                             
                                            
                                           </thead>
@@ -195,9 +205,11 @@
                                           $_total_vat_amount =0;
                                           $_total_value_amount =0;
                                           $_total_discount_amount =0;
+                                          $___master_details = $data->_master_details ?? [];
                                           @endphp
                                           <tbody class="area__purchase_details" id="area__purchase_details">
-                                            @forelse($data->_master_details as $detail)
+                                            @if(sizeof($___master_details) > 0)
+                                            @forelse($data->_master_details as $m_key=> $detail)
                                              @php
                                               $_total_qty_amount += $detail->_qty ??  0;
                                               $_total_vat_amount += $detail->_vat_amount ??  0;
@@ -228,32 +240,53 @@
                                                 </div>
                                               </td>
                                               
-                                              <td class="@if($form_settings->_show_barcode == 0) display_none @endif">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode "  value="{{$detail->_barcode ?? '' }}" >
+                                              <td class="@if($_show_barcode == 0) display_none @endif">
+                                                 <input type="text" name="{{($m_key+1)}}__barcode__{{$detail->_item_id}}" class="form-control _barcode {{($m_key+1)}}__barcode"  value="{{$detail->_barcode ?? '' }} " id="{{($m_key+1)}}__barcode" >
+
+                                                <input type="hidden" name="_unique_barcode[]" value="{{$detail->_items->_unique_barcode}}" class="_unique_barcode   1__unique_barcode" id="{{($m_key+1)}}_unique_barcode">
+                                                <input type="hidden" name="_ref_counter[]" value="{{($m_key+1)}}" class="_ref_counter" id="{{($m_key+1)}}__ref_counter">
+                                              </td>
+                                                 @if($detail->_items->_unique_barcode==1)
+ <script type="text/javascript">
+  $('#<?php echo ($m_key+1);?>__barcode').amsifySuggestags({
+      trimValue: true,
+      dashspaces: true,
+      showPlusAfter: 1,
+      });
+                                            </script>
+                                            @endif
+                                              <td class="@if($_show_warranty  ==0) display_none @endif">
+                                                <select name="_warranty[]" class="form-control _warranty {{($m_key+1)}}___warranty">
+                                                   <option value="0">--None --</option>
+                                                      @forelse($_warranties as $_warranty )
+                                                      <option value="{{$_warranty->id}}" @if($_warranty->id==$detail->_warranty) selected @endif  >{{ $_warranty->_name ?? '' }}</option>
+                                                      @empty
+                                                      @endforelse
+                                                </select>
                                               </td>
                                               
                                               <td>
                                                 <input type="number" min="0"  name="_qty[]" class="form-control _qty _common_keyup"  value="{{$detail->_qty ?? 0 }}" >
                                               </td>
-                                              <td class="@if($form_settings->_show_cost_rate == 0) display_none @endif">
+                                              <td class="@if($_show_cost_rate == 0) display_none @endif">
                                                 <input type="number" min="0"  name="_rate[]" class="form-control _rate  " value="{{$detail->_rate ?? 0 }}" readonly>
                                               </td>
                                               <td>
                                                 <input type="number" min="0"  name="_sales_rate[]" class="form-control _sales_rate " value="{{$detail->_sales_rate ?? 0 }}" >
                                               </td>
                                              
-                                              <td class="@if($form_settings->_show_vat == 0) display_none @endif">
+                                              <td class="@if($_show_vat == 0) display_none @endif">
                                                 <input type="number" name="_vat[]" class="form-control  _vat _common_keyup" value="{{$detail->_vat ?? 0 }}">
                                               </td>
-                                              <td class="@if($form_settings->_show_vat == 0) display_none @endif">
+                                              <td class="@if($_show_vat == 0) display_none @endif">
                                                 <input type="number" name="_vat_amount[]" class="form-control  _vat_amount" value="{{$detail->_vat_amount ?? 0 }}" >
                                               </td>
                                              
                                               
-                                              <td class="@if($form_settings->_inline_discount == 0) display_none @endif">
+                                              <td class="@if($_inline_discount == 0) display_none @endif">
                                                 <input type="number" name="_discount[]" class="form-control  _discount _common_keyup" value="{{$detail->_discount}}">
                                               </td>
-                                              <td class="@if($form_settings->_inline_discount == 0) display_none @endif">
+                                              <td class="@if($_inline_discount == 0) display_none @endif">
                                                 <input type="number" name="_discount_amount[]" class="form-control  _discount_amount" value="{{$detail->_discount_amount}}">
                                               </td>
                                              
@@ -299,12 +332,13 @@
                                               </td>
                                               
                                              
-                                              <td class="@if($form_settings->_show_self == 0) display_none @endif">
+                                              <td class="@if($_show_self == 0) display_none @endif">
                                                 <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " value="{{$detail->_store_salves_id ?? '' }}" >
                                               </td>
                                             </tr>
                                             @empty
                                             @endforelse
+                                            @endif
                                           </tbody>
                                           <tfoot>
                                             <tr>
@@ -314,22 +348,23 @@
                                               <td></td>
                                               <td  class="text-right"><b>Total</b></td>
                                               
-                                                <td  class="text-right @if($form_settings->_show_barcode == 0) display_none @endif"></td>
+                                                <td  class="text-right @if($_show_barcode == 0) display_none @endif"></td>
+                                                 <td class="@if($_show_warranty==0) display_none @endif"></td>
                                              
                                               <td>
                                                 <input type="number" min="0"  step="any" min="0" name="_total_qty_amount" class="form-control _total_qty_amount" value="{{$_total_qty_amount}}" readonly required>
                                               </td>
-                                              <td class="@if($form_settings->_show_cost_rate == 0) display_none @endif"></td>
+                                              <td class="@if($_show_cost_rate == 0) display_none @endif"></td>
                                               <td></td>
                                               
-                                              <td class="@if($form_settings->_show_vat == 0) display_none @endif"></td>
-                                              <td class="@if($form_settings->_show_vat == 0) display_none @endif">
+                                              <td class="@if($_show_vat == 0) display_none @endif"></td>
+                                              <td class="@if($_show_vat == 0) display_none @endif">
                                                 <input type="number" min="0"  step="any" min="0" name="_total_vat_amount" class="form-control _total_vat_amount" value="{{$_total_vat_amount ?? 0}}" readonly required>
                                               </td>
                                               
                                                
-                                              <td class="@if($form_settings->_inline_discount == 0) display_none @endif"></td>
-                                              <td class="@if($form_settings->_inline_discount == 0) display_none @endif">
+                                              <td class="@if($_inline_discount == 0) display_none @endif"></td>
+                                              <td class="@if($_inline_discount == 0) display_none @endif">
                                                 <input type="number" min="0"  step="any" min="0" name="_total_discount_amount" class="form-control _total_discount_amount"  readonly required value="{{$_total_discount_amount ?? 0}}">
                                               </td>
                                               
@@ -344,7 +379,7 @@
                                               <td class="@if(sizeof($permited_branch) == 1) display_none @endif"></td>
                                               <td class="@if(sizeof($permited_costcenters) == 1) display_none @endif"></td>
                                               <td class="@if(sizeof($store_houses) == 1) display_none @endif"></td>
-                                              <td class="@if($form_settings->_show_self==0) display_none @endif"></td>
+                                              <td class="@if($_show_self==0) display_none @endif"></td>
                                               
                                             </tr>
                                           </tfoot>
@@ -396,7 +431,7 @@
                               </td>
                             </tr>
                             
-                            <tr class="@if($form_settings->_show_vat==0) display_none @endif">
+                            <tr class="@if($_show_vat==0) display_none @endif">
                               <td style="width: 10%;border:0px;"><label for="_total_vat">Total VAT</label></td>
                               <td style="width: 70%;border:0px;">
                                 <input type="text" name="_total_vat" class="form-control width_200_px" id="_total_vat" readonly value="{{$data->_total_vat ?? 0}}">
@@ -407,6 +442,7 @@
                               <td style="width: 10%;border:0px;"><label for="_total">NET Total </label></td>
                               <td style="width: 70%;border:0px;">
                           <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{_php_round($data->_total ?? 0)}}">
+                          <input type="hidden" name="_item_row_count" value="{{sizeof($___master_details)}}" class="_item_row_count">
                               </td>
                             </tr>
                           </table>
@@ -491,7 +527,7 @@
 
   function setting_data_fetch(){
       var request = $.ajax({
-            url: "{{url('sales-setting-modal')}}",
+            url: "{{url('damage-setting-modal')}}",
             method: "GET",
             dataType: "html"
           });
@@ -510,7 +546,7 @@
 
 
   var request = $.ajax({
-      url: "{{url('item-sales-search')}}",
+      url: "{{url('item-damage-search')}}",
       method: "GET",
       data: { _text_val : _text_val },
       dataType: "JSON"
@@ -546,6 +582,8 @@
   <input type="hidden" name="_p_item_cost_center_id" class="_p_item_cost_center_id" value="${data[i]._cost_center_id}">
   <input type="hidden" name="_p_item_store_id" class="_p_item_store_id" value="${data[i]._store_id}">
   <input type="hidden" name="_p_item_store_salves_id" class="_p_item_store_salves_id" value="${data[i]._store_salves_id}">
+  <input type="hidden" name="_p_item_warranty" class="_p_item_warranty" value="${data[i]._warranty}">
+   <input type="hidden" name="_p_item_unique_barcode" class="_p_item_unique_barcode" value="${data[i]._unique_barcode}">
                                    </td>
                                    
                                    <td>${data[i]._qty}</td>
@@ -590,6 +628,9 @@ $(document).on('click','.search_row_item',function(){
   var _cost_center_id = $(this).find('._p_item_cost_center_id').val();
   var _store_id = $(this).find('._p_item_store_id').val();
   var _store_salves_id = $(this).find('._p_item_store_salves_id').val();
+  var _warranty = $(this).find('._p_item_warranty').val();
+  var _unique_barcode = $(this).find('._p_item_unique_barcode').val();
+  var _item_row_count =  $(this).parent().parent().parent().parent().parent().parent().find('._ref_counter').val();
 
 
   if(_barcode=='null'){ _barcode='' } 
@@ -601,6 +642,10 @@ $(document).on('click','.search_row_item',function(){
   if(isNaN(_sales_discount)){ _sales_discount=0 }
   _discount_amount = ((_sales_rate*_sales_discount)/100)
   
+
+var find_counter_id = $(this).parent().parent().parent().parent().parent().parent().find('._ref_counter').val();
+var _new_name_for_barcode = `${find_counter_id}__barcode__${row_id}`;
+$(this).parent().parent().parent().parent().parent().parent().find('#'+_item_row_count+"__barcode").attr('name',_new_name_for_barcode); 
 
   $(this).parent().parent().parent().parent().parent().parent().find('._item_id').val(_p_item_item_id);
   var _id_name = `${_master_id} ,${_name}, ${_qty}`;
@@ -620,10 +665,13 @@ $(document).on('click','.search_row_item',function(){
   $(this).parent().parent().parent().parent().parent().parent().find('._store_salves_id').val(_store_salves_id);
   $(this).parent().parent().parent().parent().parent().parent().find('._manufacture_date').val(_manufacture_date);
   $(this).parent().parent().parent().parent().parent().parent().find('._expire_date').val(_expire_date);
+   $(this).parent().parent().parent().parent().parent().parent().find('._warranty').val(_warranty);
+  $(this).parent().parent().parent().parent().parent().parent().find('._unique_barcode').val(_unique_barcode);
 
   _purchase_total_calculation();
   $('.search_box_item').hide();
   $('.search_box_item').removeClass('search_box_show').hide();
+  if(_unique_barcode ==1){ _new_barcode_function(_item_row_count) }
 })
 
 $(document).on('click',function(){
@@ -822,10 +870,16 @@ $(document).on("change","#_discount_input",function(){
 
   function voucher_row_add(event) {
       event.preventDefault();
+      
       $("#area__voucher_details").append(single_row);
   }
 
-var _purchase_row_single =`<tr class="_purchase_row">
+
+function purchase_row_add(event){
+   event.preventDefault();
+    var _item_row_count = parseFloat($(document).find('._item_row_count').val());
+   var _item_row_count = (parseFloat(_item_row_count)+1);
+      $("#area__purchase_details").append(`<tr class="_purchase_row">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
@@ -839,29 +893,40 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                 <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id " >
                                                 <input type="hidden" name="_purchase_invoice_no[]" class="form-control _purchase_invoice_no" >
                                                 <input type="hidden" name="_purchase_detail_id[]" class="form-control _purchase_detail_id" >
+                                                <input type="hidden" name="_ref_counter[]" value="${_item_row_count}" class="_ref_counter" id="${_item_row_count}__ref_counter">
                                                 <div class="search_box_item">
                                                   
                                                 </div>
                                               </td>
                                               
-                                              <td class="@if($form_settings->_show_barcode==0) display_none @endif">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <td class="@if($_show_barcode==0) display_none @endif">
+                                                <input type="text" name="_barcode[]" class="form-control _barcode " id="${_item_row_count}__barcode" >
+                                                <input type="hidden" name="_unique_barcode[]" value="${_unique_barcode}" class="_unique_barcode   ${_item_row_count}__unique_barcode" id="${_item_row_count}_unique_barcode">
+                                              </td>
+                                              <td class="@if($_show_warranty  ==0) display_none @endif">
+                                                <select name="_warranty[]" class="form-control _warranty ${_item_row_count}___warranty">
+                                                   <option value="0">--None --</option>
+                                                      @forelse($_warranties as $_warranty )
+                                                      <option value="{{$_warranty->id}}" >{{ $_warranty->_name ?? '' }}</option>
+                                                      @empty
+                                                      @endforelse
+                                                </select>
                                               </td>
                                               
                                               <td>
                                                 <input type="number" min="0"  name="_qty[]" class="form-control _qty _common_keyup" >
                                               </td>
-                                              <td class="@if($form_settings->_show_cost_rate==0) display_none @endif">
+                                              <td class="@if($_show_cost_rate==0) display_none @endif">
                                                 <input type="number" min="0"  name="_rate[]" class="form-control _rate " readonly >
                                               </td>
                                               <td>
                                                 <input type="number" min="0"  name="_sales_rate[]" class="form-control _sales_rate " >
                                               </td>
                                              
-                                                <td class="@if($form_settings->_show_vat==0) display_none @endif">
+                                                <td class="@if($_show_vat==0) display_none @endif">
                                                 <input type="number" name="_vat[]" class="form-control  _vat _common_keyup" >
                                               </td>
-                                              <td class="@if($form_settings->_show_vat==0) display_none @endif">
+                                              <td class="@if($_show_vat==0) display_none @endif">
                                                 <input type="number" name="_vat_amount[]" class="form-control  _vat_amount" >
                                               </td>
                                               
@@ -905,15 +970,13 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                               </td>
                                              
                                               
-                                              <td class="@if($form_settings->_show_self==0) display_none @endif">
+                                              <td class="@if($_show_self==0) display_none @endif">
                                                 <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
                                               </td>
                                              
                                               
-                                            </tr>`;
-function purchase_row_add(event){
-   event.preventDefault();
-      $("#area__purchase_details").append(_purchase_row_single);
+                                            </tr>`);
+ $(document).find('._item_row_count').val(_item_row_count)
 }
  $(document).on('click','._purchase_row_remove',function(event){
       event.preventDefault();
@@ -933,6 +996,33 @@ function purchase_row_add(event){
 
   $(document).on('click','.submit-button',function(event){
     event.preventDefault();
+
+    var _form_name = $("._form_name").val();
+
+
+    var counter_array=[];
+    var _all_barcode = [];
+
+    
+
+    $(document).find('.show-plus-bg').each(function(index){
+         console.log(parseFloat($(this).text())); 
+         var _ref_counter = $(this).closest('tr').find('._ref_counter').val(); 
+        if(!counter_array.includes(_ref_counter)){
+            var _barcode_unique =   $(this).closest('tr').find('._barcode_unique').val(); 
+            var _barcode = $(this).closest('tr').find('._barcode').val(); 
+            var _qty = $(this).closest('tr').find('._qty').val();
+            var _barcodes = isEmpty(_barcode);
+            _all_barcode.push(_barcode);
+            counter_array.push(_ref_counter);
+
+        }
+         
+    })
+
+    _all_barcode = _all_barcode.toString();
+
+
 
     var _p_p_l_ids_qtys = new Array();
      var _only_p_ids = [];
@@ -955,10 +1045,10 @@ function purchase_row_add(event){
      var _stop_sales =0;
     if(_p_p_l_ids_qtys.length > 0){
         var request = $.ajax({
-                url: "{{url('check-available-qty-update')}}",
+                url: "{{url('check-available-qty-update-damage')}}",
                 method: "GET",
                 async:false,
-                data: { _p_p_l_ids_qtys,unique_p_ids,_sales_id },
+                data: { _p_p_l_ids_qtys,unique_p_ids,_sales_id,_all_barcode,_form_name },
                 dataType: "JSON"
               });
                

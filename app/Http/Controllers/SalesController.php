@@ -30,6 +30,8 @@ use App\Models\SalesReturnAccount;
 use App\Models\SalesReturnFormSetting;
 use App\Models\GeneralSettings;
 use App\Models\BarcodeDetail;
+use App\Models\SalesBarcode;
+use App\Models\Warranty;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -188,6 +190,52 @@ class SalesController extends Controller
 
     public function checkAvailableQty(Request $request){
         $unique_p_q = [];
+         $_over_qty = array();
+
+        $unique_p_ids = $request->unique_p_ids ?? [];
+        $_p_ids = implode(",",$unique_p_ids); //Product Price list table ID
+
+      //Unique Barcode Available Check 
+         $_all_barcode= $request->_all_barcode ?? '';
+        $_all_barcodes = array();
+        if($_all_barcode !=''){
+          $_all_barcodes = explode(",",$_all_barcode);
+        }
+        $_sales_return_id = $request->_sales_return_id ?? 0;
+        $_sales_id = $request->_order_ref_id ?? 0;
+        
+        if(sizeof($_all_barcodes) > 0){
+          $productPriceListTableData =DB::select(" SELECT  _barcode FROM product_price_lists AS s1 WHERE s1.id IN(".$_p_ids.")  ");
+          $_available_barcode_numbers = [];
+          foreach ($productPriceListTableData as $_p_barcodes) {
+             $_ppl_barcodes= $_p_barcodes->_barcode;
+              if($_ppl_barcodes !=""){
+                 $_price_list_barcode_arrray = explode(",",$_ppl_barcodes);
+                 if(sizeof($_price_list_barcode_arrray) > 0){
+                      foreach ($_price_list_barcode_arrray as $value) {
+                        array_push($_available_barcode_numbers, $value);
+                      }
+                 }
+              }
+          }
+         
+          
+          
+
+          foreach ($_all_barcodes as $c_value) {
+         
+            if(!in_array($c_value, $_available_barcode_numbers)){
+               array_push($_over_qty, $c_value);
+
+            }
+          }
+
+          if(sizeof($_over_qty) > 0){
+            return json_encode($_over_qty); 
+          }
+
+        }
+
         foreach($request->_p_p_l_ids_qtys as $index=> $val){
          $unique_p_q[$val["_p_id"]][]=$val;
         }
@@ -214,9 +262,10 @@ class SalesController extends Controller
         return json_encode($_over_qty); 
     }
     public function checkAvailableQtyUpdate(Request $request){
-        $unique_p_ids = $request->unique_p_ids ?? [];
-        $_p_ids = implode(",",$unique_p_ids);
+       $_over_qty = array();
 
+       $unique_p_ids = $request->unique_p_ids ?? [];
+      $_p_ids = implode(",",$unique_p_ids); //Product Price list table ID
         $previous_sales_details = \DB::select(" SELECT t1._p_p_l_id,t1._item_id,SUM(t1._qty) as _total_qty
 FROM (
 SELECT s1._p_p_l_id,s1._item_id,s1._qty
@@ -240,7 +289,102 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
             array_push($_id_qty, ['_id'=>$key,'_qty'=>$qty_sum]);  
         }
 
-        $_over_qty = array();
+       
+       foreach ($previous_sales_details as $value) {
+           foreach ($_id_qty as $c_val) {
+            
+               if($value->_p_p_l_id ==$c_val["_id"]   ){
+                if(floatval($value->_total_qty) < floatval($c_val["_qty"])){
+                    array_push($_over_qty, $c_val["_id"]);
+                }
+               }
+           }
+       }
+       
+        
+        return json_encode($_over_qty); 
+    }
+
+    public function checkAvailableQtyUpdateDamage(Request $request){
+      
+
+       $unique_p_ids = $request->unique_p_ids ?? [];
+      $_p_ids = implode(",",$unique_p_ids); //Product Price list table ID
+      $unique_p_q = [];
+         $_over_qty = array();
+
+        $unique_p_ids = $request->unique_p_ids ?? [];
+        $_p_ids = implode(",",$unique_p_ids); //Product Price list table ID
+
+      //Unique Barcode Available Check 
+         $_all_barcode= $request->_all_barcode ?? '';
+        $_all_barcodes = array();
+        if($_all_barcode !=''){
+          $_all_barcodes = explode(",",$_all_barcode);
+        }
+       
+        $_sales_id = $request->_sales_id ?? 0;
+        
+        if(sizeof($_all_barcodes) > 0){
+          $productPriceListTableData =DB::select(" SELECT  _barcode FROM barcode_details AS s1 WHERE s1._p_p_id IN(".$_p_ids.")  AND s1._status=1
+            UNION ALL
+            SELECT _barcode FROM damage_barcodes WHERE _no_id=".$_sales_id." AND _status =1
+           ");
+          $_available_barcode_numbers = [];
+          foreach ($productPriceListTableData as $_p_barcodes) {
+             $_ppl_barcodes= $_p_barcodes->_barcode;
+              if($_ppl_barcodes !=""){
+                 $_price_list_barcode_arrray = explode(",",$_ppl_barcodes);
+                 if(sizeof($_price_list_barcode_arrray) > 0){
+                      foreach ($_price_list_barcode_arrray as $value) {
+                        array_push($_available_barcode_numbers, $value);
+                      }
+                 }
+              }
+          }
+         
+          
+          
+
+          foreach ($_all_barcodes as $c_value) {
+         
+            if(!in_array($c_value, $_available_barcode_numbers)){
+               array_push($_over_qty, $c_value);
+
+            }
+          }
+
+          if(sizeof($_over_qty) > 0){
+            return json_encode($_over_qty); 
+          }
+
+        }  //End of Wrong barcode check
+
+
+        $previous_sales_details = \DB::select(" SELECT t1._p_p_l_id,t1._item_id,SUM(t1._qty) as _total_qty
+FROM (
+SELECT s1._p_p_l_id,s1._item_id,s1._qty
+    FROM damage_adjustment_details as s1
+WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id
+UNION ALL
+SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty 
+    FROM product_price_lists AS s1 WHERE s1.id IN(".$_p_ids.")
+    ) as t1 GROUP BY t1._p_p_l_id ");
+
+        $unique_p_q = [];
+        foreach($request->_p_p_l_ids_qtys as $index=> $val){
+         $unique_p_q[$val["_p_id"]][]=$val;
+        }
+        $_id_qty=array();
+        foreach ($unique_p_q as $key=>$value) {
+            $qty_sum =0;
+            foreach ($value as $row) {
+                 $qty_sum +=floatval($row["_p_qty"]);
+             }
+            array_push($_id_qty, ['_id'=>$key,'_qty'=>$qty_sum]);  
+        }
+
+       
        foreach ($previous_sales_details as $value) {
            foreach ($_id_qty as $c_val) {
             
@@ -279,8 +423,9 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
         $vat_accounts =[];
         $categories = ItemCategory::select('id','_name')->orderBy('_name','asc')->get();
         $units = Units::select('id','_name','_code')->orderBy('_name','asc')->get();
+         $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->where('_status',1)->get();
 
-       return view('backend.sales.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units'));
+       return view('backend.sales.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','_warranties'));
     }
 
     public function formSettingAjax(){
@@ -302,18 +447,22 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
        $text_val = trim($request->_text_val);
         if($text_val =='%'){ $text_val=''; }
         
-        $datas = ProductPriceList::select('id','_item as _name','_item_id','_unit_id','_barcode','_manufacture_date','_expire_date','_qty','_sales_rate','_pur_rate','_sales_discount','_sales_vat','_purchase_detail_id','_master_id','_branch_id','_cost_center_id','_store_id','_store_salves_id')
-            ->where('_qty','>',0)
-            ->where('_status',1);
-         if($request->has('_text_val') && $text_val !=''){
-            $datas = $datas->where('_item','like',"%$text_val%")
-            ->orWhere('id','like',"%$text_val%");
-        }
-        $datas = $datas->whereIn('_branch_id',explode(',',$users->branch_ids));
-        $datas = $datas->whereIn('_cost_center_id',explode(',',$users->cost_center_ids));
+        $datas = DB::select(" select `id`, `_item` as `_name`, `_item_id`, `_unit_id`, `_barcode`,_warranty, `_manufacture_date`,_unique_barcode, `_expire_date`, `_qty`, `_sales_rate`, `_pur_rate`, `_sales_discount`, `_sales_vat`, `_purchase_detail_id`, `_master_id`, `_branch_id`, `_cost_center_id`, `_store_id`, `_store_salves_id` from `product_price_lists` where  `_status` = 1 and  (`_barcode` like '%$text_val%' OR `_item` like '%$text_val%' OR id LIKE '%$text_val%'  ) and `_branch_id` in ($users->branch_ids) and `_cost_center_id` in ($users->cost_center_ids) AND _unique_barcode !=1 AND  `_qty`> 0 order by $asc_cloumn $_asc_desc LIMIT $limit ");
+        $datas["data"]=$datas;
+        return json_encode( $datas);
+    }
+
+
+    public function itemDamageSearch(Request $request){
+        $users = Auth::user();
+        $limit = $request->limit ?? default_pagination();
+        $_asc_desc = $request->_asc_desc ?? 'ASC';
+        $asc_cloumn =  $request->asc_cloumn ?? '_qty';
+       $text_val = trim($request->_text_val);
+        if($text_val =='%'){ $text_val=''; }
         
-        
-        $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
+        $datas = DB::select(" select `id`, `_item` as `_name`, `_item_id`, `_unit_id`, `_barcode`,_warranty, `_manufacture_date`,_unique_barcode, `_expire_date`, `_qty`, `_sales_rate`, `_pur_rate`, `_sales_discount`, `_sales_vat`, `_purchase_detail_id`, `_master_id`, `_branch_id`, `_cost_center_id`, `_store_id`, `_store_salves_id` from `product_price_lists` where  `_status` = 1 and  (`_barcode` like '%$text_val%' OR `_item` like '%$text_val%' OR id LIKE '%$text_val%'  ) and `_branch_id` in ($users->branch_ids) and `_cost_center_id` in ($users->cost_center_ids) AND   `_qty`> 0 order by $asc_cloumn $_asc_desc LIMIT $limit ");
+        $datas["data"]=$datas;
         return json_encode( $datas);
     }
 
@@ -330,38 +479,70 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
         //First Check Unique Barcode or Model Barcode to compare barcode details table qty
         // if qty =1 then we can deside that's it's an unique barcode then we fetch baroce base all information from product prince list table as we use without barcode version 
 
-        $check_barcode_types = BarcodeDetail::select('_p_p_id','_item_id','_barcode','_qty')
-                              ->where('_barcode',$text_val)
-                              ->where('_status',1) 
-                              ->where('_qty','>',0)
-                              ->first();
+        // $check_barcode_types = BarcodeDetail::select('_p_p_id','_item_id','_barcode','_qty')
+        //                       ->where('_barcode',$text_val)
+        //                       ->where('_status',1) 
+        //                       ->where('_qty','>',0)
+        //                       ->get();
+
+         $datas = DB::select(" select `id`,_unique_barcode, `_item` as `_name`, `_item_id`, `_unit_id`, `_barcode`,_warranty, `_manufacture_date`, `_expire_date`, `_qty`, `_sales_rate`, `_pur_rate`, `_sales_discount`, `_sales_vat`, `_purchase_detail_id`, `_master_id`, `_branch_id`, `_cost_center_id`, `_store_id`, `_store_salves_id` from `product_price_lists` where  `_status` = 1 and  (`_barcode` like '%$text_val%' OR `_item` like '%$text_val%' OR id LIKE '%$text_val%'  ) and `_branch_id` in ($users->branch_ids) and `_cost_center_id` in ($users->cost_center_ids) AND  `_qty`> 0 order by $asc_cloumn $_asc_desc LIMIT $limit ");
+
+         //$_item_qty  = $check_barcode_types->_qty ?? 0;
+        // if(sizeof($check_barcode_types) ==1){ 
+        //     $_search_type='unique_barcode';
+        // }elseif(sizeof($check_barcode_types) > 1) {
+        //   $_search_type='model_barcode';
+        // }else{
+        //   $_search_type='item_search';
+        //   $_this_barcode=$text_val;
+        // }
 
 
-       
-        
-        $datas = ProductPriceList::select('id','_item as _name','_item_id','_unit_id','_barcode','_manufacture_date','_expire_date','_qty','_sales_rate','_pur_rate','_sales_discount','_sales_vat','_purchase_detail_id','_master_id','_branch_id','_cost_center_id','_store_id','_store_salves_id')
-            ->where('_qty','>',0)
-            ->where('_status',1);
-         if($request->has('_text_val') && $text_val !=''){
-            $datas = $datas->where('_item','like',"%$text_val%")
-            ->orWhere('_barcode','like',"%$text_val%")
-            ->orWhere('id','like',"%$text_val%");
-        }
-        $datas = $datas->whereIn('_branch_id',explode(',',$users->branch_ids));
-        $datas = $datas->whereIn('_cost_center_id',explode(',',$users->cost_center_ids));
-        
-        
-        $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
+        $_this_barcode=$text_val;
+        $data["datas"]=$datas;
+        $data["_this_barcode"]=$_this_barcode;
+        $data["_search_type"]='unique_barcode';
+        return json_encode( $data);
+    }
 
-         $_item_qty  = $check_barcode_types->_qty ?? 0;
-        if($_item_qty ==1){ 
-            $_search_type='unique_barcode';
-        }elseif($_item_qty > 1) {
-          $_search_type='model_barcode';
-        }else{
-           $_search_type='item_search';
-            $_this_barcode=$text_val;
-        }
+
+    public function itemSalesEditBarcodeSearch(Request $request){
+     // return $request->all();
+        $users = Auth::user();
+        $limit = $request->limit ?? default_pagination();
+        $_asc_desc = $request->_asc_desc ?? 'ASC';
+        $asc_cloumn =  $request->asc_cloumn ?? '_qty';
+        $_master_id =  $request->_master_id;
+       $text_val = trim($request->_text_val);
+        if($text_val =='%'){ $text_val=''; }
+        $_this_barcode='';
+
+        //First Check Unique Barcode or Model Barcode to compare barcode details table qty
+        // if qty =1 then we can deside that's it's an unique barcode then we fetch baroce base all information from product prince list table as we use without barcode version 
+
+        // $check_barcode_types = BarcodeDetail::select('_p_p_id','_item_id','_barcode','_qty')
+        //                       ->where('_barcode',$text_val)
+        //                       ->where('_status',1) 
+        //                       ->where('_qty','>',0)
+        //                       ->get();
+
+     
+
+
+         $datas = DB::select(" SELECT s1.id,s1._master_id, s1._name,s1._item_id,s1._unit_id, s1._barcode,s1._warranty,s1._unique_barcode, s1._manufacture_date, s1._expire_date,  s1._qty,s1._sales_rate, s1._pur_rate,  s1._sales_discount,s1._sales_vat, s1._purchase_detail_id, s1._branch_id, s1._cost_center_id,  s1._store_id,  s1._store_salves_id FROM (
+SELECT id,_master_id, _item as _name, _item_id, _unit_id, _barcode,_warranty,_unique_barcode, _manufacture_date, _expire_date, _qty, _sales_rate, _pur_rate, _sales_discount, _sales_vat, _purchase_detail_id, _branch_id, _cost_center_id, _store_id, _store_salves_id 
+from product_price_lists
+where  _status = 1 and  (_barcode like '%$text_val%' OR _item like '%$text_val%' OR id LIKE '%$text_val%'  ) and _branch_id in ($users->branch_ids) and _cost_center_id in ($users->cost_center_ids) AND  _qty > 0
+UNION ALL
+SELECT t1._p_p_l_id as id,t1._purchase_invoice_no as _master_id,  t2._item as _name,t1._item_id,t2._unit_id as _unit_id, t1._barcode,t1._warranty,t2._unique_barcode, t1._manufacture_date, t1._expire_date,  t1._qty,t1._sales_rate, t1._rate AS _pur_rate,  t1._discount as _sales_discount, t1._vat AS _sales_vat, t1._purchase_detail_id,   t1._branch_id, t1._cost_center_id,  t1._store_id,  t1._store_salves_id
+FROM sales_details AS t1
+INNER JOIN inventories AS t2 ON t1._item_id=t2.id
+where  t1._status = 1 and  (t1._barcode like '%$text_val%' OR t2._item like '%$text_val%' OR t2.id LIKE '%$text_val%'  ) and t1._branch_id in ($users->branch_ids) and t1._cost_center_id in ($users->cost_center_ids) AND  t1._qty> 0
+   )  AS s1   ORDER BY s1._name ASC LIMIT $limit ");
+
+        
+          $_search_type='item_search';
+         
 
 
         $_this_barcode=$text_val;
@@ -402,6 +583,7 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
         $data->_show_p_balance = $request->_show_p_balance ?? 1;
         $data->_invoice_template = $request->_invoice_template ?? 1;
         $data->_cash_customer = $_cash_ledger_ids ?? 0;
+        $data->_show_warranty =$request->_show_warranty ?? 0;
         $data->save();
 
 
@@ -419,8 +601,8 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
     public function store(Request $request)
     {
         
-         
-    
+        // return $request->all();
+         $all_req= $request->all();
          $this->validate($request, [
             '_date' => 'required',
             '_branch_id' => 'required',
@@ -439,9 +621,29 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
      ->with('error','Cash Customer Must Paid Full Amount!');
   }
 
+        $_item_ids = $request->_item_id;
+        $_barcodes = $request->_barcode ?? [];
+        $_qtys = $request->_qty;
+        $_rates = $request->_rate;
+        $_sales_rates = $request->_sales_rate;
+        $_vats = $request->_vat;
+        $_vat_amounts = $request->_vat_amount;
+        $_values = $request->_value;
+        $_main_branch_id_detail = $request->_main_branch_id_detail;
+        $_main_cost_center = $request->_main_cost_center;
+        $_store_ids = $request->_main_store_id;
+        $_store_salves_ids = $request->_store_salves_id;
+        $_p_p_l_ids = $request->_p_p_l_id;
+        $_purchase_invoice_nos = $request->_purchase_invoice_no;
+        $_purchase_detail_ids = $request->_purchase_detail_id;
+        $_discounts = $request->_discount;
+        $_discount_amounts = $request->_discount_amount;
+        $_manufacture_dates = $request->_manufacture_date;
+        $_expire_dates = $request->_expire_date;
+        $_ref_counters = $request->_ref_counter;
+        $_warrantys = $request->_warranty;
 
-
-       DB::beginTransaction();
+      DB::beginTransaction();
         try {
 
             $_p_balance = _l_balance_update($request->_main_ledger_id);
@@ -492,25 +694,7 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
         //###########################
         // Purchase Details information Save Start
         //###########################
-        $_item_ids = $request->_item_id;
-        $_barcodes = $request->_barcode;
-        $_qtys = $request->_qty;
-        $_rates = $request->_rate;
-        $_sales_rates = $request->_sales_rate;
-        $_vats = $request->_vat;
-        $_vat_amounts = $request->_vat_amount;
-        $_values = $request->_value;
-        $_main_branch_id_detail = $request->_main_branch_id_detail;
-        $_main_cost_center = $request->_main_cost_center;
-        $_store_ids = $request->_main_store_id;
-        $_store_salves_ids = $request->_store_salves_id;
-        $_p_p_l_ids = $request->_p_p_l_id;
-        $_purchase_invoice_nos = $request->_purchase_invoice_no;
-        $_purchase_detail_ids = $request->_purchase_detail_id;
-        $_discounts = $request->_discount;
-        $_discount_amounts = $request->_discount_amount;
-        $_manufacture_dates = $request->_manufacture_date;
-        $_expire_dates = $request->_expire_date;
+        
        
         $_total_cost_value=0;
 
@@ -524,10 +708,14 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
                 $SalesDetail->_purchase_invoice_no = $_purchase_invoice_nos[$i];
                 $SalesDetail->_purchase_detail_id = $_purchase_detail_ids[$i];
                 $SalesDetail->_qty = $_qtys[$i];
-                $SalesDetail->_barcode = $_barcodes[$i];
+
+                $barcode_string=$all_req[$_ref_counters[$i]."__barcode__".$_p_p_l_ids[$i]] ?? '';
+                $SalesDetail->_barcode = $barcode_string;
+
                 $SalesDetail->_manufacture_date = $_manufacture_dates[$i];
                 $SalesDetail->_expire_date = $_expire_dates[$i];
                 $SalesDetail->_rate = $_rates[$i];
+                $SalesDetail->_warranty = $_warrantys[$i] ?? 0;
                 $SalesDetail->_sales_rate = $_sales_rates[$i];
                 $SalesDetail->_discount = $_discounts[$i] ?? 0;
                 $SalesDetail->_discount_amount = $_discount_amounts[$i] ?? 0;
@@ -548,10 +736,72 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
 
                 $ProductPriceList = ProductPriceList::find($_p_p_l_ids[$i]);
                 $_p_qty = $ProductPriceList->_qty;
+                $_unique_barcode = $ProductPriceList->_unique_barcode;
+
+                //Barcode  deduction from old string data
+                if($_unique_barcode ==1){
+                     $_old_barcode_strings =  $ProductPriceList->_barcode;
+                        $_new_barcode_array = array();
+                        if($_old_barcode_strings !=""){
+                            $_old_barcode_array = explode(",",$_old_barcode_strings);
+                        }
+                        if($barcode_string !=""){
+                            $_new_barcode_array = explode(",",$barcode_string);
+                        }
+                        if(sizeof($_new_barcode_array) > 0 && sizeof($_old_barcode_array) > 0){
+                          $_last_barcode_array =  array_diff($_old_barcode_array,$_new_barcode_array);
+                          if(sizeof($_last_barcode_array ) > 0){
+                            $_last_barcode_string = implode(",",$_last_barcode_array);
+                          }else{
+                            $_last_barcode_string = $barcode_string;
+                          }
+                          
+                          $ProductPriceList->_barcode = $_last_barcode_string;
+                        }
+                }else{
+                  $ProductPriceList->_barcode = $barcode_string;
+                }
+
+                
+
+                //Barcode  deduction from old string data
+
+
+
+
                 $_status = (($_p_qty - $_qtys[$i]) > 0) ? 1 : 0;
                 $ProductPriceList->_qty = ($_p_qty - $_qtys[$i]);
                 $ProductPriceList->_status = $_status;
                 $ProductPriceList->save();
+
+
+/***************************************
+   Barcode insert into database section
+   _barcode_insert_update($modelName, $_p_p_id,$_item_id,$_no_id,$_no_detail_id,$_qty,$_barcode,$_status,$_return=0,$p=0)
+   IF RETURN ACTION THEN $_return = 1; and BarcodeDetail avoid 
+   [  $data->_no_id = $_no_id; $data->_no_detail_id = $_no_detail_id; ] use  $p=1;
+**************************************************/
+                 $product_price_id =  $ProductPriceList->id;
+             if($_unique_barcode ==1){
+                  if($barcode_string !=""){
+                       $barcode_array=  explode(",",$barcode_string);
+                       $_qty = 1;
+                       $_stat = 1;
+                       $_return=1;
+                       
+                       foreach ($barcode_array as $_b_v) {
+                        _barcode_insert_update('BarcodeDetail', $product_price_id,$_item_ids[$i],$_master_id,$_sales_details_id,$_qty,$_b_v,$_stat,1,1);
+                        _barcode_insert_update('SalesBarcode', $product_price_id,$_item_ids[$i],$_master_id,$_sales_details_id,$_qty,$_b_v,$_stat,0,0);
+                         
+                       }
+                    }
+             }
+                 
+
+                
+/*
+    Barcode insert into database section
+*/
 
                 $ItemInventory = new ItemInventory();
                 $ItemInventory->_item_id =  $_item_ids[$i];
@@ -729,7 +979,7 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
                         $SalesAccount->_ledger_id = $request->_main_ledger_id;
                         $SalesAccount->_cost_center = $users->cost_center_ids;
                         $SalesAccount->_branch_id = $users->branch_ids;
-                        $SalesAccount->_short_narr = 'N/A';
+                        $SalesAccount->_short_narr = 'Sales Payment';
                         $SalesAccount->_dr_amount = 0;
                         $SalesAccount->_cr_amount = $_total_dr_amount;
                         $SalesAccount->_status = 1;
@@ -742,7 +992,7 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
                         //Reporting Account Table Data Insert
                         $_ref_master_id=$_master_id;
                         $_ref_detail_id=$_sales_account_id;
-                        $_short_narration='N/A';
+                        $_short_narration='Sales Payment';
                         $_narration = $request->_note;
                         $_reference= $request->_referance;
                         $_transaction= 'Sales';
@@ -769,7 +1019,7 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
              if($_send_sms=='yes'){
                 $_name = _ledger_name($request->_main_ledger_id);
                 $_phones = $request->_phone;
-                $messages = "Dear ".$_name.", Invoice N0.".$_pfix." Invoice Amount: ".prefix_taka()."."._report_amount($request->_total).". Payment Amount. ".prefix_taka()."."._report_amount($_total_dr_amount).". Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". Current Balance:".prefix_taka()."."._report_amount($_l_balance);
+                $messages = "Dear ".$_name.", Date: ".$request->_date." Invoice N0.".$_pfix." Invoice Amount: ".prefix_taka()."."._report_amount($request->_total).". Payment Amount. ".prefix_taka()."."._report_amount($_total_dr_amount).". Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". Current Balance:".prefix_taka()."."._report_amount($_l_balance);
                   sms_send($messages, $_phones);
              }
              //End Sms Send to customer and Supplier
@@ -864,7 +1114,8 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
          $data =  Sales::with(['_master_branch','_master_details','s_account','_ledger'])->where('_lock',0)->find($id);
          if(!$data){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
           $sales_number = SalesDetail::where('_no',$id)->count();
-       return view('backend.sales.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data','sales_number'));
+           $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->where('_status',1)->get();
+       return view('backend.sales.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data','sales_number','_warranties'));
     }
 
     /**
@@ -874,10 +1125,11 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
      * @param  \App\Models\Purchase  $purchase
      * @return \Illuminate\Http\Response
      */
+   
     public function update(Request $request)
     {
          
-        //return $request->all();
+        $all_req= $request->all();
          $this->validate($request, [
             '_date' => 'required',
             '_branch_id' => 'required',
@@ -898,24 +1150,150 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
             $_sales_id = $request->_sales_id;
             $_lock_check =  Sales::where('_lock',0)->find($_sales_id); 
             if(!$_lock_check){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
-         DB::beginTransaction();
-         try {
-        
-       
 
-        //====
+
+        $_item_ids = $request->_item_id;
+        //$_barcodes = $request->_barcode;
+        $_qtys = $request->_qty;
+        $_rates = $request->_rate;
+        $_sales_rates = $request->_sales_rate;
+        $_vats = $request->_vat;
+        $_vat_amounts = $request->_vat_amount;
+        $_values = $request->_value;
+        $_main_branch_id_detail = $request->_main_branch_id_detail;
+        $_main_cost_center = $request->_main_cost_center;
+        $_store_ids = $request->_main_store_id;
+        $_store_salves_ids = $request->_store_salves_id;
+        $_p_p_l_ids = $request->_p_p_l_id;
+        $_purchase_invoice_nos = $request->_purchase_invoice_no;
+        $_purchase_detail_ids = $request->_purchase_detail_id;
+        $_discounts = $request->_discount;
+        $_discount_amounts = $request->_discount_amount;
+        $_sales_detail_row_ids = $request->_sales_detail_row_id;
+         $_manufacture_dates = $request->_manufacture_date;
+        $_expire_dates = $request->_expire_date;
+        $_ref_counters = $request->_ref_counter;
+        $_warrantys = $request->_warranty;
+
+ //====
         // Product Price list table update with previous sales details item
         // 
         //======
+$checkqty = array();
+$over_qtys = array();
+      
 
-        $previous_sales_details = SalesDetail::where('_no',$_sales_id)->get();
+//Prevoius Return information
+     $previous_sales_details = SalesDetail::where('_no',$_sales_id)->where('_status',1)->get();
+    foreach ($previous_sales_details as $value) {
+         $product_prices = ProductPriceList::where('_purchase_detail_id',$value->_purchase_detail_id)->first();
+         $new_qty = ($value->_qty+$product_prices->_qty);
+         $_unique_barcode = $product_prices->_unique_barcode;
+         $_old_new_barcode = $value->_barcode.",".$product_prices->_barcode;
+         array_push($checkqty, ['id'=>$product_prices->_purchase_detail_id,'_qty'=>$new_qty,'_barcode'=>$_old_new_barcode,'_unique_barcode'=>$_unique_barcode]);
+    }
+
+
+
+    foreach ($_purchase_detail_ids as $item_key=> $_item) {
+        foreach ($checkqty as $check_item) {
+              $barcode_string=$all_req[$_ref_counters[$item_key]."__barcode__".$_item_ids[$item_key]] ?? '';
+          if($_unique_barcode ==1){
+            if(strlen($barcode_string) > 0){ //Check Barcode Available
+                if($_item==$check_item["id"]){ //Check Previous item id and Current Item id Same
+                    $_req_barcode_array = explode(",",$barcode_string); // Barcode make array from string
+                    foreach ($_req_barcode_array as $_bar_value) {
+                        $_barcode_yes = str_contains($check_item["_barcode"], $_bar_value); //Check available barcode number with product price list table and previous purchase return details table
+                        if(!$_barcode_yes){
+                           // if Return false then its wrong barcode and send message
+                            $msg = "You Input Wrong Barcode. Wrong Barcode Numer is- ". $_bar_value;
+                            return redirect()->back()->with('danger',$msg);
+                        }else{
+                            //this section come after check available 
+                          $check_model_or_unique =   explode(",",$check_item["_barcode"]); //Barcode string to array to check model barcode or unique barcode
+
+                          if(sizeof(array_unique($check_model_or_unique)) ==1){ // if sizeof($check_model_or_unique)==1 then we desied that its used a model barcode 
+                           
+                              //Model Barcode and now check quantity
+                                if($_item==$check_item["id"] && $_qtys[$item_key] > $check_item["_qty"] ){
+                                    array_push($over_qtys, $_item); //if use model barcode and want to return more then purchase quantity then show a messge
+                                 }
+                          }
+                           //Unique Barcode Olready Check as wrong Barcode number
+                        }
+                       
+                    }
+                }
+            }
+
+
+          }else{
+
+                 //This section come when no barcode used for item purchase and purchase return
+                //Here we need to check item id and item available qty
+                if($_item==$check_item["id"] && $_qtys[$item_key] > $check_item["_qty"] ){
+                    array_push($over_qtys, $_item); //If input Extra qty then shw a messge
+                }
+            }
+            
+        }
+    }
+
+    if(sizeof($over_qtys) > 0){
+        return redirect()->back()
+        ->with('request',$request->all())
+        ->with('danger','You Can not Return More then available Qty !');
+    }
+
+
+
+           DB::beginTransaction();
+           try {
+        
+       
+
+       
+
+
+
+
+
+
+
+
+
+
         foreach ($previous_sales_details as $value) {
-                $ProductPriceList = ProductPriceList::where('id',$value->_p_p_l_id)->first();
-                $_p_qty = $ProductPriceList->_qty;
-                $_status = (($_p_qty + $value->_qty) > 0) ? 1 : 0;
-                $ProductPriceList->_qty = ($_p_qty + $value->_qty);
-                $ProductPriceList->_status = $_status;
-                $ProductPriceList->save();
+
+            $product_prices =ProductPriceList::where('id',$value->_p_p_l_id)->first();
+             $new_qty = ($value->_qty+$product_prices->_qty);
+             $_unique_barcode = $product_prices->_unique_barcode;
+             $_up_status = (($new_qty) > 0) ? 1 : 0;
+             if($_unique_barcode ==1){
+                $_old_new_barcode = $value->_barcode.",".$product_prices->_barcode;
+                if($_old_new_barcode !=""){
+                    $_unique_old_newbarcode_array =   explode(",",$_old_new_barcode);
+                    foreach ($_unique_old_newbarcode_array as $_arraY_val) {
+                      $_unique_old_newbarcode_array[]=trim($_arraY_val);
+                    }
+                    $_unique_old_newbarcode_array = array_unique($_unique_old_newbarcode_array);
+                     $_last_barcode_string = implode(",",$_unique_old_newbarcode_array);
+                     $product_prices->_barcode =$_last_barcode_string;
+                    if(sizeof($_unique_old_newbarcode_array) > 0){
+                        foreach ($_unique_old_newbarcode_array as $_bar_value) {
+                                BarcodeDetail::where('_p_p_id',$product_prices->id)
+                                            ->where('_item_id',$product_prices->_item_id)
+                                            ->where('_barcode',$_bar_value)
+                                            ->update(['_qty'=>1,'_status'=>1]);
+                            }
+                    }
+                }
+                
+             }
+             $product_prices->_qty = $new_qty;
+             
+             $product_prices->save();
+
         }
 
      
@@ -933,6 +1311,10 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
     Accounts::where('_ref_master_id',$_sales_id)
                     ->where('_table_name','sales_accounts')
                      ->update(['_status'=>0]);  
+
+    SalesBarcode::where('_no_id',$_sales_id)
+                  ->update(['_status'=>0,'_qty'=>0]);
+
      $_p_balance = _l_balance_update($request->_main_ledger_id);
         
          $__sub_total = (float) $request->_sub_total;
@@ -977,26 +1359,7 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
         //###########################
         // Purchase Details information Save Start
         //###########################
-        $_item_ids = $request->_item_id;
-        $_barcodes = $request->_barcode;
-        $_qtys = $request->_qty;
-        $_rates = $request->_rate;
-        $_sales_rates = $request->_sales_rate;
-        $_vats = $request->_vat;
-        $_vat_amounts = $request->_vat_amount;
-        $_values = $request->_value;
-        $_main_branch_id_detail = $request->_main_branch_id_detail;
-        $_main_cost_center = $request->_main_cost_center;
-        $_store_ids = $request->_main_store_id;
-        $_store_salves_ids = $request->_store_salves_id;
-        $_p_p_l_ids = $request->_p_p_l_id;
-        $_purchase_invoice_nos = $request->_purchase_invoice_no;
-        $_purchase_detail_ids = $request->_purchase_detail_id;
-        $_discounts = $request->_discount;
-        $_discount_amounts = $request->_discount_amount;
-        $_sales_detail_row_ids = $request->_sales_detail_row_id;
-         $_manufacture_dates = $request->_manufacture_date;
-        $_expire_dates = $request->_expire_date;
+       
 
 
 
@@ -1014,13 +1377,15 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
                     $SalesDetail = SalesDetail::find($_sales_detail_row_ids[$i]);
                 }
 
+                $barcode_string=$all_req[$_ref_counters[$i]."__barcode__".$_item_ids[$i]] ?? '';
+                $SalesDetail->_barcode = $barcode_string;
+                $SalesDetail->_warranty = $_warrantys[$i] ?? 0;
                 
                 $SalesDetail->_item_id = $_item_ids[$i];
                 $SalesDetail->_p_p_l_id = $_p_p_l_ids[$i];
                 $SalesDetail->_purchase_invoice_no = $_purchase_invoice_nos[$i];
                 $SalesDetail->_purchase_detail_id = $_purchase_detail_ids[$i];
                 $SalesDetail->_qty = $_qtys[$i];
-                $SalesDetail->_barcode = $_barcodes[$i];
                 $SalesDetail->_rate = $_rates[$i];
                 $SalesDetail->_sales_rate = $_sales_rates[$i];
                 $SalesDetail->_discount = $_discounts[$i] ?? 0;
@@ -1042,12 +1407,81 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
 
                 $item_info = Inventory::where('id',$_item_ids[$i])->first();
 
-                $ProductPriceList = ProductPriceList::find($_p_p_l_ids[$i]);
+               $ProductPriceList = ProductPriceList::find($_p_p_l_ids[$i]);
                 $_p_qty = $ProductPriceList->_qty;
+                $_unique_barcode = $ProductPriceList->_unique_barcode;
+ if($_unique_barcode ==1){
+
+                //Barcode  deduction from old string data
+                 $_old_barcode_strings =  $ProductPriceList->_barcode;
+                 $_last_barcode_array = array();
+                $_new_barcode_array = array();
+                if($_old_barcode_strings !=""){
+                    $_old_barcode_array = explode(",",$_old_barcode_strings);
+                }
+                if($barcode_string !=""){
+                    $_new_barcode_array = explode(",",$barcode_string);
+                }
+
+                foreach ($_old_barcode_array as $_old_value) {
+                  if(!in_array($_old_value, $_new_barcode_array)){
+                   
+                    array_push($_last_barcode_array, $_old_value);
+                  }
+                }
+               
+                if(sizeof($_last_barcode_array ) > 0){
+                  $_new_last_barcode_string = implode(",",$_last_barcode_array);
+                  
+                }else{
+                  $_new_last_barcode_string = '';
+                }
+
+$ProductPriceList->_barcode = $_new_last_barcode_string;
+              
+}
+                //Barcode  deduction from old string data
+
+
+
+
                 $_status = (($_p_qty - $_qtys[$i]) > 0) ? 1 : 0;
                 $ProductPriceList->_qty = ($_p_qty - $_qtys[$i]);
                 $ProductPriceList->_status = $_status;
                 $ProductPriceList->save();
+
+
+/***************************************
+   Barcode insert into database section
+   _barcode_insert_update($modelName, $_p_p_id,$_item_id,$_no_id,$_no_detail_id,$_qty,$_barcode,$_status,$_return=0,$p=0)
+   IF RETURN ACTION THEN $_return = 1; and BarcodeDetail avoid 
+   [  $data->_no_id = $_no_id; $data->_no_detail_id = $_no_detail_id; ] use  $p=1;
+**************************************************/
+                 $product_price_id =  $ProductPriceList->id;
+                 $_unique_barcode =  $ProductPriceList->_unique_barcode;
+                  if($_unique_barcode ==1){
+                 if($barcode_string !=""){
+                       $barcode_array=  explode(",",$barcode_string);
+                       $_qty = 1;
+                       $_stat = 1;
+                       $_return=1;
+                       
+                       foreach ($barcode_array as $_b_v) {
+                        _barcode_insert_update('BarcodeDetail', $product_price_id,$_item_ids[$i],$_master_id,$_sales_details_id,$_qty,$_b_v,$_stat,1,1);
+                        _barcode_insert_update('SalesBarcode', $product_price_id,$_item_ids[$i],$_master_id,$_sales_details_id,$_qty,$_b_v,$_stat,0,0);
+                         
+                       }
+                    }
+              }
+                
+/*
+    Barcode insert into database section
+
+
+*/
+
+
+
 
                 $ItemInventory = ItemInventory::where('_transection',"Sales")
                                     ->where('_transection_ref',$_sales_id)
@@ -1277,16 +1711,18 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
               //SMS SEND to Customer and Supplier
+              //SMS SEND to Customer and Supplier
              $_send_sms = $request->_send_sms ?? '';
              if($_send_sms=='yes'){
                 $_name = _ledger_name($request->_main_ledger_id);
                 $_phones = $request->_phone;
-                $messages = "Dear ".$_name.", Invoice N0.".$_pfix." Invoice Amount: ".prefix_taka()."."._report_amount($request->_total).". Payment Amount. ".prefix_taka()."."._report_amount($_total_dr_amount).". Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". Current Balance:".prefix_taka()."."._report_amount($_l_balance);
+                $messages = "Dear ".$_name.", Date: ".$request->_date." Invoice N0.".$_pfix." Updated Invoice Amount: ".prefix_taka()."."._report_amount($request->_total).". Payment Amount. ".prefix_taka()."."._report_amount($_total_dr_amount).". Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". Current Balance:".prefix_taka()."."._report_amount($_l_balance);
                   sms_send($messages, $_phones);
              }
              //End Sms Send to customer and Supplier
+             //End Sms Send to customer and Supplier
 
-           DB::commit();
+          DB::commit();
             return redirect()->back()->with('success','Information save successfully')->with('_master_id',$_master_id)->with('_print_value',$_print_value);
         } catch (\Exception $e) {
             DB::rollback();

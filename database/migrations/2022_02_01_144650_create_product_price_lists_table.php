@@ -38,6 +38,7 @@ class CreateProductPriceListsTable extends Migration
             $table->foreign('_branch_id')->references('id')->on('branches');
             $table->integer('_store_id')->default(1);
             $table->integer('_cost_center_id')->default(1);
+            $table->integer('_warranty')->default(0);
             $table->integer('_master_id')->nullable();
             $table->string('_store_salves_id',60)->nullable();
             $table->tinyInteger('_status')->default(0);

@@ -74,10 +74,23 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <label for="_barcode">Model:</label>
-                                <input type="text" id="_barcode" name="_barcode" class="form-control" value="{{old('_barcode',$data->_barcode)}}" placeholder="Model" >
+                                <label for="_barcode">Model/Barcode:</label>
+                                <input type="text" id="_barcode" name="_barcode" class="form-control" value="{{old('_barcode',$data->_barcode)}}" @if($data->_unique_barcode==1) readonly @endif placeholder="Model" >
                             </div>
                         </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Warranty: </label>
+                               <select  class="form-control _warranty select2" name="_warranty" required>
+                                  <option value="0">--Select Warranty--</option>
+                                  @forelse($_warranties as $_warranty )
+                                  <option value="{{$_warranty->id}}" @if(isset($data->_warranty)) @if($data->_warranty == $_warranty->id) selected @endif   @endif>{{ $_warranty->_name ?? '' }}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
+                            </div>
+                        </div>
+                      
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="_p_discount_input">Discount Rate:</label>

@@ -63,16 +63,16 @@
             <tr style="border: 1px solid silver;">
               <td colspan="2" style="border: 1px solid silver;">
                 <table style="width: 100%">
-                  <tr><td><b>Paid ato:</b>{{ $data->_ledger->_name ?? '' }}</td> </tr>
-                  <tr><td><b>Address:</b>{{ $data->_ledger->_address ?? '' }}</td> </tr>
-                  <tr><td><b>Phone:</b>{{ $data->_ledger->_phone ?? '' }}</td> </tr>
+                  <tr><td><b>Paid To:</b>{{ $data->_ledger->_name ?? '' }}</td> </tr>
+                  <tr><td><b>Address:</b>{{ $data->_address ?? '' }}</td> </tr>
+                  <tr><td><b>Phone:</b>{{ $data->_phone ?? '' }}</td> </tr>
                 </table>
               </td>
               <td style="border: 1px solid silver;">
                 <table style="width: 100%">
                   <tr><td>
                     <b>Invoice No: {{ $data->id ?? '' }}</b><br>
-                    <b>Date:</b> Date: {{ _view_date_formate($data->_date ?? '') }}  {{$data->_time ?? ''}}<br>
+                    <b>Date:</b>  {{ _view_date_formate($data->_date ?? '') }}  {{$data->_time ?? ''}}<br>
                     <b>Created By:</b> {{$data->_user_name ?? ''}}<br>
                     <b>Branch:</b> {{$data->_master_branch->_name ?? ''}}
                   </td></tr>

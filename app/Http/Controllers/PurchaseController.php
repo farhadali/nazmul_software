@@ -338,6 +338,8 @@ public function moneyReceipt($id){
                 $ProductPriceList->_sales_rate = $_sales_rates[$i];
                 $ProductPriceList->_pur_rate = $_rates[$i];
                 $ProductPriceList->_unit_id = $item_info->_unit_id ?? 1;
+                $ProductPriceList->_unique_barcode = $item_info->_unique_barcode ?? 0;
+                $ProductPriceList->_warranty = $item_info->_warranty ?? 0;
                 
                 $ProductPriceList->_sales_discount = $item_info->_discount ?? 0;
                 $ProductPriceList->_p_discount_input = $_discounts[$i] ?? 0;
@@ -355,6 +357,7 @@ public function moneyReceipt($id){
                 $ProductPriceList->_created_by = $users->id."-".$users->name;
                 $ProductPriceList->save();
                 $product_price_id =  $ProductPriceList->id;
+                $_unique_barcode =  $ProductPriceList->_unique_barcode;
 
 /*
     Barcode insert into database section
@@ -364,18 +367,22 @@ public function moneyReceipt($id){
                     $data->_no_detail_id = $_no_detail_id;
                     ] use  $p=1;
 */
-                 if($barcode_string !=""){
-                   $barcode_array=  explode(",",$barcode_string);
-                   $_qty = (sizeof($barcode_array) <= 1) ? $_qtys[$i] : 1;
-                   $_stat = 1;
-                   $_return=0;
-                   $p=0;
-                   foreach ($barcode_array as $_b_v) {
-                    _barcode_insert_update('BarcodeDetail',$product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,$_return,$p);
-                    _barcode_insert_update('PurchaseBarcode',$product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,$_return,$p);
-                     
-                   }
-                }
+                     if($_unique_barcode ==1){
+                         if($barcode_string !=""){
+
+                               $barcode_array=  explode(",",$barcode_string);
+                               $_qty = 1;
+                               $_stat = 1;
+                               $_return=0;
+                               $p=0;
+                               foreach ($barcode_array as $_b_v) {
+                                _barcode_insert_update('BarcodeDetail',$product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,$_return,$p);
+                                _barcode_insert_update('PurchaseBarcode',$product_price_id,$_item_ids[$i],$purchase_id,$_purchase_detail_id,$_qty,$_b_v,$_stat,$_return,$p);
+                                 
+                               }
+                            }
+                     }
+                
 
                 
 /*
@@ -588,6 +595,7 @@ public function moneyReceipt($id){
                //SMS SEND to Customer and Supplier
              $_send_sms = $request->_send_sms ?? '';
              if($_send_sms=='yes'){
+
                 $_name = _ledger_name($request->_main_ledger_id);
                 $_phones = $request->_phone;
                 $messages = "Dear ".$_name.", Invoice N0.".$_pfix." Invoice Amount: ".prefix_taka()."."._report_amount($request->_total).". Payment Amount. ".prefix_taka()."."._report_amount($_total_cr_amount).". Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". Current Balance:".prefix_taka()."."._report_amount($_l_balance);
@@ -846,6 +854,8 @@ public function moneyReceipt($id){
                 
                 $ProductPriceList->_item_id = $_item_ids[$i];
                 $ProductPriceList->_item = $item_info->_item ?? '';
+                $ProductPriceList->_unique_barcode = $item_info->_unique_barcode ?? 0;
+                $ProductPriceList->_warranty = $item_info->_warranty ?? 0;
                 $ProductPriceList->_unit_id =  $item_info->_unit_id ?? 1;
                 $ProductPriceList->_barcode =$barcode_string ?? '';
                 $ProductPriceList->_manufacture_date =$_manufacture_dates[$i] ?? null;
@@ -873,6 +883,7 @@ public function moneyReceipt($id){
 
 
                     $product_price_id =  $ProductPriceList->id;
+                    $_unique_barcode =  $ProductPriceList->_unique_barcode;
 
 /*
     Barcode insert into database section
@@ -882,9 +893,10 @@ public function moneyReceipt($id){
                     $data->_no_detail_id = $_no_detail_id;
                     ] use  $p=1;
 */
-                 if($barcode_string !=""){
+if($_unique_barcode ==1){
+      if($barcode_string !=""){
                    $barcode_array=  explode(",",$barcode_string);
-                   $_qty = (sizeof($barcode_array) <= 1) ? $_qtys[$i] : 1;
+                   $_qty = 1;
                    $_stat = 1;
                    $_return=0;
                    $p=0;
@@ -894,6 +906,8 @@ public function moneyReceipt($id){
                      
                    }
                 }
+}
+               
 
                  
 
@@ -1129,6 +1143,7 @@ if($__sub_total > 0){
              //SMS SEND to Customer and Supplier
              $_send_sms = $request->_send_sms ?? '';
              if($_send_sms=='yes'){
+                
                 $_name = _ledger_name($request->_main_ledger_id);
                 $_phones = $request->_phone;
                 $messages = "Dear ".$_name.", Invoice N0.".$_pfix." Invoice Amount: ".prefix_taka()."."._report_amount($request->_total).". Payment Amount. ".prefix_taka()."."._report_amount($_total_cr_amount).". Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". Current Balance:".prefix_taka()."."._report_amount($_l_balance);

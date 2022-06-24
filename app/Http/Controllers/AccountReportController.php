@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\AccountGroup;
 use App\Models\Accounts;
 use App\Models\AccountLedger;
+use App\Models\MainAccountHead;
 use Illuminate\Support\Facades\DB;
 use Session;
 use Auth;
@@ -26,6 +27,20 @@ class AccountReportController extends Controller
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
     	return view('backend.account-report.ledger',compact('request','page_name','permited_branch','permited_costcenters','previous_filter'));
+
+    }
+
+  //###################################
+  //
+  //
+  //####################################
+
+    public function chartOfAccount(Request $request){
+       
+        $page_name = "Chart of Accounts";
+         $data = MainAccountHead::with(['_account_type'])->get();
+        
+      return view('backend.account-report.chart-of-account',compact('request','page_name','data'));
 
     }
 
@@ -140,6 +155,7 @@ $ledger_details =[];
 
 
     public function groupBaseLedgerReport(Request $request){
+     // return $request->all();
       $this->validate($request, [
             '_datex' => 'required',
             '_datey' => 'required'

@@ -7,6 +7,7 @@ use App\Models\ItemCategory;
 use App\Models\ItemInventory;
 use App\Models\ProductPriceList;
 use App\Models\Units;
+use App\Models\Warranty;
 use Illuminate\Http\Request;
 use Session;
 
@@ -40,7 +41,7 @@ class InventoryController extends Controller
         
         $_asc_desc = $request->_asc_desc ?? 'DESC';
         $asc_cloumn =  $request->asc_cloumn ?? 'id';
-        $datas = Inventory::with(['_category','_units']);
+        $datas = Inventory::with(['_category','_units','_warranty_name']);
         if($request->has('_item') && $request->_item !=''){
             $datas = $datas->where('_item','like',"%$request->_item%");
         }
@@ -68,8 +69,14 @@ class InventoryController extends Controller
         if($request->has('_status') && $request->_status !=''){
             $datas = $datas->where('_status','=',$request->_status);
         }
+        if($request->has('_unique_barcode') && $request->_unique_barcode !=''){
+            $datas = $datas->where('_unique_barcode','=',$request->_unique_barcode);
+        }
         if($request->has('_category_id') && $request->_category_id !=''){
             $datas = $datas->where('_category_id','=',$request->_category_id);
+        }
+        if($request->has('_warranty') && $request->_warranty !=''){
+            $datas = $datas->where('_warranty','=',$request->_warranty);
         }
         if($request->has('_reorder') && $request->_reorder !=''){
             $datas = $datas->where('_reorder','=',$request->_reorder);
@@ -83,13 +90,14 @@ class InventoryController extends Controller
         $page_name = $this->page_name;
 
         $categories = ItemCategory::with(['_parents'])->orderBy('_name','asc')->get();
+        $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->where('_status',1)->get();
         if($request->has('print')){
             if($request->print =="single"){
-                return view('backend.item-information.master_print',compact('datas','page_name','request','limit'));
+                return view('backend.item-information.master_print',compact('datas','page_name','request','limit','_warranties'));
             }
          }
           $units = Units::orderBy('_name','asc')->get();
-        return view('backend.item-information.index',compact('datas','request','page_name','limit','categories','units'));
+        return view('backend.item-information.index',compact('datas','request','page_name','limit','categories','units','_warranties'));
 
     }
 
@@ -115,7 +123,8 @@ class InventoryController extends Controller
         
         $_asc_desc = $request->_asc_desc ?? 'DESC';
         $asc_cloumn =  $request->asc_cloumn ?? 'id';
-        $datas = ProductPriceList::with(['_units'])->where('_qty','!=',0);
+        
+        $datas = ProductPriceList::with(['_units','_warranty_name'])->where('_qty','!=',0);
         if($request->has('_item') && $request->_item !=''){
             $datas = $datas->where('_item','like',"%$request->_item%");
         }
@@ -143,8 +152,14 @@ class InventoryController extends Controller
         if($request->has('_status') && $request->_status !=''){
             $datas = $datas->where('_status','=',$request->_status);
         }
+        if($request->has('_unique_barcode') && $request->_unique_barcode !=''){
+            $datas = $datas->where('_unique_barcode','=',$request->_unique_barcode);
+        }
         if($request->has('_category_id') && $request->_category_id !=''){
             $datas = $datas->where('_category_id','=',$request->_category_id);
+        }
+        if($request->has('_warranty') && $request->_warranty !=''){
+            $datas = $datas->where('_warranty','=',$request->_warranty);
         }
         if($request->has('_unit_id') && $request->_unit_id !=''){
             $datas = $datas->where('_unit_id','=',$request->_unit_id);
@@ -160,15 +175,16 @@ class InventoryController extends Controller
         }
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)->paginate($limit);
         $page_name ='Lot Wise Item Information';
+         $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->get();
 
         $categories = ItemCategory::with('_parents')->orderBy('_name','asc')->get();
         if($request->has('print')){
             if($request->print =="single"){
-                return view('backend.item-information.lot_print',compact('datas','page_name','request','limit'));
+                return view('backend.item-information.lot_print',compact('datas','page_name','request','limit','_warranties'));
             }
          }
           $units = Units::orderBy('_name','asc')->get();
-         return view('backend.item-information.lot_item',compact('datas','request','page_name','limit','categories','units'));
+         return view('backend.item-information.lot_item',compact('datas','request','page_name','limit','categories','units','_warranties'));
     }
 
 
@@ -177,7 +193,7 @@ class InventoryController extends Controller
         $_asc_desc = $request->_asc_desc ?? 'ASC';
         $asc_cloumn =  $request->asc_cloumn ?? '_item';
         $text_val = $request->_text_val;
-        $datas = Inventory::select('id','_item as _name','_code','_unit_id','_barcode','_discount','_vat','_pur_rate','_sale_rate','_manufacture_company')
+        $datas = Inventory::select('id','_item as _name','_code','_unit_id','_barcode','_discount','_vat','_pur_rate','_sale_rate','_manufacture_company','_unique_barcode')
             ->where('_status',1);
          if($request->has('_text_val') && $request->_text_val !=''){
             $datas = $datas->where('_item','like',"%$request->_text_val%")
@@ -192,13 +208,14 @@ class InventoryController extends Controller
 
 
     public function salesPriceEdit($id){
-        $data = ProductPriceList::find($id);
+        $data = ProductPriceList::where('_qty','>',0)->find($id);
 
          $page_name = " Lot Wise Price Update -".$data->_item ?? '';
          
         $categories = ItemCategory::orderBy('_name','asc')->get();
          $units = Units::orderBy('_name','asc')->get();
-       return view('backend.item-information.lot_edit',compact('page_name','categories','data','units'));
+         $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->get();
+       return view('backend.item-information.lot_edit',compact('page_name','categories','data','units','_warranties'));
     }
 
     public function salesPriceUpdate(Request $request){
@@ -220,6 +237,8 @@ class InventoryController extends Controller
         $data->_p_vat = $request->_p_vat ?? 0;
         $data->_sales_rate = $request->_sales_rate ?? 0;
         $data->_status = $request->_status ?? 0;
+        $data->_unique_barcode = $request->_unique_barcode ?? 0;
+        $data->_warranty = $request->_warranty ?? 0;
         $data->save();
         return redirect()->back()->with('success','Information save successfully');
         
@@ -235,7 +254,8 @@ class InventoryController extends Controller
         $page_name = $this->page_name;
         $categories = ItemCategory::with(['_parents'])->orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
-       return view('backend.item-information.create',compact('page_name','categories','units'));
+        $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->get();
+       return view('backend.item-information.create',compact('page_name','categories','units','_warranties'));
     }
 
     /**
@@ -264,6 +284,8 @@ class InventoryController extends Controller
         $data->_sale_rate = $request->_sale_rate ?? 0;
         $data->_manufacture_company = $request->_manufacture_company;
         $data->_status = $request->_status ?? 0;
+        $data->_unique_barcode = $request->_unique_barcode ?? 0;
+        $data->_warranty = $request->_warranty ?? 0;
         $data->_reorder = $request->_reorder ?? 0;
         $data->_order_qty = $request->_order_qty ?? 0;
         $data->_created_by = \Auth::user()->id."-".\Auth::user()->name;
@@ -293,6 +315,7 @@ class InventoryController extends Controller
         $data->_sale_rate = $request->_item_sale_rate ?? 0;
         $data->_manufacture_company = $request->_item_manufacture_company;
         $data->_status = $request->_item_status ?? 0;
+        $data->_unique_barcode = $request->_item_unique_barcode ?? 0;
         $data->_created_by = \Auth::user()->id."-".\Auth::user()->name;
         $data->save();
         $id = $data->id;
@@ -312,7 +335,8 @@ class InventoryController extends Controller
         $page_name = $this->page_name;
          $data= Inventory::with(['_category','_units'])->find($id);
         $categories = ItemCategory::with(['_parents'])->orderBy('_name','asc')->get();
-       return view('backend.item-information.show',compact('page_name','categories','data'));
+         $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->get();
+       return view('backend.item-information.show',compact('page_name','categories','data','_warranties'));
     }
 
     /**
@@ -325,9 +349,10 @@ class InventoryController extends Controller
     {
          $page_name = $this->page_name;
          $data= Inventory::find($id);
-        $categories = ItemCategory::with(['_parents'])->orderBy('_name','asc')->get();
+         $categories = ItemCategory::with(['_parents'])->orderBy('_name','asc')->get();
          $units = Units::orderBy('_name','asc')->get();
-       return view('backend.item-information.edit',compact('page_name','categories','data','units'));
+        $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->get();
+       return view('backend.item-information.edit',compact('page_name','categories','data','units','_warranties'));
     }
 
     /**
@@ -358,6 +383,8 @@ class InventoryController extends Controller
         $data->_sale_rate = $request->_sale_rate ?? 0;
         $data->_manufacture_company = $request->_manufacture_company;
         $data->_status = $request->_status ?? 0;
+        $data->_unique_barcode = $request->_unique_barcode ?? 0;
+        $data->_warranty = $request->_warranty ?? 0;
         $data->_reorder = $request->_reorder ?? 0;
         $data->_order_qty = $request->_order_qty ?? 0;
         $data->_updated_by = \Auth::user()->id."-".\Auth::user()->name;

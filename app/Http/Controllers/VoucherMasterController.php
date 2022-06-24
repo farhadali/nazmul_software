@@ -194,6 +194,7 @@ class VoucherMasterController extends Controller
             $_cr_amount = $request->_cr_amount;
             if(sizeof($_ledger_id) > 0){
                 for ($i = 0; $i <sizeof($_ledger_id) ; $i++) {
+                    $_p_balance = _l_balance_update($_ledger_id[$i]);
                     $_account_type_id =  ledger_to_group_type($_ledger_id[$i])->_account_head_id;
                     $_account_group_id =  ledger_to_group_type($_ledger_id[$i])->_account_group_id;
 
@@ -235,7 +236,35 @@ class VoucherMasterController extends Controller
                     $Accounts->_name =$users->name;
                     $Accounts->save();
 
-                    ledger_balance_update($_ledger_id[$i]);
+                   $_l_balance = ledger_balance_update($_ledger_id[$i]);
+
+
+                    $__cr_amount =$_cr_amount[$i] ?? 0;
+                    $__dr_amount =$_dr_amount[$i] ?? 0;
+                    $__amount =0;
+                    $_message_string = "";
+                    if($__dr_amount > 0){
+                      $_message_string = "Your Accont has been debited by ";
+                      $__amount =$__dr_amount;
+                    }
+                    if($__cr_amount > 0){
+                      $_message_string = "Your Accont has been credited by ";
+                      $__amount =$__cr_amount;
+                    }
+
+                    $_ledger_info = AccountLedger::select('_phone','_name')->where('id',$_ledger_id[$i])->where('_phone','!=','')->first();
+                    //SMS SEND to Customer and Supplier
+                     $_send_sms = $request->_send_sms ?? '';
+                     if($_send_sms=='yes'){
+                        $_name = $_ledger_info->_name ?? '';
+                        $_phones = $_ledger_info->_phone ?? "";
+                        if(strlen($_phones) >= 11){
+                             $messages = "Dear ".$_name.", Voucher N0.".$master_id." ".$_message_string.": ".prefix_taka()."."._report_amount($__amount).". Your Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". And Current Balance:".prefix_taka()."."._report_amount($_l_balance);
+                                sms_send($messages, $_phones);
+                        }
+                       
+                     }
+                     //End Sms Send to customer and Supplier
 
                     
                 }
@@ -448,6 +477,8 @@ class VoucherMasterController extends Controller
 
             if(sizeof($_ledger_id) > 0){
                 for ($i = 0; $i <sizeof($_ledger_id) ; $i++){
+                    $_p_balance = _l_balance_update($_ledger_id[$i]);
+                    
                     $_account_type_id =  ledger_to_group_type($_ledger_id[$i])->_account_head_id;
                     $_account_group_id =  ledger_to_group_type($_ledger_id[$i])->_account_group_id;
 
@@ -523,7 +554,35 @@ class VoucherMasterController extends Controller
                                               ] );
                        //return $Accounts ; 
                     }
-                 ledger_balance_update($_ledger_id[$i]);   
+                $_l_balance = ledger_balance_update($_ledger_id[$i]);
+
+
+                    $__cr_amount =$_cr_amount[$i] ?? 0;
+                    $__dr_amount =$_dr_amount[$i] ?? 0;
+                    $__amount =0;
+                    $_message_string = "";
+                    if($__dr_amount > 0){
+                      $_message_string = "Your Accont has been debited by ";
+                      $__amount =$__dr_amount;
+                    }
+                    if($__cr_amount > 0){
+                      $_message_string = "Your Accont has been credited by ";
+                      $__amount =$__cr_amount;
+                    }
+
+                    $_ledger_info = AccountLedger::select('_phone','_name')->where('id',$_ledger_id[$i])->where('_phone','!=','')->first();
+                    //SMS SEND to Customer and Supplier
+                     $_send_sms = $request->_send_sms ?? '';
+                     if($_send_sms=='yes'){
+                        $_name = $_ledger_info->_name ?? '';
+                        $_phones = $_ledger_info->_phone ?? "";
+                        if(strlen($_phones) >= 11){
+                             $messages = "Dear ".$_name.", Voucher N0.".$master_id." ".$_message_string.": ".prefix_taka()."."._report_amount($__amount).". Your Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". And Current Balance:".prefix_taka()."."._report_amount($_l_balance);
+                                sms_send($messages, $_phones);
+                        }
+                       
+                     }
+                     //End Sms Send to customer and Supplier  
                     
                     
 

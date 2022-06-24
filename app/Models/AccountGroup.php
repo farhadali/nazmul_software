@@ -11,6 +11,6 @@ class AccountGroup extends Model
 
 
     public function account_type(){
-    	return $this->hasOne(AccountHead::class,'id','_account_head_id')->select('id','_name');
+    	return $this->hasOne(AccountHead::class,'id','_account_head_id')->select('id','_name')->with(['_account_group']);
     }
 }

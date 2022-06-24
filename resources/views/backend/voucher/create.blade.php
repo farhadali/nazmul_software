@@ -181,6 +181,7 @@
                                     <input type="text" id="_note"  name="_note" class="form-control _note" value="{{old('_note')}}" placeholder="Note" required >
                                   </div>
                                 </div>
+                                 @include('backend.message.send_sms')
                             </div>
                         </div>
                         

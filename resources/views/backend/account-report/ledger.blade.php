@@ -81,6 +81,23 @@
                             
                           </div>
                      </div>
+                     <br>
+                     <div class="row">
+                         <div style="width: 100%;text-align: center;">
+                          <div style="width: 33%;float: left;">
+                            <input type="checkbox" name="_check_id" class="form-control" <?php echo (isset($previous_filter['_check_id'])?"value='y'":"value='n'")?>  <?php echo (isset($previous_filter['_check_id'])?"checked":"") ?> ><span>ID</span>
+                          </div>
+                          <div style="width: 33%;float: left;">
+                            <input type="checkbox" name="short_naration" class="form-control" <?php echo (isset($previous_filter['short_naration'])?"value='y'":"value='n'")?>  <?php echo (isset($previous_filter['short_naration'])?"checked":"") ?> ><span>Short Naration</span>
+                          </div>
+                          <div style="width: 33%;float: left;">
+                             <input type="checkbox" name="naration" class="form-control"<?php echo (isset($previous_filter['naration'])?"value='y'":"value='n'")?>  <?php echo (isset($previous_filter['naration'])?"checked":"") ?> ><span> Naration</span>
+                          </div>
+                          
+                           
+                         </div>
+                         
+                     </div>
                      <div class="row mt-5">
                          <div class="col-xs-6 col-sm-6 col-md-6 ">
                             <button type="submit" class="btn btn-success submit-button form-control"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Report</button>

@@ -10,7 +10,7 @@ class PurchaseReturnDetail extends Model
     use HasFactory;
 
       public function _items(){
-    	return $this->hasOne(Inventory::class,'id','_item_id')->select('id','_item as _name');
+    	return $this->hasOne(Inventory::class,'id','_item_id')->select('id','_item as _name','_unique_barcode');
     }
 
 

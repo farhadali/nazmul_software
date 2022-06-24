@@ -10,7 +10,7 @@ class SalesReturnDetail extends Model
     use HasFactory;
 
      public function _items(){
-    	return $this->hasOne(ProductPriceList::class,'id','_p_p_l_id')->select('id','_item as _name','_qty','_item_id');
+    	return $this->hasOne(ProductPriceList::class,'id','_p_p_l_id')->select('id','_item as _name','_qty','_item_id','_unique_barcode');
     }
 
 

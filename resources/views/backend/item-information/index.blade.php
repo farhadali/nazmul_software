@@ -87,6 +87,7 @@ if($currentURL === $current){
                          <th>Unit</th>
                          <th>Code</th>
                          <th>Barcode</th>
+                         <th>Warranty</th>
                          <th>Category</th>
                          
                          <th>Discount</th>
@@ -124,6 +125,7 @@ if($currentURL === $current){
                             <td>{{ $data->_units->_name ?? '' }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_barcode ?? '' }}</td>
+                            <td>{{ $data->_warranty_name->_name ?? '' }}</td>
                             <td>{{ $data->_category->_parents->_name ?? 'C' }}-{{ $data->_category->_name ?? '' }}</td>
                             <td>{{ _report_amount( $data->_discount ?? 0 ) }}</td>
                             <td>{{ _report_amount( $data->_vat ?? 0 ) }}</td>

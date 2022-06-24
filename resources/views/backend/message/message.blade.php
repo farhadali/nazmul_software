@@ -12,6 +12,7 @@
                   @if ($message = Session::get('success'))
                     <div class="alert ">
                       <p>{{ $message }}</p>
+                      
                     </div>
                     @endif
                   @if ($message = Session::get('danger'))

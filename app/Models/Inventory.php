@@ -17,4 +17,8 @@ class Inventory extends Model
     public function _units(){
     	return $this->hasOne(Units::class,'id','_unit_id')->select('id','_name','_code');
     }
+
+    public function _warranty_name(){
+    	return $this->hasOne(Warranty::class,'id','_warranty')->select('id','_name');
+    }
 }

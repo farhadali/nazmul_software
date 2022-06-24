@@ -12,7 +12,7 @@
             <ol class="breadcrumb float-sm-right">
               <!-- <li class="breadcrumb-item"><a href="{{url('home')}}">Home</a></li> -->
               <li class="breadcrumb-item active">
-                 <a class="btn btn-primary" href="{{ route('cost-center.index') }}"> {{ $page_name ?? '' }} </a>
+                 <a class="btn btn-primary" href="{{ route('warranty.index') }}"> {{ $page_name ?? '' }} </a>
                </li>
             </ol>
           </div><!-- /.col -->
@@ -30,6 +30,11 @@
                 </ul>
             </div>
         @endif
+        @if ($message = Session::get('success'))
+        <div class="alert alert-success">
+          <p>{{ $message }}</p>
+        </div>
+        @endif
     </div>
     <div class="content">
       <div class="container-fluid">
@@ -38,47 +43,52 @@
             <div class="card">
              
               <div class="card-body">
-               
-                 <form action="{{ url('cost-center/update') }}" method="POST">
-                    @csrf
+                {!! Form::open(array('route' => 'warranty.store','method'=>'POST')) !!}
                     <div class="row">
-                       <div class="col-xs-12 col-sm-12 col-md-12">
-                        <input type="hidden" name="id" value="{{ $data->id }}">
-                            <div class="form-group">
-                                <strong>Branch:</strong>
-                                
-                                <select class="form-control" name="_branch_id" required>
-                                  @forelse($branchs as $branch)
-                                  <option value="{{$branch->id}}" @if($data->_branch_id==$branch->id) selected @endif>{{ $branch->_name ?? '' }}</option>
-                                  @empty
-                                  @endforelse
-                                  
-                                </select>
-                            </div>
-                        </div>
+                       
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
                                 <strong>Name:</strong>
-                                
-                                <input type="text" name="_name" class="form-control" required="true" value="{!! $data->_name ?? '' !!}">
+                                {!! Form::text('_name', null, array('placeholder' => 'Name','class' => 'form-control','required' => 'true')) !!}
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
-                                <strong>Code:</strong>
+                                <strong>Description:</strong>
+                                {!! Form::text('_description', null, array('placeholder' => 'Description','class' => 'form-control')) !!}
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <strong>Duration:<span class="_required">*</span></strong>
+                                <input type="number" name="_duration" class="form-control" required>
+                            </div>
+                        </div>
+                        @php
+                        $periods = ['days','months','years'];
+                        @endphp
+
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <strong>Period:<span class="_required">*</span></strong>
+                                <select class="form-control" name="_period" >
+                                  <option value="">Select</option>
+                                  @forelse($periods as $period)
+                                  <option value="{{$period}}">{{$period}}</option>
+                                  @empty
+                                  @endforelse
+                                </select>
                                 
-                                 <input type="text" name="_code" class="form-control" required="true" value="{!! $data->_code ?? '' !!}">
                             </div>
                         </div>
                        
-                        
-                       <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
+                        <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
                             <button type="submit" class="btn btn-success submit-button ml-5"><i class="fa fa-credit-card mr-2" aria-hidden="true"></i> Save</button>
                            
                         </div>
                         <br><br>
                     </div>
-                    </form>
+                    {!! Form::close() !!}
                 
               </div>
             </div>

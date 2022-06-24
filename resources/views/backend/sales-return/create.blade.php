@@ -65,13 +65,15 @@ $__user= Auth::user();
     $_show_vat =  $form_settings->_show_vat ?? 0;
    $_inline_discount = $form_settings->_inline_discount ?? 0;
     $_show_self = $form_settings->_show_self ?? 0;
+    $_show_warranty = $form_settings->_show_warranty ?? 0;
+    $_show_warranty = $form_settings->_show_warranty ?? 0;
     @endphp
               <div class="card-body">
                <form action="{{route('sales-return.store')}}" method="POST" class="purchase_form" >
                 @csrf
                     <div class="row">
                        <div class="col-xs-12 col-sm-12 col-md-2">
-                        <input type="hidden" name="_form_name" value="sales_return">
+                        <input type="hidden" name="_form_name" class="_form_name" value="sales_return">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -189,6 +191,7 @@ $__user= Auth::user();
                                             <th class="text-left" >Item</th>
                                           
                                             <th class="text-left @if($_show_barcode  ==0) display_none @endif" >Barcode</th>
+                                            <th class="text-left @if($_show_warranty  ==0) display_none @endif" >Warranty</th>
                                             
                                             <th class="text-left" >Qty</th>
                                             <th class="text-left @if($_show_cost_rate  ==0) display_none @endif" >Cost</th>
@@ -240,6 +243,15 @@ $__user= Auth::user();
                                              
                                               <td class=" @if($_show_barcode  ==0) display_none @endif ">
                                                 <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                              </td>
+                                              <td  class="@if($_show_warranty  ==0) display_none @endif" >
+                                                <select name="_warranty[]" class="form-control _warranty 1___warranty">
+                                                   <option value="0">--Select --</option>
+                                                      @forelse($_warranties as $_warranty )
+                                                      <option value="{{$_warranty->id}}" >{{ $_warranty->_name ?? '' }}</option>
+                                                      @empty
+                                                      @endforelse
+                                                </select>
                                               </td>
                                               
                                               <td>
@@ -323,6 +335,7 @@ $__user= Auth::user();
                                               <td  class="text-right"><b>Total</b></td>
                                               
                                                 <td  class="text-right @if($_show_barcode==0) display_none @endif"></td>
+                                                <td  class="text-right @if($_show_warranty==0) display_none @endif"></td>
                                              
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_qty_amount" class="form-control _total_qty_amount" value="0" readonly required>
@@ -545,6 +558,8 @@ $__user= Auth::user();
                           var _delivery_man_name = (data[i]._delivery_man ) ? data[i]._delivery_man._name : '' ;
                           var _sales_man_id = (data[i]._sales_man ) ? data[i]._sales_man.id : '' ;
                           var _sales_man_name = (data[i]._sales_man ) ? data[i]._sales_man._name : '' ;
+                          var __address = (data[i]._ledger._address ) ? data[i]._ledger._address : '' ;
+                          var __phone = (data[i]._ledger._phone ) ? data[i]._ledger._phone : '' ;
 
                          search_html += `<tr class="search_row_purchase_order" >
                                         <td style="border:1px solid #ccc;">${data[i].id}
@@ -553,8 +568,8 @@ $__user= Auth::user();
                                         <input type="hidden" name="_purchase_main_date" class="_purchase_main_date" value="${after_request_date__today(data[i]._date)}">
                                         </td><td style="border:1px solid #ccc;">${data[i]._ledger._name}
                                         <input type="hidden" name="_name_main_ledger" class="_name_main_ledger" value="${data[i]._ledger._name}">
-                                        <input type="hidden" name="_address_main_ledger" class="_address_main_ledger" value="${data[i]._ledger._address}">
-                                        <input type="hidden" name="_phone_main_ledger" class="_phone_main_ledger" value="${data[i]._ledger._phone}">
+                                        <input type="hidden" name="_address_main_ledger" class="_address_main_ledger" value="${__address}">
+                                        <input type="hidden" name="_phone_main_ledger" class="_phone_main_ledger" value="${__phone}">
                                         <input type="hidden" name="_delivery_man_main_id" class="_delivery_man_main_id" value="${_delivery_man_id}">
                                         <input type="hidden" name="_delivery_man_main_name" class="_delivery_man_main_name" value="${_delivery_man_name}">
                                         <input type="hidden" name="_sales_man_main_id" class="_sales_man_main_id" value="${_sales_man_id}" >
@@ -635,6 +650,9 @@ if(data.length > 0 ){
     var _item_name = (data[i]._items._name) ? data[i]._items._name : '' ;
     var _store_salves_id = (data[i]._store_salves_id) ? data[i]._store_salves_id : '' ;
     var _barcode  = (data[i]._barcode ) ? data[i]._barcode  : '' ;
+    var _warranty  = (data[i]._warranty ) ? data[i]._warranty  : '0' ;
+    var _unique_barcode  = (data[i]._items._unique_barcode ) ? data[i]._items._unique_barcode  : '' ;
+    
     var _qty   = (data[i]._qty  ) ? data[i]._qty   : 0 ;
     var _rate    = (data[i]._rate) ? data[i]._rate    : 0 ;
     var _sales_rate = (data[i]._sales_rate ) ? data[i]._sales_rate : 0 ;
@@ -647,13 +665,14 @@ if(data.length > 0 ){
     var _discount = (data[i]._discount ) ? data[i]._discount : 0 ;
     var _discount_amount = ( ((data[i]._qty*data[i]._sales_rate)*data[i]._discount)/100 ) ? ( ((data[i]._qty*data[i]._sales_rate)*data[i]._discount)/100 ) : 0 ;
     var _value = ( (data[i]._qty*data[i]._sales_rate) ) ? (data[i]._qty*data[i]._sales_rate) : 0 ;
+    var _item_row_count = (i+1);
 
-       _purchase_row_single +=`<tr class="_purchase_row">
+       $(document).find("#area__purchase_details").append(`<tr class="_purchase_row">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item" value="${_item_name}" readonly>
+                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id ${_item_row_count}__search_item_id width_280_px" placeholder="Item" value="${_item_name}" readonly>
                                                 <input type="hidden" name="_item_id[]" class="form-control _item_id " value="${data[i]._item_id}" >
                                                 <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id " value="${data[i]._p_p_l_id}"  >
                                                 <input type="hidden" name="_sales_ref_id[]" class="form-control _sales_ref_id" value="${data[i]._no}" >
@@ -663,10 +682,24 @@ if(data.length > 0 ){
                                               </td>
                                              
                                               <td class="@if($_show_barcode==0) display_none @endif">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " value="${_barcode}" >
+                                                
+
+                                                <input type="text" name="${_item_row_count}__barcode__${data[i]._p_p_l_id}" class="form-control _barcode ${_item_row_count}__barcode " id="${_item_row_count}__barcode" value="${_barcode}" >
+
+                                                <input type="hidden" name="_ref_counter[]" value="${_item_row_count}" class="_ref_counter" id="${_item_row_count}__ref_counter">
+                                                <input type="hidden" name="_unique_barcode[]" value="${_unique_barcode}" class="_unique_barcode   ${_item_row_count}__unique_barcode" id="${_item_row_count}_unique_barcode">
+                                              </td>
+                                              <td class="@if($_show_warranty==0) display_none @endif">
+                                                <select name="_warranty[]" class="form-control _warranty ${_item_row_count}___warranty">
+                                                   <option value="0">--None --</option>
+                                                      @forelse($_warranties as $_warranty )
+                                                      <option value="{{$_warranty->id}}" >{{ $_warranty->_name ?? '' }}</option>
+                                                      @empty
+                                                      @endforelse
+                                                </select>
                                               </td>
                                               <td>
-                                                <input type="number" name="_qty[]" class="form-control _qty _common_keyup" value="${_qty}"  >
+                                                <input type="number" name="_qty[]" class="form-control _qty ${_item_row_count}__qty _common_keyup" value="${_qty}"  >
                                               </td>
                                               <td class="@if($_show_cost_rate==0) display_none @endif">
                                                 <input type="number" name="_rate[]" class="form-control _rate " readonly value="${_rate}" >
@@ -724,13 +757,17 @@ if(data.length > 0 ){
                                               </td>
                                               
                                               
-                                            </tr>`;
+                                            </tr>`);
+$("."+_item_row_count+"___warranty").val(_warranty);
+                                            if(_unique_barcode ==1){ _new_barcode_function(_item_row_count)   }
+
                                           }
-                                        }else{
-                                          _purchase_row_single += `Returnable Item Not Found !`;
+
+                                          
+
                                         }
 
-            $(document).find("#area__purchase_details").html(_purchase_row_single);
+           // $(document).find("#area__purchase_details").html(_purchase_row_single);
               _purchase_total_calculation();
     })
 
@@ -738,7 +775,13 @@ if(data.length > 0 ){
 
   })
 
-
+ function _new_barcode_function(_item_row_count){
+      $('#'+_item_row_count+'__barcode').amsifySuggestags({
+      trimValue: true,
+      dashspaces: true,
+      showPlusAfter: 1,
+      });
+  }
   
 
   
@@ -970,6 +1013,7 @@ $(document).on("change","#_discount_input",function(){
       $(document).find("._qty").each(function() {
           _total_qty +=parseFloat($(this).val());
       });
+
       $(document).find("._vat_amount").each(function() {
           _total__vat +=parseFloat($(this).val());
       });
@@ -1156,6 +1200,40 @@ function purchase_row_add(event){
 
   $(document).on('click','.submit-button',function(event){
     event.preventDefault();
+
+    var _over_qty_barcode = [];
+    $(document).find("._unique_barcode").each(function(__index) {
+      var _new_index=(__index+1)
+      var __barcodes =   $("#"+_new_index+"__barcode").val();
+      var _qtys  =   $("#"+_new_index+"__qty").val();
+      var __unique_barcode  =   $("#"+_new_index+"_unique_barcode").val();
+      console.log("__unique_barcode "+__unique_barcode)
+      if(__unique_barcode ==1){
+        var __barcodes_string = isEmpty(__barcodes);
+        if(__barcodes_string !=''){
+           var _single_barcode_array = __barcodes_string.split(",");
+           console.log("_single_barcode_array "+_single_barcode_array.length);
+           console.log("_qtys "+_qtys);
+           if(_single_barcode_array.length !=_qtys ){
+            console.log("not equal with barcode and qty")
+              _over_qty_barcode.push(_new_index);
+           }
+        }
+      }
+      });
+
+    // if(_over_qty_barcode.length > 0){
+    //   for (var i = 0; i < _over_qty_barcode.length; i++) {
+    //     $("."+ _over_qty_barcode[i]+"__search_item_id").addClass('_required');
+    //   }
+    //   var _message = "Unique Barcode and Qty Is not Equal ";
+    //   var _type = "danger";
+    //   _show_notify_message(_message,_type)
+    //   return false;
+    // }
+
+    
+      
 
     var _p_p_l_ids_qtys = new Array();
      var _only_p_ids = [];

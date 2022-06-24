@@ -46,8 +46,9 @@
     $_show_barcode = $form_settings->_show_barcode ?? 0;
     $_show_cost_rate =  $form_settings->_show_cost_rate ?? 0;
     $_show_vat =  $form_settings->_show_vat ?? 0;
-   $_inline_discount = $form_settings->_inline_discount ?? 0;
+    $_inline_discount = $form_settings->_inline_discount ?? 0;
     $_show_self = $form_settings->_show_self ?? 0;
+    $_show_warranty = $form_settings->_show_warranty ?? 0;
     @endphp
   
     <div class="content">
@@ -68,7 +69,7 @@
                 @csrf
                     <div class="row">
                        <div class="col-xs-12 col-sm-12 col-md-2">
-                        <input type="hidden" name="_form_name" value="damage">
+                        <input type="hidden" name="_form_name" class="_form_name"  value="damage">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -158,6 +159,7 @@
                                             <th class="text-left" >Item</th>
                                           
                                             <th class="text-left @if($_show_barcode  ==0) display_none @endif" >Barcode</th>
+                                            <th class="text-left @if($_show_warranty  ==0) display_none @endif" >Warranty</th>
                                             
                                             <th class="text-left" >Qty</th>
                                             <th class="text-left @if($_show_cost_rate  ==0) display_none @endif" >Cost</th>
@@ -201,13 +203,24 @@
                                                 <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id " >
                                                 <input type="hidden" name="_purchase_invoice_no[]" class="form-control _purchase_invoice_no" >
                                                 <input type="hidden" name="_purchase_detail_id[]" class="form-control _purchase_detail_id" >
+                                                <input type="hidden" name="_ref_counter[]" value="1" class="_ref_counter" id="1__ref_counter">
                                                 <div class="search_box_item">
                                                   
                                                 </div>
                                               </td>
                                              
-                                              <td class=" @if($_show_barcode  ==0) display_none @endif ">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                              <td class=" @if($_show_barcode==0) display_none @endif ">
+                                                <input type="text" name="_barcode[]" class="form-control _barcode " id="1__barcode" >
+                                                <input type="hidden" name="_unique_barcode[]" value="0" class="_unique_barcode   1__unique_barcode" id="1_unique_barcode">
+                                              </td>
+                                              <td class="@if($_show_warranty  ==0) display_none @endif">
+                                                <select name="_warranty[]" class="form-control _warranty 1___warranty">
+                                                   <option value="0">--None --</option>
+                                                      @forelse($_warranties as $_warranty )
+                                                      <option value="{{$_warranty->id}}"  >{{ $_warranty->_name ?? '' }}</option>
+                                                      @empty
+                                                      @endforelse
+                                                </select>
                                               </td>
                                               
                                               <td>
@@ -291,6 +304,7 @@
                                               <td  class="text-right"><b>Total</b></td>
                                               
                                                 <td  class="text-right @if($_show_barcode==0) display_none @endif"></td>
+                                                <td class="@if($_show_warranty==0) display_none @endif"></td>
                                              
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_qty_amount" class="form-control _total_qty_amount" value="0" readonly required>
@@ -383,8 +397,10 @@
                               <td style="border:0px;width: 20%;"><label for="_total">NET Total </label></td>
                               <td style="border:0px;width: 80%;">
                           <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="0">
+                           <input type="hidden" name="_item_row_count" value="1" class="_item_row_count">
                               </td>
                             </tr>
+                            
                           </table>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
@@ -486,14 +502,14 @@
 
 
   var request = $.ajax({
-      url: "{{url('item-sales-search')}}",
+      url: "{{url('item-damage-search')}}",
       method: "GET",
       data: { _text_val : _text_val },
       dataType: "JSON"
     });
      
     request.done(function( result ) {
-
+console.log(result)
       var search_html =``;
       var data = result.data; 
       if(data.length > 0 ){
@@ -522,6 +538,8 @@
   <input type="hidden" name="_p_item_cost_center_id" class="_p_item_cost_center_id" value="${data[i]._cost_center_id}">
   <input type="hidden" name="_p_item_store_id" class="_p_item_store_id" value="${data[i]._store_id}">
   <input type="hidden" name="_p_item_store_salves_id" class="_p_item_store_salves_id" value="${data[i]._store_salves_id}">
+   <input type="hidden" name="_p_item_warranty" class="_p_item_warranty" value="${data[i]._warranty}">
+   <input type="hidden" name="_p_item_unique_barcode" class="_p_item_unique_barcode" value="${data[i]._unique_barcode}">
                                    </td>
                                    
                                    <td>${data[i]._qty}</td>
@@ -566,6 +584,16 @@ $(document).on('click','.search_row_item',function(){
   var _cost_center_id = $(this).find('._p_item_cost_center_id').val();
   var _store_id = $(this).find('._p_item_store_id').val();
   var _store_salves_id = $(this).find('._p_item_store_salves_id').val();
+  var _warranty = $(this).find('._p_item_warranty').val();
+  var _unique_barcode = $(this).find('._p_item_unique_barcode').val();
+  var _item_row_count =  $(this).parent().parent().parent().parent().parent().parent().find('._ref_counter').val();
+ 
+console.log("_unique_barcode "+_unique_barcode)
+console.log("_item_row_count "+_item_row_count)
+
+if(_unique_barcode ==1){
+  _new_barcode_function(_item_row_count)
+}
 
 
   if(_barcode=='null'){ _barcode='' } 
@@ -577,9 +605,12 @@ $(document).on('click','.search_row_item',function(){
   if(isNaN(_sales_discount)){ _sales_discount=0 }
   _discount_amount = ((_sales_rate*_sales_discount)/100)
   
+var find_counter_id = $(this).parent().parent().parent().parent().parent().parent().find('._ref_counter').val();
+var _new_name_for_barcode = `${find_counter_id}__barcode__${row_id}`;
+$(this).parent().parent().parent().parent().parent().parent().find('#'+_item_row_count+"__barcode").attr('name',_new_name_for_barcode); 
 
   $(this).parent().parent().parent().parent().parent().parent().find('._item_id').val(_p_item_item_id);
-  var _id_name = `${_master_id} ,${_name}, ${_qty}`;
+  var _id_name = `${_master_id},${_name},${_qty}`;
   $(this).parent().parent().parent().parent().parent().parent().find('._search_item_id').val(_id_name);
   $(this).parent().parent().parent().parent().parent().parent().find('._p_p_l_id').val(row_id);
   $(this).parent().parent().parent().parent().parent().parent().find('._purchase_invoice_no').val(_master_id);
@@ -596,6 +627,10 @@ $(document).on('click','.search_row_item',function(){
   $(this).parent().parent().parent().parent().parent().parent().find('._store_salves_id').val(_store_salves_id);
   $(this).parent().parent().parent().parent().parent().parent().find('._manufacture_date').val(_manufacture_date);
   $(this).parent().parent().parent().parent().parent().parent().find('._expire_date').val(_expire_date);
+  $(this).parent().parent().parent().parent().parent().parent().find('._warranty').val(_warranty);
+  $(this).parent().parent().parent().parent().parent().parent().find('._unique_barcode').val(_unique_barcode);
+
+  
 
 
   _purchase_total_calculation();
@@ -746,7 +781,13 @@ $(document).on("change","#_discount_input",function(){
 
 
 
-var _purchase_row_single =`<tr class="_purchase_row">
+
+function purchase_row_add(event){
+   event.preventDefault();
+   var _item_row_count = parseFloat($(document).find('._item_row_count').val());
+   var _item_row_count = (parseFloat(_item_row_count)+1);
+
+      $("#area__purchase_details").append(`<tr class="_purchase_row">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
@@ -756,14 +797,24 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                                 <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id " >
                                                 <input type="hidden" name="_purchase_invoice_no[]" class="form-control _purchase_invoice_no" >
                                                 <input type="hidden" name="_purchase_detail_id[]" class="form-control _purchase_detail_id" >
-                                                <div class="search_box_item">
+                                               <input type="hidden" name="_ref_counter[]" value="${_item_row_count}" class="_ref_counter" id="${_item_row_count}__ref_counter">
                                                 <div class="search_box_item">
                                                   
                                                 </div>
                                               </td>
                                              
                                               <td class="@if($_show_barcode==0) display_none @endif">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " >
+                                                <input type="text" name="_barcode[]" class="form-control _barcode " id="${_item_row_count}__barcode" >
+                                                <input type="hidden" name="_unique_barcode[]" value="${_unique_barcode}" class="_unique_barcode   ${_item_row_count}__unique_barcode" id="${_item_row_count}_unique_barcode">
+                                              </td>
+                                              <td class="@if($_show_warranty  ==0) display_none @endif">
+                                                <select name="_warranty[]" class="form-control _warranty ${_item_row_count}___warranty">
+                                                   <option value="0">--None --</option>
+                                                      @forelse($_warranties as $_warranty )
+                                                      <option value="{{$_warranty->id}}" >{{ $_warranty->_name ?? '' }}</option>
+                                                      @empty
+                                                      @endforelse
+                                                </select>
                                               </td>
                                               <td>
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup" >
@@ -833,10 +884,9 @@ var _purchase_row_single =`<tr class="_purchase_row">
                                               </td>
                                               
                                               
-                                            </tr>`;
-function purchase_row_add(event){
-   event.preventDefault();
-      $("#area__purchase_details").append(_purchase_row_single);
+                                            </tr>`);
+ $(document).find('._item_row_count').val(_item_row_count)
+
 }
  $(document).on('click','._purchase_row_remove',function(event){
       event.preventDefault();
@@ -856,6 +906,30 @@ function purchase_row_add(event){
 
   $(document).on('click','.submit-button',function(event){
     event.preventDefault();
+
+    var counter_array=[];
+    var _all_barcode = [];
+
+    
+
+    $(document).find('.show-plus-bg').each(function(index){
+         console.log(parseFloat($(this).text())); 
+         var _ref_counter = $(this).closest('tr').find('._ref_counter').val(); 
+        if(!counter_array.includes(_ref_counter)){
+            var _barcode_unique =   $(this).closest('tr').find('._barcode_unique').val(); 
+            var _barcode = $(this).closest('tr').find('._barcode').val(); 
+            var _qty = $(this).closest('tr').find('._qty').val();
+            var _barcodes = isEmpty(_barcode);
+            _all_barcode.push(_barcode);
+            counter_array.push(_ref_counter);
+
+        }
+         
+    })
+
+    _all_barcode = _all_barcode.toString();
+
+   
 
     var _p_p_l_ids_qtys = new Array();
      var _only_p_ids = [];
@@ -880,12 +954,12 @@ function purchase_row_add(event){
                 url: "{{url('check-available-qty')}}",
                 method: "GET",
                 async:false,
-                data: { _p_p_l_ids_qtys,unique_p_ids },
+                data: { _p_p_l_ids_qtys,unique_p_ids,_all_barcode },
                 dataType: "JSON"
               });
                
               request.done(function( result ) {
-                
+                console.log(result)
                   if(result.length > 0){
                      
                    _stop_sales=1;
@@ -894,9 +968,10 @@ function purchase_row_add(event){
                   }
               })
     }
+    // return false;
     if(_stop_sales ==1){
-        alert(" You Can not Adjust More then Available Qty  ");
-       var _message =" You Can not Adjust More then Available Qty";
+        alert(" You Can not Adjust More then Available Qty Or Wrong Barcode  ");
+       var _message =" You Can not Adjust More then Available Qty Or Wrong Barcode";
         $(document).find("._over_qty").text(_message);
         $(".remove_area").hide();
       return false;
@@ -956,7 +1031,13 @@ function purchase_row_add(event){
     }
   })
 
-
+ function _new_barcode_function(_item_row_count){
+      $('#'+_item_row_count+'__barcode').amsifySuggestags({
+      trimValue: true,
+      dashspaces: true,
+      showPlusAfter: 1,
+      });
+  }
 
 
  

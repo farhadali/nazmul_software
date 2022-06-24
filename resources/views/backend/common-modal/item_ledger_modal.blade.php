@@ -96,6 +96,15 @@
                                 </select>
                             </div>
                         </div>
+                         <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="_unique_barcode">Use Unique Barcode ?:</label>
+                                <select class="form-control _item_unique_barcode" name="_unique_barcode" id="_unique_barcode">
+                                  <option value="0">NO</option>
+                                  <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
                         
                     </div>
           </form> 

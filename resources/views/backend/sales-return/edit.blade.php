@@ -70,13 +70,14 @@ $__user= Auth::user();
     $_show_vat =  $form_settings->_show_vat ?? 0;
    $_inline_discount = $form_settings->_inline_discount ?? 0;
     $_show_self = $form_settings->_show_self ?? 0;
+    $_show_warranty = $form_settings->_show_warranty ?? 0;
     @endphp
               <div class="card-body">
                <form action="{{url('sales-return/update')}}" method="POST" class="purchase_form" >
                 @csrf
                     <div class="row">
                        <div class="col-xs-12 col-sm-12 col-md-2">
-                        <input type="hidden" name="_form_name" value="sales_return">
+                        <input type="hidden" name="_form_name" class="_form_name" value="sales_return">
                          <input type="hidden" name="_sales_return_id" class="_sales_return_id" value="{{$data->id}}">
                             <div class="form-group">
                                 <label>Date:</label>
@@ -107,7 +108,7 @@ $__user= Auth::user();
                         <div class="col-xs-12 col-sm-12 col-md-2 ">
                             <div class="form-group">
                               <label class="mr-2" for="_order_ref_id">Sales Invoice:<span class="_required">*</span></label>
-                              <input type="text" id="_search_order_ref_id" name="_search_order_ref_id" class="form-control _search_order_ref_id" value="{{old('_order_ref_id',$data->_order_ref_id)}}" placeholder="Sales Invoice" >
+                              <input readonly type="text" id="_search_order_ref_id" name="_search_order_ref_id" class="form-control _search_order_ref_id" value="{{old('_order_ref_id',$data->_order_ref_id)}}" placeholder="Sales Invoice" >
                               <input type="hidden" id="_order_ref_id" name="_order_ref_id" class="form-control _order_ref_id" value="{{old('_order_ref_id',$data->_order_ref_id)}}" placeholder="Sales Order" >
                               <div class="search_box_purchase_order"></div>
                                 
@@ -138,7 +139,7 @@ $__user= Auth::user();
                         @endif
                         <div class="col-xs-12 col-sm-12 col-md-2 ">
                             <div class="form-group">
-                              <label class="mr-2" for="_order_number">Order ID:</label>
+                              <label class="mr-2" for="_order_number">Sales Return ID:</label>
                               <input type="text" id="_order_number" name="_order_number" class="form-control _order_number" value="{{old('_order_number',$data->id)}}" placeholder="Order Number" readonly  >
                                 
                             </div>
@@ -193,8 +194,9 @@ $__user= Auth::user();
                                             <th class="text-left" >&nbsp;</th>
                                             <th class="text-left" >Item</th>
                                           
-                                            <th class="text-left @if($_show_barcode  ==0) display_none @endif" >Barcode</th>
-                                            
+                                            <th class="text-left @if($_show_barcode==0) display_none @endif" >Barcode</th>
+                                            <th class="text-left @if($_show_warranty==0) display_none @endif" >Warranty</th>
+                                           
                                             <th class="text-left" >Qty</th>
                                             <th class="text-left @if($_show_cost_rate  ==0) display_none @endif" >Cost</th>
                                             <th class="text-left" >Sales Rate</th>
@@ -232,8 +234,10 @@ $__user= Auth::user();
                                             $_total_vat_amount  = 0;
                                             $_total_discount_amount  = 0;
                                             $_total_value  = 0;
+                                             $__master_details = $data->_master_details ?? [];
                                             @endphp
-                                            @forelse($data->_master_details as $_detail)
+                                             @if(sizeof($__master_details)> 0)
+                                           @forelse($data->_master_details as $m_key=> $_detail)
 
                                              @php
                                             $_total_qty += floatval($_detail->_qty);
@@ -246,7 +250,7 @@ $__user= Auth::user();
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item" readonly value="{{$_detail->_items->_name}}">
+                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id  {{$m_key+1}}__search_item_id width_280_px" placeholder="Item" readonly value="{{$_detail->_items->_name}}">
 
                                                 <input type="hidden" name="_item_id[]" class="form-control _item_id " value="{{$_detail->_items->_item_id}}" >
                                                 <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id " value="{{ $_detail->_p_p_l_id }}" >
@@ -257,7 +261,31 @@ $__user= Auth::user();
                                               </td>
                                              
                                               <td class=" @if($_show_barcode  ==0) display_none @endif ">
-                                                <input type="text" name="_barcode[]" class="form-control _barcode " value="{{$_detail->_barcode ?? '' }}" >
+                                                 <input type="text" name="{{($m_key+1)}}__barcode__{{$_detail->_item_id}}" class="form-control _barcode {{($m_key+1)}}__barcode"  value="{{$_detail->_barcode ?? '' }} " id="{{($m_key+1)}}__barcode" >
+                                               
+
+                                                <input type="hidden" name="_ref_counter[]" value="{{($m_key+1)}}" class="_ref_counter" id="{{($m_key+1)}}__ref_counter">
+
+                                                <input type="hidden" name="_barcode_unique[]" value="{{$_detail->_items->_unique_barcode}}" class="_barcode_unique {{($m_key+1)}}__barcode_unique" id="{{($m_key+1)}}__barcode_unique">
+
+                                                 @if($_detail->_items->_unique_barcode==1)
+ <script type="text/javascript">
+  $('#<?php echo ($m_key+1);?>__barcode').amsifySuggestags({
+      trimValue: true,
+      dashspaces: true,
+      showPlusAfter: 1,
+      });
+                                            </script>
+                                            @endif
+                                              </td>
+                                               <td class="@if($_show_warranty==0) display_none @endif">
+                                                <select name="_warranty[]" class="form-control _warranty 1___warranty">
+                                                   <option value="0">--None --</option>
+                                                      @forelse($_warranties as $_warranty )
+                                                      <option value="{{$_warranty->id}}" @if($_warranty->id==$_detail->_warranty) selected @endif >{{ $_warranty->_name ?? '' }}</option>
+                                                      @empty
+                                                      @endforelse
+                                                </select>
                                               </td>
                                               
                                               <td>
@@ -334,12 +362,14 @@ $__user= Auth::user();
                                             </tr>
                                             @empty
                                             @endforelse
+                                            @endif
                                           </tbody>
                                           <tfoot>
                                             <tr>
                                               <td></td>
                                               <td  class="text-right"><b>Total</b></td>
                                               <td  class="text-right @if($_show_barcode==0) display_none @endif"></td>
+                                              <td class="@if($_show_warranty==0) display_none @endif"></td>
                                               <td>
                                                 <input type="number" step="any" min="0" name="_total_qty_amount" class="form-control _total_qty_amount" value="{{$_total_qty ?? 0}}" readonly required>
                                               </td>
@@ -1176,6 +1206,7 @@ function purchase_row_add(event){
     var _id_and_qtys = [];
     var _sales_detail_ref_ids = [];
     var _sales_return_id = $("._sales_return_id").val();
+    var _order_ref_id = $("._order_ref_id").val();
 
     $(document).find('._p_p_l_id').each(function(index){
      var _p_id =  $(this).val();
@@ -1190,6 +1221,32 @@ function purchase_row_add(event){
      
 
     })
+    var counter_array=[];
+    var _all_barcode = [];
+
+    
+
+    $(document).find('.show-plus-bg').each(function(index){
+         console.log(parseFloat($(this).text())); 
+         var _ref_counter = $(this).closest('tr').find('._ref_counter').val(); 
+        if(!counter_array.includes(_ref_counter)){
+            var _barcode_unique =   $(this).closest('tr').find('._barcode_unique').val(); 
+            var _barcode = $(this).closest('tr').find('._barcode').val(); 
+            var _qty = $(this).closest('tr').find('._qty').val();
+            var _barcodes = isEmpty(_barcode);
+            _all_barcode.push(_barcode);
+            counter_array.push(_ref_counter);
+
+        }
+         
+    })
+
+    _all_barcode = _all_barcode.toString();
+
+
+   
+
+
      var unique_p_ids = [...new Set(_only_p_ids)];
      var _stop_sales =0;
     if(_p_p_l_ids_qtys.length > 0){
@@ -1197,11 +1254,12 @@ function purchase_row_add(event){
                 url: "{{url('check-sales-return-available-qty')}}",
                 method: "GET",
                 async:false,
-                data: { _p_p_l_ids_qtys,unique_p_ids,_sales_detail_ref_ids:_sales_detail_ref_ids,_sales_return_id },
+                data: { _p_p_l_ids_qtys,unique_p_ids,_sales_detail_ref_ids:_sales_detail_ref_ids,_sales_return_id,_all_barcode,_order_ref_id },
                 dataType: "JSON"
               });
                
               request.done(function( result ) {
+                console.log(result)
                 
                   if(result.length > 0){
                      
@@ -1212,14 +1270,14 @@ function purchase_row_add(event){
               })
     }
     if(_stop_sales ==1){
-        alert(" You Can not Return More then Sales Qty  ");
-       var _message =" You Can not Return More then Sales Qty";
+        alert(" You Can not Return More then Sales Qty or Invalid Barcode  ");
+       var _message =" You Can not Return More then Sales Qty  or Invalid Barcode";
         $(document).find("._over_qty").text(_message);
         $(".remove_area").hide();
       return false;
     }
 
- 
+
     
    
     var _total_dr_amount = $(document).find("._total_dr_amount").val();

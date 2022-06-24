@@ -50,10 +50,41 @@
      <table class="cewReportTable">
           <thead>
           <tr>
+            @php
+            $colspan=4;
+            $_less=0;
+            $grand_colspan =1;
+             
+            @endphp
             <th style="width: 15%;border:1px solid silver;">Date</th>
+            @if(isset($previous_filter['_check_id']))
+            @php
+            $colspan +=1;
+            $grand_colspan +=1;
+            @endphp
             <th style="width: 10%;border:1px solid silver;">ID</th>
-            <th style="width: 20%;border:1px solid silver;">Short Narration</th>
-            <th style="width: 25%;border:1px solid silver;">Narration</th>
+            @else
+            
+            @endif
+
+            @if(isset($previous_filter['short_naration']))
+            <th style="width: 10%;border:1px solid silver;">Short Narration</th>
+            @php
+            $colspan +=1;
+            $grand_colspan +=1;
+            @endphp
+           @else
+            
+            @endif
+            @if(isset($previous_filter['naration']))
+            <th style="width: 10%;border:1px solid silver;">Narration</th>
+            @php
+            $colspan +=1;
+            $grand_colspan +=1;
+            @endphp
+            @else
+            
+            @endif
             <th style="width: 10%;border:1px solid silver;" class="text-right" >Dr. Amount</th>
             <th style="width: 10%;border:1px solid silver;" class="text-right" >Cr. Amount</th>
             <th style="width: 10%;border:1px solid silver;" class="text-right" >Balance</th>
@@ -69,11 +100,15 @@
             @forelse($group_array_values as $key=>$value)
             <tr>
               
-                <td colspan="7" style="text-align: left;background: #f5f9f9;">
+                <td colspan="{{$colspan}}" style="text-align: left;background: #f5f9f9;">
                   
                      <b> {{ $key ?? '' }} </b>
                     
-                
+                @php
+                    $_group_running_sub_dr_total=0;
+                    $_group_running_sub_cr_total=0;
+                   
+                  @endphp
               
               </td>
             </tr>
@@ -81,7 +116,7 @@
 
                
                   <tr>
-                    <td colspan="7" style="text-align: left;">
+                    <td colspan="{{$colspan}}" style="text-align: left;">
                      
                         <b>  {{ $l_key ?? '' }} </b>
                         
@@ -96,6 +131,11 @@
                   @php
                     $_dr_grand_total +=$detail->_dr_amount ?? 0;
                     $_cr_grand_total +=$detail->_cr_amount ?? 0;
+
+                    $_group_running_sub_dr_total+=$detail->_dr_amount ?? 0;
+                    $_group_running_sub_cr_total+=$detail->_cr_amount ?? 0;
+                    
+
                     $running_sub_dr_total +=$detail->_dr_amount ?? 0;
                     $running_sub_cr_total +=$detail->_cr_amount ?? 0;
                     $runing_balance_total += (($detail->_balance+$detail->_dr_amount)-$detail->_cr_amount);
@@ -105,7 +145,7 @@
                     <td style="text-align: left;">
                       
                       {{ _view_date_formate($detail->_date ?? $_datex) }} </td>
-                     
+                    @if(isset($previous_filter['_check_id']))
                     <td class="text-left">
                     @if($detail->_table_name=="voucher_masters")
                  <a style="text-decoration: none;" target="__blank" href="{{ route('voucher.show',$detail->_id) }}">
@@ -148,8 +188,13 @@
                   DM-{!! $detail->_id ?? '' !!}</a>
                     @endif
              </td>
+             @endif
+             @if(isset($previous_filter['short_naration']))
                     <td style="text-align: left;">{{ $detail->_short_narration ?? '' }} </td>
+            @endif
+             @if(isset($previous_filter['naration']))
                     <td style="text-align: left;">{{ $detail->_narration ?? '' }} </td>
+            @endif
                     <td style="text-align: right;">{{ _report_amount($detail->_dr_amount ?? 0) }} </td>
                     <td style="text-align: right;">{{ _report_amount($detail->_cr_amount ?? 0) }} </td>
                     <td style="text-align: right;">{{ _show_amount_dr_cr(_report_amount(  $runing_balance_total )) }} </td>
@@ -159,29 +204,39 @@
                   @empty
                   @endforelse
 
+
+
                   <tr>
-                    <td colspan="4" style="text-align: left;background: #f5f9f9;"><b>Sub Total of {{ $l_key ?? '' }}: </b> </td>
-                    <td style="text-align: right;background: #f5f9f9;"><b>{{ _report_amount($running_sub_dr_total ?? 0) }}</b> </td>
-                    <td style="text-align: right;background: #f5f9f9;"><b>{{ _report_amount($running_sub_cr_total ?? 0) }}</b> </td>
-                    <td style="text-align: right;background: #f5f9f9;"><b></b> </td>
-                </tr>
+             
+                <td colspan="{{($grand_colspan)}}" style="text-align: left;background: #f5f9f9;"><b>Sub Total of {{ $l_key ?? '' }} </b> </td>
+                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($running_sub_dr_total) }}</b> </td>
+                <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($running_sub_cr_total) }}</b> </td>
+                <td style="text-align: right;background: #f5f9f9;"> <b>{{_show_amount_dr_cr(_report_amount($running_sub_dr_total-$running_sub_cr_total)) }}</b> </td>
+            </tr>
                 
 
                 @empty
                 @endforelse
 
+           
 
+             <tr>
+                    <td colspan="{{($grand_colspan)}}" style="text-align: left;background: #f5f9f9;"><b>Sub Total of {{$key ?? ''}}: </b> </td>
+                    <td style="text-align: right;background: #f5f9f9;"><b>{{ _report_amount($_group_running_sub_dr_total ?? 0) }}</b> </td>
+                    <td style="text-align: right;background: #f5f9f9;"><b>{{ _report_amount($_group_running_sub_cr_total ?? 0) }}</b> </td>
+                    <td style="text-align: right;background: #f5f9f9;"><b>{{_show_amount_dr_cr(_report_amount($_group_running_sub_dr_total-$_group_running_sub_cr_total)) }}</b> </td>
+                </tr>
 
               
             <tr>
-                  <td colspan="7"></td>
+                  <td colspan="{{$colspan}}"></td>
             </tr>
 
             @empty
             @endforelse
             <tr>
               
-                <td colspan="4" style="text-align: left;background: #f5f9f9;"><b>Grand Total </b> </td>
+                <td colspan="{{($grand_colspan)}}" style="text-align: left;background: #f5f9f9;"><b>Grand Total </b> </td>
                 <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_dr_grand_total) }}</b> </td>
                 <td style="text-align: right;background: #f5f9f9;"> <b>{{_report_amount($_cr_grand_total) }}</b> </td>
                 <td style="text-align: right;background: #f5f9f9;"> <b>{{_show_amount_dr_cr(_report_amount($_dr_grand_total-$_cr_grand_total)) }}</b> </td>
@@ -190,7 +245,7 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="7">
+              <td colspan="{{$colspan}}">
                 <div class="col-12 mt-5">
                   <div class="row">
                     <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>

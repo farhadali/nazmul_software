@@ -27,6 +27,7 @@ use App\Http\Controllers\SalesReturnController;
 use App\Http\Controllers\InventoryReportController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\DamageAdjustmentController;
+use App\Http\Controllers\WarrantyController;
 
 
 
@@ -84,6 +85,9 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('item-category', ItemCategoryController::class);
     Route::post('item-category/update', 'App\Http\Controllers\ItemCategoryController@update');
+    
+    Route::resource('warranty', WarrantyController::class);
+    Route::post('warranty/update', 'App\Http\Controllers\WarrantyController@update');
 
     Route::resource('item-information', InventoryController::class);
     Route::post('item-information/update', 'App\Http\Controllers\InventoryController@update');
@@ -127,9 +131,12 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('sales-settings', 'App\Http\Controllers\SalesController@Settings');
     Route::get('sales-setting-modal', 'App\Http\Controllers\SalesController@formSettingAjax');
     Route::get('item-sales-search', 'App\Http\Controllers\SalesController@itemSalesSearch');
+    Route::get('item-damage-search', 'App\Http\Controllers\SalesController@itemDamageSearch');
     Route::get('item-sales-barcode-search', 'App\Http\Controllers\SalesController@itemSalesBarcodeSearch');
+    Route::get('item-sales-edit-barcode-search', 'App\Http\Controllers\SalesController@itemSalesEditBarcodeSearch');
     Route::get('check-available-qty', 'App\Http\Controllers\SalesController@checkAvailableQty');
     Route::get('check-available-qty-update', 'App\Http\Controllers\SalesController@checkAvailableQtyUpdate');
+    Route::get('check-available-qty-update-damage', 'App\Http\Controllers\SalesController@checkAvailableQtyUpdateDamage');
     Route::get('sales-money-receipt/{id}', 'App\Http\Controllers\SalesController@moneyReceipt');
 
     Route::resource('damage', DamageAdjustmentController::class);
@@ -216,6 +223,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::any('group-base-bill-party-ledger','App\Http\Controllers\AccountLedgerController@groupBaseBillParty');
     
     Route::any('group-base-ledger-purchase-statement','App\Http\Controllers\AccountLedgerController@groupBaseLedgerPurchaseStatement');
+    Route::any('chart-of-account','App\Http\Controllers\AccountReportController@chartOfAccount');
     
     
     

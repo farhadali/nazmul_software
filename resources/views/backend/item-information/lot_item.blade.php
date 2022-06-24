@@ -87,6 +87,7 @@ if($currentURL === $current){
                          <th>Unit</th>
                          <th>Code</th>
                          <th>Barcode</th>
+                         <th>Warranty</th>
                          <th>QTY</th>
                          
                          <th>Discount</th>
@@ -123,6 +124,7 @@ if($currentURL === $current){
                             <td>{{ $data->_units->_name ?? '' }}</td>
                             <td>{{ $data->_code ?? '' }}</td>
                             <td>{{ $data->_barcode ?? '' }}</td>
+                            <td>{{ $data->_warranty_name->_name ?? '' }}</td>
                             <td class="text-right">{{ _report_amount($data->_qty ?? 0) }}</td>
                             <td class="text-right">{{ _report_amount( $data->_discount ?? 0 ) }}</td>
                             <td class="text-right">{{ _report_amount( $data->_vat ?? 0 ) }}</td>
@@ -136,7 +138,7 @@ if($currentURL === $current){
                         </tr>
                         @endforeach
                         <tr>
-                          <th colspan="8" class="text-right">Total</th>
+                          <th colspan="9" class="text-right">Total</th>
                           <th class="text-right">{{_report_amount($total_qty)}}</th>
                           <th colspan="4"></th>
                           <th class="text-right">{{_report_amount($total_value)}}</th>

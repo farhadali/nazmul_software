@@ -87,6 +87,26 @@
                             </div>
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="row">
+                                 <div class=" col-sm-6">
+                                <strong>SMS Service:</strong>
+                               <select class="form-control " name="_sms_service">
+                                  <option value="0" @if($settings->_sms_service==0) selected @endif >NO</option>
+                                  <option value="1" @if($settings->_sms_service==1) selected @endif >YES</option>
+                                </select>
+                            </div>
+                            <div class=" col-sm-6">
+                                <strong>Sales Using Unique Barcode:</strong>
+                               <select class="form-control " name="_barcode_service">
+                                  <option value="0" @if($settings->_barcode_service==0) selected @endif >NO</option>
+                                  <option value="1" @if($settings->_barcode_service==1) selected @endif >YES</option>
+                                </select>
+                            </div>
+                            </div>
+                           
+                        </div>
+
+                        <div class="col-xs-6 col-sm-6 col-md-6">
                             <div class="form-group">
                                 <strong>Invoice Top Text:</strong>
                                 <textarea class="form-control" name="_top_title" >{{old('_top_title',$settings->_top_title ?? '' )}}</textarea>

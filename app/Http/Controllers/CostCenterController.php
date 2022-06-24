@@ -104,7 +104,8 @@ class CostCenterController extends Controller
         $page_name = $this->page_name;
         $data = CostCenter::find($id);
          $branchs = Branch::orderBy('_name','asc')->get();
-        return view('backend.cost-center.edit',compact('data','page_name','branchs'));    }
+        return view('backend.cost-center.edit',compact('data','page_name','branchs'));    
+    }
 
     /**
      * Update the specified resource in storage.
@@ -123,7 +124,6 @@ class CostCenterController extends Controller
         $data->_name       = $request->_name ?? '';
         $data->_branch_id = $request->_branch_id ?? '';
         $data->_code       = $request->_code ?? '';
-        //$data->_updated_by     = Auth::user()->id."-".Auth::user()->name;
         $data->save();
 
         return redirect('cost-center')->with('success','Information Save successfully');

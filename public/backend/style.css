@@ -121,7 +121,7 @@ label{
 .table td, .table th {
     padding: 1px;
     vertical-align: middle;
-    border-top: 1px solid #dee2e6;
+    border-top: 1px solid silver;
 }
 .text-middle{
     vertical-align: middle !important;
@@ -425,7 +425,7 @@ body:not(.layout-fixed) .main-sidebar {
 
 
 .mb-10{
-    margin-bottom: 100px;
+    margin-bottom: 10px;
 }
 .form-control:focus {
     border-color: #28a745;
@@ -442,9 +442,7 @@ body:not(.layout-fixed) .main-sidebar {
     text-align: center;
     font-weight: bold;
 }
-.mb-10{
-    margin-bottom: 100px;
-}
+
 
 .form-group {
     margin-bottom: 2px !important;
@@ -491,6 +489,7 @@ body:not(.layout-fixed) .main-sidebar {
         position: -webkit-sticky;
         position: sticky;
         top: 56px;
+         border:1px solid silver;
     }
     .cewSubHeader tr{
         font-weight: bold;
@@ -502,13 +501,14 @@ body:not(.layout-fixed) .main-sidebar {
         border: 1px solid silver;
     }
     
+    
    
 }
 
 @media only screen and (max-width: 767px) {
     .cewReportTable thead {
         top: 0;
-        border: 1px;
+        border: 1px solid silver;
     }
 }
 
@@ -532,26 +532,46 @@ body:not(.layout-fixed) .main-sidebar {
     }
     
     .cewReportTable thead {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 0px;
+        
         border: 1px solid silver;
     }
     .cewSubHeader tr{
         font-weight: bold;
+        border:1px solid silver;
     }
     .cewSubHeader td{
         font-weight: bold;
+        border:1px solid silver;
     }
     thead {
-    background: #fff;
-    font-family: math !important;
-    border:1px solid silver;
-}
+        background: #fff;
+        font-family: math !important;
+        border:1px solid silver;
+        color: #000;
+    }
+    thead th{
+        background: #fff;
+        font-family: math !important;
+        border: 1px solid silver;
+        color: #000;
+    }
     
     
 }
+ ._main_item_search_box{
+   width: 100%;
+    position: absolute;
+    z-index: 999;
+    height: 200px;
+    overflow-y: scroll;
+    display: none;
+  }
+  ._barcode_search_div{
 
+    margin: 0px auto;
+    padding: 10px;
+    background: #0986a2;
+  }
 .wrapper{
     background: rgb(19,173,180);
 background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
@@ -571,7 +591,7 @@ margin-bottom: 50px;
 background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
 }
 .bottom_save_section {
-    position: fixed;
+   /* position: fixed;*/
     bottom: 0px;
     width: 100%;
     padding: 10px;
@@ -614,4 +634,11 @@ background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063
 }
 .card{
     margin-top: 3px;
+}
+
+._modal_show_class{
+    display: contents;
+}
+._modal_hide_class{
+    display:none;
 }

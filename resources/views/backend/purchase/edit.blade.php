@@ -74,7 +74,7 @@ $__user= Auth::user();
                       <div class="row">
 
                        <div class="col-xs-12 col-sm-12 col-md-3">
-                        <input type="hidden" name="_form_name" value="purchases">
+                        <input type="hidden" name="_form_name" class="_form_name"  value="purchases">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -253,10 +253,22 @@ $__user= Auth::user();
                                                
 
                                                 <input type="hidden" name="_ref_counter[]" value="{{($m_key+1)}}" class="_ref_counter" id="{{($m_key+1)}}__ref_counter">
+
+
                                               </td>
                                               @endif
                                             @endif
+
                                               <td>
+                                                 @if($detail->_items->_unique_barcode==1)
+ <script type="text/javascript">
+  $('#<?php echo ($m_key+1);?>__barcode').amsifySuggestags({
+      trimValue: true,
+      dashspaces: true,
+      showPlusAfter: 1,
+      });
+                                            </script>
+                                            @endif
                                                 <input type="number" name="_qty[]" class="form-control _qty _common_keyup"  value="{{$detail->_qty ?? 0 }}" >
                                               </td>
                                               <td>
@@ -364,6 +376,7 @@ $__user= Auth::user();
                                               </td>
                                               
                                             </tr>
+                                           
                                             @empty
                                             @endforelse
                                             @endif
@@ -507,6 +520,7 @@ $__user= Auth::user();
                           <input type="hidden" name="_item_row_count" value="{{sizeof($__master_details)}}" class="_item_row_count">
                               </td>
                             </tr>
+                             @include('backend.message.send_sms')
                           </table>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
@@ -667,10 +681,7 @@ $__user= Auth::user();
   var _after_print = $(document).find("._after_print").val();
   var _master_id = $(document).find("._master_id").val();
   var _item_row_count = parseFloat($(document).find('._item_row_count').val());
-  for (var i = 0; i <= _item_row_count; i++) {
-     _new_barcode_function(i)
-  }
-
+  
 
   if(_after_print ==1){
       var open_new = window.open(_master_id, '_blank');
@@ -713,6 +724,7 @@ $__user= Auth::user();
                                         <input type="hidden" name="_id_item" class="_id_item" value="${data[i].id}">
                                         </td><td>${data[i]._name}
                                         <input type="hidden" name="_name_item" class="_name_item" value="${data[i]._name}">
+                                        <input type="hidden" name="_unique_barcode" class="_unique_barcode" value="${data[i]._unique_barcode}">
                                   <input type="hidden" name="_item_barcode" class="_item_barcode" value="${data[i]._barcode}">
                                   <input type="hidden" name="_item_rate" class="_item_rate" value="${data[i]._pur_rate}">
                                   <input type="hidden" name="_item_sales_rate" class="_item_sales_rate" value="${data[i]._sale_rate}">
@@ -746,6 +758,14 @@ $(document).on('click','.search_row_item',function(){
   var _item_rate = $(this).find('._item_rate').val();
   var _item_sales_rate = $(this).find('._item_sales_rate').val();
   var _item_vat = parseFloat($(this).find('._item_vat').val());
+
+  var _unique_barcode = parseFloat($(this).find('._unique_barcode').val());
+ var _item_row_count = $(document).find('._item_row_count').val();
+ console.log(" _unique_barcode "+_unique_barcode)
+  if(_unique_barcode ==1){
+    _new_barcode_function(_item_row_count);
+  }
+  
   if(isNaN(_item_vat)){ _item_vat=0 }
   _vat_amount = ((_item_rate*_item_vat)/100)
   
@@ -1074,7 +1094,7 @@ function purchase_row_add(event){
                                               </td>
                                               
                                             </tr>`);
-       _new_barcode_function(_item_row_count);
+       
 }
  $(document).on('click','._purchase_row_remove',function(event){
       event.preventDefault();

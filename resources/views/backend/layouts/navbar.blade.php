@@ -270,6 +270,12 @@
           <a href="{{url('balance-sheet')}}" class="dropdown-item">
             <i class="fa fa-fax mr-2" aria-hidden="true"></i> Balance Sheet
           </a>
+         @endcan 
+         <div class="dropdown-divider"></div>
+        @can('chart-of-account')
+          <a href="{{url('chart-of-account')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Chart of Account
+          </a>
          @endcan  
               
       </li>

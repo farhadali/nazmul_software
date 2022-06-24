@@ -78,6 +78,40 @@
       min-width: 150px;
     }
     .multiple_select { resize: auto; }
+    #_notify_message_box{
+      min-height: 50px;
+    position: absolute;
+    z-index: 999999999999;
+    
+    right: 0;
+    top: -47px;
+    width: 300px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    display: none;
+    }
+    .blue{ background:  #007bff;}
+    .indigo{ background:  #6610f2;}
+    .purple{  background:  #6f42c1;}
+    .pink{  background:  #e83e8c;}
+    .red{  background:  #dc3545;}
+    .orange{  background:  #fd7e14;}
+    .yellow{  background:  #ffc107;}
+    .green{  background:  #28a745;}
+    .teal{  background:  #17a2b8;}
+    .cyan{  background:  #28a745;}
+    .white{  background:  #fff;color:#000;}
+    .gray{  background:  #6c757d;color:#000;}
+    .primary{  background:  #007bff;}
+    .secondary{  background:  #6c757d;}
+    .success{  background:  #28a745;}
+    .info{  background:  #17a2b8;color: #fff;}
+    .warning{  background:  #ffc107;}
+    .danger{  background:  #dc3545;}
+    .light{  background:  #f8f9fa;}
+    .dark{  background:  #343a40;}
+   
   </style>
   
 </head>
@@ -90,6 +124,7 @@ $currentURL = URL::full();
    
 <div class="wrapper">
   <div class="ajax_loader"><h5 class="loading_text">Loading.....</span></div>
+    <div id="_notify_message_box"></div>
   <!-- Navbar -->
   @include('backend.layouts.navbar')
   <!-- /.navbar -->
@@ -146,6 +181,16 @@ $currentURL = URL::full();
       URL.revokeObjectURL(output.src) // free memory
     }
   };
+
+
+
+  function _show_notify_message(_message,_type){
+    $("#_notify_message_box").removeClass();
+    $("#_notify_message_box").addClass(_type);
+    $("#_notify_message_box").text(_message);
+
+    $("#_notify_message_box").show().delay(5000).fadeOut();
+  }
 
   $(function () {
 
@@ -528,6 +573,107 @@ $(document).on('click',function(){
     if(search_box_sales_man ==true){
       $('.search_box_sales_man').removeClass('search_box_show').hide();
     }
+
+     var _u_barcode= $(document).find('.amsify-input-group-addon').hasClass('show-plus-bg');
+
+     if(_u_barcode ==true){
+      var _form_name = $(document).find("._form_name").val();
+      if(_form_name =='sales_return'){
+            $(document).find('.show-plus-bg').each(function(index){
+               var _qty = parseFloat($(this).text());
+              if(isNaN(_qty)){ _qty=0 }
+               $(this).closest('tr').find('._qty').val(_qty);
+               var _sales_rate = $(this).closest('tr').find('._sales_rate').val();
+               var _pur_rate   = $(this).closest('tr').find('._rate').val();
+               var _sales_vat = $(this).closest('tr').find('._vat').val();
+               var _sales_discount = $(this).closest('tr').find('._discount').val();
+
+               if(isNaN(_sales_rate)){ _sales_rate=0 }
+               if(isNaN(_pur_rate)){ _pur_rate=0 }
+               if(isNaN(_sales_vat)){ _sales_vat=0 }
+               _vat_amount = ((_sales_rate*_sales_vat)/100)
+               if(isNaN(_sales_discount)){ _sales_discount=0 }
+               _discount_amount = ((_sales_rate*_sales_discount)/100);
+               var _value = (parseFloat(_qty)*parseFloat(_sales_rate));
+
+              $(this).closest('tr').find("._discount").val(_sales_discount);
+              $(this).closest('tr').find("._qty").val(_qty);
+              $(this).closest('tr').find("._sales_rate").val(_sales_rate);
+              $(this).closest('tr').find("._discount_amount").val(_discount_amount);
+              $(this).closest('tr').find("._vat").val(_sales_vat);
+              $(this).closest('tr').find("._vat_amount").val(_vat_amount);
+              $(this).closest('tr').find("._value").val(_value);
+          })
+             _purchase_total_calculation();
+
+      }
+
+       if(_form_name =='purchases'){
+            $(document).find('.show-plus-bg').each(function(index){
+               var _qty = parseFloat($(this).text());
+              if(isNaN(_qty)){ _qty=0 }
+               $(this).closest('tr').find('._qty').val(_qty);
+               var _sales_rate = $(this).closest('tr').find('._sales_rate').val();
+               var _pur_rate   = $(this).closest('tr').find('._rate').val();
+               var _sales_vat = $(this).closest('tr').find('._vat').val();
+               var _sales_discount = $(this).closest('tr').find('._discount').val();
+
+               if(isNaN(_sales_rate)){ _sales_rate=0 }
+               if(isNaN(_pur_rate)){ _pur_rate=0 }
+               if(isNaN(_sales_vat)){ _sales_vat=0 }
+               _vat_amount = ((_pur_rate*_sales_vat)/100)
+               if(isNaN(_sales_discount)){ _sales_discount=0 }
+               _discount_amount = ((_pur_rate*_sales_discount)/100);
+               var _value = (parseFloat(_qty)*parseFloat(_pur_rate));
+
+              $(this).closest('tr').find("._discount").val(_sales_discount);
+              $(this).closest('tr').find("._qty").val(_qty);
+              $(this).closest('tr').find("._sales_rate").val(_sales_rate);
+              $(this).closest('tr').find("._discount_amount").val(_discount_amount);
+              $(this).closest('tr').find("._vat").val(_sales_vat);
+              $(this).closest('tr').find("._vat_amount").val(_vat_amount);
+              $(this).closest('tr').find("._value").val(_value);
+          })
+             _purchase_total_calculation();
+
+      }
+            if(_form_name =='damage'){
+            $(document).find('.show-plus-bg').each(function(index){
+               var _qty = parseFloat($(this).text());
+              if(isNaN(_qty)){ _qty=0 }
+               $(this).closest('tr').find('._qty').val(_qty);
+               var _sales_rate = $(this).closest('tr').find('._sales_rate').val();
+               var _pur_rate   = $(this).closest('tr').find('._rate').val();
+               var _sales_vat = $(this).closest('tr').find('._vat').val();
+               var _sales_discount = $(this).closest('tr').find('._discount').val();
+
+               if(isNaN(_sales_rate)){ _sales_rate=0 }
+               if(isNaN(_pur_rate)){ _pur_rate=0 }
+               if(isNaN(_sales_vat)){ _sales_vat=0 }
+               _vat_amount = ((_sales_rate*_sales_vat)/100)
+               if(isNaN(_sales_discount)){ _sales_discount=0 }
+               _discount_amount = ((_sales_rate*_sales_discount)/100);
+               var _value = (parseFloat(_qty)*parseFloat(_sales_rate));
+
+              $(this).closest('tr').find("._discount").val(_sales_discount);
+              $(this).closest('tr').find("._qty").val(_qty);
+              $(this).closest('tr').find("._sales_rate").val(_sales_rate);
+              $(this).closest('tr').find("._discount_amount").val(_discount_amount);
+              $(this).closest('tr').find("._vat").val(_sales_vat);
+              $(this).closest('tr').find("._vat_amount").val(_vat_amount);
+              $(this).closest('tr').find("._value").val(_value);
+          })
+             _purchase_total_calculation();
+
+      }
+
+
+           
+     }
+    
+
+
+
 })
 
 
@@ -560,6 +706,7 @@ $(document).on('click','.save_item',function(){
     var _item_sale_rate = $("._item_sale_rate").val();
     var _item_manufacture_company = $("._item_manufacture_company").val();
     var _item_status = $("._item_status").val();
+    var _item_unique_barcode = $("._item__unique_barcode").val();
     
     var reqired_fields = 0;
     if(_category_id ==""){
@@ -594,7 +741,7 @@ $(document).on('click','.save_item',function(){
         $.ajax({
            type:'POST',
            url:"{{ url('ajax-item-save') }}",
-           data:{_category_id,_item_item,_item_code,_item_unit_id,_item_barcode,_item_discount,_item_vat,_item_pur_rate,_item_sale_rate,_item_manufacture_company,_item_status
+           data:{_category_id,_item_item,_item_code,_item_unit_id,_item_barcode,_item_discount,_item_vat,_item_pur_rate,_item_sale_rate,_item_manufacture_company,_item_status,_item_unique_barcode
            },
            success:function(data){
               if(data !=""){
@@ -758,7 +905,27 @@ function after_request_date__today(_date){
               console.log(data);
            }
         });
-    }   
+    }  
+
+
+    function isEmpty(value){
+  if ( value === 'undefined' || value =="" || value =="null" || value ==null || value ==undefined) {
+        return  value = "";
+    }else{
+      return value;
+    }
+}
+ 
+
+
+    
+    $(document).on('click',"input[type='number']",function(){
+        $(this).select();
+    })
+    $(document).on('click',"input[type='text']",function(){
+        $(this).select();
+    })
+   
 
 </script>
 

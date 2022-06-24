@@ -29,6 +29,9 @@ use App\Models\SalesReturn;
 use App\Models\SalesReturnDetail;
 use App\Models\SalesReturnAccount;
 use App\Models\SalesReturnFormSetting;
+use App\Models\SalesReturnBarcode;
+use App\Models\BarcodeDetail;
+use App\Models\Warranty;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -277,8 +280,8 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         // $vat_accounts = AccountLedger::where('_account_group_id',47)->get();
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
-
-       return view('backend.sales-return.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units'));
+        $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->get();
+       return view('backend.sales-return.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','_warranties'));
     }
 
      public function formSettingAjax(){
@@ -335,6 +338,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $data->_show_expire_date = $request->_show_expire_date ?? 1;
         $data->_show_p_balance = $request->_show_p_balance ?? 1;
         $data->_invoice_template = $request->_invoice_template ?? 1;
+        $data->_show_warranty = $request->_show_warranty ?? 0;
         $data->save();
 
 
@@ -414,7 +418,38 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
     }
 
         public function checkAvailableSalesQty(Request $request){
-        $_sales_id = $request->_sales_return_id ?? 0;
+
+        $_all_barcode= $request->_all_barcode ?? '';
+        $_all_barcodes = array();
+        if($_all_barcode !=''){
+          $_all_barcodes = explode(",",$_all_barcode);
+        }
+        $_sales_return_id = $request->_sales_return_id ?? 0;
+        $_sales_id = $request->_order_ref_id ?? 0;
+         $_over_qty = array();
+        if(sizeof($_all_barcodes) > 0){
+          $thissalesDetails =DB::select(" SELECT _barcode FROM sales_barcodes where _status=1 and _no_id=".$_sales_id." ");
+          $_sales_barcode_array = [];
+         
+          foreach ($thissalesDetails as $value) {
+            array_push($_sales_barcode_array, $value->_barcode);
+          }
+          
+
+          foreach ($_all_barcodes as $c_value) {
+            if(!in_array($c_value, $_sales_barcode_array)){
+               array_push($_over_qty, $c_value);
+
+            }
+          }
+
+          if(sizeof($_over_qty) > 0){
+            return json_encode($_over_qty); 
+          }
+
+        }
+
+       
 
         $_sales_detils_unique_ids = array();
         $_sales_detail_ref_ids =  $request->_sales_detail_ref_ids;
@@ -433,11 +468,11 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 GROUP BY t2._sales_detail_ref_id
                 UNION ALL
                 SELECT t2._sales_detail_ref_id as _id, SUM(t2._qty) as _qty FROM sales_return_details AS t2
-                WHERE  t2._sales_detail_ref_id IN( ".$_sales_detils_unique_ids_str.") AND t2._no= ".$_sales_id."
+                WHERE  t2._sales_detail_ref_id IN( ".$_sales_detils_unique_ids_str.") AND t2._no= ".$_sales_return_id."
                 GROUP BY t2._sales_detail_ref_id
     ) AS s1 GROUP BY s1._id ");
 
-        $_over_qty = array();
+       
         foreach ($_previous_sales as $p_key=>$value) {
             foreach ($_sales_detail_ref_ids as $_detail_val) {
                 if($value->_s_d_id == $_detail_val["_s_d_id"]){
@@ -501,18 +536,46 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
     {
          
     // return $request->all();
+       $all_req= $request->all();
          $this->validate($request, [
             '_date' => 'required',
             '_branch_id' => 'required',
             '_main_ledger_id' => 'required',
             '_form_name' => 'required'
         ]);
+
+
+         //###########################
+        // Purchase Details information Save Start
+        //###########################
+        $_item_ids = $request->_item_id;
+        $_barcodes = $request->_barcode ?? [];
+        $_qtys = $request->_qty;
+        $_rates = $request->_rate;
+        $_sales_rates = $request->_sales_rate;
+        $_vats = $request->_vat;
+        $_vat_amounts = $request->_vat_amount;
+        $_values = $request->_value;
+        $_main_branch_id_detail = $request->_main_branch_id_detail;
+        $_main_cost_center = $request->_main_cost_center;
+        $_store_ids = $request->_main_store_id;
+        $_store_salves_ids = $request->_store_salves_id;
+        $_p_p_l_ids = $request->_p_p_l_id;
+        $_sales_ref_ids = $request->_sales_ref_id;
+        $_sales_detail_ref_ids = $request->_sales_detail_ref_id;
+        $_discounts = $request->_discount;
+        $_discount_amounts = $request->_discount_amount;
+        $_manufacture_dates = $request->_manufacture_date;
+        $_expire_dates = $request->_expire_date;
+        $_ref_counters = $request->_ref_counter;
+         $_warrantys = $request->_warranty;
+
     //###########################
     // Purchase Master information Save Start
     //###########################
        DB::beginTransaction();
         try {
-$_p_balance = _l_balance_update($request->_main_ledger_id);
+        $_p_balance = _l_balance_update($request->_main_ledger_id);
         $_sales_detils_unique_ids = array();
         $_sales_detail_ref_ids =  $request->_sales_detail_ref_id;
         $_p_s__qtys =  $request->_qty;
@@ -596,28 +659,7 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
         // Purchase Master information Save End
         //###########################
 
-        //###########################
-        // Purchase Details information Save Start
-        //###########################
-        $_item_ids = $request->_item_id;
-        $_barcodes = $request->_barcode;
-        $_qtys = $request->_qty;
-        $_rates = $request->_rate;
-        $_sales_rates = $request->_sales_rate;
-        $_vats = $request->_vat;
-        $_vat_amounts = $request->_vat_amount;
-        $_values = $request->_value;
-        $_main_branch_id_detail = $request->_main_branch_id_detail;
-        $_main_cost_center = $request->_main_cost_center;
-        $_store_ids = $request->_main_store_id;
-        $_store_salves_ids = $request->_store_salves_id;
-        $_p_p_l_ids = $request->_p_p_l_id;
-        $_sales_ref_ids = $request->_sales_ref_id;
-        $_sales_detail_ref_ids = $request->_sales_detail_ref_id;
-        $_discounts = $request->_discount;
-        $_discount_amounts = $request->_discount_amount;
-          $_manufacture_dates = $request->_manufacture_date;
-        $_expire_dates = $request->_expire_date;
+        
 
        
         $_total_cost_value=0;
@@ -632,8 +674,12 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
                 $SalesReturnDetail->_sales_ref_id = $_sales_ref_ids[$i];
                 $SalesReturnDetail->_sales_detail_ref_id = $_sales_detail_ref_ids[$i];
                 $SalesReturnDetail->_qty = $_qtys[$i];
-                $SalesReturnDetail->_barcode = $_barcodes[$i];
+                
+               // $SalesReturnDetail->_barcode = $_barcodes[$i];
+                $barcode_string=$all_req[$_ref_counters[$i]."__barcode__".$_p_p_l_ids[$i]] ?? '';
+                $SalesReturnDetail->_barcode = $barcode_string;
                 $SalesReturnDetail->_rate = $_rates[$i];
+                $SalesReturnDetail->_warranty = $_warrantys[$i] ?? 0;
                 $SalesReturnDetail->_sales_rate = $_sales_rates[$i];
                 $SalesReturnDetail->_discount = $_discounts[$i] ?? 0;
                 $SalesReturnDetail->_discount_amount = $_discount_amounts[$i] ?? 0;
@@ -657,10 +703,51 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
 
                 $ProductPriceList = ProductPriceList::find($_p_p_l_ids[$i]);
                 $_p_qty = $ProductPriceList->_qty;
+                $_unique_barcode = $ProductPriceList->_unique_barcode;
+
+                //Barcode  deduction from old string data
+                $_new_barcode_array = array();
+                $_old_barcode_array = array();
+                if($_unique_barcode ==1){
+                     $_old_barcode_strings =  $ProductPriceList->_barcode;
+                        
+                        if($_old_barcode_strings !=""){
+                            $_old_barcode_array = explode(",",$_old_barcode_strings);
+                        }
+                        if($barcode_string !=""){
+                            $_new_barcode_array = explode(",",$barcode_string);
+                        }
+
+                        $_last_barcode_array = array_unique(array_merge($_new_barcode_array,$_old_barcode_array));
+                        if(sizeof($_last_barcode_array ) > 0){
+                            $_last_barcode_string = implode(",",$_last_barcode_array);
+                        }
+                        $ProductPriceList->_barcode = $_last_barcode_string ?? '';
+                }else{
+                  $ProductPriceList->_barcode = $barcode_string;
+                }
+                //Barcode  deduction from old string data
                 $_status = (($_p_qty + $_qtys[$i]) > 0) ? 1 : 0;
                 $ProductPriceList->_qty = ($_p_qty + $_qtys[$i]);
                 $ProductPriceList->_status = $_status;
                 $ProductPriceList->save();
+
+                $product_price_id =  $ProductPriceList->id;
+                 $_unique_barcode =  $ProductPriceList->_unique_barcode;
+            if($_unique_barcode ==1){
+                if(sizeof($_new_barcode_array) > 0){
+                    foreach ($_new_barcode_array as $_b_v) {
+                        BarcodeDetail::where('_p_p_id',$product_price_id)
+                                            ->where('_item_id',$_item_ids[$i])
+                                            ->where('_barcode',$_b_v)
+                                            ->update(['_qty'=>1,'_status'=>1]);
+                                            $_qty=1;
+                                            $_stat=1;
+                      _barcode_insert_update('SalesReturnBarcode', $product_price_id,$_item_ids[$i],$_master_id,$_sales_details_id,$_qty,$_b_v,$_stat,0,0);
+                    }         
+                }
+            }
+               
 
                 $ItemInventory = new ItemInventory();
                 $ItemInventory->_item_id =  $_item_ids[$i];
@@ -875,6 +962,16 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
              ->where('id',$_master_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
+               //SMS SEND to Customer and Supplier
+             $_send_sms = $request->_send_sms ?? '';
+             if($_send_sms=='yes'){
+                $_name = _ledger_name($request->_main_ledger_id);
+                $_phones = $request->_phone;
+                $messages = "Dear ".$_name.", Date: ".$request->_date." Invoice N0.".$_pfix." Invoice Amount: ".prefix_taka()."."._report_amount($request->_total).". Payment Amount. ".prefix_taka()."."._report_amount($_total_dr_amount).". Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". Current Balance:".prefix_taka()."."._report_amount($_l_balance);
+                  sms_send($messages, $_phones);
+             }
+             //End Sms Send to customer and Supplier
+
             DB::commit();
             return redirect()->back()
                 ->with('success','Information save successfully')
@@ -886,7 +983,9 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
                 ->with('delivery_man_name_leder',$delivery_man_name_leder);
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('danger','There is Something Wrong !');
+            return redirect()->back()
+            ->with('request',$request->all())
+            ->with('danger','There is Something Wrong !');
          }
 
        
@@ -927,6 +1026,7 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
         $vat_accounts =[];
         $categories = ItemCategory::orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
+         $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->get();
           $data = SalesReturn::with(['_master_branch','_master_details','s_account','_ledger'])->where('_lock',0)->find($id);
 
          if(!$data){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }
@@ -934,7 +1034,7 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
                 return redirect()->back()->with('danger','No Data Found');
         }
         
-       return view('backend.sales-return.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data'));
+       return view('backend.sales-return.edit',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','store_houses','form_settings','inv_accounts','p_accounts','dis_accounts','vat_accounts','categories','units','data','_warranties'));
     }
 
     /**
@@ -947,7 +1047,8 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
     public function update(Request $request)
     {
 
-
+//return $request->all();
+ $all_req= $request->all();
   $this->validate($request, [
             '_date' => 'required',
             '_branch_id' => 'required',
@@ -967,8 +1068,7 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
             array_push($_sales_detils_unique_ids, intval($value));
         }
 
-         $_sales_detils_unique_ids_str = implode(',', $_sales_detils_unique_ids);
-
+        $_sales_detils_unique_ids_str = implode(',', $_sales_detils_unique_ids);
         $_previous_sales = \DB::select(" SELECT s1._id as _s_d_id, SUM(s1._qty) AS _qty FROM (
                 SELECT t1.id as _id,t1._qty as _qty FROM sales_details AS t1
                 WHERE   t1.id IN( ".$_sales_detils_unique_ids_str.")
@@ -988,14 +1088,13 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
                 if($value->_s_d_id == $_detail_val ){
                     if(floatval($value->_qty) < floatval($_p_s__qtys[$key])){
                      array_push($_over_qty, $value->_s_d_id);
-                    }
-                    
+                    }  
                 }
             }
-            
         }
         if(sizeof($_over_qty) > 0){
             return redirect()->back()
+                ->with('request',$request->all())
                 ->with('danger','You Can not return more then Sales Qty !');
         }
 
@@ -1012,9 +1111,11 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
          Accounts::where('_ref_master_id',$_sales_id)
                         ->where('_table_name','sales_return_accounts')
                          ->update(['_status'=>0]); 
-         $_p_balance = _l_balance_update($request->_main_ledger_id);
-          
+         SalesReturnBarcode::where('_no_id',$_sales_id)
+                  ->update(['_status'=>0,'_qty'=>0]);
 
+
+         $_p_balance = _l_balance_update($request->_main_ledger_id);
         $previous_sales_details = SalesReturnDetail::where('_no',$_sales_id)->get();
         foreach ($previous_sales_details as $value) {
                 $ProductPriceList = ProductPriceList::where('id',$value->_p_p_l_id)->first();
@@ -1022,9 +1123,62 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
                 $_status = (($_p_qty - $value->_qty) > 0) ? 1 : 0;
                 $ProductPriceList->_qty = ($_p_qty - $value->_qty);
                 $ProductPriceList->_status = $_status;
-                $ProductPriceList->save();
-        }
 
+
+                $_unique_barcode = $ProductPriceList->_unique_barcode;
+            
+             if($_unique_barcode ==1){
+                $_old_new_barcode = $value->_barcode.",".$ProductPriceList->_barcode;
+                if($_old_new_barcode !=""){
+                    $_unique_old_newbarcode_array =   explode(",",$_old_new_barcode);
+                    foreach ($_unique_old_newbarcode_array as $_arraY_val) {
+                      $_unique_old_newbarcode_array[]=trim($_arraY_val);
+                    }
+                    $_unique_old_newbarcode_array = array_unique($_unique_old_newbarcode_array);
+                     $_last_barcode_string = implode(",",$_unique_old_newbarcode_array);
+                     $ProductPriceList->_barcode =$_last_barcode_string;
+                    if(sizeof($_unique_old_newbarcode_array) > 0){
+                        foreach ($_unique_old_newbarcode_array as $_bar_value) {
+                                BarcodeDetail::where('_p_p_id',$ProductPriceList->id)
+                                            ->where('_item_id',$ProductPriceList->_item_id)
+                                            ->where('_barcode',$_bar_value)
+                                            ->update(['_qty'=>1,'_status'=>1]);
+                            }
+                    }
+                }
+                
+             }
+
+                $ProductPriceList->save();
+
+
+
+        }
+        //###########################
+        // Purchase Details information Save Start
+        //###########################
+        $_item_ids = $request->_item_id;
+        $_barcodes = $request->_barcode;
+        $_qtys = $request->_qty;
+        $_rates = $request->_rate;
+        $_sales_rates = $request->_sales_rate;
+        $_vats = $request->_vat;
+        $_vat_amounts = $request->_vat_amount;
+        $_values = $request->_value;
+        $_main_branch_id_detail = $request->_main_branch_id_detail;
+        $_main_cost_center = $request->_main_cost_center;
+        $_store_ids = $request->_main_store_id;
+        $_store_salves_ids = $request->_store_salves_id;
+        $_p_p_l_ids = $request->_p_p_l_id;
+        $_sales_ref_ids = $request->_sales_ref_id;
+        $_sales_detail_ref_ids = $request->_sales_detail_ref_id;
+        $_discounts = $request->_discount;
+        $_discount_amounts = $request->_discount_amount;
+        $_sales_return_detail_ids = $request->_sales_return_detail_id;
+        $_manufacture_dates = $request->_manufacture_date;
+        $_expire_dates = $request->_expire_date;
+        $_ref_counters = $request->_ref_counter;
+        $_warrantys = $request->_warranty;
 
         
  
@@ -1076,29 +1230,7 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
         // Purchase Master information Save End
         //###########################
 
-        //###########################
-        // Purchase Details information Save Start
-        //###########################
-        $_item_ids = $request->_item_id;
-        $_barcodes = $request->_barcode;
-        $_qtys = $request->_qty;
-        $_rates = $request->_rate;
-        $_sales_rates = $request->_sales_rate;
-        $_vats = $request->_vat;
-        $_vat_amounts = $request->_vat_amount;
-        $_values = $request->_value;
-        $_main_branch_id_detail = $request->_main_branch_id_detail;
-        $_main_cost_center = $request->_main_cost_center;
-        $_store_ids = $request->_main_store_id;
-        $_store_salves_ids = $request->_store_salves_id;
-        $_p_p_l_ids = $request->_p_p_l_id;
-        $_sales_ref_ids = $request->_sales_ref_id;
-        $_sales_detail_ref_ids = $request->_sales_detail_ref_id;
-        $_discounts = $request->_discount;
-        $_discount_amounts = $request->_discount_amount;
-        $_sales_return_detail_ids = $request->_sales_return_detail_id;
-          $_manufacture_dates = $request->_manufacture_date;
-        $_expire_dates = $request->_expire_date;
+        
 
                 
 
@@ -1115,12 +1247,16 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
                 }else{
                     $SalesReturnDetail = SalesReturnDetail::find($_sales_return_detail_ids[$i]);
                 }
+               
+
+                $barcode_string=$all_req[$_ref_counters[$i]."__barcode__".$_item_ids[$i]] ?? '';
+                $SalesReturnDetail->_barcode = $barcode_string;
+                $SalesReturnDetail->_warranty = $_warrantys[$i] ?? 0;
                 $SalesReturnDetail->_item_id = $_item_ids[$i];
                 $SalesReturnDetail->_p_p_l_id = $_p_p_l_ids[$i];
                 $SalesReturnDetail->_sales_ref_id = $_sales_ref_ids[$i];
                 $SalesReturnDetail->_sales_detail_ref_id = $_sales_detail_ref_ids[$i];
                 $SalesReturnDetail->_qty = $_qtys[$i];
-                $SalesReturnDetail->_barcode = $_barcodes[$i];
                 $SalesReturnDetail->_rate = $_rates[$i];
                 $SalesReturnDetail->_sales_rate = $_sales_rates[$i];
                 $SalesReturnDetail->_discount = $_discounts[$i] ?? 0;
@@ -1144,10 +1280,50 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
 
                 $ProductPriceList = ProductPriceList::find($_p_p_l_ids[$i]);
                 $_p_qty = $ProductPriceList->_qty;
+                $_unique_barcode = $ProductPriceList->_unique_barcode;
+
+                //Barcode  deduction from old string data
+                $_new_barcode_array = array();
+                $_old_barcode_array = array();
+                if($_unique_barcode ==1){
+                     $_old_barcode_strings =  $ProductPriceList->_barcode;
+                        
+                        if($_old_barcode_strings !=""){
+                            $_old_barcode_array = explode(",",$_old_barcode_strings);
+                        }
+                        if($barcode_string !=""){
+                            $_new_barcode_array = explode(",",$barcode_string);
+                        }
+
+                        $_last_barcode_array = array_unique(array_merge($_new_barcode_array,$_old_barcode_array));
+                        if(sizeof($_last_barcode_array ) > 0){
+                            $_last_barcode_string = implode(",",$_last_barcode_array);
+                        }
+                        $ProductPriceList->_barcode = $_last_barcode_string ?? '';
+                }else{
+                  $ProductPriceList->_barcode = $barcode_string;
+                }
+                //Barcode  deduction from old string data
                 $_status = (($_p_qty + $_qtys[$i]) > 0) ? 1 : 0;
                 $ProductPriceList->_qty = ($_p_qty + $_qtys[$i]);
                 $ProductPriceList->_status = $_status;
                 $ProductPriceList->save();
+
+                $product_price_id =  $ProductPriceList->id;
+                 $_unique_barcode =  $ProductPriceList->_unique_barcode;
+            if($_unique_barcode ==1){
+                if(sizeof($_new_barcode_array) > 0){
+                    foreach ($_new_barcode_array as $_b_v) {
+                        BarcodeDetail::where('_p_p_id',$product_price_id)
+                                            ->where('_item_id',$_item_ids[$i])
+                                            ->where('_barcode',$_b_v)
+                                            ->update(['_qty'=>1,'_status'=>1]);
+                                            $_qty=1;
+                                            $_stat=1;
+                      _barcode_insert_update('SalesReturnBarcode', $product_price_id,$_item_ids[$i],$_master_id,$_sales_details_id,$_qty,$_b_v,$_stat,0,0);
+                    }         
+                }
+            }
 
                 $ItemInventory = ItemInventory::where('_transection',"Sales Return")
                                     ->where('_transection_ref',$_sales_id)
@@ -1370,6 +1546,16 @@ $_p_balance = _l_balance_update($request->_main_ledger_id);
              \DB::table('sales_returns')
              ->where('id',$_master_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
+
+              //SMS SEND to Customer and Supplier
+             $_send_sms = $request->_send_sms ?? '';
+             if($_send_sms=='yes'){
+                $_name = _ledger_name($request->_main_ledger_id);
+                $_phones = $request->_phone;
+                $messages = "Dear ".$_name.", Date: ".$request->_date." Invoice N0.".$_pfix." Invoice Amount: ".prefix_taka()."."._report_amount($request->_total).". Payment Amount. ".prefix_taka()."."._report_amount($_total_dr_amount).". Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". Current Balance:".prefix_taka()."."._report_amount($_l_balance);
+                  sms_send($messages, $_phones);
+             }
+             //End Sms Send to customer and Supplier
 
             return redirect()->back()
                 ->with('success','Information save successfully')

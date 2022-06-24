@@ -57,7 +57,7 @@ $__user= Auth::user();
                     <div class="row">
 
                        <div class="col-xs-12 col-sm-12 col-md-4">
-                        <input type="hidden" name="_form_name" value="purchases_return">
+                        <input type="hidden" name="_form_name" class="_form_name"  value="purchases_return">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -434,6 +434,7 @@ $__user= Auth::user();
                            <input type="hidden" name="_item_row_count" value="1" class="_item_row_count">
                               </td>
                             </tr>
+                             @include('backend.message.send_sms')
                           </table>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">
@@ -673,6 +674,8 @@ if(data.length > 0 ){
 
   for (var i = 0; i < data.length; i++) {
       var _item_row_count = (parseFloat(i)+1);
+      var _unique_barcode = data[i]._unique_barcode
+
    $("._item_row_count").val(_item_row_count)
 
             $(document).find("#area__purchase_details").append(`<tr class="_purchase_row">
@@ -785,7 +788,10 @@ if(data.length > 0 ){
                                               @endif
                                               
                                             </tr>`);
-                          _new_barcode_function(_item_row_count);
+if(_unique_barcode ==1){
+  _new_barcode_function(_item_row_count);
+}
+                          
        
                                           }
                                         }else{
