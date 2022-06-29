@@ -61,7 +61,7 @@
                               @if(isset($previous_filter["_cost_center"]))
                               @if(in_array($costcenter->id,$previous_filter["_cost_center"])) selected @endif
                                  @endif
-                              > {{ $costcenter->_name ?? '' }}</option>
+                              > {{ $_category->_parents->_name ?? '' }}/{{ $costcenter->_name ?? '' }}</option>
                             @empty
                             @endforelse
                           </select>

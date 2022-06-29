@@ -101,6 +101,36 @@ class InventoryController extends Controller
 
     }
 
+    public function labelPrint(){
+        $page_name="Label Print";
+        return view('backend.item-information.label-print',compact('page_name'));
+    }
+
+    public function barcodePrintStore(Request $request){
+         $data =  $request->all();
+         $barcode_setting = $request->barcode_setting ?? 1;
+         if($barcode_setting ==1){
+            return view('backend.item-information.final_print_1',compact('data'));
+         }
+         if($barcode_setting ==2){
+            return view('backend.item-information.final_print_2',compact('data'));
+         }
+         if($barcode_setting ==3){
+            return view('backend.item-information.final_print_3',compact('data'));
+         }
+         if($barcode_setting ==4){
+            return view('backend.item-information.final_print_4',compact('data'));
+         }
+         if($barcode_setting ==5){
+            return view('backend.item-information.final_print_5',compact('data'));
+         }
+         if($barcode_setting ==6){
+            return view('backend.item-information.final_print_6',compact('data'));
+         }
+
+        
+    }
+
      public function reset(){
         Session::flash('_i_limit');
        return  \Redirect::to('item-information?limit='.default_pagination());

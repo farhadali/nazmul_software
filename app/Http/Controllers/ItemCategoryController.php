@@ -31,7 +31,8 @@ class ItemCategoryController extends Controller
         if($request->has('_parent_id') && $request->_parent_id !=''){
             $datas = $datas->where('_parent_id','=',$request->_parent_id);
         }
-        $datas = $datas->orderBy('id','desc')->paginate($limit);
+        $datas = $datas->orderBy('id','ASC')->paginate($limit);
+
         $page_name = $this->page_name;
          
         return view('backend.item-category.index',compact('datas','request','page_name'));
@@ -46,7 +47,7 @@ class ItemCategoryController extends Controller
     public function create()
     {
        $page_name = $this->page_name;
-       $parents_categories = ItemCategory::orderBy('_name','asc')->get();
+       $parents_categories = ItemCategory::with(['_parents'])->orderBy('_name','asc')->get();
         return view('backend.item-category.create',compact('page_name','parents_categories'));
     }
 

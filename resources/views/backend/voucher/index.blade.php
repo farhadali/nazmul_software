@@ -9,9 +9,9 @@ $__user= Auth::user();
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-12">
-            <h1 class="m-0">{!! $page_name ?? '' !!}  @can('voucher-create')
-                        <a title="Add New" class="btn  btn-sm btn-success" href="{{ route('voucher.create') }}"> <i class="nav-icon fas fa-plus"></i> </a>
-                @endcan </h1>
+            <h1 class="m-0">{!! $page_name ?? '' !!}  
+            @include('backend.message.voucher-header')
+              </h1>
           </div><!-- /.col -->
           
         </div><!-- /.row -->

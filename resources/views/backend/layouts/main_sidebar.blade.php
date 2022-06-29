@@ -10,22 +10,57 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          
- @can('inventory-menu') 
+          @can('inventory-menu') 
           <li class="nav-item ">
             <a href="#" class="nav-link ">
               <i class="fa fa-credit-card nav-icon" aria-hidden="true"></i>
               <p>
-                 Entry
+                 Accounts
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
+            @can('cash-receive')
+              <li class="nav-item" >
+                  <a href="{{url('voucher')}}?_voucher_type=CR" class="nav-link" >
+                  <i class="fa fa-list-alt nav-icon"></i><p>Cash Receive</p></a>
+              </li>
+              @endcan
+             @can('cash-payment')
+              <li class="nav-item">
+                <a href="{{url('voucher')}}?_voucher_type=CP" class="nav-link" ><i class="fa fa-list-alt nav-icon"></i><p>Cash Payment</p></a>
+              </li>
+              @endcan
+             @can('bank-receive')
+              <li class="nav-item">
+                <a href="{{url('voucher')}}?_voucher_type=BR" class="nav-link" ><i class="fa fa-list-alt nav-icon"></i><p>Bank Receive</p></a>
+              </li>
+              @endcan
+             @can('bank-payment')
+              <li class="nav-item">
+                <a href="{{url('voucher')}}?_voucher_type=BP" class="nav-link" ><i class="fa fa-list-alt nav-icon"></i><p>Bank Payment</p></a>
+              </li>
+              @endcan
+             
              @can('voucher-list')
               <li class="nav-item">
                 <a href="{{url('voucher')}}" class="nav-link" ><i class="fa fa-list-alt nav-icon"></i><p>Voucher</p></a>
               </li>
               @endcan
+            </ul>
+          </li>
+          @endcan
+ @can('inventory-menu') 
+          <li class="nav-item ">
+            <a href="#" class="nav-link ">
+              <i class="fa fa-credit-card nav-icon" aria-hidden="true"></i>
+              <p>
+                 Inventory
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+             
              @can('purchase-order-list')
               <li class="nav-item">
                 <a href="{{url('purchase-order')}}" class="nav-link" ><i class="fa fa-list-alt nav-icon"></i><p>Purchase Order</p></a>
@@ -163,6 +198,14 @@
                 </a>
               </li>
               @endcan
+             @can('ledger-summary-report')
+              <li class="nav-item">
+                <a href="{{url('filter-ledger-summary')}}" class="nav-link {{Route::is('filter-ledger-summary.*')   ? 'active' : '' }}" >
+                  <i class="fa fa-id-card nav-icon"></i>
+                  <p> Ledger Summary Report</p>
+                </a>
+              </li>
+              @endcan
              @can('income-statement')
               <li class="nav-item">
                 <a href="{{url('income-statement')}}" class="nav-link {{Route::is('income-statement.*')   ? 'active' : '' }}" >
@@ -229,6 +272,12 @@
                 <a href="{{url('item-category')}}"  class="nav-link {{Route::is('item-category.*')   ? 'active' : '' }}" ><i class="fa fa-laptop nav-icon"></i> <p>Item Category</p></a>
               </li>
               @endcan
+             
+             @can('warranty-list')
+              <li class="nav-item">
+                <a href="{{url('warranty')}}"  class="nav-link {{Route::is('warranty.*')   ? 'active' : '' }}" ><i class="fa fa-laptop nav-icon"></i> <p>Warranty</p></a>
+              </li>
+              @endcan
              @can('unit-list')
               <li class="nav-item">
                 <a href="{{url('unit')}}"  class="nav-link {{Route::is('unit.*')   ? 'active' : '' }}" ><i class="fa fa-laptop nav-icon"></i> <p>Unit Of Measurment</p></a>
@@ -242,6 +291,11 @@
              @can('lot-item-information')
               <li class="nav-item">
                 <a href="{{url('lot-item-information')}}"  class="nav-link {{Route::is('lot-item-information.*')   ? 'active' : '' }}" ><i class="fa fa-laptop nav-icon"></i> <p>Lot Item Information</p></a>
+              </li>
+              @endcan
+             @can('labels-print')
+              <li class="nav-item">
+                <a href="{{url('labels-print')}}"  class="nav-link {{Route::is('labels-print.*')   ? 'active' : '' }}" ><i class="fa fa-laptop nav-icon"></i> <p>Labels Print</p></a>
               </li>
               @endcan
 

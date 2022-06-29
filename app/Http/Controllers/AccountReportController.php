@@ -137,6 +137,233 @@ $ledger_details =[];
 
     }
 
+//Cash book filter
+    public function cashBook(Request $request){
+        $previous_filter= Session::get('filter_cash_book');
+        $page_name = "Cash Book";
+        $account_ledgers = \DB::select( " SELECT t1.id,t1._account_head_id,t1._account_group_id,t1._name FROM account_ledgers AS t1 WHERE t1._account_group_id=(SELECT _cash_group FROM general_settings ) " );
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        return view('backend.account-report.filter_cash_book',compact('request','page_name','account_ledgers','previous_filter','permited_branch','permited_costcenters'));
+    }
+
+    public function cashBookReport(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_datey' => 'required',
+            '_account_ledger_id' => 'required',
+        ]);
+
+        session()->put('filter_cash_book', $request->all());
+        $previous_filter= Session::get('filter_cash_book');
+        $page_name = "Cash Book";
+         $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+        $request_branchs = $request->_branch_id ?? [];
+        $request_cost_centers = $request->_cost_center ?? [];
+
+        $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+        $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+        $ledger_ids = $request->_account_ledger_id ?? [];
+
+        $ledger_id_rows = implode(',', $ledger_ids);
+        $_branch_ids_rows = implode(',', $_branch_ids);
+        $_cost_center_id_rows = implode(',', $_cost_center_ids);
+        $opening_query_sting = " SELECT 'A. Opening Cash' as _type,null as _date,  t1._account_ledger AS _account_ledger,t3._name as _l_name,null as _short_narration,null as _reference,null as _table_name, null as _id,SUM(t1._dr_amount-t1._cr_amount) as _dr_amount,0 as _cr_amount,0 as _serial
+            FROM accounts as t1
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+               WHERE t1._status=1 AND t1._date < '".$_datex."' AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger 
+UNION ALL
+SELECT 'B. Receipt & Payment' as _type,t1._date, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._short_narration as _short_narration,t1._reference as _reference,t1._table_name, t1._ref_master_id as _id,t1._dr_amount as _dr_amount,t1._cr_amount as _cr_amount,t1._serial
+            FROM accounts as t1
+             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+              WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+               AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+
+    UNION ALL
+    SELECT 'C. Closing Cash' as _type,null as _date,  t1._account_ledger AS _account_ledger,t3._name as _l_name,null as _short_narration,null as _reference,null as _table_name, null as _id,SUM(t1._dr_amount-t1._cr_amount) as _dr_amount,0 as _cr_amount,0 as _serial
+            FROM accounts as t1
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+               WHERE t1._status=1 AND t1._date <= '".$_datey."'  AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger ";
+
+         $_opening_balance =  DB::select($opening_query_sting);
+         $_result_group =array();
+         foreach ($_opening_balance as $value) {
+           $_result_group[$value->_type][]=$value;
+         }
+        return view('backend.account-report.report_cash_book',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','_result_group'));
+
+    }
+
+public function cashBookFilterReset(){
+  Session::flash('filter_cash_book');
+  return redirect()->back();
+}
+
+
+//Bank book filter
+    public function bankBook(Request $request){
+        $previous_filter= Session::get('filter_bank_book');
+        $page_name = "Bank Book";
+        $account_ledgers = \DB::select( " SELECT t1.id,t1._account_head_id,t1._account_group_id,t1._name FROM account_ledgers AS t1 WHERE t1._account_group_id=(SELECT _bank_group FROM general_settings ) " );
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        return view('backend.account-report.filter_bank_book',compact('request','page_name','account_ledgers','previous_filter','permited_branch','permited_costcenters'));
+    }
+
+    public function bankBookReport(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_datey' => 'required',
+            '_account_ledger_id' => 'required',
+        ]);
+
+        session()->put('filter_bank_book', $request->all());
+        $previous_filter= Session::get('filter_bank_book');
+        $page_name = "Bank Book";
+         $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+        $request_branchs = $request->_branch_id ?? [];
+        $request_cost_centers = $request->_cost_center ?? [];
+
+        $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+        $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+        $ledger_ids = $request->_account_ledger_id ?? [];
+
+        $ledger_id_rows = implode(',', $ledger_ids);
+        $_branch_ids_rows = implode(',', $_branch_ids);
+        $_cost_center_id_rows = implode(',', $_cost_center_ids);
+        $opening_query_sting = " SELECT 'A. Opening Bank' as _type,null as _date,  t1._account_ledger AS _account_ledger,t3._name as _l_name,null as _short_narration,null as _reference,null as _table_name, null as _id,SUM(t1._dr_amount-t1._cr_amount) as _dr_amount,0 as _cr_amount,0 as _serial
+            FROM accounts as t1
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+               WHERE t1._status=1 AND t1._date < '".$_datex."' AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger 
+UNION ALL
+SELECT 'B. Receipt & Payment' as _type,t1._date, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._short_narration as _short_narration,t1._reference as _reference,t1._table_name, t1._ref_master_id as _id,t1._dr_amount as _dr_amount,t1._cr_amount as _cr_amount,t1._serial
+            FROM accounts as t1
+             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+              WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+               AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+
+    UNION ALL
+    SELECT 'C. Closing Bank' as _type,null as _date,  t1._account_ledger AS _account_ledger,t3._name as _l_name,null as _short_narration,null as _reference,null as _table_name, null as _id,SUM(t1._dr_amount-t1._cr_amount) as _dr_amount,0 as _cr_amount,0 as _serial
+            FROM accounts as t1
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+               WHERE t1._status=1 AND t1._date <= '".$_datey."'  AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger ";
+
+         $_opening_balance =  DB::select($opening_query_sting);
+         $_result_group =array();
+         foreach ($_opening_balance as $value) {
+           $_result_group[$value->_type][]=$value;
+         }
+        return view('backend.account-report.report_bank_book',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','_result_group'));
+
+    }
+
+public function bankBookFilterReset(){
+  Session::flash('filter_bank_book');
+  return redirect()->back();
+}
+
+//Bank book filter
+    public function receiptPayment(Request $request){
+        $previous_filter= Session::get('filter_receipt_payment');
+        $page_name = "Receipt Payment";
+        $_defalut_groups = \DB::select("SELECT _bank_group,_cash_group FROM general_settings");
+        $_defalut_groups_array = array();
+        foreach ($_defalut_groups as $value) {
+          array_push($_defalut_groups_array ,intval($value->_bank_group));
+          array_push($_defalut_groups_array ,intval($value->_cash_group));
+        }
+        $_defalut_groups_ids=implode(',', $_defalut_groups_array);
+
+        $account_ledgers = \DB::select( " SELECT t1.id,t1._account_head_id,t1._account_group_id,t1._name FROM account_ledgers AS t1 WHERE t1._account_group_id IN(".$_defalut_groups_ids." ) " );
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        return view('backend.account-report.filter_receipt_payment',compact('request','page_name','account_ledgers','previous_filter','permited_branch','permited_costcenters'));
+    }
+
+    public function receiptPaymentReport(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_datey' => 'required',
+            '_account_ledger_id' => 'required',
+        ]);
+
+        session()->put('filter_receipt_payment', $request->all());
+        $previous_filter= Session::get('filter_receipt_payment');
+        $page_name = "Receipt Payment";
+         $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+        $request_branchs = $request->_branch_id ?? [];
+        $request_cost_centers = $request->_cost_center ?? [];
+
+        $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+        $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+        $ledger_ids = $request->_account_ledger_id ?? [];
+
+        $ledger_id_rows = implode(',', $ledger_ids);
+        $_branch_ids_rows = implode(',', $_branch_ids);
+        $_cost_center_id_rows = implode(',', $_cost_center_ids);
+        $opening_query_sting = " SELECT 'A. Opening' as _type,null as _date,  t1._account_ledger AS _account_ledger,t3._name as _l_name,null as _short_narration,null as _reference,null as _table_name, null as _id,SUM(t1._dr_amount-t1._cr_amount) as _dr_amount,0 as _cr_amount,0 as _serial
+            FROM accounts as t1
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+               WHERE t1._status=1 AND t1._date < '".$_datex."' AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger 
+UNION ALL
+SELECT 'B. Receipt & Payment' as _type,t1._date, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._short_narration as _short_narration,t1._reference as _reference,t1._table_name, t1._ref_master_id as _id,t1._dr_amount as _dr_amount,t1._cr_amount as _cr_amount,t1._serial
+            FROM accounts as t1
+             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+              WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+               AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+
+    UNION ALL
+    SELECT 'C. Closing' as _type,null as _date,  t1._account_ledger AS _account_ledger,t3._name as _l_name,null as _short_narration,null as _reference,null as _table_name, null as _id,SUM(t1._dr_amount-t1._cr_amount) as _dr_amount,0 as _cr_amount,0 as _serial
+            FROM accounts as t1
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+               WHERE t1._status=1 AND t1._date <= '".$_datey."'  AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+                 GROUP BY t1._account_ledger ";
+
+         $_opening_balance =  DB::select($opening_query_sting);
+         $_result_group =array();
+         foreach ($_opening_balance as $value) {
+           $_result_group[$value->_type][]=$value;
+         }
+        return view('backend.account-report.report_receipt_payment',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','_result_group'));
+
+    }
+
+public function receiptPaymentFilterReset(){
+  Session::flash('filter_receipt_payment');
+  return redirect()->back();
+}
 
     public function groupLedger(Request $request){
 
@@ -165,11 +392,11 @@ $ledger_details =[];
         $previous_filter= Session::get('groupBaseLedgerReportFilter');
         $page_name = "Group Ledger Statement";
         
-       $users = Auth::user();
+        $users = Auth::user();
         $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
         $datas=[];
-         $_datex =  change_date_format($request->_datex);
+        $_datex =  change_date_format($request->_datex);
         $_datey=  change_date_format($request->_datey);
 
         $group_ids = array();
@@ -244,8 +471,116 @@ $ledger_details =[];
     }
 
 
+    
+
     public function groupBaseLedgerFilterReset(){
         Session::flash('groupBaseLedgerReportFilter');
+
+        return redirect()->back();
+    }
+ public function filterLedgerSummarray(Request $request){
+
+        $previous_filter= Session::get('ledgerSummaryFilter');
+        $page_name = "Ledger Summary Report";
+        $account_groups = \DB::select(" SELECT DISTINCT t2.id as id,t2._name as _name FROM accounts AS t1
+                                        INNER JOIN account_groups AS t2 ON t1._account_group=t2.id WHERE t2._show_filter=1 ORDER BY t2._name ASC ");
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+
+
+         
+        return view('backend.account-report.filter_ledger_summary',compact('request','page_name','account_groups','previous_filter','permited_branch','permited_costcenters'));
+    }
+
+
+    public function ledgerSummaryReport(Request $request){
+   //  return $request->all();
+      $this->validate($request, [
+            '_branch_id' => 'required',
+            '_account_group_id' => 'required'
+        ]);
+
+        session()->put('ledgerSummaryFilter', $request->all());
+        $previous_filter= Session::get('ledgerSummaryFilter');
+        $page_name = "Ledger Summary Report";
+        $_order_by= $request->_order_by ?? 'DESC';
+        $_with_zero= $request->_with_zero ?? 1;
+        
+       $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+
+        $group_ids = array();
+        $_account_groups = $request->_account_group_id ?? [];
+        if(sizeof($_account_groups) > 0){
+            foreach ($_account_groups as $value) {
+                array_push($group_ids, (int) $value);
+            }
+        }
+
+        $ledger_ids = array();
+        $_account_ledgers = (array) $request->_account_ledger_id ?? [];
+        if(sizeof($_account_ledgers) > 0){
+            foreach ($_account_ledgers as $value) {
+                array_push($ledger_ids, (int) $value);
+            }
+            $basic_information = AccountLedger::with(['account_group'])
+                    ->select('_account_group_id','id as _ledger_id','_name')
+                         ->whereIn('id',$_account_ledgers)->get();
+        }else{
+            $basic_information = AccountLedger::with(['account_group'])->select('_account_group_id','id as _ledger_id','_name')
+            ->whereIn('_account_group_id',$group_ids)->get();
+            foreach ($basic_information as $value) {
+                array_push($ledger_ids, (int) $value->_ledger_id);
+            }
+        }
+
+       
+
+      $request_branchs = $request->_branch_id ?? [];
+      $request_cost_centers = $request->_cost_center ?? [];
+
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+
+      $ledger_id_rows = implode(',', $ledger_ids);
+      $_branch_ids_rows = implode(',', $_branch_ids);
+      $_cost_center_id_rows = implode(',', $_cost_center_ids);
+      
+     if($ledger_id_rows){
+     $string_query = "  
+            SELECT t1._account_group AS _account_group,t2._name as _group_name,t3._address,t3._phone, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name, SUM(t1._dr_amount-t1._cr_amount) AS _balance
+            FROM accounts AS t1
+            INNER JOIN account_groups as t2 ON t2.id=t1._account_group
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+            INNER JOIN branches as t4 ON t4.id = t1._branch_id
+              WHERE  t1._status=1 
+              AND t1._account_ledger IN(".$ledger_id_rows.") AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")    GROUP BY t1._account_ledger ";
+              if($_with_zero ==1){
+                $string_query .= " HAVING (abs(SUM(t1._dr_amount-t1._cr_amount)) > 0 )  ";
+              }
+
+              $string_query .= "   ORDER BY  abs(SUM(t1._dr_amount-t1._cr_amount))  $_order_by ";
+           
+
+        $datas = DB::select($string_query);
+       $group_array_values = array();
+       foreach ($datas as $value) {
+           $group_array_values[$value->_group_name][]=$value;
+       }
+
+}else{
+   $group_array_values = array();
+}
+        //return $group_array_values;
+        return view('backend.account-report.report_ledger_summary',compact('request','page_name','group_array_values','basic_information','previous_filter','permited_branch','permited_costcenters'));
+    }
+
+
+    public function ledgerSummaryFilterReset(){
+        Session::flash('ledgerSummaryFilter');
 
         return redirect()->back();
     }
@@ -516,6 +851,7 @@ $ledger_details =[];
 
       $_branch_ids_rows = implode(',', $_branch_ids);
       $_cost_center_id_rows = implode(',', $_cost_center_ids);
+      $_with_zero_qty = $request->_with_zero ?? 0;
 
 
       $balance_sheet = "   SELECT t5._name as _main_head,t6._name as _head_name, t1._account_group AS _account_group,t2._name as _group_name, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._branch_id AS _branch_id,t1._cost_center as _cost_center, t4._name as _branch_name,  SUM(t1._dr_amount-t1._cr_amount)  AS _amount
@@ -538,10 +874,8 @@ $ledger_details =[];
             INNER JOIN main_account_head as t5 ON t5.id=t6._account_id
             INNER JOIN branches as t4 ON t4.id = t1._branch_id
                WHERE  t1._status=1 AND t1._date <= '".$_datex."' AND t3._show=1 AND t5.id IN (3,4)
-               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.") 
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.") ";
 
-
-                   ";
       $balance_sheet_result = DB::select($balance_sheet);
       $balance_sheet_filter = array();
       foreach ($balance_sheet_result as $value) {
@@ -550,10 +884,10 @@ $ledger_details =[];
 
      if($request->_level =='Level 1'){
       
-       return view('backend.account-report.balance_sheet_level_1',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','balance_sheet_filter'));
+       return view('backend.account-report.balance_sheet_level_1',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','balance_sheet_filter','_with_zero_qty'));
 
      }else{
-       return view('backend.account-report.balance-sheet-report',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','balance_sheet_filter'));
+       return view('backend.account-report.balance-sheet-report',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','balance_sheet_filter','_with_zero_qty'));
      }
 
        

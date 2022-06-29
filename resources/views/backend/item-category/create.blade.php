@@ -51,7 +51,7 @@
                                 <select class="form-control" name="_parent_id" required>
                                   <option value="0">Base Category</option>
                                   @forelse($parents_categories as $category)
-                                  <option value="{{$category->id}}">{{ $category->_name ?? '' }}</option>
+                                  <option value="{{$category->id}}">{{ $category->_parents->_name ?? '' }}/{{ $category->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                   

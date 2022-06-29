@@ -103,6 +103,20 @@
                     </div>
                   </div>
                   <div class="form-group row">
+                    <label for="_lock" class="col-sm-2 col-form-label">Voucher Type:</label>
+                    <div class="col-sm-10">
+                      @php
+                     $_voucher_types = \DB::table("voucher_types")->select('_name','_code')->get();
+                      @endphp
+                       <select id="_voucher_type" class="form-control" name="_voucher_type" >
+                        <option value="">Select</option>
+                            @foreach($_voucher_types AS $key=>$val)
+                            <option value="{{$val->_code}}" @if(isset($request->_voucher_type)) @if($val->_code==$request->_voucher_type) selected @endif @endif >{{$val->_name}}</option>
+                        @endforeach
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group row">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Limit:</label>
                     <div class="col-sm-10">
                      <select name="limit" class="form-control" >

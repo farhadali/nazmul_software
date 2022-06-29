@@ -15,18 +15,57 @@
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
      
-
-      <!-- Messages Dropdown Menu -->
+ <!-- Messages Dropdown Menu -->
       <li class="nav-item dropdown"> </li>
-       @can('inventory-menu') 
+       @can('account-menu') 
       <li class="nav-item dropdown remove_from_header">
         <a class="nav-link" data-toggle="dropdown" href="#">
           
-          Entry <i class="right fas fa-angle-down"></i>
+          Accounts <i class="right fas fa-angle-down"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+       
+        @can('cash-receive')
+        <div style="display: flex;">
+         <a href="{{url('voucher')}}?_voucher_type=CR" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Cash Receive
+          </a>
+           <a  href="{{url('cash-receive')}}" class="dropdown-item text-right">
+            <i class="nav-icon fas fa-plus"></i>
+          </a>
+        </div>
+         @endcan
+        @can('cash-payment')
+        <div style="display: flex;">
+         <a href="{{url('voucher')}}?_voucher_type=CP" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Cash Payment
+          </a>
+           <a  href="{{url('cash-payment')}}" class="dropdown-item text-right">
+            <i class="nav-icon fas fa-plus"></i>
+          </a>
+        </div>
+         @endcan 
+        @can('bank-receive')
+        <div style="display: flex;">
+         <a href="{{url('voucher')}}?_voucher_type=BR" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Bank Receive
+          </a>
+           <a  href="{{url('bank-receive')}}" class="dropdown-item text-right">
+            <i class="nav-icon fas fa-plus"></i>
+          </a>
+        </div>
+         @endcan 
+        @can('bank-payment')
+        <div style="display: flex;">
+         <a href="{{url('voucher')}}?_voucher_type=BP" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Bank Payment
+          </a>
+           <a  href="{{url('bank-payment')}}" class="dropdown-item text-right">
+            <i class="nav-icon fas fa-plus"></i>
+          </a>
+        </div>
+         @endcan 
           @can('voucher-list')
-          
         <div style="display: flex;">
          <a href="{{url('voucher')}}" class="dropdown-item">
             <i class="fa fa-fax mr-2" aria-hidden="true"></i> Voucher
@@ -35,8 +74,20 @@
             <i class="nav-icon fas fa-plus"></i>
           </a>
         </div>
-          
          @endcan 
+         
+      </li>
+    @endcan
+      <!-- Messages Dropdown Menu -->
+      <li class="nav-item dropdown"> </li>
+       @can('inventory-menu') 
+      <li class="nav-item dropdown remove_from_header">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          
+          Inventory <i class="right fas fa-angle-down"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+           
           @can('purchase-order-list')
           
            <div style="display: flex;">
@@ -219,6 +270,13 @@
             <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Shortage Item
           </a>
         </div>
+         @endcan  
+       @can('barcode-history')
+        <div style="display: flex;">
+           <a href="{{url('barcode-history')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Barcode History
+          </a>
+        </div>
          @endcan 
 
 
@@ -234,17 +292,41 @@
           Accounts Report <i class="right fas fa-angle-down"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-         
+          <div class="dropdown-divider"></div>
+           @can('cash-book')
+          <a href="{{url('cash-book')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Cash Book
+          </a>
+         @endcan
+          <div class="dropdown-divider"></div>
+           @can('bank-book')
+          <a href="{{url('bank-book')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Bank Book
+          </a>
+         @endcan
+          <div class="dropdown-divider"></div>
+           @can('receipt-payment')
+          <a href="{{url('receipt-payment')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Receipt & Payment
+          </a>
+         @endcan
           <div class="dropdown-divider"></div>
            @can('ledger-report')
           <a href="{{url('ledger-report')}}" class="dropdown-item">
             <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Ledger Report
           </a>
          @endcan
+         
          <div class="dropdown-divider"></div>
         @can('group-ledger')
           <a href="{{url('group-ledger')}}" class="dropdown-item">
             <i class="fa fa-fax mr-2" aria-hidden="true"></i> Group Ledger Report
+          </a>
+         @endcan
+         <div class="dropdown-divider"></div>
+        @can('ledger-summary-report')
+          <a href="{{url('filter-ledger-summary')}}" class="dropdown-item">
+            <i class="fa fa-fax mr-2" aria-hidden="true"></i>  Ledger Summary Report
           </a>
          @endcan
          <div class="dropdown-divider"></div>
@@ -340,6 +422,19 @@
         </div>
           
          @endcan
+          <div class="dropdown-divider"></div>
+           @can('warranty-list')
+          
+        <div style="display: flex;">
+           <a href="{{url('warranty')}}" class="dropdown-item">
+            <i class="fa fa-laptop mr-2" aria-hidden="true"></i>Warranty
+          </a>
+           <a  href="{{route('warranty.create')}}" class="dropdown-item text-right">
+            <i class="nav-icon fas fa-plus"></i>
+          </a>
+        </div>
+          
+         @endcan
          <div class="dropdown-divider"></div>
         @can('item-information-list')
         <div style="display: flex;">
@@ -360,7 +455,15 @@
           </a>
            
         </div>
-          
+         @endcan
+         <div class="dropdown-divider"></div> 
+        @can('labels-print')
+        <div style="display: flex;">
+           <a href="{{url('labels-print')}}" class="dropdown-item">
+            <i class="fa fa-list-alt mr-2" aria-hidden="true"></i>Labels Print
+          </a>
+           
+        </div>
          @endcan
          <div class="dropdown-divider"></div>  
       </li>

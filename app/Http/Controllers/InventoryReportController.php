@@ -36,6 +36,67 @@ class InventoryReportController extends Controller
 {
 
 
+
+
+     public function filterBarcodeHistory(Request $request){
+
+        $previous_filter= Session::get('barcode_history');
+        $page_name = "Barcode History";
+       
+
+
+         
+        return view('backend.inventory-report.filter_barcode_history',compact('request','page_name','previous_filter'));
+    }
+
+
+    public function reportBarcodeHistory(Request $request){
+      $this->validate($request, [
+            '_barcode' => 'required'
+        ]);
+
+        session()->put('barcode_history', $request->all());
+        $previous_filter= Session::get('barcode_history');
+        $page_name = "Barcode History";
+        $_barcode = $request->_barcode ?? '';
+        $datas = DB::select(" 
+SELECT s1._type,s1._table_name,s4._name as _w_name,s1._ledger_id,s1.id as _id, s1._barcode,s1._warranty,s1._date,s1._item_id,s1._qty,s1._rate,s1._sales_rate,s1._store_id,s1._branch_id,s1._no  FROM(
+          SELECT '1.Purchase' AS _type,'purchases' as _table_name,t2._ledger_id,t2.id, t1._barcode,t3._warranty,t2._date,t1._item_id,t1._qty,t1._rate,t1._sales_rate,t1._store_id,t1._branch_id,t1._no 
+FROM purchase_details AS t1 
+INNER JOIN purchases AS t2 ON t1._no=t2.id
+LEFT JOIN inventories AS t3 ON t3.id=t1._item_id where t1._barcode LIKE '%$_barcode%'
+UNION ALL
+SELECT  '2.Purchase Return' AS _type,'purchase_return' as _table_name,t2._ledger_id,t2.id,t1._barcode,t3._warranty,t2._date,t1._item_id,t1._qty,t1._rate,t1._sales_rate,t1._store_id,t1._branch_id,t1._no 
+FROM purchase_return_details AS t1 
+INNER JOIN purchase_returns AS t2 ON t1._no=t2.id
+LEFT JOIN inventories AS t3 ON t3.id=t1._item_id where t1._barcode LIKE '%$_barcode%'
+UNION ALL
+SELECT '3.Sales' AS _type,'sales' as _table_name,t2._ledger_id,t2.id,t1._barcode,t1._warranty,t2._date,t1._item_id,t1._qty,t1._rate,t1._sales_rate,t1._store_id,t1._branch_id,t1._no 
+FROM sales_details AS t1
+INNER JOIN sales AS t2 ON t1._no=t2.id where t1._barcode LIKE '%$_barcode%'
+UNION ALL
+SELECT '4.Sales Return' AS _type,'sales_return' as _table_name,t2._ledger_id,t2.id,t1._barcode,t1._warranty,t2._date,t1._item_id,t1._qty,t1._rate,t1._sales_rate,t1._store_id,t1._branch_id,t1._no 
+FROM sales_return_details AS t1
+INNER JOIN sales_returns AS t2 ON t1._no=t2.id where t1._barcode LIKE '%$_barcode%'
+UNION ALL
+SELECT '5.Damage' AS _type,'damage' as _table_name,t2._ledger_id,t2.id,t1._barcode,t1._warranty,t2._date,t1._item_id,t1._qty,t1._rate,t1._sales_rate,t1._store_id,t1._branch_id,t1._no 
+FROM damage_adjustment_details AS t1
+INNER JOIN damage_adjustments AS t2 ON t1._no=t2.id 
+ where t1._barcode LIKE '%$_barcode%' ) as s1
+ LEFT JOIN warranties as s4 on s4.id=s1._warranty
+  ORDER BY s1._type ASC
+  ");
+  //return $datas;
+        return view('backend.inventory-report.report_barcode_history',compact('request','page_name','previous_filter','datas'));
+    }
+
+
+    public function resetBarcodeHistory(){
+        Session::flash('barcode_history');
+        return redirect()->back();
+    }
+
+
      public function filterBillOfPartyStatement(Request $request){
 
         $previous_filter= Session::get('bill_of_party_statement');
@@ -576,7 +637,12 @@ public function filterStockPossition(Request $request){
       $_datex =  change_date_format($request->_datex);
       $_datey=  change_date_format($request->_datey);
       $stores = StoreHouse::get();
-      $_item_categories = ItemCategory::get();
+      $categories = DB::select( " SELECT DISTINCT t1._category_id FROM item_inventories AS t1" );
+      $_categories_ids = [];
+      foreach ($categories as $value) {
+        array_push($_categories_ids, intval($value->_category_id));
+      }
+     $_item_categories = ItemCategory::with(['_parents'])->whereIn('id',$_categories_ids)->get();
       
         return view('backend.inventory-report.filter_stock_possition',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
 }
@@ -643,10 +709,11 @@ public function reportStockPossition(Request $request){
       $_cost_center_id_rows = implode(',', $_cost_center_ids);
       $_stores_id_rows = implode(',', $_stores);
       $category_ids_rows = implode(',', $category_ids);
+      $_with_zero_qty = $request->_with_zero ?? 0;
       
      if($_items_ids){
 
-      $datas = DB::select("  SELECT  s1._item_id,s1._name,s1._category_id,t3._name as _unit,s1._unit_id,s1._store_id,s1._branch_id, s1._cost_center_id, SUM(s1._opening) AS _opening,SUM(s1._stockin) as _stockin,SUM(s1._stockout) AS _stockout
+      $_string_query = "  SELECT  s1._item_id,s1._name,s1._category_id,t3._name as _unit,s1._unit_id,s1._store_id,s1._branch_id, s1._cost_center_id, SUM(s1._opening) AS _opening,SUM(s1._stockin) as _stockin,SUM(s1._stockout) AS _stockout
       FROM (
       SELECT t1._item_id,t1._item_name as _name,t1._category_id,t1._unit_id,t1._store_id,t1._branch_id, t1._cost_center_id, SUM(IFNULL(t1._qty,0)) AS _opening,0 as _stockin,0 AS _stockout 
         FROM item_inventories as t1 
@@ -662,7 +729,12 @@ public function reportStockPossition(Request $request){
         GROUP BY t1._branch_id,t1._cost_center_id,t1._store_id,t1._category_id,t1._item_id 
     ) as s1
     inner join units as t3 ON t3.id=s1._unit_id
-     GROUP BY s1._branch_id,s1._cost_center_id,s1._store_id,s1._category_id,s1._item_id ");
+     GROUP BY s1._branch_id,s1._cost_center_id,s1._store_id,s1._category_id,s1._item_id  ";
+     if($_with_zero_qty ==1){
+       $_string_query .= " HAVING (SUM(s1._stockin+s1._stockout+s1._opening) > 0) ";
+     }
+
+      $datas = DB::select($_string_query);
 
        
        $group_array_values =array();
@@ -702,7 +774,12 @@ public function filterStockLedger(Request $request){
       $_datex =  change_date_format($request->_datex);
       $_datey=  change_date_format($request->_datey);
       $stores = StoreHouse::get();
-      $_item_categories = ItemCategory::get();
+       $categories = DB::select( " SELECT DISTINCT t1._category_id FROM item_inventories AS t1" );
+      $_categories_ids = [];
+      foreach ($categories as $value) {
+        array_push($_categories_ids, intval($value->_category_id));
+      }
+     $_item_categories = ItemCategory::with(['_parents'])->whereIn('id',$_categories_ids)->get();
       
         return view('backend.inventory-report.filter_stock_ledger',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
 }
@@ -831,7 +908,12 @@ public function filterStockValueRegister(Request $request){
       $_datex =  change_date_format($request->_datex);
       $_datey=  change_date_format($request->_datey);
       $stores = StoreHouse::get();
-      $_item_categories = ItemCategory::get();
+       $categories = DB::select( " SELECT DISTINCT t1._category_id FROM item_inventories AS t1" );
+      $_categories_ids = [];
+      foreach ($categories as $value) {
+        array_push($_categories_ids, intval($value->_category_id));
+      }
+     $_item_categories = ItemCategory::with(['_parents'])->whereIn('id',$_categories_ids)->get();
       
         return view('backend.inventory-report.filter_stock_value_register',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
 }
@@ -944,7 +1026,12 @@ public function filterStockValue(Request $request){
       $_datex =  change_date_format($request->_datex);
       $_datey=  change_date_format($request->_datey);
       $stores = StoreHouse::get();
-      $_item_categories = ItemCategory::get();
+      $categories = DB::select( " SELECT DISTINCT t1._category_id FROM item_inventories AS t1" );
+      $_categories_ids = [];
+      foreach ($categories as $value) {
+        array_push($_categories_ids, intval($value->_category_id));
+      }
+     $_item_categories = ItemCategory::with(['_parents'])->whereIn('id',$_categories_ids)->get();
       
         return view('backend.inventory-report.filter_stock_value',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
 }
@@ -1057,7 +1144,12 @@ public function filterGrossProfit(Request $request){
       $_datex =  change_date_format($request->_datex);
       $_datey=  change_date_format($request->_datey);
       $stores = StoreHouse::get();
-      $_item_categories = ItemCategory::get();
+       $categories = DB::select( " SELECT DISTINCT t1._category_id FROM item_inventories AS t1" );
+      $_categories_ids = [];
+      foreach ($categories as $value) {
+        array_push($_categories_ids, intval($value->_category_id));
+      }
+     $_item_categories = ItemCategory::with(['_parents'])->whereIn('id',$_categories_ids)->get();
       
         return view('backend.inventory-report.filter_gross_profit',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
 }
@@ -1178,7 +1270,12 @@ public function filterExpiredItem(Request $request){
       $_datex =  change_date_format($request->_datex);
       $_datey=  change_date_format($request->_datey);
       $stores = StoreHouse::get();
-      $_item_categories = ItemCategory::get();
+       $categories = DB::select( " SELECT DISTINCT t1._category_id FROM item_inventories AS t1" );
+      $_categories_ids = [];
+      foreach ($categories as $value) {
+        array_push($_categories_ids, intval($value->_category_id));
+      }
+     $_item_categories = ItemCategory::with(['_parents'])->whereIn('id',$_categories_ids)->get();
       
         return view('backend.inventory-report.filter_expired_item',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
 }
@@ -1301,7 +1398,12 @@ public function filterShortageItem(Request $request){
       $_datex =  change_date_format($request->_datex);
       $_datey=  change_date_format($request->_datey);
       $stores = StoreHouse::get();
-      $_item_categories = ItemCategory::get();
+      $categories = DB::select( " SELECT DISTINCT t1._category_id FROM item_inventories AS t1" );
+      $_categories_ids = [];
+      foreach ($categories as $value) {
+        array_push($_categories_ids, intval($value->_category_id));
+      }
+     $_item_categories = ItemCategory::with(['_parents'])->whereIn('id',$_categories_ids)->get();
       
         return view('backend.inventory-report.filter_shortage_item',compact('page_name','previous_filter','permited_branch','permited_costcenters','_datex','_datey','request','stores','_item_categories'));
 }

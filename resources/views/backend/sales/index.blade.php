@@ -125,6 +125,9 @@ $__user= Auth::user();
                                      <a class="dropdown-item " href="{{url('sales/print')}}/{{$data->id}}" >
                                          View & Print
                                       </a>
+                                     <a class="dropdown-item " href="{{url('sales/challan')}}/{{$data->id}}" >
+                                         Challan
+                                      </a>
                                      @can('sales-edit')
                                         <a class="dropdown-item " href="{{ route('sales.edit',$data->id) }}" >
                                           Edit

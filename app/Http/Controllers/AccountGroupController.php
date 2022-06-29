@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AccountGroup;
 use App\Models\AccountHead;
+use App\Models\Accounts;
 use Illuminate\Http\Request;
 use Session;
 
@@ -163,10 +164,16 @@ class AccountGroupController extends Controller
      * @param  \App\Models\AccountGroup  $accountGroup
      * @return \Illuminate\Http\Response
      */
-   public function destroy(AccountHead $accountHead)
+   public function destroy($id)
     {
-        $__message ="You Can not delete this Information";
-        $page_name ="Permission Denied";
-        return view('backend.message.permission_message',compact('__message','page_name'));
+        $numOfAccount = Accounts::where('_account_group',$id)->count();
+        if($numOfAccount ==0){
+            AccountGroup::find($id)->delete();
+            return redirect('account-group')->with('success','Information deleted successfully');
+        }else{
+            $__message ="You Can not delete this Information";
+            $page_name ="Permission Denied";
+            return view('backend.message.permission_message',compact('__message','page_name'));
+        }
     }
 }

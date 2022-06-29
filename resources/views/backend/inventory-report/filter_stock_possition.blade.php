@@ -99,7 +99,7 @@
                               @if(isset($previous_filter["_item_category"]))
                               @if(in_array($_category->id,$previous_filter["_item_category"])) selected @endif
                                  @endif
-                              > {{ $_category->_name ?? '' }}</option>
+                              > {{ $_category->_parents->_name ?? '' }}/{{ $_category->_name ?? '' }}</option>
                             @empty
                             @endforelse
                           </select>
@@ -115,6 +115,16 @@
                           @endif
                          </select>
                      </div>
+                     <br>
+                     <div class="row">
+                         <select id="_with_zero" class="form-control  _with_zero " name="_with_zero"  >
+                           <option value="1" @if(isset($previous_filter["_with_zero"])) @if($previous_filter["_with_zero"] ==1) selected @endif @endif >Without Zero QTY</option>
+                           <option value="0" @if(isset($previous_filter["_with_zero"])) @if($previous_filter["_with_zero"] ==0) selected @endif @endif>With Zero QTY</option>
+                         
+                         </select>
+                     </div>
+                     <br>
+                     
 
                      <div class="row mt-3">
                          <div class="col-xs-6 col-sm-6 col-md-6 ">

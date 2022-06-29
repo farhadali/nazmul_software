@@ -98,11 +98,20 @@
                       $summary_l2 +=$l_4value->_amount ?? 0;
                       $summary_l3 +=$l_4value->_amount ?? 0;
                       $total_liabilites +=$l_4value->_amount ?? 0;
+
                      @endphp
+                     @if( $_with_zero_qty==1 &&  $l_4value->_amount !=0 )
                           <tr>
                              <td  style="text-align: left;">&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;{!! $l_4value->_l_name ?? '' !!}</td>
                              <td style="text-align: right;padding-right: 10px;">{!! _show_amount_dr_cr(_report_amount(   $l_4value->_amount ?? 0 ))  !!}</td>
                            </tr>
+                      @endif
+                      @if( $_with_zero_qty==0 )
+                      <tr>
+                             <td  style="text-align: left;">&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;{!! $l_4value->_l_name ?? '' !!}</td>
+                             <td style="text-align: right;padding-right: 10px;">{!! _show_amount_dr_cr(_report_amount(   $l_4value->_amount ?? 0 ))  !!}</td>
+                           </tr>
+                      @endif
                      @empty
                      @endforelse
                      

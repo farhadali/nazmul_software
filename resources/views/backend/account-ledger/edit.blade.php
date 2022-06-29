@@ -93,6 +93,12 @@
                                 <input type="text" name="_address" class="form-control" value="{{old('_address',$data->_address)}}" placeholder="Address" >
                             </div>
                         </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <strong>Alious:</strong>
+                                <input type="text" name="_alious" class="form-control" value="{{old('_alious',$data->_alious)}}" placeholder="Alious">
+                            </div>
+                        </div>
                         <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
                                 <strong>Code:</strong>

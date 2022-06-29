@@ -91,7 +91,7 @@
                               @if(isset($previous_filter["_item_category"]))
                               @if(in_array($_category->id,$previous_filter["_item_category"])) selected @endif
                                  @endif
-                              > {{ $_category->_name ?? '' }}</option>
+                              > {{ $_category->_parents->_name ?? '' }}/{{ $_category->_name ?? '' }}</option>
                             @empty
                             @endforelse
                           </select>

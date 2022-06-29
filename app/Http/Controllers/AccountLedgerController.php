@@ -61,6 +61,9 @@ class AccountLedgerController extends Controller
         if($request->has('_note') && $request->_note !=''){
             $datas = $datas->where('_note','like',"%$request->_note%");
         }
+        if($request->has('_alious') && $request->_alious !=''){
+            $datas = $datas->where('_alious','like',"%$request->_alious%");
+        }
         if($request->has('_email') && $request->_email !=''){
             $datas = $datas->where('_email','like',"%$request->_email%");
         }
@@ -171,11 +174,12 @@ class AccountLedgerController extends Controller
         $data->_account_head_id = $request->_account_head_id;
         $data->_account_group_id = $request->_account_group_id;
         $data->_branch_id = $request->_branch_id;
-        $data->_name = $request->_name;
-        $data->_address = $request->_address;
-        $data->_code = $request->_code;
-        $data->_nid = $request->_nid;
-        $data->_note = $request->_note;
+        $data->_name = $request->_name ?? '';
+        $data->_address = $request->_address ?? '';
+        $data->_code = $request->_code ?? '';
+        $data->_nid = $request->_nid ?? '';
+        $data->_note = $request->_note ?? '';
+        $data->_alious = $request->_alious ?? '';
         $data->_email = $request->_email;
         $data->_phone = $request->_phone;
         $data->_credit_limit = $request->_credit_limit ?? 0;
@@ -283,6 +287,7 @@ class AccountLedgerController extends Controller
         $data->_branch_id = $request->_branch_id;
         $data->_name = $request->_name;
         $data->_address = $request->_address;
+         $data->_alious = $request->_alious ?? '';
         $data->_code = $request->_code;
         $data->_nid = $request->_nid;
         $data->_note = $request->_note;

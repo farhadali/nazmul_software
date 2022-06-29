@@ -282,7 +282,8 @@ $__user= Auth::user();
                                                 </div>
                                               </td>
                                               
-                                              <td class="@if($form_settings->_show_barcode == 0) display_none @endif d-flex">
+                                              <td class=" @if($form_settings->_show_barcode == 0) display_none @endif ">
+                                                <div class="d-flex">
                                                @php
                                                $__barcode = $detail->_barcode ?? '';
                                                if($__barcode !=''){
@@ -295,7 +296,11 @@ $__user= Auth::user();
                                                
 
                                                 <input type="hidden" name="_ref_counter[]" value="counter_{{($m_key+1)}}" class="_ref_counter _ref_counter__counter_{{($m_key+1)}} _ref_counter__{{$detail->_p_p_l_id}}" id="counter_{{($m_key+1)}}__ref_counter">
-                                                @if($detail->_items->_unique_barcode ==1)
+                                              </div>
+                                                @php
+                                                $_unique_barcode = $detail->_items->_unique_barcode ?? 0;
+                                                @endphp
+                                                @if( $_unique_barcode==1)
                                                 <div  class="modal" tabindex="-1" role="dialog" style="display: contents;">
                                                         <button 
                                                         attr_row_counter="counter_{{($m_key+1)}}" 

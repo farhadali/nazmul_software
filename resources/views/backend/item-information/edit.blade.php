@@ -58,8 +58,8 @@
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label>Warranty: </label>
-                               <select  class="form-control _warranty select2" name="_warranty" required>
-                                  <option value="">--Select Warranty--</option>
+                               <select  class="form-control _warranty select2" name="_warranty" >
+                                  <option value="0">--None--</option>
                                   @forelse($_warranties as $_warranty )
                                   <option value="{{$_warranty->id}}" @if(isset($data->_warranty)) @if($data->_warranty == $_warranty->id) selected @endif   @endif>{{ $_warranty->_name ?? '' }}</option>
                                   @empty

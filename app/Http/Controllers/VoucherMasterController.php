@@ -31,6 +31,7 @@ class VoucherMasterController extends Controller
          $this->middleware('permission:voucher-delete', ['only' => ['destroy']]);
          $this->middleware('permission:money-receipt-print', ['only' => ['moneyReceiptPrint']]);
          $this->middleware('permission:money-payment-receipt', ['only' => ['moneyPaymentReceiptPrint']]);
+         $this->middleware('permission:cash-receive', ['only' => ['cashReceive']]);
          $this->page_name = "Voucher";
 
 
@@ -76,6 +77,9 @@ class VoucherMasterController extends Controller
         if($request->has('_lock') && $request->_lock !=''){
             $datas = $datas->where('_lock','=',$request->_lock);
         }
+        if($request->has('_voucher_type') && $request->_voucher_type !=''){
+            $datas = $datas->where('_voucher_type','=',$request->_voucher_type);
+        }
 
         if($request->has('_transection_ref') && $request->_transection_ref !=''){
             $datas = $datas->where('_transection_ref','like',"%trim($request->_transection_ref)%");
@@ -93,8 +97,19 @@ class VoucherMasterController extends Controller
         
         $datas = $datas->orderBy($asc_cloumn,$_asc_desc)
                         ->paginate($limit);
+        if($request->_voucher_type =="CR"){
+            $page_name = "Cash Receive";
+        }elseif($request->_voucher_type =="CP"){
+            $page_name = "Cash Payment";
+        }elseif($request->_voucher_type =="BR"){
+            $page_name = "Bank Receive";
+        }elseif($request->_voucher_type =="BP"){
+            $page_name = "Bank Payment";
+        }else{
+             $page_name = $this->page_name;
+        }
 
-         $page_name = $this->page_name;
+        
          $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
          $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
           $current_date = date('Y-m-d');
@@ -139,6 +154,68 @@ class VoucherMasterController extends Controller
        return view('backend.voucher.create',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types'));
     }
 
+    public function cashReceive(){
+       $users = Auth::user();
+        $page_name = "Cash Receive";
+        $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $voucher_types = VoucherType::select('id','_name','_code')->where('_code','CR')->orderBy('_code','asc')->get();
+        $_defalut_group_ledgers =\DB::select( " SELECT t1.id,t1._account_head_id,t1._account_group_id,t1._name 
+FROM account_ledgers AS t1 
+WHERE t1._account_group_id=(SELECT _cash_group FROM general_settings ) " );
+
+       return view('backend.voucher.cash-receive',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','_defalut_group_ledgers'));
+    }
+    public function bankReceive(){
+       $users = Auth::user();
+        $page_name = "Bank Receive";
+        $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $voucher_types = VoucherType::select('id','_name','_code')->where('_code','BR')->orderBy('_code','asc')->get();
+        $_defalut_group_ledgers =\DB::select( " SELECT t1.id,t1._account_head_id,t1._account_group_id,t1._name 
+FROM account_ledgers AS t1 
+WHERE t1._account_group_id=(SELECT _bank_group FROM general_settings ) " );
+
+       return view('backend.voucher.bank-receive',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','_defalut_group_ledgers'));
+    }
+
+    public function cashPayment(){
+       $users = Auth::user();
+        $page_name = "Cash Payment";
+        $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $voucher_types = VoucherType::select('id','_name','_code')->where('_code','CP')->orderBy('_code','asc')->get();
+        $_defalut_group_ledgers =\DB::select( " SELECT t1.id,t1._account_head_id,t1._account_group_id,t1._name 
+FROM account_ledgers AS t1 
+WHERE t1._account_group_id=(SELECT _cash_group FROM general_settings ) " );
+
+       return view('backend.voucher.cash-payment',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','_defalut_group_ledgers'));
+    }
+    public function bankPayment(){
+       $users = Auth::user();
+        $page_name = "Bank Payment";
+        $account_types = AccountHead::select('id','_name')->orderBy('_name','asc')->get();
+        $account_groups = AccountGroup::select('id','_name')->orderBy('_name','asc')->get();
+        $branchs = Branch::orderBy('_name','asc')->get();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $voucher_types = VoucherType::select('id','_name','_code')->where('_code','BP')->orderBy('_code','asc')->get();
+        $_defalut_group_ledgers =\DB::select( " SELECT t1.id,t1._account_head_id,t1._account_group_id,t1._name 
+FROM account_ledgers AS t1 
+WHERE t1._account_group_id=(SELECT _bank_group FROM general_settings ) " );
+
+       return view('backend.voucher.bank-payment',compact('account_types','page_name','account_groups','branchs','permited_branch','permited_costcenters','voucher_types','_defalut_group_ledgers'));
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -176,6 +253,7 @@ class VoucherMasterController extends Controller
             $VoucherMaster->_amount = $request->_total_dr_amount;
             $VoucherMaster->_note = $request->_note;
             $VoucherMaster->_form_name = $request->_form_name;
+            $VoucherMaster->_cost_center_id = $request->_cost_center_id ?? 1;
             $VoucherMaster->_status =1;
             $VoucherMaster->_created_by = $users->id."-".$users->name;
             $VoucherMaster->_user_id = $users->id;
@@ -280,6 +358,183 @@ class VoucherMasterController extends Controller
         }
 
 
+    }
+
+    public function voucherSave(Request $request){
+       // return $request->all();
+        $this->validate($request, [
+             '_ledger_id' => 'required|array',
+            '_branch_id_detail' => 'required|array',
+             '_dr_amount' => 'required|array',
+             '_cr_amount' => 'required|array',
+            '_voucher_type' => 'required',
+            '_branch_id' => 'required',
+           
+            '_date' => 'required'
+        ]);
+
+        $_voucher_type = $request->_voucher_type;
+        $_ledger_id = $request->_ledger_id;
+        $_branch_id_detail = $request->_branch_id_detail;
+        $_cost_center = $request->_cost_center;
+        $_short_narr = $request->_short_narr;
+        $_dr_amount = $request->_dr_amount;
+        $_cr_amount = $request->_cr_amount;
+        if($_voucher_type =="CR"){
+            $_total_dr_amount = array_sum($_cr_amount);
+            array_push($_dr_amount, $_total_dr_amount);
+            array_push($_cr_amount, 0);
+            array_push($_ledger_id, $request->_defalut_ledger_id);
+            array_push($_cost_center, $request->_cost_center_id ?? 1);
+            array_push($_branch_id_detail, $request->_branch_id ?? 1);
+            array_push($_short_narr, $request->_note ?? 'N/A');
+            //
+        }
+        if($_voucher_type =="BR"){
+            $_total_dr_amount = array_sum($_cr_amount);
+            array_push($_dr_amount, $_total_dr_amount);
+            array_push($_cr_amount, 0);
+            array_push($_ledger_id, $request->_defalut_ledger_id);
+            array_push($_cost_center, $request->_cost_center_id ?? 1);
+            array_push($_branch_id_detail, $request->_branch_id ?? 1);
+            array_push($_short_narr, $request->_note ?? 'N/A');
+            //
+        }
+        if($_voucher_type =="CP"){
+            $_total_am = array_sum($_dr_amount);
+            array_push($_cr_amount, $_total_am);
+            array_push($_dr_amount, 0);
+            array_push($_ledger_id, $request->_defalut_ledger_id);
+            array_push($_cost_center, $request->_cost_center_id ?? 1);
+            array_push($_branch_id_detail, $request->_branch_id ?? 1);
+            array_push($_short_narr, $request->_note ?? 'N/A');
+            //
+        }
+        if($_voucher_type =="BP"){
+            $_total_am = array_sum($_dr_amount);
+            array_push($_cr_amount, $_total_am);
+            array_push($_dr_amount, 0);
+            array_push($_ledger_id, $request->_defalut_ledger_id);
+            array_push($_cost_center, $request->_cost_center_id ?? 1);
+            array_push($_branch_id_detail, $request->_branch_id ?? 1);
+            array_push($_short_narr, $request->_note ?? 'N/A');
+            //
+        }
+        
+        $_total_dr_amount = array_sum($_cr_amount);
+
+       DB::beginTransaction();
+       try {
+
+            $_print_value = $request->_print ?? 0;
+            $users = Auth::user();
+            // Voucher Master Data Insert
+            $VoucherMaster = new VoucherMaster();
+            $VoucherMaster->_date = change_date_format($request->_date);
+            $VoucherMaster->_voucher_type = $request->_voucher_type;
+            $VoucherMaster->_branch_id = $request->_branch_id;
+            $VoucherMaster->_transection_ref = $request->_transection_ref;
+            $VoucherMaster->_amount = $_total_dr_amount;
+            $VoucherMaster->_note = $request->_note;
+            $VoucherMaster->_form_name = $request->_form_name;
+            $VoucherMaster->_cost_center_id = $request->_cost_center_id ?? 1;
+            $VoucherMaster->_status =1;
+            $VoucherMaster->_created_by = $users->id."-".$users->name;
+            $VoucherMaster->_user_id = $users->id;
+            $VoucherMaster->_user_name = $users->name;
+            $VoucherMaster->_time = date('H:i:s');
+            $VoucherMaster->save();
+            $master_id = $VoucherMaster->id;
+            VoucherMaster::where('id',$master_id )->update(['_code'=>voucher_prefix().$master_id]);
+
+            //Inser Voucher Details Table
+            
+            if(sizeof($_ledger_id) > 0){
+                for ($i = 0; $i <sizeof($_ledger_id) ; $i++) {
+                    $_p_balance = _l_balance_update($_ledger_id[$i]);
+                    $_account_type_id =  ledger_to_group_type($_ledger_id[$i])->_account_head_id;
+                    $_account_group_id =  ledger_to_group_type($_ledger_id[$i])->_account_group_id;
+
+                    $VoucherMasterDetail = new VoucherMasterDetail();
+                    $VoucherMasterDetail->_no = $master_id;
+                    $VoucherMasterDetail->_account_type_id = $_account_type_id;
+                    $VoucherMasterDetail->_account_group_id = $_account_group_id;
+                    $VoucherMasterDetail->_ledger_id = $_ledger_id[$i];
+                    $VoucherMasterDetail->_cost_center = $_cost_center[$i] ?? 0;
+                    $VoucherMasterDetail->_branch_id = $_branch_id_detail[$i] ?? 0;
+                    $VoucherMasterDetail->_short_narr = $_short_narr[$i] ?? 'N/A';
+                    $VoucherMasterDetail->_dr_amount = $_dr_amount[$i] ?? 0;
+                    $VoucherMasterDetail->_cr_amount = $_cr_amount[$i] ?? 0;
+                    $VoucherMasterDetail->_status = 1;
+                    $VoucherMasterDetail->_created_by = $users->id."-".$users->name;
+                    $VoucherMasterDetail->save();
+                    $master_detail_id = $VoucherMasterDetail->id;
+
+
+
+                    //Reporting Account Table Data Insert
+
+                    $Accounts = new Accounts();
+                    $Accounts->_ref_master_id = $master_id;
+                    $Accounts->_ref_detail_id = $master_detail_id;
+                    $Accounts->_short_narration = $_short_narr[$i] ?? 'N/A';
+                    $Accounts->_narration = $request->_note;
+                    $Accounts->_reference = $request->_transection_ref;
+                    $Accounts->_transaction = 'Account';
+                    $Accounts->_date = change_date_format($request->_date);
+                    $Accounts->_table_name = $request->_form_name;
+                    $Accounts->_account_head = $_account_type_id;
+                    $Accounts->_account_group = $_account_group_id;
+                    $Accounts->_account_ledger = $_ledger_id[$i];
+                    $Accounts->_dr_amount = $_dr_amount[$i] ?? 0;
+                    $Accounts->_cr_amount = $_cr_amount[$i] ?? 0;
+                    $Accounts->_branch_id = $_branch_id_detail[$i] ?? 0;
+                    $Accounts->_cost_center = $_cost_center[$i] ?? 0;
+                    $Accounts->_name =$users->name;
+                    $Accounts->save();
+
+                   $_l_balance = ledger_balance_update($_ledger_id[$i]);
+
+
+                    $__cr_amount =$_cr_amount[$i] ?? 0;
+                    $__dr_amount =$_dr_amount[$i] ?? 0;
+                    $__amount =0;
+                    $_message_string = "";
+                    if($__dr_amount > 0){
+                      $_message_string = "Your Accont has been debited by ";
+                      $__amount =$__dr_amount;
+                    }
+                    if($__cr_amount > 0){
+                      $_message_string = "Your Accont has been credited by ";
+                      $__amount =$__cr_amount;
+                    }
+
+                    $_ledger_info = AccountLedger::select('_phone','_name')->where('id',$_ledger_id[$i])->where('_phone','!=','')->first();
+                    //SMS SEND to Customer and Supplier
+                     $_send_sms = $request->_send_sms ?? '';
+                     if($_send_sms=='yes'){
+                        $_name = $_ledger_info->_name ?? '';
+                        $_phones = $_ledger_info->_phone ?? "";
+                        if(strlen($_phones) >= 11){
+                             $messages = "Dear ".$_name.", Voucher N0.".$master_id." ".$_message_string.": ".prefix_taka()."."._report_amount($__amount).". Your Previous Balance ".prefix_taka()."."._report_amount($_p_balance).". And Current Balance:".prefix_taka()."."._report_amount($_l_balance);
+                                sms_send($messages, $_phones);
+                        }
+                       
+                     }
+                     //End Sms Send to customer and Supplier
+
+                    
+                }
+            }
+
+           
+
+           DB::commit();
+            return redirect()->back()->with('success','Information save successfully')->with('_master_id',$master_id)->with('_print_value',$_print_value);
+       } catch (\Exception $e) {
+           DB::rollback();
+           return redirect()->back();
+        }
     }
 
     /**
@@ -414,6 +669,7 @@ class VoucherMasterController extends Controller
             $VoucherMaster->_amount = $request->_total_dr_amount;
             $VoucherMaster->_note = $request->_note;
             $VoucherMaster->_form_name = $request->_form_name;
+             $VoucherMaster->_cost_center_id = $request->_cost_center_id ?? 1;
             $VoucherMaster->_status =1;
             $VoucherMaster->_updated_by = $users->id."-".$users->name;
             $VoucherMaster->_user_id = $users->id;

@@ -421,7 +421,7 @@ SELECT s1.id as _p_p_l_id,s1._item_id,s1._qty
         $p_accounts = [];
         $dis_accounts = [];
         $vat_accounts =[];
-        $categories = ItemCategory::select('id','_name')->orderBy('_name','asc')->get();
+        $categories = ItemCategory::with(['_parents'])->select('id','_name','_parent_id')->orderBy('_name','asc')->get();
         $units = Units::select('id','_name','_code')->orderBy('_name','asc')->get();
          $_warranties = Warranty::select('id','_name')->orderBy('_name','asc')->where('_status',1)->get();
 
@@ -1074,6 +1074,23 @@ where  t1._status = 1 and  (t1._barcode like '%$text_val%' OR t2._item like '%$t
        
     }
 
+    public function challanPrint($id){
+        $users = Auth::user();
+        $page_name = $this->page_name;
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+       
+         $data =  Sales::with(['_master_branch','_master_details','s_account','_ledger'])->find($id);
+        $form_settings = SalesFormSetting::first();
+           $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+         $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
+        
+            return view('backend.sales.challan',compact('page_name','permited_branch','permited_costcenters','data','form_settings','permited_branch','permited_costcenters','store_houses'));
+        
+       
+    }
+
     /**
      * Display the specified resource.
      *
@@ -1109,7 +1126,7 @@ where  t1._status = 1 and  (t1._barcode like '%$text_val%' OR t2._item like '%$t
         $p_accounts = [];
         $dis_accounts = [];
         $vat_accounts =[];
-        $categories = ItemCategory::orderBy('_name','asc')->get();
+        $categories = ItemCategory::with(['_parents'])->select('id','_name','_parent_id')->orderBy('_name','asc')->get();
         $units = Units::orderBy('_name','asc')->get();
          $data =  Sales::with(['_master_branch','_master_details','s_account','_ledger'])->where('_lock',0)->find($id);
          if(!$data){ return redirect()->back()->with('danger','You have no permission to edit or update !'); }

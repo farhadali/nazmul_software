@@ -564,6 +564,7 @@ $__user= Auth::user();
 var _text_val="";
 var _global_unique_barcode =0;
 var _item_row_count = parseFloat($(document).find('._item_row_count').val());
+$("#_serach_baorce").focus();
  
 
  

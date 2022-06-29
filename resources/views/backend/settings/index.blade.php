@@ -105,6 +105,29 @@
                             </div>
                            
                         </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="row">
+                                 <div class=" col-sm-6">
+                                <strong>Cash Group:</strong>
+                               <select class="form-control " name="_cash_group">
+                                @forelse($_accounts_group as $_group)
+                                  <option value="{{$_group->id}}" @if($settings->_cash_group==$_group->id) selected @endif >{{$_group->_name ?? ''}}</option>
+                                @empty
+                                @endforelse
+                                </select>
+                            </div>
+                            <div class=" col-sm-6">
+                                <strong>Bank Group:</strong>
+                               <select class="form-control " name="_bank_group">
+                                  @forelse($_accounts_group as $_group)
+                                  <option value="{{$_group->id}}" @if($settings->_bank_group==$_group->id) selected @endif >{{$_group->_name ?? ''}}</option>
+                                @empty
+                                @endforelse
+                                </select>
+                            </div>
+                            </div>
+                           
+                        </div>
 
                         <div class="col-xs-6 col-sm-6 col-md-6">
                             <div class="form-group">

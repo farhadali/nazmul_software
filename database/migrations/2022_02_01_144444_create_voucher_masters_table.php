@@ -21,6 +21,7 @@ class CreateVoucherMastersTable extends Migration
             $table->unsignedBigInteger('_user_id');
             $table->foreign('_user_id')->references('id')->on('users');
             $table->string('_user_name')->nullable();
+            $table->integer('_defalut_ledger_id')->nullable();
             $table->string('_note')->nullable();
             $table->string('_voucher_type')->nullable();
             $table->string('_transection_type')->nullable();

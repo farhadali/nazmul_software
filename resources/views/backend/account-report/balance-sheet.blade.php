@@ -88,8 +88,18 @@
                           </select>
                       </div>
 
+
                     
                     </div>
+                    <br>
+                     <div class="row">
+                         <select id="_with_zero" class="form-control  _with_zero " name="_with_zero"  >
+                           <option value="1" @if(isset($previous_filter["_with_zero"])) @if($previous_filter["_with_zero"] ==1) selected @endif @endif >Without Zero Amount</option>
+                           <option value="0" @if(isset($previous_filter["_with_zero"])) @if($previous_filter["_with_zero"] ==0) selected @endif @endif>With Zero Amount</option>
+                         
+                         </select>
+                     </div>
+                    
                     
                     
                      <div class="row mt-3">

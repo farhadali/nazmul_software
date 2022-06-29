@@ -37,7 +37,8 @@ class GeneralSettingsController extends Controller
 
     public function settings(Request $request){
     	$settings = GeneralSettings::first();
-    	return view('backend.settings.index',compact('settings'));
+        $_accounts_group = \DB::table('account_groups')->select('id','_name')->where('_account_head_id',1)->get();
+    	return view('backend.settings.index',compact('settings','_accounts_group'));
     }
 
 
@@ -117,6 +118,8 @@ class GeneralSettingsController extends Controller
         $settings->_ac_type = $request->_ac_type ?? 0;
         $settings->_sms_service = $request->_sms_service ?? 0;
         $settings->_barcode_service = $request->_barcode_service ?? 0;
+        $settings->_bank_group = $request->_bank_group ?? 0;
+        $settings->_cash_group = $request->_cash_group ?? 0;
 
     	if($request->hasFile('logo')){ 
                 $logo = $this->UserImageUpload($request->logo); 

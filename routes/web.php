@@ -98,6 +98,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('lot-item-information-reset', 'App\Http\Controllers\InventoryController@lotReset');
     Route::get('item-sales-price-edit/{id}', 'App\Http\Controllers\InventoryController@salesPriceEdit');
     Route::post('item-sales-price-update', 'App\Http\Controllers\InventoryController@salesPriceUpdate');
+    Route::get('labels-print', 'App\Http\Controllers\InventoryController@labelPrint');
+    Route::post('barcode-print-store', 'App\Http\Controllers\InventoryController@barcodePrintStore');
 
     
     Route::resource('store-house', StoreHouseController::class);
@@ -128,6 +130,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('sales/update', 'App\Http\Controllers\SalesController@update');
     Route::get('sales-reset', 'App\Http\Controllers\SalesController@reset');
     Route::get('sales/print/{id}', 'App\Http\Controllers\SalesController@Print');
+    Route::get('sales/challan/{id}', 'App\Http\Controllers\SalesController@challanPrint');
     Route::post('sales-settings', 'App\Http\Controllers\SalesController@Settings');
     Route::get('sales-setting-modal', 'App\Http\Controllers\SalesController@formSettingAjax');
     Route::get('item-sales-search', 'App\Http\Controllers\SalesController@itemSalesSearch');
@@ -185,6 +188,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('money-payment-receipt/{id}', 'App\Http\Controllers\VoucherMasterController@moneyPaymentReceiptPrint');
 
     Route::post('master-base-detils','App\Http\Controllers\VoucherMasterController@masterBseDetails');
+    Route::get('cash-receive','App\Http\Controllers\VoucherMasterController@cashReceive');
+    Route::get('bank-receive','App\Http\Controllers\VoucherMasterController@bankReceive');
+    Route::get('cash-payment','App\Http\Controllers\VoucherMasterController@cashPayment');
+    Route::get('bank-payment','App\Http\Controllers\VoucherMasterController@bankPayment');
+
+
+
+    Route::post('voucher-save','App\Http\Controllers\VoucherMasterController@voucherSave');
 
 
     //Account Report Section 
@@ -195,6 +206,10 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('group-base-ledger-report','App\Http\Controllers\AccountReportController@groupBaseLedgerReport');
     Route::get('group-base-ledger-filter-reset','App\Http\Controllers\AccountReportController@groupBaseLedgerFilterReset');
     Route::get('LedgerReportFilterReset','App\Http\Controllers\AccountReportController@LedgerReportFilterReset');
+
+    Route::post('ledger-summary-report','App\Http\Controllers\AccountReportController@ledgerSummaryReport');
+    Route::get('ledger-summary-filter-reset','App\Http\Controllers\AccountReportController@ledgerSummaryFilterReset');
+    Route::get('filter-ledger-summary','App\Http\Controllers\AccountReportController@filterLedgerSummarray');
 
 
 
@@ -214,6 +229,18 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('work-sheet','App\Http\Controllers\AccountReportController@workSheet');
     Route::get('work-sheet-filter-reset','App\Http\Controllers\AccountReportController@workSheetFilterReset');
     Route::get('work-sheet-report','App\Http\Controllers\AccountReportController@workSheetReport');
+
+    Route::get('cash-book','App\Http\Controllers\AccountReportController@cashBook');
+    Route::get('cash-book-filter-reset','App\Http\Controllers\AccountReportController@cashBookFilterReset');
+    Route::post('cash-book-report','App\Http\Controllers\AccountReportController@cashBookReport');
+
+    Route::get('bank-book','App\Http\Controllers\AccountReportController@bankBook');
+    Route::get('bank-book-filter-reset','App\Http\Controllers\AccountReportController@bankBookFilterReset');
+    Route::post('bank-book-report','App\Http\Controllers\AccountReportController@bankBookReport');
+
+    Route::get('receipt-payment','App\Http\Controllers\AccountReportController@receiptPayment');
+    Route::get('receipt-payment-filter-reset','App\Http\Controllers\AccountReportController@receiptPaymentFilterReset');
+    Route::post('receipt-payment-report','App\Http\Controllers\AccountReportController@receiptPaymentReport');
     
     //Searching section 
     Route::any('ledger-search','App\Http\Controllers\AccountLedgerController@ledger_search');
@@ -235,7 +262,12 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::post('report-bill-party-statement','App\Http\Controllers\InventoryReportController@reportBillOfPartyStatement');
     Route::get('bill-party-statement','App\Http\Controllers\InventoryReportController@filterBillOfPartyStatement');
-    Route::get('reset-bill-party-statement','App\Http\Controllers\InventoryReportController@resetBillOfPartyStatement');   
+    Route::get('reset-bill-party-statement','App\Http\Controllers\InventoryReportController@resetBillOfPartyStatement');
+    
+
+    Route::post('report-barcode-history','App\Http\Controllers\InventoryReportController@reportBarcodeHistory');
+    Route::get('barcode-history','App\Http\Controllers\InventoryReportController@filterBarcodeHistory');
+    Route::get('reset-barcode-history','App\Http\Controllers\InventoryReportController@resetBarcodeHistory');   
 
     Route::post('report-date-wise-purchase','App\Http\Controllers\InventoryReportController@reportDateWisePurchaseStatement');
     Route::get('date-wise-purchase','App\Http\Controllers\InventoryReportController@filterDateWisePurchaseStatement');

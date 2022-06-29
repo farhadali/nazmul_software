@@ -18,7 +18,7 @@
                                <select  class="form-control _category_id" name="_category_id" required>
                                   <option value="">--Select Category--</option>
                                   @forelse($categories as $category )
-                                  <option value="{{$category->id}}" >{{ $category->_name ?? '' }}</option>
+                                  <option value="{{$category->id}}" >{{ $category->_parents->_name ?? '' }}/{{ $category->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                 </select>

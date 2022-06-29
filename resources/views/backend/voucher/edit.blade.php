@@ -15,7 +15,10 @@
               <div class="card-header">
                 <div class="row">
                   <div class="col-md-6">
-                     <h3> {{ $page_name ?? '' }} </h3>
+                     <h1 class="m-0">{!! $page_name ?? '' !!}  
+              @include('backend.message.voucher-header') 
+              </h1>
+
                   </div>
                   <div class="col-md-6 ">
                     <div class="d-flex right" style="float: right;">

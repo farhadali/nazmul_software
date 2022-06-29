@@ -101,6 +101,20 @@ if (!function_exists('_barcode_insert_update')) {
 
 
 
+if (! function_exists('_oposite_account')) {
+    function _oposite_account($_master_id,$_table_name,$_ledger_id)
+    {
+        $_ledgers = \DB::select(" SELECT DISTINCT t2._name FROM `accounts` AS t1 
+            INNER JOIN account_ledgers AS t2 ON t2.id=t1._account_ledger
+            WHERE t1.`_table_name`='".$_table_name."' 
+            AND t1.`_ref_master_id`=".$_master_id." AND t1.`_account_ledger` !=$_ledger_id ");
+       
+        return $_ledgers;
+    }
+}
+
+
+
 if (! function_exists('_barcode_status')) {
     function _barcode_status($modelName,$_no_id)
     {

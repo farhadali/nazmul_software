@@ -19,6 +19,7 @@ class CreateAccountLedgersTable extends Migration
             $table->foreign('_account_group_id')->references('id')->on('account_groups');
             $table->integer('_account_head_id')->nullable();
             $table->string('_name')->nullable();
+            $table->string('_alious')->nullable();
             $table->string('_code',50)->nullable();
             $table->string('_image',250)->nullable();
             $table->string('_nid',250)->nullable();

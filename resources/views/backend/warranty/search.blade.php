@@ -13,28 +13,8 @@
                                     @endforelse
                             </select>
                           </div>
-                          <div class="col-md-2">
-                            <input type="text" name="_name" class="form-control" placeholder="Search By Name" value="@if(isset($request->_name)) {{$request->_name ?? ''}}  @endif">
-                          </div>
-                          <div class="col-md-2">
-                            <input type="text" name="_description" class="form-control" placeholder="Search By Code" value="@if(isset($request->_description)) {{$request->_description ?? ''}}  @endif">
-                          </div>
-                          <div class="col-md-2">
-                            <input type="text" name="_duration" class="form-control" placeholder="Search By Code" value="@if(isset($request->_duration)) {{$request->_duration ?? ''}}  @endif">
-                          </div>
-                           @php
-                        $periods = ['days','months','years'];
-                        @endphp
-                          <div class="col-md-2">
-                            <select class="form-control" name="_branch_id" >
-                              <option value="">--Select Period--</option>
-                                  @forelse($periods as $period)
-                                  <option value="{{$period}}" @if($request->_period==$period) selected @endif>{{$period}}</option>
-                                  @empty
-                                  @endforelse
-                                  
-                                </select>
-                          </div>
+                          
+                          
                           
                           <div class="col-md-2">
                               <button class="form-control btn btn-warning" type="submit">Search</button>

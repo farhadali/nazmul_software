@@ -14,7 +14,9 @@
              <div class="card-header">
                 <div class="row">
                   <div class="col-md-6">
-                     <h4>{!! $page_name ?? '' !!} </h4>
+                     <h4>{!! $page_name ?? '' !!}
+                      @include('backend.message.voucher-header')
+                      </h4>
                   </div>
                   <div class="col-md-6">
                    <div class="d-flex right" style="float: right;">

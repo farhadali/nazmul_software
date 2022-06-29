@@ -6,7 +6,10 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class=" col-sm-6 ">
-            <h1 class="m-0"> {{ $page_name ?? '' }} </h1>
+            <h1 class="m-0">{!! $page_name ?? '' !!}  
+              @include('backend.message.voucher-header')
+              </h1>
+
           </div><!-- /.col -->
           <div class=" col-sm-6 ">
             <ol class="breadcrumb float-sm-right">
@@ -32,7 +35,7 @@
                 {!! Form::open(array('route' => 'voucher.store','method'=>'POST','class'=>'voucher-form')) !!}
                     <div class="row">
 
-                       <div class="col-xs-12 col-sm-12 col-md-2">
+                       <div class="col-xs-12 col-sm-12 col-md-3">
                         <input type="hidden" name="_form_name" value="voucher_masters">
                             <div class="form-group">
                                 <label>Date:</label>
@@ -45,7 +48,7 @@
                               </div>
                         </div>
 
-                       <div class="col-xs-12 col-sm-12 col-md-5">
+                       <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label>Voucher Type: <span class="_required">*</span></label>
                                <select class="form-control _voucher_type" name="_voucher_type" required="true">
@@ -58,7 +61,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-5">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group ">
                                 <label>Branch:<span class="_required">*</span></label>
                                <select class="form-control" name="_branch_id" required >
@@ -67,6 +70,17 @@
                                   <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->id ?? '' }} - {{ $branch->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3">
+                            <div class="form-group ">
+                                <label>Cost Center:<span class="_required">*</span></label>
+                               <select class="form-control" name="_cost_center_id" required >
+                                   @forelse($permited_costcenters as $costcenter )
+                                                  <option value="{{$costcenter->id}}" @if(isset($request->_cost_center_id)) @if($request->_cost_center_id == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  @empty
+                                                  @endforelse
                                 </select>
                             </div>
                         </div>
