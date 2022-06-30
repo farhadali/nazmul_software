@@ -262,6 +262,7 @@ public function moneyReceipt($id){
         $Purchase->_address = $request->_address;
         $Purchase->_phone = $request->_phone;
         $Purchase->_status = 1;
+        $Purchase->_lock = $request->_lock ?? 0;
         $Purchase->save();
         $purchase_id = $Purchase->id;
 
@@ -781,6 +782,7 @@ public function moneyReceipt($id){
         $Purchase->_address = $request->_address;
         $Purchase->_phone = $request->_phone;
         $Purchase->_status = 1;
+        $Purchase->_lock = $request->_lock ?? 0;
         $Purchase->save();
         $purchase_id = $Purchase->id;
 
@@ -1152,7 +1154,17 @@ if($__sub_total > 0){
              //End Sms Send to customer and Supplier
 
                DB::commit();
-        return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
+        if(($request->_lock ?? 0) ==1){
+                return redirect('purchase/print/'.$purchase_id)
+                ->with('success','Information save successfully');
+          }else{
+            return redirect()->back()
+            ->with('success','Information save successfully')
+            ->with('_master_id',$purchase_id)
+            ->with('_print_value',$_print_value);
+          }
+
+        
        } catch (\Exception $e) {
            DB::rollback();
            return redirect()->back()->with('danger','There is Something Wrong !');

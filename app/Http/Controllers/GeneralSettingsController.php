@@ -120,6 +120,7 @@ class GeneralSettingsController extends Controller
         $settings->_barcode_service = $request->_barcode_service ?? 0;
         $settings->_bank_group = $request->_bank_group ?? 0;
         $settings->_cash_group = $request->_cash_group ?? 0;
+        $settings->_auto_lock = $request->_auto_lock ?? 0;
 
     	if($request->hasFile('logo')){ 
                 $logo = $this->UserImageUpload($request->logo); 

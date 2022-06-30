@@ -376,6 +376,14 @@ if (! function_exists('_ledger_name')) {
     }
 }
 
+if (! function_exists('_group_name')) {
+    function _group_name($id)
+    {
+        $data= AccountGroup::where('id',$id)->select('_name')->first();
+        return $data->_name ?? '';
+    }
+}
+
 
 
 

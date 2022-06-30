@@ -346,6 +346,7 @@ class PurchaseReturnController extends Controller
         $PurchaseReturn->_total = $request->_total;
         $PurchaseReturn->_branch_id = $request->_branch_id;
         $PurchaseReturn->_status = 1;
+         $PurchaseReturn->_lock = $request->_lock ?? 0;
         $PurchaseReturn->save();
         $purchase_id = $PurchaseReturn->id;
 
@@ -923,6 +924,7 @@ if($check_item["_unique_barcode"] ==1){
         $PurchaseReturn->_total = $request->_total;
         $PurchaseReturn->_branch_id = $request->_branch_id;
         $PurchaseReturn->_status = 1;
+        $PurchaseReturn->_lock = $request->_lock ?? 0;
         $PurchaseReturn->save();
         $purchase_id = $PurchaseReturn->id;
 
@@ -1264,7 +1266,17 @@ $_pfix = _purchase_return_pfix().$purchase_id;
              ->where('id',$purchase_id)
              ->update(['_p_balance'=>$_p_balance,'_l_balance'=>$_l_balance,'_order_number'=>$_pfix]);
 
-       return redirect()->back()->with('success','Information save successfully')->with('_master_id',$purchase_id)->with('_print_value',$_print_value);
+        if(($request->_lock ?? 0) ==1){
+                return redirect('purchase-return/print/'.$purchase_id)
+                ->with('success','Information save successfully');
+          }else{
+             return redirect()->back()
+               ->with('success','Information save successfully')
+               ->with('_master_id',$purchase_id)
+               ->with('_print_value',$_print_value);
+          }
+
+
     }
 
     /**

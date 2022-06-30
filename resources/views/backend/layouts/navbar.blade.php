@@ -282,6 +282,58 @@
 
       </li>
     @endcan
+<!-- Notifications Dropdown Menu -->
+      @can('advance-report-menu') 
+      <li class="nav-item dropdown remove_from_header">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          
+          Advance Report <i class="right fas fa-angle-down"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <div class="dropdown-divider"></div>
+           @can('user-wise-collection-payment')
+          <a href="{{url('user-wise-collection-payment')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>User Wise Collection Payment
+          </a>
+         @endcan
+          <div class="dropdown-divider"></div>
+           @can('date-wise-invoice-print')
+          <a href="{{url('date-wise-invoice-print')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Date Wise Invoice Print
+          </a>
+         @endcan
+          <div class="dropdown-divider"></div>
+           @can('delivery-man-sales')
+          <a href="{{url('delivery-man-sales')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Delivery Man Sales
+             </a>
+         @endcan
+          <div class="dropdown-divider"></div>
+           @can('delivery-man-sales-return')
+          <a href="{{url('delivery-man-sales-return')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Delivery Man Sales Return
+             </a>
+         @endcan
+          <div class="dropdown-divider"></div>
+           @can('sales-man-sales-return')
+          <a href="{{url('sales-man-sales-return')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Sales Man Sales Return </a>
+         @endcan
+          <div class="dropdown-divider"></div>
+           @can('sales-man-invoice')
+          <a href="{{url('sales-man-invoice')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Sales Man Invoice </a>
+         @endcan
+          <div class="dropdown-divider"></div>
+           @can('delivery-man-sales-invoice')
+          <a href="{{url('delivery-man-sales-invoice')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Delivery Man Sales Invoice </a>
+         @endcan
+         </div>
+              
+      </li>
+    @endcan
+      
       
       
       <!-- Notifications Dropdown Menu -->
@@ -292,6 +344,12 @@
           Accounts Report <i class="right fas fa-angle-down"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <div class="dropdown-divider"></div>
+           @can('day-book')
+          <a href="{{url('day-book')}}" class="dropdown-item">
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Day Book
+          </a>
+         @endcan
           <div class="dropdown-divider"></div>
            @can('cash-book')
           <a href="{{url('cash-book')}}" class="dropdown-item">
@@ -320,43 +378,43 @@
          <div class="dropdown-divider"></div>
         @can('group-ledger')
           <a href="{{url('group-ledger')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Group Ledger Report
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i> Group Ledger Report
           </a>
          @endcan
          <div class="dropdown-divider"></div>
         @can('ledger-summary-report')
           <a href="{{url('filter-ledger-summary')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i>  Ledger Summary Report
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>  Ledger Summary Report
           </a>
          @endcan
          <div class="dropdown-divider"></div>
         @can('income-statement')
           <a href="{{url('income-statement')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Income Statement
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i> Income Statement
           </a>
          @endcan
          <div class="dropdown-divider"></div>
         @can('trail-balance')
           <a href="{{url('trail-balance')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i>Trail Balance
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i>Trail Balance
           </a>
          @endcan
          <div class="dropdown-divider"></div>
         @can('work-sheet')
           <a href="{{url('work-sheet')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Work Sheet
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i> Work Sheet
           </a>
          @endcan
          <div class="dropdown-divider"></div>
         @can('balance-sheet')
           <a href="{{url('balance-sheet')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Balance Sheet
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i> Balance Sheet
           </a>
          @endcan 
          <div class="dropdown-divider"></div>
         @can('chart-of-account')
           <a href="{{url('chart-of-account')}}" class="dropdown-item">
-            <i class="fa fa-fax mr-2" aria-hidden="true"></i> Chart of Account
+            <i class="fa fa-sitemap mr-2" aria-hidden="true"></i> Chart of Account
           </a>
          @endcan  
               

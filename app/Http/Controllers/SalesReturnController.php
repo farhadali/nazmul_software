@@ -633,6 +633,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $SalesReturn->_order_number = $request->_order_number ?? '';
         $SalesReturn->_referance = $request->_referance;
         $SalesReturn->_ledger_id = $request->_main_ledger_id;
+        $SalesReturn->_lock = $request->_lock ?? 0;
       
         $SalesReturn->_created_by = $users->id."-".$users->name;
         $SalesReturn->_user_id = $users->id;
@@ -1206,6 +1207,7 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
         $SalesReturn->_ledger_id = $request->_main_ledger_id;
         $SalesReturn->_phone = $request->_phone;
         $SalesReturn->_address = $request->_address;
+         $SalesReturn->_lock = $request->_lock ?? 0;
       
         $SalesReturn->_created_by = $users->id."-".$users->name;
         $SalesReturn->_user_id = $users->id;
@@ -1557,6 +1559,10 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
              }
              //End Sms Send to customer and Supplier
 
+          if(($request->_lock ?? 0) ==1){
+                return redirect('sales-return/print/'.$_master_id)
+                ->with('success','Information save successfully');
+          }else{
             return redirect()->back()
                 ->with('success','Information save successfully')
                 ->with('_master_id',$_master_id)
@@ -1565,6 +1571,9 @@ WHERE s1._no=".$request->_sales_id." GROUP BY s1._p_p_l_id ");
                 ->with('sales_man_name_leder',$sales_man_name_leder)
                 ->with('_delivery_man_id',$_delivery_man_id)
                 ->with('delivery_man_name_leder',$delivery_man_name_leder);
+          }
+
+            
     }
 
     /**

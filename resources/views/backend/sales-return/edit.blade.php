@@ -469,6 +469,7 @@ $__user= Auth::user();
                           <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{ _php_round($data->_total ?? 0 ) }}">
                               </td>
                             </tr>
+                             @include('backend.message.send_sms')
                           </table>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">

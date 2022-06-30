@@ -572,7 +572,7 @@ body:not(.layout-fixed) .main-sidebar {
     background: #0986a2;
     border-radius: 3px;
 }
-/*.wrapper{
+.wrapper{
     background: rgb(19,173,180);
 background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
 
@@ -589,7 +589,7 @@ margin-bottom: 50px;
 .content-header {
    background: rgb(19,173,180);
 background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063200280112045) 25%, rgba(59,200,194,1) 100%);
-}*/
+}
 .bottom_save_section {
    /* position: fixed;*/
     bottom: 0px;
@@ -641,4 +641,8 @@ background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063
 }
 ._modal_hide_class{
     display:none;
+}
+.navbar-expand .navbar-nav .nav-link {
+    padding-right: 10px;
+    padding-left: 10px;
 }

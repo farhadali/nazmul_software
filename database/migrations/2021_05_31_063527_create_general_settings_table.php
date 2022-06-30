@@ -31,7 +31,17 @@ class CreateGeneralSettingsTable extends Migration
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
             $table->integer('_ac_type')->default(0);
+            $table->integer('_auto_lock')->default(0);
+            $table->integer('_sms_service')->default(0);
+            $table->integer('_barcode_service')->default(0);
+            $table->integer('_bank_group')->default(0);
+            $table->integer('_cash_group')->default(0);
             $table->timestamps();
+
+            
+
+
+
         });
     }
 

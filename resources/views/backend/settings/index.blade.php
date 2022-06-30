@@ -102,6 +102,7 @@
                                   <option value="1" @if($settings->_barcode_service==1) selected @endif >YES</option>
                                 </select>
                             </div>
+                            
                             </div>
                            
                         </div>
@@ -128,6 +129,13 @@
                             </div>
                            
                         </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                                <strong>Auto Lock:</strong>
+                               <select class="form-control " name="_auto_lock">
+                                  <option value="0" @if($settings->_auto_lock==0) selected @endif >NO</option>
+                                  <option value="1" @if($settings->_auto_lock==1) selected @endif >YES</option>
+                                </select>
+                            </div>
 
                         <div class="col-xs-6 col-sm-6 col-md-6">
                             <div class="form-group">

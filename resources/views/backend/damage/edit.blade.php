@@ -445,6 +445,7 @@
                           <input type="hidden" name="_item_row_count" value="{{sizeof($___master_details)}}" class="_item_row_count">
                               </td>
                             </tr>
+                             @include('backend.message.send_sms')
                           </table>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 bottom_save_section text-middle">

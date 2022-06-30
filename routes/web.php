@@ -234,6 +234,18 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('cash-book-filter-reset','App\Http\Controllers\AccountReportController@cashBookFilterReset');
     Route::post('cash-book-report','App\Http\Controllers\AccountReportController@cashBookReport');
 
+    Route::get('day-book','App\Http\Controllers\AccountReportController@dayBook');
+    Route::get('day-book-filter-reset','App\Http\Controllers\AccountReportController@dayBookFilterReset');
+    Route::post('day-book-report','App\Http\Controllers\AccountReportController@dayBookReport');
+
+    Route::get('user-wise-collection-payment','App\Http\Controllers\AccountReportController@userReceiptPayment');
+    Route::get('user-wise-collection-payment-filter-reset','App\Http\Controllers\AccountReportController@userReceiptPaymentFilterReset');
+    Route::post('user-wise-collection-payment-report','App\Http\Controllers\AccountReportController@userReceiptPaymentReport');
+
+    Route::get('date-wise-invoice-print','App\Http\Controllers\AccountReportController@dateWiseInvoice');
+    Route::get('date-wise-invoice-print-filter-reset','App\Http\Controllers\AccountReportController@dateWiseInvoiceFilterReset');
+    Route::post('date-wise-invoice-print-report','App\Http\Controllers\AccountReportController@dateWiseInvoiceReport');
+
     Route::get('bank-book','App\Http\Controllers\AccountReportController@bankBook');
     Route::get('bank-book-filter-reset','App\Http\Controllers\AccountReportController@bankBookFilterReset');
     Route::post('bank-book-report','App\Http\Controllers\AccountReportController@bankBookReport');

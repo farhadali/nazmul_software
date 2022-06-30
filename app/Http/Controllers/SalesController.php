@@ -124,6 +124,7 @@ class SalesController extends Controller
             $datas = $datas->where('_note','like',"%trim($request->_note)%");
         }
         if($request->has('_user_name') && $request->_user_name !=''){
+
             $datas = $datas->where('_user_name','like',"%trim($request->_user_name)%");
         }
         
@@ -684,6 +685,8 @@ where  t1._status = 1 and  (t1._barcode like '%$text_val%' OR t2._item like '%$t
         $Sales->_sales_man_id = $request->_sales_man_id ?? 0;
         $Sales->_sales_type = $request->_sales_type ?? 'sales';
         $Sales->_status = 1;
+        $Sales->_lock = $request->_lock ?? 0;
+
         $Sales->save();
         $_master_id = $Sales->id;             
 
@@ -1365,6 +1368,7 @@ $over_qtys = array();
         $Sales->_sales_man_id = $request->_sales_man_id ?? 0;
         $Sales->_sales_type = $request->_sales_type ?? 'sales';
         $Sales->_status = 1;
+        $Sales->_lock = $request->_lock ?? 0;
         $Sales->save();
         $_master_id = $Sales->id;
                                            
@@ -1740,7 +1744,17 @@ $ProductPriceList->_barcode = $_new_last_barcode_string;
              //End Sms Send to customer and Supplier
 
           DB::commit();
-            return redirect()->back()->with('success','Information save successfully')->with('_master_id',$_master_id)->with('_print_value',$_print_value);
+          if(($request->_lock ?? 0) ==1){
+                return redirect('sales/print/'.$_master_id)
+                ->with('success','Information save successfully');
+          }else{
+            return redirect()
+                ->back()
+                ->with('success','Information save successfully')
+                ->with('_master_id',$_master_id)
+                ->with('_print_value',$_print_value);
+          }
+            
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('danger','There is Something Wrong !');

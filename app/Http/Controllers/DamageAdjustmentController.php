@@ -311,6 +311,7 @@ class DamageAdjustmentController extends Controller
         $DamageAdjustment->_address = $request->_address;
         $DamageAdjustment->_phone = $request->_phone;
         $DamageAdjustment->_status = 1;
+        $DamageAdjustment->_lock = $request->_lock ?? 0;
         $DamageAdjustment->save();
         $_master_id = $DamageAdjustment->id;         
 
@@ -793,6 +794,7 @@ class DamageAdjustmentController extends Controller
         $DamageAdjustment->_address = $request->_address;
         $DamageAdjustment->_phone = $request->_phone;
         $DamageAdjustment->_status = 1;
+        $DamageAdjustment->_lock = $request->_lock ?? 0;
         $DamageAdjustment->save();
         $_master_id = $DamageAdjustment->id;
                                            
@@ -1019,7 +1021,17 @@ $ProductPriceList->_barcode = $_new_last_barcode_string;
             
 
            DB::commit();
-            return redirect()->back()->with('success','Information save successfully')->with('_master_id',$_master_id)->with('_print_value',$_print_value);
+           if(($request->_lock ?? 0) ==1){
+                return redirect('damage/print/'.$_master_id)
+                ->with('success','Information save successfully');
+          }else{
+             return redirect()->back()
+            ->with('success','Information save successfully')
+            ->with('_master_id',$_master_id)
+            ->with('_print_value',$_print_value);
+          }
+
+
        } catch (\Exception $e) {
            DB::rollback();
            return redirect()->back()->with('danger','There is Something Wrong !');

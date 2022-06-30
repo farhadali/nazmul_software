@@ -400,6 +400,7 @@
                            <input type="hidden" name="_item_row_count" value="1" class="_item_row_count">
                               </td>
                             </tr>
+                             @include('backend.message.send_sms')
                             
                           </table>
                         </div>

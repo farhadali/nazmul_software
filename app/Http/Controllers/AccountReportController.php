@@ -7,6 +7,9 @@ use App\Models\AccountGroup;
 use App\Models\Accounts;
 use App\Models\AccountLedger;
 use App\Models\MainAccountHead;
+use App\Models\VoucherType;
+use App\Models\Sales;
+use App\Models\SalesFormSetting;
 use Illuminate\Support\Facades\DB;
 use Session;
 use Auth;
@@ -136,6 +139,79 @@ $ledger_details =[];
     	return view('backend.account-report.ledger_show',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','group_array_values','_datex','_datey','ledger_id_rows','ledger_info'));
 
     }
+
+//Day book filter
+    public function dayBook(Request $request){
+        $previous_filter= Session::get('filter_day_book');
+        $page_name = "Day Book";
+        $voucher_types = VoucherType::select('_name','_code')->get();
+        $transactions=DB::select('SELECT DISTINCT `_transaction` FROM `accounts`'); 
+        $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        return view('backend.account-report.filter_day_book',compact('request','page_name','voucher_types','previous_filter','permited_branch','permited_costcenters','transactions'));
+    }
+
+    public function dayBookReport(Request $request){
+
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_datey' => 'required',
+            '_transaction' => 'required',
+        ]);
+
+        session()->put('filter_day_book', $request->all());
+        $previous_filter= Session::get('filter_day_book');
+        $page_name = "Day Book";
+         $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+        $request_branchs = $request->_branch_id ?? [];
+        $request_cost_centers = $request->_cost_center ?? [];
+
+        $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+        $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+        $_voucher_types = $request->_voucher_type ?? [];
+        $_transaction = $request->_transaction ?? 'all';
+        $_voucher_types_codes='';
+         if(sizeof($_voucher_types) > 0){
+          foreach ($_voucher_types as $value) {
+            $_voucher_types_codes .="'".$value."',";
+          }
+          $_voucher_types_codes = rtrim($_voucher_types_codes,",");
+        }
+        $_branch_ids_rows = implode(',', $_branch_ids);
+        $_cost_center_id_rows = implode(',', $_cost_center_ids);
+
+        $query = " SELECT `_ref_master_id` as _id,`_short_narration`,`_narration`,`_reference`,`_transaction`,`_voucher_type`,`_date`,`_account_group`,`_account_ledger`,`_dr_amount`,`_cr_amount`,`_table_name` FROM
+         `accounts` WHERE  _status=1 AND _date  >= '".$_datex."'  AND _date <= '".$_datey."' 
+               AND  _branch_id IN(".$_branch_ids_rows.") AND  _cost_center IN(".$_cost_center_id_rows.")  ";
+          if(sizeof($_voucher_types) > 0){
+            $query .= " AND _voucher_type IN(".$_voucher_types_codes.") ";
+          }
+          if($_transaction !='all'){
+             $query .= " AND _transaction ='".$_transaction."' ";
+          }
+           $query_result = DB::select($query);
+           $_result_group = array();
+           foreach ($query_result as $value) {
+             $_result_group["ID:".$value->_id." | Date:".$value->_date." | Transaction: ".$value->_transaction." | Type: ".$value->_voucher_type." | Reference".$value->_reference ??'N/A'][]=$value;
+           }
+
+         
+        return view('backend.account-report.report_day_book',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','_result_group'));
+
+    }
+
+public function dayBookFilterReset(){
+  Session::flash('filter_day_book');
+  return redirect()->back();
+}
+
+
 
 //Cash book filter
     public function cashBook(Request $request){
@@ -283,6 +359,175 @@ public function bankBookFilterReset(){
   Session::flash('filter_bank_book');
   return redirect()->back();
 }
+
+
+public function dateWiseInvoice(Request $request){
+        $users = Auth::user();
+        $previous_filter= Session::get('filter_date_wise_invoice_print');
+        $page_name = "Date Wise Invoice Print";
+        $sales_mans = DB::select(" SELECT id,_name FROM account_ledgers WHERE id IN(SELECT DISTINCT t1._sales_man_id FROM sales AS t1  WHERE t1._sales_man_id !=0) ");
+        $delivery_mans = DB::select(" SELECT id,_name FROM account_ledgers WHERE id IN(SELECT DISTINCT t1._delivery_man_id FROM sales AS t1  WHERE t1._delivery_man_id !=0) ");
+        $users_info = DB::select(" SELECT DISTINCT _user_name as name FROM sales  ");
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        return view('backend.account-report.filter_date_wise_invoice_print',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','sales_mans','delivery_mans','users_info'));
+    }
+
+     public function dateWiseInvoiceReport(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_datey' => 'required',
+            '_branch_id' => 'required',
+            '_cost_center' => 'required',
+        ]);
+        session()->put('filter_date_wise_invoice_print', $request->all());
+        $previous_filter= Session::get('filter_date_wise_invoice_print');
+        $page_name = "Date Wise Invoice Print";
+         $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+        $request_branchs = $request->_branch_id ?? [];
+        $request_cost_centers = $request->_cost_center ?? [];
+        $_delivery_man_ids = $request->_delivery_man_id ?? [];
+        $user_names = $request->_name ?? [];
+        
+      $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+      $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+       $datas = Sales::with(['_master_branch','_master_details','s_account','_ledger','_delivery_man','_sales_man'])->where('_status',1);
+        $datas = $datas->whereDate('_date','>=', $_datex);
+        $datas = $datas->whereDate('_date','<=', $_datey);
+        if($request->has('_cost_center_id')){
+                    $datas = $datas->whereIn('_cost_center_id',$_cost_center_ids);
+        }       
+        if($request->has('_branch_id')){
+                    $datas = $datas->whereIn('_branch_id',$_branch_ids);
+        }
+        if($request->has('_delivery_man_id')){
+                    $datas = $datas->whereIn('_delivery_man_id',$_delivery_man_ids);
+        }
+
+        if($request->has('_sales_man_id')){
+            $datas = $datas->whereIn('_sales_man_id',$request->_sales_man_id);
+        }
+        if($request->has('_name')){
+            $datas = $datas->whereIn('_user_name',$user_names);
+        }
+        $datas = $datas->orderBy('_date','ASC')
+                                ->get();
+         $form_settings = SalesFormSetting::first();
+      
+
+return view('backend.account-report.report_date_wise_invoice_print',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','datas','form_settings'));
+
+
+    }
+
+
+
+
+
+   //User Receipt Payment
+    public function userReceiptPayment(Request $request){
+        $previous_filter= Session::get('filter_user_receipt_payment');
+        $page_name = "User Wise Receipt & Payment";
+        $_defalut_groups = \DB::select("SELECT _bank_group,_cash_group FROM general_settings");
+        $_defalut_groups_array = array();
+        foreach ($_defalut_groups as $value) {
+          array_push($_defalut_groups_array ,intval($value->_bank_group));
+          array_push($_defalut_groups_array ,intval($value->_cash_group));
+        }
+        $_defalut_groups_ids=implode(',', $_defalut_groups_array);
+
+        $account_ledgers = \DB::select( " SELECT t1.id,t1._account_head_id,t1._account_group_id,t1._name FROM account_ledgers AS t1 WHERE t1._account_group_id IN(".$_defalut_groups_ids." ) " );
+        $users = Auth::user();
+        if($users->user_type=="admin"){
+          $users_info =  DB::select(" SELECT DISTINCT _name as name FROM accounts  ");
+        }else{
+          $users_info =[];
+        }
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        return view('backend.account-report.filter_user_receipt_payment',compact('request','page_name','account_ledgers','previous_filter','permited_branch','permited_costcenters','users_info'));
+    }
+
+
+
+    public function userReceiptPaymentReport(Request $request){
+      $this->validate($request, [
+            '_datex' => 'required',
+            '_datey' => 'required',
+            '_account_ledger_id' => 'required',
+            '_name' => 'required',
+        ]);
+
+        session()->put('filter_user_receipt_payment', $request->all());
+        $previous_filter= Session::get('filter_user_receipt_payment');
+        $page_name = "User Wise Receipt & Payment";
+         $users = Auth::user();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
+        $datas=[];
+        $_datex =  change_date_format($request->_datex);
+        $_datey=  change_date_format($request->_datey);
+        $request_branchs = $request->_branch_id ?? [];
+        $request_cost_centers = $request->_cost_center ?? [];
+        $user_names = $request->_name ?? [];
+         $_user_name_codes='';
+         if(sizeof($user_names) > 0){
+          foreach ($user_names as $value) {
+            $_user_name_codes .="'".$value."',";
+          }
+          $_user_name_codes = rtrim($_user_name_codes,",");
+        }
+
+        $_branch_ids = filterableBranch($request_branchs,$permited_branch);
+        $_cost_center_ids = filterableCostCenter($request_cost_centers,$permited_costcenters);
+        $ledger_ids = $request->_account_ledger_id ?? [];
+
+        $ledger_id_rows = implode(',', $ledger_ids);
+        $_branch_ids_rows = implode(',', $_branch_ids);
+        $_cost_center_id_rows = implode(',', $_cost_center_ids);
+        $opening_query_sting = " SELECT 'A. Opening' as _type,'".$_datex."' as _date,  t1._account_ledger AS _account_ledger,t3._name as _l_name,null as _short_narration,null as _reference,null as _table_name, null as _id,SUM(t1._dr_amount-t1._cr_amount) as _dr_amount,0 as _cr_amount,0 as _serial,t1._name
+            FROM accounts as t1
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+               WHERE t1._status=1 AND t1._date < '".$_datex."' AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.") AND t1._name IN(".$_user_name_codes.")
+                 GROUP BY t1._account_ledger,t1._name 
+UNION ALL
+SELECT 'B. Receipt & Payment' as _type,t1._date, t1._account_ledger AS _account_ledger,t3._name as _l_name,t1._short_narration as _short_narration,t1._reference as _reference,t1._table_name, t1._ref_master_id as _id,t1._dr_amount as _dr_amount,t1._cr_amount as _cr_amount,t1._serial,t1._name
+            FROM accounts as t1
+             INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+              WHERE  t1._status=1 AND t1._date  >= '".$_datex."'  AND t1._date <= '".$_datey."' 
+               AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+               AND t1._name IN(".$_user_name_codes.")
+
+    UNION ALL
+    SELECT 'C. Closing' as _type,null as _date,  t1._account_ledger AS _account_ledger,t3._name as _l_name,null as _short_narration,null as _reference,null as _table_name, null as _id,SUM(t1._dr_amount-t1._cr_amount) as _dr_amount,0 as _cr_amount,0 as _serial,t1._name
+            FROM accounts as t1
+            INNER JOIN account_ledgers as t3 ON t3.id=t1._account_ledger
+               WHERE t1._status=1 AND t1._date <= '".$_datey."'  AND t1._account_ledger IN(".$ledger_id_rows.")
+               AND  t1._branch_id IN(".$_branch_ids_rows.") AND  t1._cost_center IN(".$_cost_center_id_rows.")
+               AND t1._name IN(".$_user_name_codes.")
+                 GROUP BY t1._account_ledger,t1._name ";
+
+         $_opening_balance =  DB::select($opening_query_sting);
+         $_result_group =array();
+         foreach ($_opening_balance as $value) {
+           $_result_group[$value->_type."-".$value->_name][]=$value;
+         }
+        return view('backend.account-report.report_user_receipt_payment',compact('request','page_name','previous_filter','permited_branch','permited_costcenters','_result_group'));
+
+    }
+
+public function userReceiptPaymentFilterReset(){
+  Session::flash('filter_user_receipt_payment');
+  return redirect()->back();
+}
+
 
 //Bank book filter
     public function receiptPayment(Request $request){
