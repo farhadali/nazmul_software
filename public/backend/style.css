@@ -646,3 +646,7 @@ background: linear-gradient(90deg, rgba(19,173,180,1) 0%, rgba(74,134,170,0.7063
     padding-right: 10px;
     padding-left: 10px;
 }
+.dropdown-menu{
+    max-height: 80vh;
+    overflow: auto;
+}

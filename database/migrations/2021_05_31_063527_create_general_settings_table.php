@@ -36,6 +36,7 @@ class CreateGeneralSettingsTable extends Migration
             $table->integer('_barcode_service')->default(0);
             $table->integer('_bank_group')->default(0);
             $table->integer('_cash_group')->default(0);
+            $table->integer('_pur_base_model_barcode')->default(0);
             $table->timestamps();
 
             

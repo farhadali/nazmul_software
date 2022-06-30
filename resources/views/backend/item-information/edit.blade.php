@@ -156,8 +156,8 @@
                             <div class="form-group">
                                 <label for="_unique_barcode">Use Unique Barcode ?:</label>
                                 <select class="form-control" name="_unique_barcode" id="_unique_barcode">
-                                 <option value="1" @if($data->_unique_barcode==1) selected @endif >Active</option>
-                                  <option value="0" @if($data->_unique_barcode==0) selected @endif >In Active</option>
+                                 <option value="1" @if($data->_unique_barcode==1) selected @endif >Yes</option>
+                                  <option value="0" @if($data->_unique_barcode==0) selected @endif >No</option>
                                 </select>
                             </div>
                         </div>

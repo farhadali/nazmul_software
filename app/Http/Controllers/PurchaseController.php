@@ -23,6 +23,7 @@ use App\Models\Units;
 use App\Models\SalesDetail;
 use App\Models\BarcodeDetail;
 use App\Models\PurchaseBarcode;
+use App\Models\GeneralSettings;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -329,9 +330,25 @@ public function moneyReceipt($id){
 
                 $ProductPriceList = new ProductPriceList();
                 $ProductPriceList->_item_id = $_item_ids[$i];
-
                 $ProductPriceList->_item = $item_info->_item ?? '';
+
+            $general_settings =GeneralSettings::select('_pur_base_model_barcode')->first();
+            if($general_settings->_pur_base_model_barcode==1){
+                 if($item_info->_unique_barcode ==1){
+                    $ProductPriceList->_barcode =$barcode_string ?? '';
+                    }else{
+                        if($barcode_string !=''){
+                            $ProductPriceList->_barcode = $barcode_string.$purchase_id;
+                            $PurchaseD = PurchaseDetail::find($_purchase_detail_id);
+                            $PurchaseD->_barcode = $barcode_string.$purchase_id;
+                            $PurchaseD->save();
+                        }
+                    }
+            }else{
                 $ProductPriceList->_barcode =$barcode_string ?? '';
+            }
+               
+                
                 $ProductPriceList->_manufacture_date =$_manufacture_dates[$i] ?? null;
 
                 $ProductPriceList->_expire_date = $_expire_dates[$i] ?? null;
@@ -854,12 +871,29 @@ public function moneyReceipt($id){
                     $ProductPriceList->_created_by = $users->id."-".$users->name;
                 }
                 
+               // $ProductPriceList->_barcode =$barcode_string ?? '';
+
+                $general_settings =GeneralSettings::select('_pur_base_model_barcode')->first();
+                if($general_settings->_pur_base_model_barcode==1){
+                     if($item_info->_unique_barcode ==1){
+                        $ProductPriceList->_barcode =$barcode_string ?? '';
+                        }else{
+                            if($barcode_string !=''){
+                                $ProductPriceList->_barcode = $barcode_string.$purchase_id;
+                                $PurchaseD = PurchaseDetail::find($_purchase_detail_id);
+                                $PurchaseD->_barcode = $barcode_string.$purchase_id;
+                                $PurchaseD->save();
+                            }
+                        }
+                }else{
+                    $ProductPriceList->_barcode =$barcode_string ?? '';
+                }
+                
                 $ProductPriceList->_item_id = $_item_ids[$i];
                 $ProductPriceList->_item = $item_info->_item ?? '';
                 $ProductPriceList->_unique_barcode = $item_info->_unique_barcode ?? 0;
                 $ProductPriceList->_warranty = $item_info->_warranty ?? 0;
                 $ProductPriceList->_unit_id =  $item_info->_unit_id ?? 1;
-                $ProductPriceList->_barcode =$barcode_string ?? '';
                 $ProductPriceList->_manufacture_date =$_manufacture_dates[$i] ?? null;
                 $ProductPriceList->_expire_date = $_expire_dates[$i] ?? null;
                 $ProductPriceList->_qty = $_qtys[$i];
