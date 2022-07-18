@@ -1,29 +1,5 @@
-@extends('backend.layouts.app')
-@section('title',$page_name)
 
-@section('content')
-<style type="text/css">
-	.invoice{
-			box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
-  padding:2px;
-  margin: 0 auto;
-  width: 300px;
-  background: #FFF;
-  text-align: center;
-  font-size: 12px;
-		}
-	@media print {
-		.invoice{
-			box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
-  padding:2px;
-  margin: 0 auto;
-  width: 300px;
-  background: #FFF;
-  text-align: center;
-   font-size: 12px;
-		}
-	}
-</style>
+
 <div class="_report_button_header">
  <a class="nav-link"  href="{{url('sales')}}" role="button"><i class="fa fa-arrow-left"></i></a>
  @can('sales-edit')
@@ -39,7 +15,7 @@
 
 <section class="invoice" id="printablediv" style="">
 		
-            <table style="width: 100%;">
+            <table class="table" style="border-collapse: collapse;">
             	<tr>
             		<td colspan="5" style="text-align: center;">
             			{{ $settings->_top_title ?? '' }}<br>
@@ -52,7 +28,7 @@
             	</tr>
             	<tr>
             		<td colspan="3" style="text-align: left;border: 1px dotted grey;">
-            			<table style="width: 100%">
+            			<table style="">
             				 <tr> <td style="border:none;" > <b>Customer:</b></td></tr>
             				 <tr> <td style="border:none;" > {{$data->_ledger->_name ?? '' }}</td></tr>
 			                <tr> <td style="border:none;" >Phone:{{$data->_phone ?? '' }} </td></tr>
@@ -60,7 +36,7 @@
             			</table>
             		</td>
             		<td colspan="2" style="border: 1px dotted grey;">
-            			<table style="width: 100%;text-align: left;">
+            			<table style="text-align: left;">
             				<tr> <td style="border:none;" > Invoice No: {{ $data->_order_number ?? '' }}</td></tr>
                   <tr> <td style="border:none;" > Date: {{ _view_date_formate($data->_date ?? '') }}</td></tr>
             			</table>
@@ -93,35 +69,35 @@
                                      @endphp
 <td class="text-left" style="border:1px dotted grey;" >{{($item_key+1)}}</td>
 <td  class="text-left" style="border:1px dotted grey;">{!! $_item->_items->_name ?? '' !!}</td>
-<td class="text-right" style="border:1px dotted grey;" >{!! _report_amount($_item->_qty ?? 0) !!}</td>
-<td class="text-right" style="border:1px dotted grey;">{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
-<td class="text-right" style="border:1px dotted grey;" >{!! _report_amount($_item->_value ?? 0) !!}</td>
+<td  style="border:1px dotted grey;text-align: right;" >{!! _report_amount($_item->_qty ?? 0) !!}</td>
+<td  style="border:1px dotted grey;text-align: right;">{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
+<td  style="border:1px dotted grey;text-align: right;" >{!! _report_amount($_item->_value ?? 0) !!}</td>
                                   </tr>
                                   @empty
                                   @endforelse
                                    <tr>
                               <td style="border:1px dotted grey;" colspan="2" class="text-right "><b>Sub Total</b></td>
 
-                              <td style="border:1px dotted grey;" class="text-right "> <b>{{ _report_amount($_qty_total ?? 0) }}</b> </td>
-                              <td style="border:1px dotted grey;"></td>
-                              <td style="border:1px dotted grey;" class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
+                              <td style="border:1px dotted grey;text-align: right;" class="text-right "> <b>{{ _report_amount($_qty_total ?? 0) }}</b> </td>
+                              <td style="border:1px dotted grey;text-align: right;"></td>
+                              <td style="border:1px dotted grey;text-align: right;" class=" text-right"><b> {{ _report_amount($_value_total ?? 0) }}</b>
                               </td>
                             </tr>
    
 <tr>
   <td style="border:1px dotted grey;" colspan="4" class="text-right" ><b>Discount[-]</b></td>
-  <td  style="border:1px dotted grey;" class="text-right">{!! _report_amount($data->_total_discount ?? 0) !!}</td>
+  <td  style="border:1px dotted grey;text-align: right;" class="text-right">{!! _report_amount($data->_total_discount ?? 0) !!}</td>
 </tr>
 
 @if($form_settings->_show_vat==1)
 <tr>
   <td style="border:1px dotted grey;" colspan="4" class="text-right" ><b>VAT[+]</b></td>
-  <td style="border:1px dotted grey;" class="text-right">{!! _report_amount($data->_total_vat ?? 0) !!}</td>
+  <td style="border:1px dotted grey;text-align: right;" class="text-right">{!! _report_amount($data->_total_vat ?? 0) !!}</td>
 </tr>
 @endif
 <tr>
   <td style="border:1px dotted grey;" colspan="4" class="text-right" ><b>Net Total</b></td>
-  <td style="border:1px dotted grey;" class="text-right">{!! _report_amount($data->_total ?? 0) !!}</td>
+  <td style="border:1px dotted grey;text-align: right;" class="text-right">{!! _report_amount($data->_total ?? 0) !!}</td>
 </tr>
 @php
 $accounts = $data->s_account ?? [];
@@ -137,7 +113,7 @@ $_due_amount =$data->_total ?? 0;
 <tr>
   <td style="border:1px dotted grey;" colspan="4" class="text-right" ><b> {!! $ac_val->_ledger->_name ?? '' !!}[+]
     </b></td>
-  <td style="border:1px dotted grey;" class="text-right">{!! _report_amount( $ac_val->_cr_amount ?? 0 ) !!}</td>
+  <td style="border:1px dotted grey;text-align: right;" class="text-right">{!! _report_amount( $ac_val->_cr_amount ?? 0 ) !!}</td>
 </tr>
 @endif
 @if($ac_val->_dr_amount > 0)
@@ -147,7 +123,7 @@ $_due_amount =$data->_total ?? 0;
 <tr>
   <td style="border:1px dotted grey;" colspan="4" class="text-right"><b> {!! $ac_val->_ledger->_name ?? '' !!}[-]
     </b></td>
-  <td style="border:1px dotted grey;" class="text-right">{!! _report_amount( $ac_val->_dr_amount ?? 0 ) !!}</td>
+  <td style="border:1px dotted grey;text-align: right;" class="text-right">{!! _report_amount( $ac_val->_dr_amount ?? 0 ) !!}</td>
 </tr>
 @endif
 
@@ -156,12 +132,12 @@ $_due_amount =$data->_total ?? 0;
 @if($_due_amount >= 0)
 <tr>
   <td style="border:1px dotted grey;" colspan="4" class="text-right" ><b>Invoice Due </b></td>
-  <td style="border:1px dotted grey;" class="text-right">{!! _report_amount( $_due_amount) !!}</td>
+  <td style="border:1px dotted grey;text-align: right;" class="text-right">{!! _report_amount( $_due_amount) !!}</td>
 </tr>
 @else
 <tr>
   <td style="border:1px dotted grey;" colspan="4" class="text-right" ><b>Advance </b></td>
-  <td style="border:1px dotted grey;" class="text-right">{!! _report_amount( -($_due_amount)) !!}</td>
+  <td style="border:1px dotted grey;text-align: right;" class="text-right">{!! _report_amount( -($_due_amount)) !!}</td>
 </tr>
   
   @endif
@@ -170,11 +146,11 @@ $_due_amount =$data->_total ?? 0;
 @if($form_settings->_show_p_balance==1)
 <tr>
   <td style="border:1px dotted grey;" colspan="4" class="text-right" ><b>Previous Balance</b></td>
-  <td  style="border:1px dotted grey;" class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_p_balance ?? 0)) !!}</td>
+  <td  style="border:1px dotted grey;text-align: right;" class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_p_balance ?? 0)) !!}</td>
 </tr>
 <tr>
   <td style="border:1px dotted grey;" colspan="4" class="text-right" ><b>Current Balance</b></td>
-  <td style="border:1px dotted grey;"class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}</td>
+  <td style="border:1px dotted grey;text-align: right;"class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}</td>
 </tr>
 @endif
 <tr>
@@ -194,4 +170,6 @@ $_due_amount =$data->_total ?? 0;
         </section>
 	
 
-	@endsection
+<script type="text/javascript">
+  window.print();
+</script>

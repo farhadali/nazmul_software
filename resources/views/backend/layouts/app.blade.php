@@ -560,10 +560,14 @@ $(document).on('click',function(){
     var search_box_main_ledger= $('.search_box_main_ledger').hasClass('search_box_show');
     var search_box_delivery_man= $('.search_box_delivery_man').hasClass('search_box_show');
     var search_box_sales_man= $('.search_box_sales_man').hasClass('search_box_show');
+    var search_box= $('.search_box').hasClass('search_box_show');
     if(searach_show ==true){
       $('.search_box_item').removeClass('search_box_show').hide();
     }
 
+    if(search_box ==true){
+      $('.search_box').removeClass('search_box_show').hide();
+    }
     if(search_box_main_ledger ==true){
       $('.search_box_main_ledger').removeClass('search_box_show').hide();
     }
@@ -706,7 +710,7 @@ $(document).on('click','.save_item',function(){
     var _item_sale_rate = $("._item_sale_rate").val();
     var _item_manufacture_company = $("._item_manufacture_company").val();
     var _item_status = $("._item_status").val();
-    var _item_unique_barcode = $("._item__unique_barcode").val();
+    var _item_unique_barcode = $("._item_unique_barcode").val();
     
     var reqired_fields = 0;
     if(_category_id ==""){
@@ -922,8 +926,19 @@ function after_request_date__today(_date){
     $(document).on('click',"input[type='number']",function(){
         $(this).select();
     })
-    $(document).on('click',"input[type='text']",function(){
-        $(this).select();
+    // $(document).on('click',"input[type='text']",function(){
+    //     $(this).select();
+    // })
+
+    $(document).on('change',"#_unique_barcode",function(){
+      var _check_val = $(this).val();
+      if(_check_val ==1){
+        $("#_barcode").val("");
+        $("#_barcode").attr("readonly",true);
+      }else{
+        $("#_barcode").attr("readonly",false);
+      }
+
     })
    
 

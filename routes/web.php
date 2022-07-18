@@ -28,6 +28,7 @@ use App\Http\Controllers\InventoryReportController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\DamageAdjustmentController;
 use App\Http\Controllers\WarrantyController;
+use App\Http\Controllers\ProductionController;
 
 
 
@@ -148,6 +149,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('damage/print/{id}', 'App\Http\Controllers\DamageAdjustmentController@Print');
     Route::post('damage-settings', 'App\Http\Controllers\DamageAdjustmentController@Settings');
     Route::get('damage-setting-modal', 'App\Http\Controllers\DamageAdjustmentController@formSettingAjax');
+
+    Route::resource('transfer-production', ProductionController::class);
+    Route::post('transfer-production/update', 'App\Http\Controllers\ProductionController@update');
+    Route::get('transfer-production-reset', 'App\Http\Controllers\ProductionController@reset');
+    Route::get('transfer-production/print/{id}', 'App\Http\Controllers\ProductionController@Print');
+    Route::get('production-setting-modal', 'App\Http\Controllers\ProductionController@formSettingAjax');
+    Route::post('production-form-settings', 'App\Http\Controllers\ProductionController@Settings');
+   
     
     
     

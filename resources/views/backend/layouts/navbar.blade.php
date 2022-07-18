@@ -35,6 +35,7 @@
           </a>
         </div>
          @endcan
+         <div class="dropdown-divider"></div>
         @can('cash-payment')
         <div style="display: flex;">
          <a href="{{url('voucher')}}?_voucher_type=CP" class="dropdown-item">
@@ -45,6 +46,7 @@
           </a>
         </div>
          @endcan 
+         <div class="dropdown-divider"></div>
         @can('bank-receive')
         <div style="display: flex;">
          <a href="{{url('voucher')}}?_voucher_type=BR" class="dropdown-item">
@@ -55,6 +57,7 @@
           </a>
         </div>
          @endcan 
+         <div class="dropdown-divider"></div>
         @can('bank-payment')
         <div style="display: flex;">
          <a href="{{url('voucher')}}?_voucher_type=BP" class="dropdown-item">
@@ -65,6 +68,7 @@
           </a>
         </div>
          @endcan 
+         <div class="dropdown-divider"></div>
           @can('voucher-list')
         <div style="display: flex;">
          <a href="{{url('voucher')}}" class="dropdown-item">

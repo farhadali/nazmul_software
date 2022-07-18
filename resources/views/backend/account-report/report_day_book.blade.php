@@ -89,12 +89,12 @@
                     @endif
                     @if($value->_table_name=="purchases")
                  <a style="text-decoration: none;" target="__blank" href="{{ url('purchase/print',$value->_id) }}">
-                  PA-{!! $value->_id ?? '' !!}</a>
+                  P-{!! $value->_id ?? '' !!}</a>
                     @endif
                     
                     @if($value->_table_name=="purchases_return")
                  <a style="text-decoration: none;" target="__blank" href="{{ url('purchase-return/print',$value->_id) }}">
-                  PRA-{!! $value->_id ?? '' !!}</a>
+                  PR-{!! $value->_id ?? '' !!}</a>
                     @endif
                     @if($value->_table_name=="purchase_return_accounts")
                  <a style="text-decoration: none;" target="__blank" href="{{ url('purchase-return/print',$value->_id) }}">
@@ -103,7 +103,7 @@
                     
                     @if($value->_table_name=="sales")
                  <a style="text-decoration: none;" target="__blank" href="{{ url('sales/print',$value->_id) }}">
-                  SA-{!! $value->_id ?? '' !!}</a>
+                  S-{!! $value->_id ?? '' !!}</a>
                     @endif
                     @if($value->_table_name=="sales_accounts")
                  <a style="text-decoration: none;" target="__blank" href="{{ url('sales/print',$value->_id) }}">
@@ -112,7 +112,7 @@
                    
                     @if($value->_table_name=="sales_return")
                  <a style="text-decoration: none;" target="__blank" href="{{ url('sales-return/print',$value->_id) }}">
-                  SRA-{!! $value->_id ?? '' !!}</a>
+                  SR-{!! $value->_id ?? '' !!}</a>
                     @endif
                     @if($value->_table_name=="sales_return_accounts")
                  <a style="text-decoration: none;" target="__blank" href="{{ url('sales-return/print',$value->_id) }}">
@@ -120,7 +120,7 @@
                     @endif
                     @if($value->_table_name=="damage")
                  <a style="text-decoration: none;" target="__blank" href="{{ url('sales-return/print',$value->_id) }}">
-                  SRA-{!! $value->_id ?? '' !!}</a>
+                  DM-{!! $value->_id ?? '' !!}</a>
                     @endif
                     @endif
                </td>

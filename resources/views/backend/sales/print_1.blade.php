@@ -74,11 +74,11 @@
        <table class="table table-striped">
         <thead>
          <tr>
-          <th class="text-left">SL</th>
-          <th class="text-left">Item</th>
-          <th class="text-right">Qty</th>
-          <th class="text-right">Rate</th>
-          <th class="text-right">Amount</th>
+          <th class="text-left" style="width: 10%;">SL</th>
+          <th class="text-left" style="width: 60%;">Product Description</th>
+          <th class="text-right" style="width: 10%;">Qty</th>
+          <th class="text-right" style="width: 10%;">Rate</th>
+          <th class="text-right" style="width: 10%;">Amount</th>
          </tr>
         </thead>
         <tbody>
@@ -91,19 +91,33 @@
                                   @endphp
                                   @forelse($data->_master_details AS $item_key=>$_item )
                                   <tr>
-                                     <td class="text-left" >{{($item_key+1)}}.</td>
+                                     <td class="text-left" style="vertical-align: top;">{{($item_key+1)}}.</td>
                                      @php
                                       $_value_total +=$_item->_value ?? 0;
                                       $_vat_total += $_item->_vat_amount ?? 0;
                                       $_qty_total += $_item->_qty ?? 0;
                                       $_total_discount_amount += $_item->_discount_amount ?? 0;
                                      @endphp
-                                            <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
+                                             <td class="  " style="word-break: break-all;vertical-align: text-top;border:1px solid silver;" >{!! $_item->_items->_name ?? '' !!}<br>
+                                             <b>Warranty: </b> {!! $_item->_warrant->_name ?? 'N/A' !!}<br>
+                                              @php 
+                                                  $_barcodes_string = $_item->_barcode ?? '';
+                                                  $_barcodes = explode(",",$_barcodes_string);
+                                              @endphp
+                                              @if(sizeof($_barcodes) > 0)
+                                              <b>SN:</b>
+                                                  @forelse($_barcodes as $barcode)
+                                                    <span style="font-size: 12px;background: #f5f5f5;">{{$barcode ?? '' }},</span>
+                                                  @empty
+                                                  @endforelse
+                                              @endif
+
+                                             </td>
                                             
-                                             <td class="text-right  " >{!! _report_amount($_item->_qty ?? 0) !!}</td>
-                                            <td class="text-right  " >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
+                                             <td class="text-right  " style="vertical-align: text-top;border:1px solid silver;">{!! _report_amount($_item->_qty ?? 0) !!}</td>
+                                            <td class="text-right  " style="vertical-align: text-top;border:1px solid silver;">{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
                                             
-                                            <td class="text-right  " >{!! _report_amount($_item->_value ?? 0) !!}</td>
+                                            <td class="text-right  " style="vertical-align: text-top;border:1px solid silver;">{!! _report_amount($_item->_value ?? 0) !!}</td>
                                             
                                             
                                            
@@ -119,7 +133,7 @@
                               </td>
                             </tr>
                             <tr>
-                              <td colspan="3" class="text-left " style="width: 50%;">
+                              <td colspan="2" class="text-left " style="width: 50%;">
                               <table style="width: 100%">
                                 <tr>
                                   <td>
@@ -133,7 +147,7 @@
                               </table>
                               </td>
                               
-                              <td colspan="2" class=" text-right"  style="width: 50%;">
+                              <td colspan="3" class=" text-right"  style="width: 50%;">
                                   <table style="width: 100%">
                                      <tr>
                                       <th class="text-right" ><b>Sub Total</b></th>

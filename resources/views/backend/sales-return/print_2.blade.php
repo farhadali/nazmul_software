@@ -87,13 +87,14 @@
        <table class="table table-striped">
         <thead>
          <tr>
-          <th class="text-left">SL</th>
-          <th class="text-left">Item</th>
-          <th class="text-right">Qty</th>
-          <th class="text-right">Rate</th>
-          <th class="text-right">Discount</th>
-          <th class="text-right">VAT</th>
-          <th class="text-right">Amount</th>
+          <th class="text-left" style="width: 10%;">SL</th>
+          <th class="text-left" style="width: 20%;">Item</th>
+          <th class="text-left" style="width: 20%;">Barcode</th>
+          <th class="text-right" style="width: 10%;">Qty</th>
+          <th class="text-right" style="width: 10%;">Rate</th>
+          <th class="text-right" style="width: 10%;">Discount</th>
+          <th class="text-right" style="width: 10%;">VAT</th>
+          <th class="text-right" style="width: 10%;">Amount</th>
          </tr>
         </thead>
         <tbody>
@@ -113,14 +114,15 @@
                                       $_qty_total += $_item->_qty ?? 0;
                                       $_total_discount_amount += $_item->_discount_amount ?? 0;
                                      @endphp
-                                            <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
+                                             <td class="  " style="word-break: break-all;vertical-align: top;">{!! $_item->_items->_name ?? '' !!}</td>
+                                            <td class="  " style="word-break: break-all;vertical-align: top;font-size: 10px;">{!! $_item->_barcode ?? '' !!}</td>
                                             
-                                            <td class="text-right  " >{!! _report_amount($_item->_qty ?? 0) !!}</td>
-                                            <td class="text-right  " >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
-                                            <td class="text-right  " >{!! _report_amount($_item->_discount_amount ?? 0) !!}</td>
-                                            <td class="text-right  " >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
+                                            <td class="text-right  "  style="vertical-align: top;">{!! _report_amount($_item->_qty ?? 0) !!}</td>
+                                            <td class="text-right  " style="vertical-align: top;" >{!! _report_amount($_item->_sales_rate ?? 0) !!}</td>
+                                            <td class="text-right  " style="vertical-align: top;" >{!! _report_amount($_item->_discount_amount ?? 0) !!}</td>
+                                            <td class="text-right  " style="vertical-align: top;" >{!! _report_amount($_item->_vat_amount ?? 0) !!}</td>
                                             
-                                            <td class="text-right  " >{!! _report_amount($_item->_value ?? 0) !!}</td>
+                                            <td class="text-right  " style="vertical-align: top;" >{!! _report_amount($_item->_value ?? 0) !!}</td>
                                             
                                             
                                            
@@ -129,7 +131,7 @@
                                   @empty
                                   @endforelse
                             <tr>
-                              <td colspan="2" class="text-right "><b>Total</b></td>
+                              <td colspan="3" class="text-right "><b>Total</b></td>
                               <td class="text-right "> <b>{{_report_amount( $_qty_total ?? 0)}}</b> </td>
                               <td></td>
                               <td class="text-right "> <b>{{_report_amount( $_total_discount_amount ?? 0) }}</b> </td>
@@ -138,7 +140,7 @@
                               </td>
                             </tr>
                             <tr>
-                              <td colspan="3" class="text-left " style="width: 50%;">
+                              <td colspan="4" class="text-left " style="width: 50%;">
                               <table style="width: 100%">
                                 <tr>
                                   <td>
@@ -229,7 +231,7 @@
         <tfoot>
 
                <tr>
-                 <td colspan="7">
+                 <td colspan="8">
                    <div class="col-12 mt-5">
                       <div class="row">
                         <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>

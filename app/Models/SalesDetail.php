@@ -26,6 +26,10 @@ class SalesDetail extends Model
     	return $this->hasOne(StoreHouse::class,'id','_store_id')->select('id','_name');
     }
 
+    public function _warrant(){
+        return $this->hasOne(Warranty::class,'id','_warranty')->select('id','_name');
+    }
+
     // public function _p_p_l(){
     // 	return $this->hasOne(ProductPriceList::class,'id','_p_p_l_id')->select('_qty');
     // }

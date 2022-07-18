@@ -374,6 +374,7 @@ public function dateWiseInvoice(Request $request){
     }
 
      public function dateWiseInvoiceReport(Request $request){
+   //   return $request->all();
       $this->validate($request, [
             '_datex' => 'required',
             '_datey' => 'required',

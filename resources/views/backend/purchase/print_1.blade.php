@@ -10,6 +10,9 @@
     color: #000;
     background-color: #fff; 
 }
+.table td{
+  border:1px solid silver;
+}
 }
   </style>
 <div class="_report_button_header">
@@ -74,11 +77,11 @@
        <table class="table table-striped">
         <thead>
          <tr>
-          <th class="text-left">SL</th>
-          <th class="text-left">Item</th>
-          <th class="text-right">Qty</th>
-          <th class="text-right">Rate</th>
-          <th class="text-right">Amount</th>
+          <th class="text-left" style="width: 10%;">SL</th>
+          <th class="text-left" style="width: 60%;">Product Description</th>
+          <th class="text-right" style="width: 10%;">Qty</th>
+          <th class="text-right" style="width: 10%;">Rate</th>
+          <th class="text-right" style="width: 10%;">Amount</th>
          </tr>
         </thead>
         <tbody>
@@ -94,19 +97,32 @@
                                   @endphp
                                   @forelse($data->_master_details AS $item_key=>$_item )
                                   <tr>
-                                     <td class="text-left" >{{($item_key+1)}}.</td>
+                                     <td class="text-left" style="vertical-align: top;" >{{($item_key+1)}}.</td>
                                      @php
                                       $_value_total +=$_item->_value ?? 0;
                                       $_vat_total += $_item->_vat_amount ?? 0;
                                       $_qty_total += $_item->_qty ?? 0;
                                       $_total_discount_amount += $_item->_discount_amount ?? 0;
                                      @endphp
-                                            <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
+                                            <td class="  " style="word-break: break-all;vertical-align: text-top;border:1px solid silver;padding:2px;" >{!! $_item->_items->_name ?? '' !!}<br>
+                                              @php 
+                                                  $_barcodes_string = $_item->_barcode ?? '';
+                                                  $_barcodes = explode(",",$_barcodes_string);
+                                              @endphp
+                                              @if(sizeof($_barcodes) > 0)
+                                              <b>SN:</b>
+                                                  @forelse($_barcodes as $barcode)
+                                                    <span style="font-size: 12px;">{{$barcode ?? '' }},</span>
+                                                  @empty
+                                                  @endforelse
+                                              @endif
+
+                                             </td>
                                             
-                                             <td class="text-right  " >{!! _report_amount($_item->_qty ?? 0) !!}</td>
-                                            <td class="text-right  " >{!! _report_amount($_item->_rate ?? 0) !!}</td>
+                                             <td class="text-right  " style="vertical-align: text-top;border:1px solid silver;padding:2px;">{!! _report_amount($_item->_qty ?? 0) !!}</td>
+                                            <td class="text-right  " style="vertical-align: text-top;border:1px solid silver;padding:2px;">{!! _report_amount($_item->_rate ?? 0) !!}</td>
                                             
-                                            <td class="text-right  " >{!! _report_amount($_item->_value ?? 0) !!}</td>
+                                            <td class="text-right  " style="vertical-align: text-top;border:1px solid silver;padding:2px;">{!! _report_amount($_item->_value ?? 0) !!}</td>
                                             
                                             
                                            
@@ -122,7 +138,7 @@
                               </td>
                             </tr>
                             <tr>
-                              <td colspan="3" class="text-left " style="width: 50%;">
+                              <td colspan="2" class="text-left " style="width: 50%;">
                               <table style="width: 100%">
                                 <tr>
                                   <td>
@@ -136,26 +152,26 @@
                               </table>
                               </td>
                               
-                              <td colspan="2" class=" text-right"  style="width: 50%;">
+                              <td colspan="3" class=" text-right"  style="width: 50%;">
                                   <table style="width: 100%">
                                      <tr>
-                                      <th class="text-right" ><b>Sub Total</b></th>
+                                      <th class="text-left" ><b>Sub Total</b></th>
                                       <th class="text-right">{!! _report_amount($data->_sub_total ?? 0) !!}</th>
                                     </tr>
                                    
                                     <tr>
-                                      <th class="text-right" ><b>Discount</b></th>
+                                      <th class="text-left" ><b>Discount</b></th>
                                       <th class="text-right">{!! _report_amount($data->_total_discount ?? 0) !!}</th>
                                     </tr>
                                    
                                     @if($form_settings->_show_vat==1)
                                     <tr>
-                                      <th class="text-right" ><b>VAT</b></th>
+                                      <th class="text-left" ><b>VAT</b></th>
                                       <th class="text-right">{!! _report_amount($data->_total_vat ?? 0) !!}</th>
                                     </tr>
                                     @endif
                                     <tr>
-                                      <th class="text-right" ><b>Net Total</b></th>
+                                      <th class="text-left" ><b>Net Total</b></th>
                                       <th class="text-right">{!! _report_amount($data->_total ?? 0) !!}</th>
                                     </tr>
                                     @php
@@ -170,7 +186,7 @@
                                       $_due_amount -=$ac_val->_cr_amount ?? 0;
                                      @endphp
                                     <tr>
-                                      <th class="text-right" ><b> Less:{!! $ac_val->_ledger->_name ?? '' !!}
+                                      <th class="text-left" ><b> Less:{!! $ac_val->_ledger->_name ?? '' !!}
                                         </b></th>
                                       <th class="text-right">{!! _report_amount( $ac_val->_cr_amount ?? 0 ) !!}</th>
                                     </tr>
@@ -180,7 +196,7 @@
                                       $_due_amount +=$ac_val->_dr_amount ?? 0;
                                      @endphp
                                     <tr>
-                                      <th class="text-right" ><b> Add:{!! $ac_val->_ledger->_name ?? '' !!}
+                                      <th class="text-left" ><b> Add:{!! $ac_val->_ledger->_name ?? '' !!}
                                         </b></th>
                                       <th class="text-right">{!! _report_amount( $ac_val->_dr_amount ?? 0 ) !!}</th>
                                     </tr>
@@ -189,18 +205,18 @@
                                     @endif
                                     @endforeach
                                     <tr>
-                                      <th class="text-right" ><b>Invoice Due </b></th>
+                                      <th class="text-left" ><b>Invoice Due </b></th>
                                       <th class="text-right">{!! _report_amount( $_due_amount) !!}</th>
                                     </tr>
 
                                     @endif
                                     @if($form_settings->_show_p_balance==1)
                                     <tr>
-                                      <th class="text-right" ><b>Previous Balance</b></th>
+                                      <th class="text-left" ><b>Previous Balance</b></th>
                                       <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_p_balance ?? 0)) !!}</th>
                                     </tr>
                                     <tr>
-                                      <th class="text-right" ><b>Current Balance</b></th>
+                                      <th class="text-left" ><b>Current Balance</b></th>
                                       <th class="text-right">{!! _show_amount_dr_cr(_report_amount($data->_l_balance ?? 0)) !!}</th>
                                     </tr>
                                     @endif

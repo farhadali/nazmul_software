@@ -54,7 +54,7 @@
            </td>
          </tr>
          <tr style="border:0px">
-           <td colspan="4" class="text-left" style="border:1px solid silver;">
+           <td colspan="3" class="text-left" style="border:1px solid silver;">
             <b> Customer:</b>
              <address>
               <strong>Name: </strong>{{$data->_ledger->_name ?? '' }}<br>
@@ -63,7 +63,7 @@
               <strong>Email: </strong> {{$data->_email ?? 'N/A' }}
              </address>
            </td>
-           <td colspan="3" class="text-right" style="border:1px solid silver;">
+           <td colspan="4" class="text-right" style="border:1px solid silver;">
              <b>Invoice/Bill No:</b> {{ $data->_order_number ?? '' }}<br>
              <b>Date:</b> {!! _view_date_formate($data->_date ?? '') !!}<br>
              <b>Referance:</b> {!! $data->_referance ?? '' !!}<br>

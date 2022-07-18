@@ -73,7 +73,7 @@
                                 <thead >
                                             <th class="text-left " >SL</th>
                                             <th class="text-left " >Item</th>
-                                            <th class="text-middle  @if($form_settings->_show_barcode==0) display_none @endif" >Barcode</th>
+                                            <th  class="text-middle  @if($form_settings->_show_barcode==0) display_none @endif" >Barcode</th>
                                             <th class="text-right " >Qty</th>
                                             <th class="text-right " >Rate</th>
                                             <th class="text-right @if($form_settings->_show_vat==0) display_none @endif" >VAT%</th>
@@ -105,7 +105,7 @@
                                       $_total_discount_amount += $_item->_discount_amount ?? 0;
                                      @endphp
                                             <td class="  " >{!! $_item->_items->_name ?? '' !!}</td>
-                                            <td class="   @if($form_settings->_show_barcode==0) display_none @endif" >{!! $_item->_barcode ?? '' !!}</td>
+                                            <td style="word-break: break-all;" class="   @if($form_settings->_show_barcode==0) display_none @endif" >{!! $_item->_barcode ?? '' !!}</td>
                                             <td class="text-right  " >{!! $_item->_qty ?? 0 !!}</td>
                                             <td class="text-right  " >{!! _report_amount($_item->_rate ?? 0) !!}</td>
                                             <td class="text-right   @if($form_settings->_show_vat==0) display_none @endif" >{!! $_item->_vat ?? 0 !!}</td>

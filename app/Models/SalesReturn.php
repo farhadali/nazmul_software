@@ -13,7 +13,7 @@ class SalesReturn extends Model
     }
 
     public function _master_details(){
-    	return $this->hasMany(SalesReturnDetail::class,'_no','id')->with(['_detail_branch','_detail_cost_center','_store','_items'])->where('_status',1);
+    	return $this->hasMany(SalesReturnDetail::class,'_no','id')->with(['_detail_branch','_detail_cost_center','_store','_items','_warrant'])->where('_status',1);
     }
 
     public function s_account(){

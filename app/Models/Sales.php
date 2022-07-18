@@ -14,7 +14,7 @@ class Sales extends Model
     }
 
     public function _master_details(){
-    	return $this->hasMany(SalesDetail::class,'_no','id')->with(['_detail_branch','_detail_cost_center','_store','_items'])->where('_status',1);
+    	return $this->hasMany(SalesDetail::class,'_no','id')->with(['_detail_branch','_detail_cost_center','_store','_items','_warrant'])->where('_status',1);
     }
 
     public function s_account(){
@@ -40,6 +40,8 @@ class Sales extends Model
     public function _master_store(){
         return $this->hasOne(StoreHouse::class,'id','_store_id')->select('id','_name');
     }
+
+    
 
     
 }

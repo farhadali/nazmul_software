@@ -25,4 +25,7 @@ class SalesReturnDetail extends Model
     public function _store(){
     	return $this->hasOne(StoreHouse::class,'id','_store_id')->select('id','_name');
     }
+     public function _warrant(){
+        return $this->hasOne(Warranty::class,'id','_warranty')->select('id','_name');
+    }
 }

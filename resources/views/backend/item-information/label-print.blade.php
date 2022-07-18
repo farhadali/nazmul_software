@@ -322,7 +322,7 @@ var find_counter_id = $(this).parent().parent().parent().parent().parent().paren
 var _new_name_for_barcode = `${find_counter_id}__barcode__${row_id}`;
 $(this).parent().parent().parent().parent().parent().parent().find('.'+find_counter_id+"__barcode").attr('name',_new_name_for_barcode); 
   $(this).parent().parent().parent().parent().parent().parent().find('._item_id').val(_p_item_item_id);
-var _id_name = `${_master_id} ,${_name}, ${_qty}`;
+var _id_name = `${_name}`;
   $(this).parent().parent().parent().parent().parent().parent().find('._search_item_id').val(_id_name);
   $(this).parent().parent().parent().parent().parent().parent().find('._p_p_l_id').val(row_id);
   $(this).parent().parent().parent().parent().parent().parent().find('._purchase_invoice_no').val(_master_id);

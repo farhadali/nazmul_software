@@ -95,9 +95,9 @@
                     <td style="text-align: left;">{{ _item_name($detail->_item_id ) }} </td>
                     <td style="text-align: left;">{{ $previous_filter["_barcode"] ?? '' }} </td>
                     <td style="text-align: left;">{{ $detail->_w_name ?? '' }} </td>
-                    <td style="text-align: left;">{{ $detail->_qty ?? '' }} </td>
-                    <td style="text-align: left;">{{ $detail->_rate ?? 0 }} </td>
-                    <td style="text-align: left;">{{ $detail->_sales_rate ?? 0 }} </td>
+                    <td style="text-align: left;">{{ $detail->_qty ?? '' }} (1) </td>
+                    <td style="text-align: left;">{{ _report_amount($detail->_rate ?? 0) }} </td>
+                    <td style="text-align: left;">{{ _report_amount($detail->_sales_rate ?? 0) }} </td>
                     <td style="text-align: left;">{{ _branch_name($detail->_branch_id ?? 0) }} </td>
                     <td style="text-align: left;">{{ _store_name($detail->_store_id ?? 0) }} </td>
 
