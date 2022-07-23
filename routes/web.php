@@ -154,6 +154,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('transfer-production/update', 'App\Http\Controllers\ProductionController@update');
     Route::get('transfer-production-reset', 'App\Http\Controllers\ProductionController@reset');
     Route::get('transfer-production/print/{id}', 'App\Http\Controllers\ProductionController@Print');
+    Route::get('transfer-production/stock-in/{id}', 'App\Http\Controllers\ProductionController@PrintStockIn');
+    Route::get('transfer-production/stock-out/{id}', 'App\Http\Controllers\ProductionController@PrintStockOut');
     Route::get('production-setting-modal', 'App\Http\Controllers\ProductionController@formSettingAjax');
     Route::post('production-form-settings', 'App\Http\Controllers\ProductionController@Settings');
    

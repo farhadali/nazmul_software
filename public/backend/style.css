@@ -120,7 +120,7 @@ label{
 
 .table td, .table th {
     padding: 1px;
-    vertical-align: middle;
+   vertical-align: top;
     border-top: 1px solid silver;
 }
 .text-middle{
@@ -206,6 +206,17 @@ label{
 	background: #e9ecef;
     cursor: pointer;
 }
+._stock_in_search_box_item{
+   position: absolute;
+    z-index: 9999;
+    background: #fff;
+    display: none;
+}
+._stock_in_search_row_item:hover{
+    background: #e9ecef;
+    cursor: pointer;
+}
+
 .search_row_purchase_order:hover{
     background: #e9ecef;
     cursor: pointer;

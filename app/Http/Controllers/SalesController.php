@@ -736,11 +736,9 @@ where  t1._status = 1 and  (t1._barcode like '%$text_val%' OR t2._item like '%$t
                 $_sales_details_id = $SalesDetail->id;
 
                 $item_info = Inventory::where('id',$_item_ids[$i])->first();
-
                 $ProductPriceList = ProductPriceList::find($_p_p_l_ids[$i]);
                 $_p_qty = $ProductPriceList->_qty;
                 $_unique_barcode = $ProductPriceList->_unique_barcode;
-
                 //Barcode  deduction from old string data
                 if($_unique_barcode ==1){
                      $_old_barcode_strings =  $ProductPriceList->_barcode;
@@ -764,14 +762,7 @@ where  t1._status = 1 and  (t1._barcode like '%$text_val%' OR t2._item like '%$t
                 }else{
                   $ProductPriceList->_barcode = $barcode_string;
                 }
-
-                
-
                 //Barcode  deduction from old string data
-
-
-
-
                 $_status = (($_p_qty - $_qtys[$i]) > 0) ? 1 : 0;
                 $ProductPriceList->_qty = ($_p_qty - $_qtys[$i]);
                 $ProductPriceList->_status = $_status;
@@ -830,7 +821,6 @@ where  t1._status = 1 and  (t1._barcode like '%$text_val%' OR t2._item like '%$t
                 $ItemInventory->_status = 1;
                 $ItemInventory->_created_by = $users->id."-".$users->name;
                 $ItemInventory->save(); 
-
                 inventory_stock_update($_item_ids[$i]);
             }
         }

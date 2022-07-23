@@ -267,6 +267,24 @@ if (! function_exists('_item_category')) {
     }
 }
 
+if (! function_exists('_p_t_status')) {
+    function _p_t_status($_p_status)
+    {
+        if($_p_status ==1){
+            return "Transit";
+        }elseif($_p_status ==2){
+            return "Work-in-progress";
+        }elseif($_p_status ==3){
+            return "Complete";
+        }else{
+            return "N/A";
+        }
+    }
+}
+
+
+
+
 
 
 if (! function_exists('filterableBranch')) {
@@ -400,7 +418,7 @@ if (! function_exists('permited_costcenters')) {
 if (! function_exists('filter_page_numbers')) {
     function filter_page_numbers()
     {
-        return  [10,20,30,40,50,100,200,300,400,500,600,1000,2000,100000,200000,500000];
+        return  [10,20,30,40,50,100,200,300,400,500];
     }
 }
 

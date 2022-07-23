@@ -126,8 +126,8 @@ class PurchaseController extends Controller
           $current_date = date('Y-m-d');
           $current_time = date('H:i:s');
           $users = Auth::user();
-           $form_settings = PurchaseFormSettings::first();
-           $permited_branch = permited_branch(explode(',',$users->branch_ids));
+        $form_settings = PurchaseFormSettings::first();
+        $permited_branch = permited_branch(explode(',',$users->branch_ids));
         $permited_costcenters = permited_costcenters(explode(',',$users->cost_center_ids));
          $store_houses = StoreHouse::whereIn('_branch_id',explode(',',$users->cost_center_ids))->get();
         //return $datas;
@@ -241,7 +241,7 @@ public function moneyReceipt($id){
          $__discount_input = (float) $request->_discount_input;
          $__total_discount = (float) $request->_total_discount;
 
-       $_print_value = $request->_print ?? 0;
+        $_print_value = $request->_print ?? 0;
          $users = Auth::user();
         $Purchase = new Purchase();
         $Purchase->_date = change_date_format($request->_date);
@@ -327,7 +327,6 @@ public function moneyReceipt($id){
 
 
                 $item_info = Inventory::where('id',$_item_ids[$i])->first();
-
                 $ProductPriceList = new ProductPriceList();
                 $ProductPriceList->_item_id = $_item_ids[$i];
                 $ProductPriceList->_item = $item_info->_item ?? '';
@@ -371,6 +370,7 @@ public function moneyReceipt($id){
                 $ProductPriceList->_branch_id = $_main_branch_id_detail[$i] ?? 1;
                 $ProductPriceList->_cost_center_id = $_main_cost_center[$i] ?? 1;
                 $ProductPriceList->_store_salves_id = $_store_salves_ids[$i] ?? '';
+                $ProductPriceList->_store_id = $_store_ids[$i] ?? 1;
                 $ProductPriceList->_status =1;
                 $ProductPriceList->_created_by = $users->id."-".$users->name;
                 $ProductPriceList->save();
