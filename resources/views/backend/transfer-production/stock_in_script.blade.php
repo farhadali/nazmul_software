@@ -12,6 +12,7 @@ function _stock_in_purchase_row_add(event){
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
+                                                <td></td>
                                               <td>
                                                 <input type="text" name="_stock_in__search_item_id[]" class="form-control _stock_in__search_item_id width_280_px" placeholder="Item">
                                                 <input type="hidden" name="_stock_in__item_id[]" class="form-control _stock_in__item_id width_200_px" >

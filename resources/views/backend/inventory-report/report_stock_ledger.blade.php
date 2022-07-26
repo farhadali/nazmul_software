@@ -127,7 +127,7 @@
             <tr>
              
 
-            <td>{!! $g_value->_transection ?? '' !!} </td>
+            <td style="text-transform: capitalize;">{!! $g_value->_transection ?? '' !!} </td>
             <td style="width: 10%;">
               @if($g_value->_transection=="Purchase")
                  <a style="text-decoration: none;" target="__blank" href="{{ url('purchase/print',$g_value->_transection_ref) }}">
@@ -150,6 +150,14 @@
                     @if($g_value->_transection=="Damage")
                  <a style="text-decoration: none;" target="__blank" href="{{ url('damage/print',$g_value->_transection_ref) }}">
                   D-{!! $g_value->_transection_ref ?? '' !!}</a>
+                    @endif
+                    @if($g_value->_transection=="transfer")
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('transfer-production/print',$g_value->_transection_ref) }}">
+                  TF-{!! $g_value->_transection_ref ?? '' !!}</a>
+                    @endif
+                    @if($g_value->_transection=="production")
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('transfer-production/print',$g_value->_transection_ref) }}">
+                  PD-{!! $g_value->_transection_ref ?? '' !!}</a>
                     @endif
 
 

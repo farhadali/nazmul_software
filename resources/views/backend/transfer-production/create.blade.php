@@ -191,6 +191,7 @@ $__user= Auth::user();
                                       <table class="table table-bordered" >
                                           <thead >
                                             <th class="text-left" >&nbsp;</th>
+                                            <th class="text-left" >ID</th>
                                             <th class="text-left" >Item</th>
                                           
                                             <th class="text-left @if($_show_barcode  ==0) display_none @endif" >Barcode</th>
@@ -225,6 +226,7 @@ $__user= Auth::user();
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
+                                              <td></td>
                                               <td>
                                                 <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item">
 
@@ -316,7 +318,7 @@ $__user= Auth::user();
                                               <td>
                                                 <a href="#none"  class="btn btn-default btn-sm" onclick="purchase_row_add(event)"><i class="fa fa-plus"></i></a>
                                               </td>
-                                              <td  class="text-right"><b>Total</b></td>
+                                              <td colspan="2"  class="text-right"><b>Total</b></td>
                                               
                                                 <td  class="text-right @if($_show_barcode==0) display_none @endif"></td>
                                                 <td  class="text-right @if($_show_warranty==0) display_none @endif"></td>
@@ -368,6 +370,7 @@ $__user= Auth::user();
                                       <table class="table table-bordered" >
                                           <thead >
                                             <th class="text-left" >&nbsp;</th>
+                                            <th class="text-left" >ID</th>
                                             <th class="text-left" >Item</th>
                                            
                                             <th class="text-left @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==0) display_none    @endif @endif" >Barcode</th>
@@ -408,6 +411,7 @@ $__user= Auth::user();
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
+                                              <td></td>
                                               <td>
                                                 <input type="text" name="_stock_in__search_item_id[]" class="form-control _stock_in__search_item_id width_280_px" placeholder="Item">
                                                  <input type="hidden" name="_stock_in__item_id[]" class="form-control _stock_in__item_id width_200_px" >
@@ -510,7 +514,7 @@ $__user= Auth::user();
                                               <td>
                                                 <a href="#none"  class="btn btn-default btn-sm" onclick="_stock_in_purchase_row_add(event)"><i class="fa fa-plus"></i></a>
                                               </td>
-                                              <td  class="text-right"><b>Total</b></td>
+                                              <td colspan="2"  class="text-right"><b>Total</b></td>
                                               @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td  class="text-right"></td>
                                               @else

@@ -116,6 +116,15 @@
                  <a style="text-decoration: none;" target="__blank" href="{{ url('sales-return/print',$value->_id) }}">
                   SRA-{!! $value->_id ?? '' !!}</a>
                     @endif
+
+                    @if($value->_table_name=="transfer")
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('transfer-production/print',$value->_id) }}">
+                  TF-{!! $value->_id ?? '' !!}</a>
+                    @endif
+                    @if($value->_table_name=="production")
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('transfer-production/print',$value->_id) }}">
+                  PD-{!! $value->_id ?? '' !!}</a>
+                    @endif
                    
               </td>
  @if($key=="B. Receipt & Payment")

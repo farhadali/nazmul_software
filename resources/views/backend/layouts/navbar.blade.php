@@ -163,6 +163,18 @@
             <i class="nav-icon fas fa-plus"></i>
           </a>
         </div>
+         @endcan 
+         <div class="dropdown-divider"></div>  
+       @can('transfer-production-list')
+          
+        <div style="display: flex;">
+           <a href="{{url('transfer-production')}}" class="dropdown-item">
+            <i class="fa fa-recycle mr-2" aria-hidden="true"></i> Transfer/Production
+          </a>
+           <a  href="{{route('transfer-production.create')}}" class="dropdown-item text-right">
+            <i class="nav-icon fas fa-plus"></i>
+          </a>
+        </div>
          @endcan   
       </li>
     @endcan

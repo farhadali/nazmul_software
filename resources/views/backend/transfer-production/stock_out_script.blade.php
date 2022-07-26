@@ -19,6 +19,10 @@
       }
   }
 
+ var _insert_edit = parseFloat($("._main_id").val());
+ 
+ if(isNaN(_insert_edit)){ _insert_edit =0 } 
+
 var _text_val="";
 var _global_unique_barcode =0;
 var _item_row_count = parseFloat($(document).find('._item_row_count').val());
@@ -908,6 +912,7 @@ function purchase_row_add(event){
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
+                                              <td></td>
                                               <td>
                                                 <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item">
                                                 <input type="hidden" name="_item_id[]" class="form-control _item_id width_200_px" >
@@ -1007,17 +1012,12 @@ function purchase_row_add(event){
       _purchase_total_calculation();
   })
 
- 
 
-
+  
   $(document).on('click','.submit-button',function(event){
+
     event.preventDefault();
-
-     var _serach_baorce = $("#_serach_baorce").val()
-    if(_serach_baorce){
-      return false;
-    }
-
+if(_insert_edit > 0){ 
     var _p_p_l_ids_qtys = new Array();
      var _only_p_ids = [];
      var empty_qty = [];
@@ -1035,8 +1035,99 @@ function purchase_row_add(event){
 
     })
      var unique_p_ids = [...new Set(_only_p_ids)];
+     var _sales_id = $("._sales_id").val();
+
      var _stop_sales =0;
     if(_p_p_l_ids_qtys.length > 0){
+        var request = $.ajax({
+                url: "{{url('check-available-qty-update')}}",
+                method: "GET",
+                async:false,
+                data: { _p_p_l_ids_qtys,unique_p_ids,_sales_id },
+                dataType: "JSON"
+              });
+               
+              request.done(function( result ) {
+                console.log(result);
+                $("._search_item_id").removeClass('_required');
+                  if(result.length > 0){
+                     for (var i = 0; i < result.length; i++) {
+                      $("._search_item_id__"+result[i]).addClass('_required'); 
+                     }
+                   _stop_sales=1;
+                  }else{
+                    $("._search_item_id__"+result[i]).removeClass('_required') 
+                     $(document).find(".alert").text('');
+                  }
+              })
+    }
+
+    if(_stop_sales ==1){
+      alert(" You Can not Sales More then Available Qty  ");
+       var _message =" You Can not Sales More then Available Qty";
+       $(document).find(".alert").addClass('_required')
+        $(document).find(".alert").text(_message);
+       
+        $(".remove_area").hide();
+      return false;
+    }
+
+ 
+    var _note = $(document).find('._note').val();
+    if(empty_qty.length > 0){
+       alert(" You Can not sale empty qty !");
+      return false;
+
+    }
+
+
+    var empty_ledger = [];
+    $(document).find("._search_item_id").each(function(){
+        if($(this).val() ==""){
+          
+          $(this).addClass('required_border');
+          empty_ledger.push(1);
+        }  
+    })
+
+    if(empty_ledger.length > 0){
+      return false;
+    }
+
+
+    if(_note ==""){
+      $(document).find('._note').focus().addClass('required_border');
+      return false;
+    }else{
+      $(document).find('.purchase_form').submit();
+    }
+
+  }else{
+
+var _serach_baorce = $("#_serach_baorce").val()
+    if(_serach_baorce){
+      return false;
+    }
+
+    var _p_p_l_ids_qtys = new Array();
+     var _only_p_ids = [];
+     var empty_qty = [];
+      var _id_and_qtys = [];
+
+    $(document).find('._p_p_l_id').each(function(index){
+     var _p_id =  $(this).val();
+     var _p_qty = $(document).find('._qty').eq(index).val();
+     if(isNaN(_p_qty)){
+        empty_qty.push(_p_id);
+     }
+    _only_p_ids.push(_p_id);
+    _p_p_l_ids_qtys.push( {_p_id: _p_id, _p_qty: _p_qty});
+     
+
+    })
+     var unique_p_ids = [...new Set(_only_p_ids)];
+     var _stop_sales =0;
+    if(_p_p_l_ids_qtys.length > 0 ){
         var request = $.ajax({
                 url: "{{url('check-available-qty')}}",
                 method: "GET",
@@ -1068,21 +1159,9 @@ function purchase_row_add(event){
     }
 
  
-    
-   
-    var _total_dr_amount = $(document).find("._total_dr_amount").val();
-    var _total_cr_amount = $(document).find("._total_cr_amount").val();
-    var _voucher_type = $(document).find('._voucher_type').val();
     var _note = $(document).find('._note').val();
-    var _main_ledger_id = $(document).find('._main_ledger_id').val();
 
 
-
-    if(_main_ledger_id  ==""){
-       alert(" Please Add Ledger  ");
-        $(document).find('._search_main_ledger_id').addClass('required_border').focus();
-        return false;
-    }
 
     if(empty_qty.length > 0){
        alert(" You Can not sale empty qty !");
@@ -1109,57 +1188,29 @@ function purchase_row_add(event){
 
 
 
-@if($__user->_ac_type==0)
-    if( parseFloat(_total_dr_amount) !=parseFloat(_total_cr_amount)){
-      $(document).find("._total_dr_amount").addClass('required_border').focus();
-      $(document).find("._total_cr_amount").addClass('required_border').focus();
-       alert("Account Details Dr. And Cr. Amount Not Equal");
-      return false;
-
-    }
-@endif
-
-//Cash Customer Can not Sale without payment Start
-var _cash_customers = <?php echo json_encode($_cash_customer); ?>;
-if(_cash_customers.length > 0){
-  var _total_dr_amount = $(document).find('._total_dr_amount').val();
-  var _total = $(document).find('#_total').val();
-  var _main_ledger_id = $(document).find('#_main_ledger_id').val();
-  var check_cash_customer = 0;
-  for (var i = 0; i < _cash_customers.length; i++) {
-      if(_main_ledger_id ==_cash_customers[i]){
-        check_cash_customer =1;
-          break;
-      }
-  }
-  if(check_cash_customer ==1){
-    if(Math.round(_total_dr_amount) !=Math.round(_total)){
-        $(document).find("._total_dr_amount").addClass('required_border').focus();
-        alert(" You have to pay full Amount  ");
-        return false;
-    }
-  }
-
-} //Cash Customer Can not Sale without payment End
-
    if(_note ==""){
        $(document).find('._note').focus().addClass('required_border');
-      return false;
-    }else if(_main_ledger_id ==""){
-       
-      $(document).find('._search_main_ledger_id').focus().addClass('required_border');
       return false;
     }else{
       $(document).find('.purchase_form').submit();
     }
+  
+
+
+
+  }
+
   })
 
 
 
 
- 
 
-$(".datetimepicker-input").val(date__today())
+ if(_insert_edit==0){
+  $(".datetimepicker-input").val(date__today())
+ }
+
+
 
           function date__today(){
               var d = new Date();

@@ -865,6 +865,7 @@ public function moneyReceipt($id){
 
                 $ProductPriceList = ProductPriceList::where('_master_id',$purchase_id)
                                     ->where('_purchase_detail_id',$_purchase_detail_id)
+                                    ->where('_input_type','purchase')
                                     ->first();
                 if(empty($ProductPriceList)){
                     $ProductPriceList = new ProductPriceList();

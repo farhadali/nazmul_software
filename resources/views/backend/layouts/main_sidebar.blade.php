@@ -91,6 +91,11 @@
                 <a href="{{url('damage')}}" class="nav-link" ><i class="fa fa-list-alt nav-icon"></i><p> Damage Adjustment </p></a>
               </li>
               @endcan
+             @can('transfer-production-list')
+              <li class="nav-item">
+                <a href="{{url('transfer-production')}}" class="nav-link" ><i class="fa fa-list-alt nav-icon"></i><p> Transfer/Production </p></a>
+              </li>
+              @endcan
              
             
               

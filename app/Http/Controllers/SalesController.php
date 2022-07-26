@@ -1221,7 +1221,6 @@ $over_qtys = array();
                         }else{
                             //this section come after check available 
                           $check_model_or_unique =   explode(",",$check_item["_barcode"]); //Barcode string to array to check model barcode or unique barcode
-
                           if(sizeof(array_unique($check_model_or_unique)) ==1){ // if sizeof($check_model_or_unique)==1 then we desied that its used a model barcode 
                            
                               //Model Barcode and now check quantity

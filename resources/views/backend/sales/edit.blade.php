@@ -1704,9 +1704,7 @@ function purchase_row_add(event){
     })
      var unique_p_ids = [...new Set(_only_p_ids)];
      var _sales_id = $("._sales_id").val();
-     console.log(_p_p_l_ids_qtys)
-     console.log(unique_p_ids)
-     console.log(_sales_id)
+
      var _stop_sales =0;
     if(_p_p_l_ids_qtys.length > 0){
         var request = $.ajax({

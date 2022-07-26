@@ -85,15 +85,16 @@ $__user= Auth::user();
                  </div> 
                </div>
                @endif
-               <form action="{{route('transfer-production.store')}}" method="POST" class="purchase_form" >
+               <form action="{{url('transfer-production/update')}}" method="POST" class="purchase_form" >
                 @csrf
                     <div class="row">
+                      <input type="hidden" name="id" value="{{$data->id}}" class="_main_id">
                        <div class="col-xs-12 col-sm-12 col-md-4">
                         <input type="hidden" name="_form_name" class="_form_name"  value="production">
                             <div class="form-group">
                                 <label>Date:</label>
                                   <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                      <input type="text" name="_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                      <input type="text" name="_date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{_view_date_formate($data->_date)}}"/>
                                       <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                           <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                       </div>
@@ -103,13 +104,14 @@ $__user= Auth::user();
                         
                         
 
+                        
                         <div class="col-xs-12 col-sm-12 col-md-4 " >
                             <div class="form-group ">
                                 <label>From Branch:<span class="_required">*</span></label>
                                <select class="form-control" name="_from_branch" required >
                                   
                                   @forelse($permited_branch as $branch )
-                                  <option value="{{$branch->id}}" @if(isset($request->_from_branch)) @if($request->_from_branch == $branch->id) selected @endif   @endif>{{ $branch->id ?? '' }} - {{ $branch->_name ?? '' }}</option>
+                                  <option value="{{$branch->id}}" @if(isset($data->_from_branch)) @if($data->_from_branch == $branch->id) selected @endif   @endif>{{ $branch->id ?? '' }} - {{ $branch->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                 </select>
@@ -122,20 +124,20 @@ $__user= Auth::user();
                                <select class="form-control" name="_from_cost_center" required >
                                   
                                   @forelse($permited_costcenters as $cost_center )
-                                  <option value="{{$cost_center->id}}" @if(isset($request->_from_cost_center)) @if($request->_from_cost_center == $cost_center->id) selected @endif   @endif>{{ $cost_center->id ?? '' }} - {{ $cost_center->_name ?? '' }}</option>
+                                  <option value="{{$cost_center->id}}" @if(isset($data->_from_cost_center)) @if($data->_from_cost_center == $cost_center->id) selected @endif   @endif>{{ $cost_center->id ?? '' }} - {{ $cost_center->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                 </select>
                             </div>
                         </div>
+                        @php
+                        $_types = [$data->_type];
+                        @endphp
                         <div class="col-xs-12 col-sm-12 col-md-4 " >
                             <div class="form-group ">
                                 <label>Type:<span class="_required">*</span></label>
                                <select class="form-control" name="_type" required >
-                                  
-                                 
-                                  <option value="transfer" @if(isset($request->_type)) @if($request->_type == 'transfer') selected @endif   @endif>Transfer</option>
-                                  <option value="production" @if(isset($request->_type)) @if($request->_type == 'production') selected @endif   @endif>Production</option>
+                                  <option value="{{$data->_type}}">{{$data->_type}}</option>
                                   
                                 </select>
                             </div>
@@ -150,7 +152,7 @@ $__user= Auth::user();
                                <select class="form-control" name="_to_branch" required >
                                   
                                   @forelse($all_branch as $branch )
-                                  <option value="{{$branch->id}}" @if(isset($request->_to_branch)) @if($request->_to_branch == $branch->id) selected @endif   @endif>{{ $branch->id ?? '' }} - {{ $branch->_name ?? '' }}</option>
+                                  <option value="{{$branch->id}}" @if(isset($data->_to_branch)) @if($data->_to_branch == $branch->id) selected @endif   @endif>{{ $branch->id ?? '' }} - {{ $branch->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                 </select>
@@ -162,7 +164,7 @@ $__user= Auth::user();
                                <select class="form-control" name="_to_cost_center" required >
                                   
                                   @forelse($all_costcenters as $cost_center )
-                                  <option value="{{$cost_center->id}}" @if(isset($request->_to_cost_center)) @if($request->_to_cost_center == $cost_center->id) selected @endif   @endif>{{ $cost_center->id ?? '' }} - {{ $cost_center->_name ?? '' }}</option>
+                                  <option value="{{$cost_center->id}}" @if(isset($data->_to_cost_center)) @if($data->_to_cost_center == $cost_center->id) selected @endif   @endif>{{ $cost_center->id ?? '' }} - {{ $cost_center->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                 </select>
@@ -173,10 +175,21 @@ $__user= Auth::user();
                         <div class="col-xs-12 col-sm-12 col-md-8 ">
                             <div class="form-group">
                               <label class="mr-2" for="_referance">Referance:</label>
-                              <input type="text" id="_referance" name="_referance" class="form-control _referance" value="{{old('_referance')}}" placeholder="Referance" >
+                              <input type="text" id="_referance" name="_referance" class="form-control _referance" value="{{old('_referance',$data->_reference)}}" placeholder="Referance" >
                             </div>
                         </div>
-                        
+                        <div class="col-xs-12 col-sm-12 col-md-4 " >
+                            <div class="form-group ">
+                                <label>ID:</label>
+                               <input type="text" name="" readonly value="{{$data->id}}" class="form-control">
+                            </div>
+                        </div>
+                        @php
+
+
+                        $___stock_in = $data->_stock_in ?? [];
+                        $___stock_out = $data->_stock_out ?? [];
+                        @endphp
                         
                         <div class="col-md-12  ">
                              <div class="card">
@@ -191,6 +204,7 @@ $__user= Auth::user();
                                       <table class="table table-bordered" >
                                           <thead >
                                             <th class="text-left" >&nbsp;</th>
+                                            <th class="text-left" >SL</th>
                                             <th class="text-left" >Item</th>
                                           
                                             <th class="text-left @if($_show_barcode  ==0) display_none @endif" >Barcode</th>
@@ -220,18 +234,34 @@ $__user= Auth::user();
                                            
                                            
                                           </thead>
+                                          @php
+                                          $_stock_out_qty = 0;
+                                          $_stock_out_total = 0;
+                                          @endphp
                                           <tbody class="area__purchase_details" id="area__purchase_details">
+                                            @if(sizeof($___stock_out) > 0)
+                                            @forelse($___stock_out as $key=>$detail)
+
+                                            @php
+                                          $_stock_out_qty +=$detail->_qty ?? 0;
+                                          $_stock_out_total +=$detail->_value ?? 0;
+                                          @endphp
                                             <tr class="_purchase_row _purchase_row__">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
                                               <td>
-                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item">
+                                                {{ $detail->id }}
+                                                <input type="hidden" name="_purchase_detail_id[]" value="{{ $detail->id }}" class="form-control _purchase_detail_id" >
+                                                
+                                              </td>
+                                              <td>
+                                                <input type="text" name="_search_item_id[]" class="form-control _search_item_id width_280_px" placeholder="Item" value="{{_item_name($detail->_item_id)}}">
 
-                                                <input type="hidden" name="_item_id[]" class="form-control _item_id " >
-                                                <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id " >
-                                                <input type="hidden" name="_purchase_invoice_no[]" class="form-control _purchase_invoice_no" >
-                                                <input type="hidden" name="_purchase_detail_id[]" class="form-control _purchase_detail_id" >
+                                                <input type="hidden" name="_item_id[]" class="form-control _item_id " value="{{$detail->_item_id}}" >
+                                                <input type="hidden" name="_p_p_l_id[]" class="form-control _p_p_l_id "  value="{{$detail->_p_p_l_id}}"  >
+                                                <input type="hidden" name="_purchase_invoice_no[]" class="form-control _purchase_invoice_no" value="{{$detail->_purchase_invoice_no}}">
+                                                
                                                 <div class="search_box_item">
                                                   
                                                 </div>
@@ -239,44 +269,44 @@ $__user= Auth::user();
                                              
                                               <td class=" @if($_show_barcode  ==0) display_none @endif ">
                                                
-                                                <input type="text" name="_barcode_[]" class="form-control _barcode 1__barcode"  value="" id="1__barcode" readonly >
-                                                <input type="hidden" name="_ref_counter[]" value="1" class="_ref_counter" id="1__ref_counter">
+                                                <input type="text" name="_barcode_[]" class="form-control _barcode {{($key+1)}}__barcode"  value="{{$detail->_barcode ?? '' }}" id="{{($key+1)}}__barcode" readonly >
+                                                <input type="hidden" name="_ref_counter[]" value="{{($key+1)}}" class="_ref_counter" id="{{($key+1)}}__ref_counter">
                                               </td>
                                               <td  class="@if($_show_warranty  ==0) display_none @endif" >
                                                 <select name="_warranty[]" class="form-control _warranty 1___warranty">
                                                    <option value="0">--Select --</option>
                                                       @forelse($_warranties as $_warranty )
-                                                      <option value="{{$_warranty->id}}" >{{ $_warranty->_name ?? '' }}</option>
+                                                      <option value="{{$_warranty->id}}" @if($_warranty->id==$detail->_warranty) selected @endif >{{ $_warranty->_name ?? '' }}</option>
                                                       @empty
                                                       @endforelse
                                                 </select>
                                               </td>
                                               
                                               <td>
-                                                <input type="number" name="_qty[]" class="form-control _qty _common_keyup" >
+                                                <input type="number" name="_qty[]" class="form-control _qty _common_keyup"  value="{{$detail->_qty}}">
                                               </td>
                                               <td class=" @if($_show_cost_rate ==0) display_none @endif " >
-                                                <input type="number" name="_rate[]" class="form-control _rate  " readonly>
+                                                <input type="number" name="_rate[]" class="form-control _rate  " value="{{$detail->_rate}}" readonly>
                                               </td>
                                               <td>
-                                                <input type="number" name="_sales_rate[]" class="form-control _sales_rate _common_keyup " >
+                                                <input type="number" name="_sales_rate[]" class="form-control _sales_rate _common_keyup " value="{{$detail->_sales_rate}}" >
                                               </td>
                                               
                                               
                                               <td>
-                                                <input type="number" name="_value[]" class="form-control _value " readonly >
+                                                <input type="number" name="_value[]" class="form-control _value " readonly value="{{$detail->_value}}" >
                                               </td>
                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
-                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " >
+                                                <input type="date" name="_manufacture_date[]" class="form-control _manufacture_date " value="{{_view_date_formate($detail->_manufacture_date)}}" >
                                               </td>
                                               <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
-                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " >
+                                                <input type="date" name="_expire_date[]" class="form-control _expire_date " value="{{_view_date_formate($detail->_expire_date)}}"  >
                                               </td>
                                             
                                                <td class="@if(sizeof($permited_branch) == 1) display_none @endif ">
                                                 <select class="form-control  _main_branch_id_detail" name="_main_branch_id_detail[]"  required>
                                                   @forelse($permited_branch as $branch )
-                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
+                                                  <option value="{{$branch->id}}" @if(isset($detail->_branch_id)) @if($detail->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -287,7 +317,7 @@ $__user= Auth::user();
                                                  <select class="form-control  _main_cost_center" name="_main_cost_center[]" required >
                                             
                                                   @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_main_cost_center)) @if($request->_main_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  <option value="{{$costcenter->id}}" @if(isset($detail->_cost_center_id)) @if($detail->_cost_center_id == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -296,7 +326,7 @@ $__user= Auth::user();
                                               <td class=" @if(sizeof($store_houses) == 1) display_none @endif ">
                                                 <select class="form-control  _main_store_id" name="_main_store_id[]">
                                                   @forelse($store_houses as $store)
-                                                  <option value="{{$store->id}}">{{$store->_name ?? '' }}</option>
+                                                  <option value="{{$store->id}}" @if($detail->_store_id==$store->id) selected @endif >{{$store->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -305,33 +335,32 @@ $__user= Auth::user();
                                              
                                              
                                               <td class=" @if($_show_self==0) display_none @endif ">
-                                                <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " >
+                                                <input type="text" name="_store_salves_id[]" class="form-control _store_salves_id " value="{{$detail->_store_salves_id ?? '' }}">
                                               </td>
                                               
                                               
                                             </tr>
+                                            @empty
+                                            @endforelse
+                                            @endif
                                           </tbody>
                                           <tfoot>
                                             <tr>
                                               <td>
                                                 <a href="#none"  class="btn btn-default btn-sm" onclick="purchase_row_add(event)"><i class="fa fa-plus"></i></a>
                                               </td>
-                                              <td  class="text-right"><b>Total</b></td>
+                                              <td colspan="2"  class="text-right"><b>Total</b></td>
                                               
                                                 <td  class="text-right @if($_show_barcode==0) display_none @endif"></td>
                                                 <td  class="text-right @if($_show_warranty==0) display_none @endif"></td>
                                              
                                               <td>
-                                                <input type="number" step="any" min="0" name="_total_qty_amount" class="form-control _total_qty_amount" value="0" readonly required>
+                                                <input type="number" step="any" min="0" name="_total_qty_amount" class="form-control _total_qty_amount" value="{{$_stock_out_qty}}" readonly required>
                                               </td>
                                               <td class="@if($_show_cost_rate==0) display_none @endif"></td>
                                               <td></td>
-                                              
-                                             
-                                              
-                                             
                                               <td>
-                                                <input type="number" step="any" min="0" name="_total_value_amount" class="form-control _total_value_amount" value="0" readonly required>
+                                                <input type="number" step="any" min="0" name="_total_value_amount" class="form-control _total_value_amount" value="{{$_stock_out_total}}" readonly required>
                                               </td>
                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
                                               </td>
@@ -367,7 +396,9 @@ $__user= Auth::user();
                                 <div class="table-responsive">
                                       <table class="table table-bordered" >
                                           <thead >
+                                            <tr>
                                             <th class="text-left" >&nbsp;</th>
+                                            <th class="text-left" >ID</th>
                                             <th class="text-left" >Item</th>
                                            
                                             <th class="text-left @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==0) display_none    @endif @endif" >Barcode</th>
@@ -400,52 +431,63 @@ $__user= Auth::user();
                                             @endif"> Expired Date </th>
                                             <th class="text-left @if(isset($form_settings->_show_self)) @if($form_settings->_show_self==0) display_none @endif
                                             @endif" >Shelf</th>
-                                            
+                                            </tr>
                                            
                                           </thead>
+                                          @php
+                                            $_stock_in_qty_total=0;
+                                            $_stock_in_total_amount=0;
+                                          @endphp
                                           <tbody class="area__purchase_details" id="_stock_in_area__purchase_details">
+                                            @if(sizeof( $___stock_in)> 0)
+                                            @forelse($___stock_in as $key=>$detail)
+                                            @php
+                                            $_stock_in_qty_total +=$detail->_qty ?? 0 ;
+                                            $_stock_in_total_amount +=$detail->_value ?? 0 ;
+                                          @endphp
                                             <tr class="_purchase_row">
                                               <td>
                                                 <a  href="#none" class="btn btn-default _purchase_row_remove" ><i class="fa fa-trash"></i></a>
                                               </td>
+                                              <td>{{$detail->id ?? ''}}</td>
                                               <td>
-                                                <input type="text" name="_stock_in__search_item_id[]" class="form-control _stock_in__search_item_id width_280_px" placeholder="Item">
-                                                 <input type="hidden" name="_stock_in__item_id[]" class="form-control _stock_in__item_id width_200_px" >
-                                                <input type="hidden" name="_stock_in__p_p_l_id[]" class="form-control _stock_in__p_p_l_id " >
-                                                <input type="hidden" name="_stock_in__purchase_invoice_no[]" class="form-control _stock_in__purchase_invoice_no" >
-                                                <input type="hidden" name="_stock_in__purchase_detail_id[]" class="form-control _stock_in__purchase_detail_id" >
+                                                <input type="text" name="_stock_in__search_item_id[]" class="form-control _stock_in__search_item_id width_280_px" placeholder="Item" value="{{ _item_name($detail->_item_id ?? '') }}">
+                                                 <input type="hidden" name="_stock_in__item_id[]" class="form-control _stock_in__item_id width_200_px" value="{{$detail->_item_id ?? ''}}">
+                                                <input type="hidden" name="_stock_in__p_p_l_id[]" class="form-control _stock_in__p_p_l_id "   value="{{$detail->id ?? ''}}">
+                                                <input type="hidden" name="_stock_in__purchase_invoice_no[]" class="form-control _stock_in__purchase_invoice_no"  value="{{$detail->_purchase_invoice_no ?? ''}}"  >
+                                                <input type="hidden" name="_stock_in__purchase_detail_id[]" class="form-control _stock_in__purchase_detail_id" value="{{$detail->id ?? ''}}" >
                                                 <div class="_stock_in_search_box_item">
                                                   
                                                 </div>
                                               </td>
                                               
                                               <td class="@if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==0) display_none   @endif @endif">
-                                                <input type="text" name="_stock_in__barcode[]" class="form-control _stock_in__barcode 1___stock_in_barcode "  id="1___stock_in_barcode">
+                                                <input type="text" name="_stock_in__barcode[]" class="form-control _stock_in__barcode {{($key+1)}}___stock_in_barcode "  id="{{($key+1)}}___stock_in_barcode" value="{{$detail->_barcode ?? '' }}">
 
-                                                <input type="hidden" name="_stock_in__ref_counter[]" value="1" class="_stock_in__ref_counter" id="1___stock_in_ref_counter">
+                                                <input type="hidden" name="_stock_in__ref_counter[]" value="{{($key+1)}}" class="_stock_in__ref_counter" id="{{($key+1)}}___stock_in_ref_counter">
 
                                               </td>
                                             
                                               <td>
-                                                <input type="number" name="_stock_in__qty[]" class="form-control _stock_in__qty _stock_in_common_keyup" >
+                                                <input type="number" name="_stock_in__qty[]" class="form-control _stock_in__qty _stock_in_common_keyup" value="{{ $detail->_qty ?? 0 }}" >
                                               </td>
                                               <td>
-                                                <input type="number" name="_stock_in__rate[]" class="form-control _stock_in__rate _stock_in_common_keyup" >
+                                                <input type="number" name="_stock_in__rate[]" class="form-control _stock_in__rate _stock_in_common_keyup" value="{{ $detail->_rate ?? 0 }}" >
                                               </td>
                                               <td>
-                                                <input type="number" name="_stock_in__sales_rate[]" class="form-control _stock_in__sales_rate " >
+                                                <input type="number" name="_stock_in__sales_rate[]" class="form-control _stock_in__sales_rate " value="{{ $detail->_sales_rate ?? 0 }}" >
                                               </td>
                                              
                                              
                                              
                                               <td>
-                                                <input type="number" name="_stock_in__value[]" class="form-control _stock_in__value " readonly >
+                                                <input type="number" name="_stock_in__value[]" class="form-control _stock_in__value " readonly value="{{ $detail->_value ?? 0 }}" >
                                               </td>
                                             @if(sizeof($permited_branch) > 1)  
                                               <td>
                                                 <select class="form-control  _stock_in__main_branch_id_detail" name="_stock_in__main_branch_id_detail[]"  required>
                                                   @forelse($permited_branch as $branch )
-                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
+                                                  <option value="{{$branch->id}}" @if(isset($detail->_branch_id)) @if($detail->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -454,7 +496,7 @@ $__user= Auth::user();
                                                <td class="display_none">
                                                 <select class="form-control  _stock_in__main_branch_id_detail" name="_stock_in__main_branch_id_detail[]"  required>
                                                   @forelse($permited_branch as $branch )
-                                                  <option value="{{$branch->id}}" @if(isset($request->_branch_id)) @if($request->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
+                                                  <option value="{{$branch->id}}" @if(isset($detail->_branch_id)) @if($detail->_branch_id == $branch->id) selected @endif   @endif>{{ $branch->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -465,7 +507,7 @@ $__user= Auth::user();
                                                  <select class="form-control  _stock_in__main_cost_center" name="_stock_in__main_cost_center[]" required >
                                             
                                                   @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_main_cost_center)) @if($request->_main_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  <option value="{{$costcenter->id}}" @if(isset($detail->_cost_center_id)) @if($detail->_cost_center_id == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -475,7 +517,7 @@ $__user= Auth::user();
                                                  <select class="form-control  _stock_in__main_cost_center" name="_stock_in__main_cost_center[]" required >
                                             
                                                   @forelse($permited_costcenters as $costcenter )
-                                                  <option value="{{$costcenter->id}}" @if(isset($request->_main_cost_center)) @if($request->_main_cost_center == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
+                                                  <option value="{{$costcenter->id}}" @if(isset($detail->_cost_center_id)) @if($detail->_cost_center_id == $costcenter->id) selected @endif   @endif> {{ $costcenter->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -485,7 +527,7 @@ $__user= Auth::user();
                                               <td>
                                                 <select class="form-control  _stock_in__main_store_id" name="_stock_in__main_store_id[]">
                                                   @forelse($_all_store_houses as $store)
-                                                  <option value="{{$store->id}}">{{$store->_name ?? '' }}/{{$store->_branch->_name ?? '' }}</option>
+                                                  <option value="{{$store->id}}" @if($detail->_store_id==$store->id) selected @endif >{{$store->_name ?? '' }}/{{$store->_branch->_name ?? '' }}</option>
                                                   @empty
                                                   @endforelse
                                                 </select>
@@ -494,23 +536,26 @@ $__user= Auth::user();
                                               
                                               
                                               <td class="@if(isset($form_settings->_show_manufacture_date)) @if($form_settings->_show_manufacture_date==0) display_none  @endif @endif">
-                                                <input type="date" name="_stock_in__manufacture_date[]" class="form-control _stock_in__manufacture_date " >
+                                                <input type="date" name="_stock_in__manufacture_date[]" class="form-control _stock_in__manufacture_date "  value="{{ _view_date_formate( $detail->_manufacture_date ?? '') }}" >
                                               </td>
                                               <td class="@if(isset($form_settings->_show_expire_date)) @if($form_settings->_show_expire_date==0) display_none  @endif @endif">
-                                                <input type="date" name="_stock_in__expire_date[]" class="form-control _stock_in__expire_date " >
+                                                <input type="date" name="_stock_in__expire_date[]" class="form-control _stock_in__expire_date " value="{{ _view_date_formate($detail->_expire_date ?? '') }}"  >
                                               </td>
                                              <td class="@if(isset($form_settings->_show_self)) @if($form_settings->_show_self==0) display_none  @endif @endif">
-                                                <input type="text" name="_stock_in__store_salves_id[]" class="form-control _stock_in__store_salves_id " >
+                                                <input type="text" name="_stock_in__store_salves_id[]" class="form-control _stock_in__store_salves_id " value="{{$detail->_store_salves_id ?? '' }}" >
                                               </td>
                                               
                                             </tr>
+                                            @empty
+                                            @endforelse
+                                            @endif
                                           </tbody>
                                           <tfoot>
                                             <tr>
                                               <td>
                                                 <a href="#none"  class="btn btn-default btn-sm" onclick="_stock_in_purchase_row_add(event)"><i class="fa fa-plus"></i></a>
                                               </td>
-                                              <td  class="text-right"><b>Total</b></td>
+                                              <td colspan="2"  class="text-right"><b>Total</b></td>
                                               @if(isset($form_settings->_show_barcode)) @if($form_settings->_show_barcode==1)
                                               <td  class="text-right"></td>
                                               @else
@@ -518,15 +563,12 @@ $__user= Auth::user();
                                              @endif
                                             @endif
                                               <td>
-                                                <input type="number" step="any" min="0" name="_total_qty_amount" class="form-control _stock_in__total_qty_amount" value="0" readonly required>
+                                                <input type="number" step="any" min="0" name="_total_qty_amount" class="form-control _stock_in__total_qty_amount" value="{{$_stock_in_qty_total}}" readonly required>
                                               </td>
                                               <td></td>
                                               <td></td>
-                                             
-                                             
-                                            
                                               <td>
-                                                <input type="number" step="any" min="0" name="_total_value_amount" class="form-control _stock_in__total_value_amount" value="0" readonly required>
+                                                <input type="number" step="any" min="0" name="_total_value_amount" class="form-control _stock_in__total_value_amount" value="{{$_stock_in_total_amount}}" readonly required>
                                               </td>
                                               @if(sizeof($permited_branch) > 1)
                                               <td></td>
@@ -571,17 +613,17 @@ $__user= Auth::user();
                                     <input type="hidden" name="_after_print" value="0" class="_after_print" >
                                     @endif
                                     @if ($_master_id = Session::get('_master_id'))
-                                     <input type="hidden" name="_master_id" value="{{url('production/print')}}/{{$_master_id}}" class="_master_id">
+                                     <input type="hidden" name="_master_id" value="{{url('transfer-production/print')}}/{{$_master_id}}" class="_master_id">
                                     
                                     @endif
                                    
                                        <input type="hidden" name="_print" value="0" class="_save_and_print_value">
 
-                                    <input type="text" id="_note"  name="_note" class="form-control _note" value="{{old('_note')}}" placeholder="Note" required >
+                                    <input type="text" id="_note"  name="_note" class="form-control _note" value="{{old('_note',$data->_note ?? '')}}" placeholder="Note" required >
                               </td>
                             </tr>
                             <tr>
-                              <td style="border:0px;width: 20%;"><label for="_sub_total">Status</label></td>
+                              <td style="border:0px;width: 20%;"><label for="_p_status">Status</label></td>
                               <td style="border:0px;width: 80%;">
                                 @php
                                 $_p_statues = \DB::table("production_status")->get();
@@ -590,7 +632,7 @@ $__user= Auth::user();
                                <select class="form-control" name="_p_status" required >
                                   
                                   @forelse($_p_statues as $_statues )
-                                  <option value="{{$_statues->id}}" @if(isset($request->_p_status)) @if($request->_p_status == $_statues->id) selected @endif   @endif> {{ $_statues->_name ?? '' }}</option>
+                                  <option value="{{$_statues->id}}" @if(isset($data->_p_status)) @if($data->_p_status == $_statues->id) selected @endif   @endif> {{ $_statues->_name ?? '' }}</option>
                                   @empty
                                   @endforelse
                                 </select>
@@ -602,15 +644,15 @@ $__user= Auth::user();
                             <tr>
                               <td style="border:0px;width: 20%;"><label for="_total">Stock Out Total </label></td>
                               <td style="border:0px;width: 80%;">
-                          <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="0">
-                           <input type="hidden" name="_item_row_count" value="1" class="_item_row_count">
-                           <input type="hidden" name="_stock_in__item_row_count" value="1" class="_stock_in__item_row_count">
+                          <input type="text" name="_total" class="form-control width_200_px" id="_total" readonly value="{{ $data->_total ?? 0 }}">
+                           <input type="hidden" name="_item_row_count" value="{{sizeof($___stock_out)}}" class="_item_row_count">
+                           <input type="hidden" name="_stock_in__item_row_count" value="{{sizeof($___stock_in)}}" class="_stock_in__item_row_count">
                               </td>
                             </tr>
                             <tr>
                               <td style="border:0px;width: 20%;"><label for="_stock_in__total">Stock In Total </label></td>
                               <td style="border:0px;width: 80%;">
-                          <input type="text" name="_stock_in__total" class="form-control width_200_px" id="_stock_in__total" readonly value="0">
+                          <input type="text" name="_stock_in__total" class="form-control width_200_px" id="_stock_in__total" readonly value="{{$data->_stock_in__total ?? 0}}">
                               </td>
                             </tr>
                             

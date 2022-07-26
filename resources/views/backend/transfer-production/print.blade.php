@@ -149,9 +149,6 @@
                 <td>{{ _report_amount($_master_val->_rate ?? '') }}</td>
                 <td>{{ _report_amount($_master_val->_sales_rate ?? '') }}</td>
                 <td class="text-right">{{ _report_amount( $_master_val->_value ?? 0) }}</td>
-                <td>{{ $_master_val->_manufacture_date  ?? '' }}</td>
-                <td>{{ $_master_val->_expire_date  ?? '' }}</td>
-                <td>{{ $_master_val->_store_salves_id  ?? '' }}</td>
                 @php 
                 $_stock_out_total += $_master_val->_value;    
                 $_stock_out_qty += $_master_val->_qty;    

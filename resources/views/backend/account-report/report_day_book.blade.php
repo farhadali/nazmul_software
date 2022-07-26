@@ -123,6 +123,14 @@
                   DM-{!! $value->_id ?? '' !!}</a>
                     @endif
                     @endif
+                    @if($value->_table_name=="transfer")
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('transfer-production/print',$value->_id) }}">
+                  TF-{!! $value->_id ?? '' !!}</a>
+                    @endif
+                    @if($value->_table_name=="production")
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('transfer-production/print',$value->_id) }}">
+                  PD-{!! $value->_id ?? '' !!}</a>
+                    @endif
                </td>
                
                <td>{{_group_name($value->_account_group)}}</td>

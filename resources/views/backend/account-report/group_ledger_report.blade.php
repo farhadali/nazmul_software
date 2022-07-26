@@ -187,6 +187,14 @@
                  <a style="text-decoration: none;" target="__blank" href="{{ url('damage/print',$detail->_id) }}">
                   DM-{!! $detail->_id ?? '' !!}</a>
                     @endif
+                    @if($detail->_table_name=="transfer")
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('transfer-production/print',$detail->_id) }}">
+                  TF-{!! $detail->_id ?? '' !!}</a>
+                    @endif
+                    @if($detail->_table_name=="production")
+                 <a style="text-decoration: none;" target="__blank" href="{{ url('transfer-production/print',$detail->_id) }}">
+                  PD-{!! $detail->_id ?? '' !!}</a>
+                    @endif
              </td>
              @endif
              @if(isset($previous_filter['short_naration']))
