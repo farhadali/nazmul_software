@@ -442,7 +442,7 @@ function after_request_date__today(_date){
 
   $(document).on("click","._invoice_lock",function(){
     var _id = $(this).attr('_attr_invoice_id');
-    var _table_name ="purchases";
+    var _table_name ="productions";
    if($(this).is(':checked')){
             $(this).prop("selected", "selected");
           var _action = 1;

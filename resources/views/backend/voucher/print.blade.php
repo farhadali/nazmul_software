@@ -127,19 +127,7 @@
         <p class="lead"> <b>In Words: {{ nv_number_to_text( $data->_amount ?? 0) }} </b></p>
         
       </div>
-      <!-- /.col -->
-      <div class="col-12 mt-5">
-        <div class="row">
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Received By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Prepared By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;">Checked By</span></div>
-          <div class="col-3 text-center " style="margin-bottom: 50px;"><span style="border-bottom: 1px solid #f5f9f9;"> Approved By</span></div>
-        </div>
-
-          
-       
-      </div>
-      <!-- /.col -->
+       @include('backend.message.invoice_footer')
     </div>
     <!-- /.row -->
   </section>

@@ -1,5 +1,6 @@
 body{
      font-family: math;
+
 }
 
 .banner_image{
@@ -685,4 +686,13 @@ input[type='text']{
 }
 .width_280_px{
     min-width: 280px !important;
+}
+#printablediv {
+    font-size: 20px !important;
+}
+
+@media print {
+    #printablediv {
+        font-size: 12pt;
+    }
 }

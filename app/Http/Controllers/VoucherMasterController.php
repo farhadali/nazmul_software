@@ -854,7 +854,7 @@ WHERE t1._account_group_id=(SELECT _bank_group FROM general_settings ) " );
            
 
            DB::commit();
-            return redirect()->back()->with('success','Information save successfully');
+            return redirect('voucher/'.$master_id)->with('success','Information save successfully');
        } catch (\Exception $e) {
            DB::rollback();
             return redirect()->back()->with('error','Something Went Wrong');;

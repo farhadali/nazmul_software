@@ -1260,18 +1260,6 @@ $over_qtys = array();
            try {
         
        
-
-       
-
-
-
-
-
-
-
-
-
-
         foreach ($previous_sales_details as $value) {
 
             $product_prices =ProductPriceList::where('id',$value->_p_p_l_id)->first();
